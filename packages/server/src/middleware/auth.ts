@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import {NextFunction, Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
-import { UserType } from '@ironlogic4/shared/types/users';
-import { User, UserDocument } from '../models/User';
+import {UserType} from '@ironlogic4/shared/types/users';
+import {User, UserDocument} from '../models/User';
 
 // Extend Express Request interface to include user
 export interface AuthenticatedRequest extends Request {
@@ -126,10 +126,18 @@ export const requireUserManagementPermission = (targetUserType?: UserType) => {
 
     const { userType } = req.user;
 
-    // Admin and Owner can manage all user types
-    if (userType === UserType.ADMIN || userType === UserType.OWNER) {
+    // Admin can manage all user types
+    if (userType === UserType.ADMIN) {
       next();
       return;
+    }
+
+    // Owner can manage Coach and Client Types
+    if (userType === UserType.OWNER) {
+        if (targetUserType === UserType.CLIENT || targetUserType === UserType.COACH) {
+            next();
+            return;
+        }
     }
 
     // Coach can only manage client users
