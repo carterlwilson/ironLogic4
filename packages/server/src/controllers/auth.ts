@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { RegisterSchema, LoginSchema, ApiResponse } from '@ironlogic4/shared';
+import { RegisterSchema, LoginSchema } from '@ironlogic4/shared';
+import { ApiResponse } from '@ironlogic4/shared/types/api';
 import { User } from '../models/User';
 import { generateToken } from '../utils/auth';
 

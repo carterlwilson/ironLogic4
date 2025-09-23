@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserType } from '../types';
+import { UserType } from '../types/users';
 
 export const UserTypeSchema = z.nativeEnum(UserType);
 

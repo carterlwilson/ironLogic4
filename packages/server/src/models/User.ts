@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { User as IUser, UserType } from '@ironlogic4/shared';
+import { User as IUser, UserType } from '@ironlogic4/shared/types/users';
 import { hashPassword, comparePassword } from '../utils/auth';
 
 export interface UserDocument extends Omit<IUser, 'id'>, Document {

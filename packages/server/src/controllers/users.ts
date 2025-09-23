@@ -2,7 +2,8 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { User } from '../models/User';
 import { CreateUserSchema } from '@ironlogic4/shared';
-import { ApiResponse, PaginatedResponse, UserType } from '@ironlogic4/shared';
+import { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
+import { UserType } from '@ironlogic4/shared/types/users';
 import { z } from 'zod';
 
 // Update user schema for validation

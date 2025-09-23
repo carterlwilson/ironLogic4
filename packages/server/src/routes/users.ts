@@ -12,7 +12,7 @@ import {
   deleteUser,
 } from '../controllers/users';
 import { User } from '../models/User';
-import { UserType } from '@ironlogic4/shared';
+import { UserType } from '@ironlogic4/shared/types/users';
 
 const router = express.Router();
 
