@@ -4,6 +4,28 @@
   "description": "Shared TypeScript types and utilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./types/users": {
+      "types": "./dist/types/users.d.ts",
+      "import": "./dist/types/users.js",
+      "require": "./dist/types/users.js"
+    },
+    "./types/auth": {
+      "types": "./dist/types/auth.d.ts",
+      "import": "./dist/types/auth.js",
+      "require": "./dist/types/auth.js"
+    },
+    "./types/api": {
+      "types": "./dist/types/api.d.ts",
+      "import": "./dist/types/api.js",
+      "require": "./dist/types/api.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",

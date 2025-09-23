@@ -1,17 +1,3 @@
-export interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken?: string;
-}
-
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
