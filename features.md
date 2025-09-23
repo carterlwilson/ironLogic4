@@ -1,0 +1,3 @@
+Go into plan mode
+
+Let's start by implementing auth on the server side. Session management will be handled in a modern way with JWT tokens. The users stored in the db will all have a 'type". The possible types are admin, owner, coach, and client. The type can be stored as a string. Only an admin type user should have the ability to create other admin and coach type users. A coach should have access to create, edit, or delete client users. A client should have no write access to users. All the user types need to be able to log in to the app though. It will probably be useful to use an enum to keep track of the user types and put the enum in the shared types project, as it will be useful for the client as well.
