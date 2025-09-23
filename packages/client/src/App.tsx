@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
-import { AppShell, Header, Text } from '@mantine/core';
+import { AppShell, Text } from '@mantine/core';
 import { HomePage } from './pages/HomePage';
+import { LoginPage } from './pages/LoginPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <AppShell.Main>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
       </AppShell.Main>
     </AppShell>
