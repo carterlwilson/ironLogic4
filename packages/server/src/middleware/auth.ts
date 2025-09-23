@@ -96,9 +96,14 @@ export const requireRole = (allowedRoles: UserType[]) => {
 };
 
 /**
- * Middleware for admin-only access
+ * Middleware for admin-only access (strict admin only, no other roles)
  */
-export const requireAdmin = requireRole([UserType.ADMIN, UserType.OWNER]);
+export const requireAdmin = requireRole([UserType.ADMIN]);
+
+/**
+ * Middleware for admin and owner access (legacy, kept for compatibility)
+ */
+export const requireAdminOrOwner = requireRole([UserType.ADMIN, UserType.OWNER]);
 
 /**
  * Middleware for admin and coach access

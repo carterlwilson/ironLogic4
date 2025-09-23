@@ -1,13 +1,19 @@
 import { Routes, Route } from 'react-router-dom';
 import { AppShell, Text } from '@mantine/core';
 import { AuthGuard } from './components/AuthGuard';
+import { Navigation } from './components/Navigation';
 import { Dashboard } from './pages/Dashboard';
+import { UsersPage } from './pages/UsersPage';
 
 function App() {
   return (
     <AuthGuard>
       <AppShell
         header={{ height: 60 }}
+        navbar={{
+          width: 280,
+          breakpoint: 'sm',
+        }}
         padding="md"
       >
         <AppShell.Header>
@@ -16,10 +22,15 @@ function App() {
           </Text>
         </AppShell.Header>
 
+        <AppShell.Navbar p="md" style={{ backgroundColor: '#fafafa' }}>
+          <Navigation />
+        </AppShell.Navbar>
+
         <AppShell.Main>
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/users" element={<UsersPage />} />
             {/* All routes are protected by AuthGuard wrapper */}
           </Routes>
         </AppShell.Main>
