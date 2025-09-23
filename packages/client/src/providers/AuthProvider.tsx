@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import type { AuthTokens } from '@ironlogic4/shared';
@@ -26,30 +26,51 @@ interface AuthState {
   tokens: AuthTokens | null;
   isLoading: boolean;
   error: AuthError | null;
+  isAuthenticated: boolean;
 }
+
+interface AuthContextType extends AuthState {
+  login: (credentials: LoginCredentials) => Promise<{ success: boolean; user?: User; tokens?: AuthTokens; error?: AuthError }>;
+  logout: () => void;
+  clearError: () => void;
+  initializeAuth: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-export const useAuth = () => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export function AuthProvider({ children }: AuthProviderProps) {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     tokens: null,
     isLoading: false,
     error: null,
+    isAuthenticated: false,
   });
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     setAuthState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, credentials, {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, credentials, {
         timeout: 10000,
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      const { user, tokens } = response.data;
+      console.log('📥 Raw server response:', response.data);
+
+      const { user: serverUser, token } = response.data.data;
+      const tokens = { accessToken: token };
+      const user = { ...serverUser, role: serverUser.userType };
+
+      console.log('🔄 Parsed user data:', { serverUser, token, user });
 
       // Store tokens in localStorage for persistence
       localStorage.setItem('authTokens', JSON.stringify(tokens));
@@ -60,7 +81,10 @@ export const useAuth = () => {
         tokens,
         isLoading: false,
         error: null,
+        isAuthenticated: true,
       });
+
+      console.log('🔐 Login successful - auth state updated:', { user, tokens });
 
       notifications.show({
         title: 'Login Successful',
@@ -71,6 +95,8 @@ export const useAuth = () => {
 
       return { success: true, user, tokens };
     } catch (error: any) {
+      console.error('❌ Login error caught:', error);
+
       const authError: AuthError = {
         message: 'Login failed. Please check your credentials.',
         field: undefined,
@@ -94,6 +120,7 @@ export const useAuth = () => {
         ...prev,
         isLoading: false,
         error: authError,
+        isAuthenticated: false,
       }));
 
       notifications.show({
@@ -116,7 +143,10 @@ export const useAuth = () => {
       tokens: null,
       isLoading: false,
       error: null,
+      isAuthenticated: false,
     });
+
+    console.log('🚪 Logout successful - auth state cleared');
 
     notifications.show({
       title: 'Logged Out',
@@ -130,7 +160,6 @@ export const useAuth = () => {
     setAuthState(prev => ({ ...prev, error: null }));
   }, []);
 
-  // Initialize auth state from localStorage on hook creation
   const initializeAuth = useCallback(() => {
     try {
       const storedTokens = localStorage.getItem('authTokens');
@@ -145,7 +174,10 @@ export const useAuth = () => {
           tokens,
           isLoading: false,
           error: null,
+          isAuthenticated: true,
         });
+
+        console.log('🔄 Auth state restored from localStorage:', { user, tokens });
       }
     } catch (error) {
       console.error('Failed to initialize auth state:', error);
@@ -154,12 +186,32 @@ export const useAuth = () => {
     }
   }, []);
 
-  return {
+  // Automatically initialize auth state when provider mounts
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  console.log('🔐 AuthProvider state:', authState);
+
+  const contextValue: AuthContextType = {
     ...authState,
     login,
     logout,
     clearError,
     initializeAuth,
-    isAuthenticated: !!authState.user,
   };
-};
+
+  return (
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+}

@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Container,
   Paper,
@@ -17,7 +15,7 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconMail, IconLock, IconAlertCircle, IconShield } from '@tabler/icons-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../providers/AuthProvider';
 
 interface LoginFormValues {
   email: string;
@@ -25,17 +23,9 @@ interface LoginFormValues {
 }
 
 export function LoginPage() {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { login, isLoading, error, clearError, isAuthenticated } = useAuth();
+  const { login, isLoading, error, clearError } = useAuth();
 
-  // Redirect if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
-    }
-  }, [isAuthenticated, navigate, location]);
+  // Note: Redirect logic is handled by AuthGuard component
 
   const form = useForm<LoginFormValues>({
     initialValues: {
@@ -58,12 +48,8 @@ export function LoginPage() {
 
   const handleSubmit = async (values: LoginFormValues) => {
     clearError();
-    const result = await login(values);
-
-    if (result.success) {
-      const from = location.state?.from?.pathname || '/dashboard';
-      navigate(from, { replace: true });
-    }
+    await login(values);
+    // Navigation will be handled automatically by AuthGuard when isAuthenticated becomes true
   };
 
   const handleInputChange = () => {

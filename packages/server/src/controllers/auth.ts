@@ -83,6 +83,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
  */
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
+      console.log("logging in user")
     // Validate request body using LoginSchema
     const validationResult = LoginSchema.safeParse(req.body);
 
@@ -92,6 +93,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         error: 'Validation failed',
         message: validationResult.error.errors.map(e => e.message).join(', ')
       };
+      console.log(response);
       res.status(400).json(response);
       return;
     }
