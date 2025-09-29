@@ -9,9 +9,6 @@ interface AuthGuardProps {
 export function AuthGuard({ children }: AuthGuardProps) {
   const { isAuthenticated, isLoading } = useAuth();
 
-  // Debug: Log when AuthGuard renders and what the auth state is
-  console.log('🛡️ AuthGuard render:', { isAuthenticated, isLoading });
-
   // Show loading while checking authentication
   if (isLoading) {
     return <LoadingOverlay visible={true} />;

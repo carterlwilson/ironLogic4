@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { RegisterSchema, LoginSchema } from '@ironlogic4/shared';
+import { RegisterSchema, LoginSchema } from '@ironlogic4/shared/schemas/auth';
 import { ApiResponse } from '@ironlogic4/shared/types/api';
 import { User } from '../models/User';
 import { generateToken } from '../utils/auth';
@@ -22,7 +22,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    const { email, password, firstName, lastName, userType } = validationResult.data;
+    const { email, password, firstName, lastName, userType, gymId } = validationResult.data;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -42,7 +42,8 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       password,
       firstName,
       lastName,
-      userType
+      userType,
+      gymId
     });
 
     await user.save();

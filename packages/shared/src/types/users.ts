@@ -12,6 +12,7 @@ export interface User {
   lastName: string;
   userType: UserType;
   password: string;
+  gymId?: string;
   createdAt: Date;
   updatedAt: Date;
 }

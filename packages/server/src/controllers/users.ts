@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { User } from '../models/User';
-import { CreateUserSchema } from '@ironlogic4/shared';
+import { CreateUserSchema } from '@ironlogic4/shared/schemas/users';
 import { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 import { UserType } from '@ironlogic4/shared/types/users';
 import { z } from 'zod';
@@ -14,6 +14,7 @@ const UpdateUserSchema = z.object({
   lastName: z.string().min(1).optional(),
   userType: z.nativeEnum(UserType).optional(),
   password: z.string().min(6).optional(),
+  gymId: z.string().optional(),
 }).refine((data) => Object.keys(data).length > 0, {
   message: "At least one field must be provided for update",
 });
@@ -29,18 +30,36 @@ export const getAllUsers = async (
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
+    const searchQuery = req.query.search as string;
+    const roleFilter = req.query.role as string;
 
     // Ensure limit is reasonable
     const maxLimit = Math.min(limit, 100);
 
+    // Build query object
+    let query: any = {};
+
+    // Add search functionality (firstName, lastName, email)
+    if (searchQuery && searchQuery.trim()) {
+      query.$or = [
+        { firstName: { $regex: searchQuery.trim(), $options: 'i' } },
+        { lastName: { $regex: searchQuery.trim(), $options: 'i' } },
+        { email: { $regex: searchQuery.trim(), $options: 'i' } }
+      ];
+    }
+
+    // Add role filtering
+    if (roleFilter && Object.values(UserType).includes(roleFilter as UserType)) {
+      query.userType = roleFilter;
+    }
+
     const [users, total] = await Promise.all([
-      User.find({})
+      User.find(query)
         .select('-password')
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(maxLimit)
-        .lean(),
-      User.countDocuments({})
+        .limit(maxLimit),
+      User.countDocuments(query)
     ]);
 
     const totalPages = Math.ceil(total / maxLimit);
@@ -118,7 +137,7 @@ export const createUser = async (
       return;
     }
 
-    const { email, password, firstName, lastName, userType } = validationResult.data;
+    const { email, password, firstName, lastName, userType, gymId } = validationResult.data;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -137,6 +156,7 @@ export const createUser = async (
       firstName,
       lastName,
       userType,
+      gymId,
     });
 
     await user.save();

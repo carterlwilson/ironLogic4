@@ -185,3 +185,54 @@ function extractTokenFromHeader(req: Request): string | null {
 
   return parts[1];
 }
+
+/**
+ * Middleware for gym-scoped access - owners can only access their own gym's data, admins have full access
+ */
+export const requireOwnerOrAdminForGym = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  if (!user) {
+    res.status(401).json({
+      success: false,
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  // Admins have full access to all gyms
+  if (user.userType === UserType.ADMIN) {
+    next();
+    return;
+  }
+
+  // Owners have access only to their own gym's data
+  if (user.userType === UserType.OWNER) {
+    // Check if gymId in request matches user's gym
+    const requestGymId = req.body.gymId || req.query.gymId || req.params.gymId;
+
+    if (!requestGymId) {
+      res.status(400).json({
+        success: false,
+        error: 'Gym ID is required',
+      });
+      return;
+    }
+
+    if (requestGymId === user.gymId) {
+      next();
+      return;
+    }
+
+    res.status(403).json({
+      success: false,
+      error: 'Access denied. You can only access your own gym\'s data.',
+    });
+    return;
+  }
+
+  res.status(403).json({
+    success: false,
+    error: 'Access denied. Owner or admin privileges required.',
+  });
+};

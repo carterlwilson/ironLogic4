@@ -1,19 +1,19 @@
 import { Container, Title, Text, Stack, Group, Notification } from '@mantine/core';
-import { IconUsers, IconCheck, IconX } from '@tabler/icons-react';
+import { IconBuilding, IconCheck, IconX } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 import React, { useState } from 'react';
-import type { User } from '@ironlogic4/shared/types/users';
-import { useUserManagement } from '../hooks/useUserManagement';
-import { useUserSearch } from '../hooks/useUserSearch';
-import { useGymOptions } from '../hooks/useGymOptions';
-import { UserToolbar } from '../components/admin/UserManagement/UserToolbar';
-import { UserTable } from '../components/admin/UserManagement/UserTable';
-import { AddUserModal } from '../components/admin/UserManagement/AddUserModal';
-import { EditUserModal } from '../components/admin/UserManagement/EditUserModal';
-import { DeleteUserModal } from '../components/admin/UserManagement/DeleteUserModal';
+import type { Gym } from '@ironlogic4/shared/types/gyms';
+import { useGymManagement } from '../hooks/useGymManagement';
+import { useGymSearch } from '../hooks/useGymSearch';
+import { useOwnerMapping } from '../hooks/useOwnerMapping';
+import { GymToolbar } from '../components/admin/GymManagement/GymToolbar';
+import { GymTable } from '../components/admin/GymManagement/GymTable';
+import { AddGymModal } from '../components/admin/GymManagement/AddGymModal';
+import { EditGymModal } from '../components/admin/GymManagement/EditGymModal';
+import { DeleteGymModal } from '../components/admin/GymManagement/DeleteGymModal';
 
-export function UsersPage() {
+export function GymsPage() {
   const { user } = useAuth();
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
@@ -23,69 +23,73 @@ export function UsersPage() {
   }
 
   const {
-    users,
+    gyms,
     loading,
     pagination,
     isAddModalOpen,
     isEditModalOpen,
     isDeleteModalOpen,
-    selectedUser,
+    selectedGym,
     openAddModal,
     openEditModal,
     openDeleteModal,
     closeModals,
-    createUser,
-    updateUser,
-    deleteUser,
-    loadUsers,
-  } = useUserManagement();
+    createGym,
+    updateGym,
+    deleteGym,
+    loadGyms,
+  } = useGymManagement();
 
   const {
     searchQuery,
-    roleFilter,
+    ownerFilter,
     hasFilters,
     setSearchQuery,
-    setRoleFilter,
+    setOwnerFilter,
     clearFilters,
     page,
     pageSize,
     setPage,
     setPageSize,
     queryParams,
-  } = useUserSearch();
+  } = useGymSearch();
 
-  // Load gym options for user modals
-  const { gymOptions, loading: gymsLoading } = useGymOptions();
+  // Owner mapping for efficient owner name lookups
+  const {
+    ownerMapping,
+    ownerOptions,
+    loading: ownersLoading,
+  } = useOwnerMapping();
 
-  // Use the search parameters to fetch users
+  // Use the search parameters to fetch gyms
   React.useEffect(() => {
-    loadUsers(queryParams);
-  }, [searchQuery, roleFilter, page, pageSize]);
+    loadGyms(queryParams);
+  }, [searchQuery, ownerFilter, page, pageSize]);
 
-  const handleCreateUser = async (data: any) => {
+  const handleCreateGym = async (data: any) => {
     try {
-      await createUser(data);
-      setNotification({ type: 'success', message: 'User created successfully!' });
+      await createGym(data);
+      setNotification({ type: 'success', message: 'Gym created successfully!' });
     } catch (error) {
-      setNotification({ type: 'error', message: 'Failed to create user. Please try again.' });
+      setNotification({ type: 'error', message: 'Failed to create gym. Please try again.' });
     }
   };
 
-  const handleUpdateUser = async (userId: string, data: any) => {
+  const handleUpdateGym = async (gymId: string, data: any) => {
     try {
-      await updateUser(userId, data);
-      setNotification({ type: 'success', message: 'User updated successfully!' });
+      await updateGym(gymId, data);
+      setNotification({ type: 'success', message: 'Gym updated successfully!' });
     } catch (error) {
-      setNotification({ type: 'error', message: 'Failed to update user. Please try again.' });
+      setNotification({ type: 'error', message: 'Failed to update gym. Please try again.' });
     }
   };
 
-  const handleDeleteUser = async (userToDelete: User) => {
+  const handleDeleteGym = async (gymToDelete: Gym) => {
     try {
-      await deleteUser(userToDelete.id);
-      setNotification({ type: 'success', message: 'User deleted successfully!' });
+      await deleteGym(gymToDelete.id);
+      setNotification({ type: 'success', message: 'Gym deleted successfully!' });
     } catch (error) {
-      setNotification({ type: 'error', message: 'Failed to delete user. Please try again.' });
+      setNotification({ type: 'error', message: 'Failed to delete gym. Please try again.' });
     }
   };
 
@@ -115,28 +119,31 @@ export function UsersPage() {
 
         {/* Page Header */}
         <Group gap="sm">
-          <IconUsers size={32} color="#22c55e" />
-          <Title order={1}>Users Management</Title>
+          <IconBuilding size={32} color="#22c55e" />
+          <Title order={1}>Gyms Management</Title>
         </Group>
 
         <Text size="lg" c="dimmed">
-          Manage user accounts and permissions for your organization.
+          Manage gym locations and their associated owners.
         </Text>
 
         {/* Toolbar */}
-        <UserToolbar
+        <GymToolbar
           searchQuery={searchQuery}
-          roleFilter={roleFilter}
+          ownerFilter={ownerFilter}
           hasFilters={hasFilters}
+          ownerOptions={ownerOptions}
+          ownersLoading={ownersLoading}
           onSearchChange={setSearchQuery}
-          onRoleFilterChange={setRoleFilter}
+          onOwnerFilterChange={setOwnerFilter}
           onClearFilters={clearFilters}
-          onAddUser={openAddModal}
+          onAddGym={openAddModal}
         />
 
-        {/* User Table */}
-        <UserTable
-          users={users}
+        {/* Gym Table */}
+        <GymTable
+          gyms={gyms}
+          ownerMapping={ownerMapping}
           loading={loading}
           pagination={pagination}
           hasFilters={hasFilters}
@@ -144,36 +151,32 @@ export function UsersPage() {
           onDelete={openDeleteModal}
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
-          onAddUser={openAddModal}
+          onAddGym={openAddModal}
           onClearFilters={clearFilters}
         />
 
         {/* Modals */}
-        <AddUserModal
+        <AddGymModal
           opened={isAddModalOpen}
           onClose={closeModals}
-          onSubmit={handleCreateUser}
+          onSubmit={handleCreateGym}
           loading={loading}
-          gymOptions={gymOptions}
-          gymsLoading={gymsLoading}
         />
 
-        <EditUserModal
+        <EditGymModal
           opened={isEditModalOpen}
           onClose={closeModals}
-          user={selectedUser}
-          onSubmit={handleUpdateUser}
+          gym={selectedGym}
+          onSubmit={handleUpdateGym}
           onDelete={openDeleteModal}
           loading={loading}
-          gymOptions={gymOptions}
-          gymsLoading={gymsLoading}
         />
 
-        <DeleteUserModal
+        <DeleteGymModal
           opened={isDeleteModalOpen}
           onClose={closeModals}
-          user={selectedUser}
-          onConfirm={handleDeleteUser}
+          gym={selectedGym}
+          onConfirm={handleDeleteGym}
           loading={loading}
         />
       </Stack>

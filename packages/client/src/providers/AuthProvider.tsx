@@ -64,13 +64,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         },
       });
 
-      console.log('📥 Raw server response:', response.data);
-
       const { user: serverUser, token } = response.data.data;
       const tokens = { accessToken: token };
       const user = { ...serverUser, role: serverUser.userType };
-
-      console.log('🔄 Parsed user data:', { serverUser, token, user });
 
       // Store tokens in localStorage for persistence
       localStorage.setItem('authTokens', JSON.stringify(tokens));
@@ -83,8 +79,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         error: null,
         isAuthenticated: true,
       });
-
-      console.log('🔐 Login successful - auth state updated:', { user, tokens });
 
       notifications.show({
         title: 'Login Successful',
@@ -146,8 +140,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       isAuthenticated: false,
     });
 
-    console.log('🚪 Logout successful - auth state cleared');
-
     notifications.show({
       title: 'Logged Out',
       message: 'You have been successfully logged out.',
@@ -176,8 +168,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error: null,
           isAuthenticated: true,
         });
-
-        console.log('🔄 Auth state restored from localStorage:', { user, tokens });
       }
     } catch (error) {
       console.error('Failed to initialize auth state:', error);
@@ -190,8 +180,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     initializeAuth();
   }, [initializeAuth]);
-
-  console.log('🔐 AuthProvider state:', authState);
 
   const contextValue: AuthContextType = {
     ...authState,

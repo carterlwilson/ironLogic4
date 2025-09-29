@@ -6,6 +6,9 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import adminUserRoutes from './routes/admin/users';
+import adminGymRoutes from './routes/admin/gyms';
+import gymActivityTemplateRoutes from './routes/gym/activityTemplates';
+import gymActivityGroupRoutes from './routes/gym/activityGroups';
 
 dotenv.config();
 
@@ -26,6 +29,9 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/users', adminUserRoutes);
+app.use('/api/admin/gyms', adminGymRoutes);
+app.use('/api/gym/activity-templates', gymActivityTemplateRoutes);
+app.use('/api/gym/activity-groups', gymActivityGroupRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });

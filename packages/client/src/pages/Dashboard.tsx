@@ -1,40 +1,22 @@
 import { Container, Title, Text, Button, Stack, Group, Card, Grid } from '@mantine/core';
-import { IconUser, IconLogout } from '@tabler/icons-react';
-import { useNavigate } from 'react-router-dom';
+import { IconUser } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
 
 export function Dashboard() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
-
-  const handleLogout = async () => {
-    logout();
-    // Navigate to login page after logout
-    navigate('/', { replace: true });
-  };
+  const { user } = useAuth();
 
   return (
     <Container size="lg">
       <Stack gap="xl">
-        {/* Header with user info and logout */}
-        <Group justify="space-between">
-          <Group gap="sm">
-            <IconUser size={24} color="#22c55e" />
-            <div>
-              <Title order={2}>Welcome, {user?.firstName || user?.email}</Title>
-              <Text size="sm" c="dimmed">
-                Role: {user?.role} • {user?.email}
-              </Text>
-            </div>
-          </Group>
-          <Button
-            variant="outline"
-            color="red"
-            leftSection={<IconLogout size={16} />}
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
+        {/* Header with user info */}
+        <Group gap="sm">
+          <IconUser size={24} color="#22c55e" />
+          <div>
+            <Title order={2}>Welcome, {user?.firstName || user?.email}</Title>
+            <Text size="sm" c="dimmed">
+              Role: {user?.role} • {user?.email}
+            </Text>
+          </div>
         </Group>
 
         {/* Dashboard Content */}

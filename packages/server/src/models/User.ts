@@ -36,6 +36,10 @@ const userSchema = new Schema<UserDocument>(
       required: true,
       select: false, // Don't include password in queries by default
     },
+    gymId: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

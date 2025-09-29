@@ -4,6 +4,7 @@ import { AuthGuard } from './components/AuthGuard';
 import { Navigation } from './components/Navigation';
 import { Dashboard } from './pages/Dashboard';
 import { UsersPage } from './pages/UsersPage';
+import { GymsPage } from './pages/GymsPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/users" element={<UsersPage />} />
+            <Route path="/gyms" element={<GymsPage />} />
             {/* All routes are protected by AuthGuard wrapper */}
           </Routes>
         </AppShell.Main>

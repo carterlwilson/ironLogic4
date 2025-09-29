@@ -24,6 +24,31 @@
       "types": "./dist/types/api.d.ts",
       "import": "./dist/types/api.js",
       "require": "./dist/types/api.js"
+    },
+    "./types/gyms": {
+      "types": "./dist/types/gyms.d.ts",
+      "import": "./dist/types/gyms.js",
+      "require": "./dist/types/gyms.js"
+    },
+    "./schemas/auth": {
+      "types": "./dist/schemas/auth.d.ts",
+      "import": "./dist/schemas/auth.js",
+      "require": "./dist/schemas/auth.js"
+    },
+    "./schemas/users": {
+      "types": "./dist/schemas/users.d.ts",
+      "import": "./dist/schemas/users.js",
+      "require": "./dist/schemas/users.js"
+    },
+    "./schemas/gyms": {
+      "types": "./dist/schemas/gyms.d.ts",
+      "import": "./dist/schemas/gyms.js",
+      "require": "./dist/schemas/gyms.js"
+    },
+    "./schemas/api": {
+      "types": "./dist/schemas/api.d.ts",
+      "import": "./dist/schemas/api.js",
+      "require": "./dist/schemas/api.js"
     }
   },
   "scripts": {
