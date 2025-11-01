@@ -13,15 +13,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.8.0",
+    "@ironlogic4/shared": "file:../shared",
+    "@mantine/charts": "^8.3.6",
     "@mantine/core": "^7.0.0",
     "@mantine/hooks": "^7.0.0",
     "@mantine/notifications": "^7.0.0",
     "@tabler/icons-react": "^2.40.0",
-    "workbox-window": "^7.0.0",
-    "@ironlogic4/shared": "file:../shared"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.0",
+    "recharts": "^3.3.0",
+    "workbox-window": "^7.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",

@@ -62,7 +62,7 @@ export const getAllActivityTemplates = async (
 
     const response: PaginatedResponse<any> = {
       success: true,
-      data: templates,
+      data: templates.map(t => t.toJSON()),
       pagination: {
         page,
         limit,
@@ -122,9 +122,9 @@ export const getActivityTemplateById = async (
       return;
     }
 
-    const response: ApiResponse<typeof template> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: template,
+      data: template.toJSON(),
     };
 
     res.json(response);
@@ -178,9 +178,9 @@ export const createActivityTemplate = async (
     await savedTemplate.populate('gymId', 'name');
     await savedTemplate.populate('createdBy', 'firstName lastName');
 
-    const response: ApiResponse<typeof savedTemplate> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: savedTemplate,
+      data: savedTemplate.toJSON(),
       message: 'Activity template created successfully',
     };
 
@@ -244,9 +244,9 @@ export const updateActivityTemplate = async (
       .populate('gymId', 'name')
       .populate('createdBy', 'firstName lastName');
 
-    const response: ApiResponse<typeof updatedTemplate> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: updatedTemplate,
+      data: updatedTemplate ? updatedTemplate.toJSON() : null,
       message: 'Activity template updated successfully',
     };
 

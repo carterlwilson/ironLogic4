@@ -30,6 +30,41 @@
       "import": "./dist/types/gyms.js",
       "require": "./dist/types/gyms.js"
     },
+    "./types/activityGroups": {
+      "types": "./dist/types/activityGroups.d.ts",
+      "import": "./dist/types/activityGroups.js",
+      "require": "./dist/types/activityGroups.js"
+    },
+    "./types/activityTemplates": {
+      "types": "./dist/types/activityTemplates.d.ts",
+      "import": "./dist/types/activityTemplates.js",
+      "require": "./dist/types/activityTemplates.js"
+    },
+    "./types/benchmarkTemplates": {
+      "types": "./dist/types/benchmarkTemplates.d.ts",
+      "import": "./dist/types/benchmarkTemplates.js",
+      "require": "./dist/types/benchmarkTemplates.js"
+    },
+    "./types/clientBenchmarks": {
+      "types": "./dist/types/clientBenchmarks.d.ts",
+      "import": "./dist/types/clientBenchmarks.js",
+      "require": "./dist/types/clientBenchmarks.js"
+    },
+    "./types/programs": {
+      "types": "./dist/types/programs.d.ts",
+      "import": "./dist/types/programs.js",
+      "require": "./dist/types/programs.js"
+    },
+    "./types/schedules": {
+      "types": "./dist/types/schedules.d.ts",
+      "import": "./dist/types/schedules.js",
+      "require": "./dist/types/schedules.js"
+    },
+    "./types/coaches": {
+      "types": "./dist/types/coaches.d.ts",
+      "import": "./dist/types/coaches.js",
+      "require": "./dist/types/coaches.js"
+    },
     "./schemas/auth": {
       "types": "./dist/schemas/auth.d.ts",
       "import": "./dist/schemas/auth.js",
@@ -45,10 +80,45 @@
       "import": "./dist/schemas/gyms.js",
       "require": "./dist/schemas/gyms.js"
     },
+    "./schemas/activityGroups": {
+      "types": "./dist/schemas/activityGroups.d.ts",
+      "import": "./dist/schemas/activityGroups.js",
+      "require": "./dist/schemas/activityGroups.js"
+    },
+    "./schemas/activityTemplates": {
+      "types": "./dist/schemas/activityTemplates.d.ts",
+      "import": "./dist/schemas/activityTemplates.js",
+      "require": "./dist/schemas/activityTemplates.js"
+    },
+    "./schemas/benchmarkTemplates": {
+      "types": "./dist/schemas/benchmarkTemplates.d.ts",
+      "import": "./dist/schemas/benchmarkTemplates.js",
+      "require": "./dist/schemas/benchmarkTemplates.js"
+    },
+    "./schemas/clients": {
+      "types": "./dist/schemas/clients.d.ts",
+      "import": "./dist/schemas/clients.js",
+      "require": "./dist/schemas/clients.js"
+    },
     "./schemas/api": {
       "types": "./dist/schemas/api.d.ts",
       "import": "./dist/schemas/api.js",
       "require": "./dist/schemas/api.js"
+    },
+    "./schemas/programs": {
+      "types": "./dist/schemas/programs.d.ts",
+      "import": "./dist/schemas/programs.js",
+      "require": "./dist/schemas/programs.js"
+    },
+    "./schemas/schedules": {
+      "types": "./dist/schemas/schedules.d.ts",
+      "import": "./dist/schemas/schedules.js",
+      "require": "./dist/schemas/schedules.js"
+    },
+    "./schemas/coaches": {
+      "types": "./dist/schemas/coaches.d.ts",
+      "import": "./dist/schemas/coaches.js",
+      "require": "./dist/schemas/coaches.js"
     }
   },
   "scripts": {

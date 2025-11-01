@@ -1,6 +1,7 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth';
 import { Gym } from '../models/Gym';
+import { User } from '../models/User';
 import { CreateGymSchema } from '@ironlogic4/shared/schemas/gyms';
 import { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 import { z } from 'zod';
@@ -60,7 +61,7 @@ export const getAllGyms = async (
 
     const response: PaginatedResponse<any> = {
       success: true,
-      data: gyms,
+      data: gyms.map(gym => gym.toJSON()),
       pagination: {
         page,
         limit: maxLimit,
@@ -101,7 +102,7 @@ export const getGymById = async (
 
     res.json({
       success: true,
-      data: gym,
+      data: gym.toJSON(),
     } as ApiResponse);
   } catch (error) {
     console.error('Error fetching gym:', error);
@@ -152,6 +153,11 @@ export const createGym = async (
     });
 
     await gym.save();
+
+    // Update owner's gymId if owner was assigned
+    if (ownerId) {
+      await User.findByIdAndUpdate(ownerId, { gymId: gym.id });
+    }
 
     // Return gym data
     const gymResponse = gym.toJSON();
@@ -215,6 +221,19 @@ export const updateGym = async (
       }
     }
 
+    // Handle owner change - update both old and new owner's gymId
+    if (updateData.ownerId !== undefined) {
+      // Remove gymId from old owner if there was one
+      if (existingGym.ownerId) {
+        await User.findByIdAndUpdate(existingGym.ownerId, { $unset: { gymId: 1 } });
+      }
+
+      // Set gymId for new owner
+      if (updateData.ownerId) {
+        await User.findByIdAndUpdate(updateData.ownerId, { gymId: id });
+      }
+    }
+
     // Update gym
     const updatedGym = await Gym.findByIdAndUpdate(
       id,
@@ -232,7 +251,7 @@ export const updateGym = async (
 
     res.json({
       success: true,
-      data: updatedGym,
+      data: updatedGym.toJSON(),
       message: 'Gym updated successfully',
     } as ApiResponse);
   } catch (error) {

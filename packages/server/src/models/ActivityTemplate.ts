@@ -26,6 +26,11 @@ const activityTemplateSchema = new Schema<ActivityTemplateDocument>(
       required: true,
       enum: Object.values(ActivityType),
     },
+    benchmarkTemplateId: {
+      type: String,
+      ref: 'BenchmarkTemplate',
+      required: false,
+    },
     gymId: {
       type: String,
       ref: 'Gym',

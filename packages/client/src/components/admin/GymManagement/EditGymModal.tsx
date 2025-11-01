@@ -176,7 +176,7 @@ export function EditGymModal({ opened, onClose, gym, onSubmit, onDelete, loading
                 </Button>
                 <Button
                   type="submit"
-                  color="blue"
+                  color="forestGreen"
                   loading={loading}
                   disabled={!form.isValid() || !form.isDirty() || loadingOwners}
                 >

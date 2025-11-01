@@ -9,6 +9,12 @@ import adminUserRoutes from './routes/admin/users';
 import adminGymRoutes from './routes/admin/gyms';
 import gymActivityTemplateRoutes from './routes/gym/activityTemplates';
 import gymActivityGroupRoutes from './routes/gym/activityGroups';
+import gymClientRoutes from './routes/gym/clients';
+import gymCoachRoutes from './routes/gym/coaches';
+import gymBenchmarkTemplateRoutes from './routes/gym/benchmarkTemplates';
+import gymProgramRoutes from './routes/gym/programs';
+import gymScheduleRoutes from './routes/gym/schedules';
+import meRoutes from './routes/me';
 
 dotenv.config();
 
@@ -16,13 +22,18 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 100 in prod, 1000 in dev
+  message: 'Too many requests from this IP, please try again later.'
 });
 
 app.use(helmet());
 app.use(cors());
-app.use(limiter);
+
+// Only apply rate limiting if not explicitly disabled
+if (process.env.DISABLE_RATE_LIMIT !== 'true') {
+  app.use(limiter);
+}
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,6 +43,12 @@ app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/admin/gyms', adminGymRoutes);
 app.use('/api/gym/activity-templates', gymActivityTemplateRoutes);
 app.use('/api/gym/activity-groups', gymActivityGroupRoutes);
+app.use('/api/gym/clients', gymClientRoutes);
+app.use('/api/gym/coaches', gymCoachRoutes);
+app.use('/api/gym/benchmark-templates', gymBenchmarkTemplateRoutes);
+app.use('/api/gym/programs', gymProgramRoutes);
+app.use('/api/gym/schedules', gymScheduleRoutes);
+app.use('/api/me', meRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });

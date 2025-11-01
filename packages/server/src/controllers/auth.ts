@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { RegisterSchema, LoginSchema } from '@ironlogic4/shared/schemas/auth';
 import { ApiResponse } from '@ironlogic4/shared/types/api';
 import { User } from '../models/User';
+import { Gym } from '../models/Gym';
 import { generateToken } from '../utils/auth';
 
 /**
@@ -125,6 +126,13 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    // Fetch gym name if user has a gymId
+    let gymName: string | undefined;
+    if (user.gymId) {
+      const gym = await Gym.findById(user.gymId).select('name');
+      gymName = gym?.name;
+    }
+
     // Generate JWT token using generateToken utility
     const token = generateToken(user.id);
 
@@ -134,7 +142,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
       success: true,
       data: {
         token,
-        user: userData
+        user: { ...userData, gymName }
       },
       message: 'Login successful'
     };

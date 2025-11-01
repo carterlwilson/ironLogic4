@@ -1,21 +1,44 @@
-import { Container, Title, Text, Button, Stack, Card } from '@mantine/core';
-import { IconDeviceMobile, IconOffline, IconBell } from '@tabler/icons-react';
+import { Container, Title, Text, Stack, Card, Paper, Group, Badge } from '@mantine/core';
+import { IconDeviceMobile, IconWifiOff, IconBell, IconUser } from '@tabler/icons-react';
+import { useAuth } from '../providers/AuthProvider';
+import { useAppTitle } from '../hooks/useAppTitle';
 
 export function MobileHomePage() {
-  const handleInstallPWA = () => {
-    // PWA installation logic would go here
-    console.log('Install PWA');
-  };
+  const { user } = useAuth();
+  const appTitle = useAppTitle();
 
   return (
-    <Container size="sm" p="md">
+    <Container size="sm" py="xl">
       <Stack gap="lg">
+        {user && (
+          <Paper shadow="sm" p="lg" radius="md" withBorder>
+            <Group justify="space-between" align="center">
+              <Group gap="sm">
+                <IconUser size={24} />
+                <div>
+                  <Text fw={500} size="lg">
+                    {user.firstName && user.lastName
+                      ? `${user.firstName} ${user.lastName}`
+                      : user.email}
+                  </Text>
+                  <Text size="sm" c="dimmed">
+                    {user.email}
+                  </Text>
+                </div>
+              </Group>
+              <Badge color="forestGreen" variant="light" size="lg">
+                Client
+              </Badge>
+            </Group>
+          </Paper>
+        )}
+
         <Title order={1} size="h2" ta="center">
-          Welcome to IronLogic4 Mobile
+          Welcome to {appTitle}
         </Title>
 
         <Text size="md" ta="center" c="dimmed">
-          Your mobile-optimized PWA experience
+          Your mobile training companion
         </Text>
 
         <Stack gap="md">
@@ -31,7 +54,7 @@ export function MobileHomePage() {
 
           <Card shadow="sm" padding="lg" radius="md" withBorder>
             <Stack gap="sm" align="center">
-              <IconOffline size={32} />
+              <IconWifiOff size={32} />
               <Text fw={500}>Offline Support</Text>
               <Text size="sm" ta="center" c="dimmed">
                 Works offline with cached content and background sync
@@ -49,15 +72,6 @@ export function MobileHomePage() {
             </Stack>
           </Card>
         </Stack>
-
-        <Button
-          variant="filled"
-          size="lg"
-          fullWidth
-          onClick={handleInstallPWA}
-        >
-          Install App
-        </Button>
       </Stack>
     </Container>
   );

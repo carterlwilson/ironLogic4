@@ -30,7 +30,7 @@ export function UserRow({ user, onEdit, onDelete }: UserRowProps) {
           component="a"
           href={`mailto:${user.email}`}
           style={{ color: 'inherit', textDecoration: 'none' }}
-          c="blue"
+          c="forestGreen"
         >
           {user.email}
         </Text>
@@ -48,7 +48,7 @@ export function UserRow({ user, onEdit, onDelete }: UserRowProps) {
           <Tooltip label="Edit user">
             <ActionIcon
               variant="subtle"
-              color="blue"
+              color="forestGreen"
               onClick={() => onEdit(user)}
             >
               <IconPencil size={16} />

@@ -46,7 +46,7 @@ export function GymRow({ gym, ownerMapping, onEdit, onDelete }: GymRowProps) {
             component="a"
             href={`tel:${gym.phoneNumber}`}
             style={{ color: 'inherit', textDecoration: 'none' }}
-            c="blue"
+            c="forestGreen"
             size="sm"
           >
             {gym.phoneNumber}
@@ -71,7 +71,7 @@ export function GymRow({ gym, ownerMapping, onEdit, onDelete }: GymRowProps) {
           <Tooltip label="Edit gym">
             <ActionIcon
               variant="subtle"
-              color="blue"
+              color="forestGreen"
               onClick={() => onEdit(gym)}
             >
               <IconPencil size={16} />

@@ -19,6 +19,8 @@ interface User {
   role: 'admin' | 'owner' | 'coach' | 'client';
   firstName?: string;
   lastName?: string;
+  gymId?: string;
+  gymName?: string;
 }
 
 interface AuthState {

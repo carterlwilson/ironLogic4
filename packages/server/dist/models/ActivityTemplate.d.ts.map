@@ -1,0 +1,1 @@
+{"version":3,"file":"ActivityTemplate.d.ts","sourceRoot":"","sources":["../../src/models/ActivityTemplate.ts"],"names":[],"mappings":"AAAA,OAAO,QAAQ,EAAE,EAAE,QAAQ,EAAU,MAAM,UAAU,CAAC;AACtD,OAAO,EAAE,gBAAgB,IAAI,iBAAiB,EAAgB,MAAM,oBAAoB,CAAC;AAEzF,MAAM,WAAW,wBAAyB,SAAQ,IAAI,CAAC,iBAAiB,EAAE,IAAI,CAAC,EAAE,QAAQ;CAAG;AA8D5F,eAAO,MAAM,gBAAgB;;;;OAAuF,CAAC"}

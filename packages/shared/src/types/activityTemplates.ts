@@ -11,6 +11,7 @@ export interface ActivityTemplate {
   notes?: string;
   groupId?: string;
   type: ActivityType;
+  benchmarkTemplateId?: string;
   gymId: string;
   createdBy: string;
   createdAt: Date;
@@ -22,6 +23,7 @@ export interface CreateActivityTemplateRequest {
   notes?: string;
   groupId?: string;
   type: ActivityType;
+  benchmarkTemplateId?: string;
   gymId: string;
 }
 
@@ -30,6 +32,7 @@ export interface UpdateActivityTemplateRequest {
   notes?: string;
   groupId?: string;
   type?: ActivityType;
+  benchmarkTemplateId?: string;
 }
 
 export interface ActivityTemplateListParams {

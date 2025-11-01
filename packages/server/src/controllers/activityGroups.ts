@@ -49,7 +49,7 @@ export const getAllActivityGroups = async (
 
     const response: PaginatedResponse<any> = {
       success: true,
-      data: groups,
+      data: groups.map(g => g.toJSON()),
       pagination: {
         page,
         limit,
@@ -105,9 +105,9 @@ export const getActivityGroupById = async (
       return;
     }
 
-    const response: ApiResponse<typeof group> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: group,
+      data: group.toJSON(),
     };
 
     res.json(response);
@@ -157,9 +157,9 @@ export const createActivityGroup = async (
     await savedGroup.populate('gymId', 'name');
     await savedGroup.populate('createdBy', 'firstName lastName');
 
-    const response: ApiResponse<typeof savedGroup> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: savedGroup,
+      data: savedGroup.toJSON(),
       message: 'Activity group created successfully',
     };
 
@@ -219,9 +219,9 @@ export const updateActivityGroup = async (
       .populate('gymId', 'name')
       .populate('createdBy', 'firstName lastName');
 
-    const response: ApiResponse<typeof updatedGroup> = {
+    const response: ApiResponse<any> = {
       success: true,
-      data: updatedGroup,
+      data: updatedGroup ? updatedGroup.toJSON() : null,
       message: 'Activity group updated successfully',
     };
 

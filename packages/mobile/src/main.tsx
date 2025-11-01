@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
+import { AuthProvider } from './providers/AuthProvider';
+import { theme } from './theme/theme';
 import App from './App';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
@@ -22,9 +24,11 @@ if ('serviceWorker' in navigator) {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <MantineProvider>
+      <MantineProvider theme={theme}>
         <Notifications />
-        <App />
+        <AuthProvider>
+          <App />
+        </AuthProvider>
       </MantineProvider>
     </BrowserRouter>
   </React.StrictMode>,

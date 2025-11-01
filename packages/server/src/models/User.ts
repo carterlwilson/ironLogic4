@@ -1,8 +1,11 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { User as IUser, UserType } from '@ironlogic4/shared/types/users';
 import { hashPassword, comparePassword } from '../utils/auth';
+import { clientBenchmarkSchema, ClientBenchmarkDocument } from './ClientBenchmark';
 
-export interface UserDocument extends Omit<IUser, 'id'>, Document {
+export interface UserDocument extends Omit<IUser, 'id' | 'currentBenchmarks' | 'historicalBenchmarks'>, Document {
+  currentBenchmarks?: ClientBenchmarkDocument[];
+  historicalBenchmarks?: ClientBenchmarkDocument[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -40,6 +43,21 @@ const userSchema = new Schema<UserDocument>(
       type: String,
       required: false,
     },
+    programId: {
+      type: String,
+      ref: 'Program',
+      required: false,
+    },
+    currentBenchmarks: {
+      type: [clientBenchmarkSchema],
+      default: [],
+      required: false,
+    },
+    historicalBenchmarks: {
+      type: [clientBenchmarkSchema],
+      default: [],
+      required: false,
+    },
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt
@@ -49,6 +67,28 @@ const userSchema = new Schema<UserDocument>(
         delete (ret as any)._id;
         delete (ret as any).__v;
         if (ret.password) delete (ret as any).password; // Never include password in JSON responses
+
+        // Transform _id to id for benchmark subdocuments
+        if (ret.currentBenchmarks && Array.isArray(ret.currentBenchmarks)) {
+          ret.currentBenchmarks = ret.currentBenchmarks.map((benchmark: any) => {
+            if (benchmark._id) {
+              benchmark.id = benchmark._id;
+              delete benchmark._id;
+            }
+            return benchmark;
+          });
+        }
+
+        if (ret.historicalBenchmarks && Array.isArray(ret.historicalBenchmarks)) {
+          ret.historicalBenchmarks = ret.historicalBenchmarks.map((benchmark: any) => {
+            if (benchmark._id) {
+              benchmark.id = benchmark._id;
+              delete benchmark._id;
+            }
+            return benchmark;
+          });
+        }
+
         return ret;
       },
     },
@@ -77,5 +117,14 @@ userSchema.methods.comparePassword = async function (
 
 // Create unique index on email
 userSchema.index({ email: 1 }, { unique: true });
+
+// Compound index for gym-scoped queries
+userSchema.index({ gymId: 1, userType: 1 });
+
+// Index for sorting by creation date
+userSchema.index({ createdAt: -1 });
+
+// Index for program queries
+userSchema.index({ programId: 1 });
 
 export const User = mongoose.model<UserDocument>('User', userSchema);

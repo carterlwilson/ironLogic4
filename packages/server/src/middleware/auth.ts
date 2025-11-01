@@ -188,6 +188,11 @@ function extractTokenFromHeader(req: Request): string | null {
 
 /**
  * Middleware for gym-scoped access - owners can only access their own gym's data, admins have full access
+ *
+ * For OWNER/CLIENT users: Verifies they have a gym assignment (req.user.gymId exists)
+ * For ADMIN users: Allows full access across all gyms
+ *
+ * Controllers are responsible for using req.user.gymId for gym scoping.
  */
 export const requireOwnerOrAdminForGym = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
   const user = req.user;
@@ -206,28 +211,19 @@ export const requireOwnerOrAdminForGym = (req: AuthenticatedRequest, res: Respon
     return;
   }
 
-  // Owners have access only to their own gym's data
-  if (user.userType === UserType.OWNER) {
-    // Check if gymId in request matches user's gym
-    const requestGymId = req.body.gymId || req.query.gymId || req.params.gymId;
-
-    if (!requestGymId) {
+  // Owners and Clients must have a gym assignment
+  if (user.userType === UserType.OWNER || user.userType === UserType.CLIENT) {
+    if (!user.gymId) {
       res.status(400).json({
         success: false,
-        error: 'Gym ID is required',
+        error: 'You must be assigned to a gym to perform this action',
       });
       return;
     }
 
-    if (requestGymId === user.gymId) {
-      next();
-      return;
-    }
-
-    res.status(403).json({
-      success: false,
-      error: 'Access denied. You can only access your own gym\'s data.',
-    });
+    // User has a gym assignment, allow the request
+    // Controllers will use req.user.gymId for gym scoping
+    next();
     return;
   }
 

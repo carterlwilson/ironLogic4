@@ -1,9 +1,11 @@
 import { Container, Title, Text, Button, Stack, Group, Card, Grid } from '@mantine/core';
 import { IconUser } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
+import { useAppTitle } from '../hooks/useAppTitle';
 
 export function Dashboard() {
   const { user } = useAuth();
+  const appTitle = useAppTitle();
 
   return (
     <Container size="lg">
@@ -20,7 +22,7 @@ export function Dashboard() {
         </Group>
 
         {/* Dashboard Content */}
-        <Title order={1}>IronLogic4 Dashboard</Title>
+        <Title order={1}>{appTitle} Dashboard</Title>
 
         <Text size="lg" c="dimmed">
           You are successfully authenticated and can now access the application.

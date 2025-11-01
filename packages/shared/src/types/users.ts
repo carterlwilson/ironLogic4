@@ -1,3 +1,5 @@
+import { ClientBenchmark } from './clientBenchmarks';
+
 export enum UserType {
   ADMIN = 'admin',
   OWNER = 'owner',
@@ -13,6 +15,10 @@ export interface User {
   userType: UserType;
   password: string;
   gymId?: string;
+  gymName?: string;
+  programId?: string;
+  currentBenchmarks?: ClientBenchmark[];
+  historicalBenchmarks?: ClientBenchmark[];
   createdAt: Date;
   updatedAt: Date;
 }

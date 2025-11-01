@@ -16,6 +16,7 @@ import {
 import { useForm } from '@mantine/form';
 import { IconMail, IconLock, IconAlertCircle, IconShield } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
+import { useAppTitle } from '../hooks/useAppTitle';
 
 interface LoginFormValues {
   email: string;
@@ -24,6 +25,7 @@ interface LoginFormValues {
 
 export function LoginPage() {
   const { login, isLoading, error, clearError } = useAuth();
+  const appTitle = useAppTitle();
 
   // Note: Redirect logic is handled by AuthGuard component
 
@@ -72,7 +74,7 @@ export function LoginPage() {
 
           {/* Header Section */}
           <Group justify="center" mb="xl">
-            <IconShield size={40} stroke={1.5} color="#22c55e" />
+            <IconShield size={40} stroke={1.5} color="var(--mantine-color-forestGreen-6)" />
           </Group>
 
           <Title order={1} ta="center" mb="xs" style={{ color: '#1f2937', fontWeight: 700 }}>
@@ -80,7 +82,7 @@ export function LoginPage() {
           </Title>
 
           <Text ta="center" size="sm" c="dimmed" mb="xl">
-            Sign in to your IronLogic4 account
+            Sign in to your {appTitle} account
           </Text>
 
           {/* Error Alert */}
@@ -131,7 +133,7 @@ export function LoginPage() {
                 <Anchor
                   component="button"
                   type="button"
-                  c="green.6"
+                  c="forestGreen.6"
                   size="sm"
                   onClick={() => {
                     // TODO: Implement forgot password functionality
@@ -150,7 +152,7 @@ export function LoginPage() {
                 mt="md"
                 loading={isLoading}
                 disabled={!form.isValid() || isLoading}
-                color="green"
+                color="forestGreen"
               >
                 Sign In
               </Button>
@@ -181,10 +183,10 @@ export function LoginPage() {
           p="md"
           radius="md"
           mt="lg"
-          style={{ backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }}
+          style={{ backgroundColor: 'var(--mantine-color-forestGreen-0)', borderColor: 'var(--mantine-color-forestGreen-2)' }}
         >
           <Group gap="xs">
-            <IconShield size={16} color="#22c55e" />
+            <IconShield size={16} color="var(--mantine-color-forestGreen-6)" />
             <Text size="xs" c="dimmed">
               Your connection is secure and encrypted
             </Text>

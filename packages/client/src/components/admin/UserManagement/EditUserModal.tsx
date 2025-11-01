@@ -216,7 +216,7 @@ export function EditUserModal({ opened, onClose, user, onSubmit, onDelete, loadi
                 </Button>
                 <Button
                   type="submit"
-                  color="blue"
+                  color="forestGreen"
                   loading={loading}
                   disabled={!form.isValid() || !form.isDirty()}
                 >
@@ -230,7 +230,7 @@ export function EditUserModal({ opened, onClose, user, onSubmit, onDelete, loadi
         <Tabs.Panel value="password" pt="md">
           <form onSubmit={passwordForm.onSubmit(handlePasswordReset)}>
             <Stack gap="md">
-              <Alert color="blue" title="Password Reset">
+              <Alert color="forestGreen" title="Password Reset">
                 Enter a new password for this user. They will need to use this password on their next login.
               </Alert>
 

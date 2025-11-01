@@ -1,0 +1,164 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getBenchmarkProgress = void 0;
+const User_1 = require("../models/User");
+const BenchmarkTemplate_1 = require("../models/BenchmarkTemplate");
+const shared_1 = require("@ironlogic4/shared");
+/**
+ * Helper: Extract numeric value from benchmark based on type
+ */
+function extractValue(benchmark) {
+    switch (benchmark.type) {
+        case shared_1.BenchmarkType.WEIGHT:
+            return benchmark.weightKg ?? null;
+        case shared_1.BenchmarkType.TIME:
+            return benchmark.timeSeconds ?? null;
+        case shared_1.BenchmarkType.REPS:
+            return benchmark.reps ?? null;
+        case shared_1.BenchmarkType.OTHER:
+            // Try to parse as number, return null if can't
+            const parsed = parseFloat(benchmark.otherNotes);
+            return isNaN(parsed) ? null : parsed;
+        default:
+            return null;
+    }
+}
+/**
+ * Helper: Format date for chart display
+ * @param date Date to format
+ * @param includeYear Whether to include year in format
+ * @returns Formatted date string (e.g., "Jan 15" or "Jan 15, 2025")
+ */
+function formatDate(date, includeYear) {
+    const month = date.toLocaleDateString('en-US', { month: 'short' });
+    const day = date.getDate();
+    if (includeYear) {
+        const year = date.getFullYear();
+        return `${month} ${day}, ${year}`;
+    }
+    return `${month} ${day}`;
+}
+/**
+ * Helper: Get unit label for benchmark type
+ */
+function getUnitLabel(benchmarkType) {
+    switch (benchmarkType) {
+        case shared_1.BenchmarkType.WEIGHT:
+            return 'kg';
+        case shared_1.BenchmarkType.TIME:
+            return 'seconds';
+        case shared_1.BenchmarkType.REPS:
+            return 'reps';
+        case shared_1.BenchmarkType.OTHER:
+            return 'value';
+        default:
+            return '';
+    }
+}
+/**
+ * GET /api/me/benchmarks/:templateId/progress
+ * Get benchmark progress data for charts
+ *
+ * Query Parameters:
+ * - limit: Maximum number of data points to return (optional)
+ * - startDate: ISO date string for filtering (optional)
+ * - endDate: ISO date string for filtering (optional)
+ */
+const getBenchmarkProgress = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { templateId } = req.params;
+        const { limit, startDate, endDate } = req.query;
+        // Fetch user with benchmarks
+        const user = await User_1.User.findById(userId).select('currentBenchmarks historicalBenchmarks');
+        if (!user) {
+            res.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+            return;
+        }
+        // Fetch benchmark template
+        const template = await BenchmarkTemplate_1.BenchmarkTemplate.findById(templateId);
+        if (!template) {
+            res.status(404).json({
+                success: false,
+                error: 'Benchmark template not found'
+            });
+            return;
+        }
+        // Combine current and historical benchmarks
+        const allBenchmarks = [
+            ...(user.currentBenchmarks || []),
+            ...(user.historicalBenchmarks || [])
+        ];
+        // Filter benchmarks for this template
+        let benchmarksForTemplate = allBenchmarks.filter(b => b.templateId === templateId);
+        // Apply date filters if provided
+        if (startDate) {
+            const start = new Date(startDate);
+            benchmarksForTemplate = benchmarksForTemplate.filter(b => new Date(b.recordedAt) >= start);
+        }
+        if (endDate) {
+            const end = new Date(endDate);
+            benchmarksForTemplate = benchmarksForTemplate.filter(b => new Date(b.recordedAt) <= end);
+        }
+        // Sort by recordedAt (oldest to newest)
+        benchmarksForTemplate.sort((a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime());
+        // Apply limit if provided
+        if (limit) {
+            const limitNum = parseInt(limit, 10);
+            if (!isNaN(limitNum) && limitNum > 0) {
+                // Take the most recent N points
+                benchmarksForTemplate = benchmarksForTemplate.slice(-limitNum);
+            }
+        }
+        // Check if we have data
+        if (benchmarksForTemplate.length === 0) {
+            res.json({
+                success: true,
+                data: {
+                    benchmarkName: template.name,
+                    benchmarkType: template.type,
+                    unit: getUnitLabel(template.type),
+                    chartData: []
+                }
+            });
+            return;
+        }
+        // Determine if we need to include year in dates
+        const dates = benchmarksForTemplate.map(b => new Date(b.recordedAt));
+        const years = new Set(dates.map(d => d.getFullYear()));
+        const includeYear = years.size > 1;
+        // Build chart data
+        const chartData = benchmarksForTemplate
+            .map(benchmark => {
+            const value = extractValue(benchmark);
+            if (value === null)
+                return null;
+            return {
+                date: formatDate(new Date(benchmark.recordedAt), includeYear),
+                value
+            };
+        })
+            .filter((item) => item !== null);
+        res.json({
+            success: true,
+            data: {
+                benchmarkName: template.name,
+                benchmarkType: template.type,
+                unit: getUnitLabel(template.type),
+                chartData
+            }
+        });
+    }
+    catch (error) {
+        console.error('Error fetching benchmark progress:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Failed to fetch benchmark progress'
+        });
+    }
+};
+exports.getBenchmarkProgress = getBenchmarkProgress;
+//# sourceMappingURL=benchmarkProgress.js.map

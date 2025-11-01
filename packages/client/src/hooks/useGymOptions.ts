@@ -27,7 +27,7 @@ export const useGymOptions = (): UseGymOptionsReturn => {
       setError(null);
 
       // Load all gyms (no pagination for dropdown)
-      const response = await gymApi.getGyms({ limit: 1000 });
+      const response = await gymApi.getGyms({ limit: 100 });
       const gyms = response.data || [];
 
       // Create options for select dropdown

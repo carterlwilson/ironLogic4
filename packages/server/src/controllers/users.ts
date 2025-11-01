@@ -66,7 +66,7 @@ export const getAllUsers = async (
 
     const response: PaginatedResponse<any> = {
       success: true,
-      data: users,
+      data: users.map(u => u.toJSON()),
       pagination: {
         page,
         limit: maxLimit,
@@ -107,7 +107,7 @@ export const getUserById = async (
 
     res.json({
       success: true,
-      data: user,
+      data: user.toJSON(),
     } as ApiResponse);
   } catch (error) {
     console.error('Error fetching user:', error);
@@ -240,7 +240,7 @@ export const updateUser = async (
 
     res.json({
       success: true,
-      data: updatedUser,
+      data: updatedUser ? updatedUser.toJSON() : null,
       message: 'User updated successfully',
     } as ApiResponse);
   } catch (error) {
