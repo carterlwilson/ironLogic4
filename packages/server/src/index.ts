@@ -27,8 +27,17 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.'
 });
 
+// Configure CORS
+const corsOrigin = process.env.CORS_ORIGIN;
+const corsOptions = corsOrigin
+  ? {
+      origin: corsOrigin.split(',').map(origin => origin.trim()),
+      credentials: true,
+    }
+  : {}; // Default: allow all origins in development
+
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOptions));
 
 // Only apply rate limiting if not explicitly disabled
 if (process.env.DISABLE_RATE_LIMIT !== 'true') {

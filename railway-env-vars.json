@@ -1,0 +1,29 @@
+{
+  "$schema": "https://railway.app/railway.schema.json",
+  "variables": {
+    "NODE_ENV": {
+      "description": "Application environment (development, preprod, production)",
+      "value": "preprod"
+    },
+    "PORT": {
+      "description": "Port the Express server listens on (Railway may override this)",
+      "value": "3001"
+    },
+    "MONGODB_URI": {
+      "description": "MongoDB Atlas connection string - REPLACE WITH YOUR ACTUAL CONNECTION STRING",
+      "value": "mongodb+srv://username:password@cluster.mongodb.net/ironlogic_preprod?retryWrites=true&w=majority"
+    },
+    "JWT_SECRET": {
+      "description": "Secret key for signing JWT tokens - GENERATE A SECURE RANDOM STRING (openssl rand -base64 32)",
+      "value": "REPLACE_WITH_SECURE_RANDOM_STRING"
+    },
+    "JWT_EXPIRES_IN": {
+      "description": "How long JWT tokens remain valid (e.g., 7d, 30d, 24h)",
+      "value": "30d"
+    },
+    "CORS_ORIGIN": {
+      "description": "Comma-separated list of allowed origins - ADD AFTER DEPLOYING TO VERCEL",
+      "value": "https://your-client.vercel.app,https://your-mobile.vercel.app"
+    }
+  }
+}
