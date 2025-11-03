@@ -1,4 +1,4 @@
-import { BenchmarkType } from './benchmarkTemplates';
+import { BenchmarkType } from './benchmarkTemplates.js';
 export interface ClientBenchmark {
     id: string;
     templateId: string;

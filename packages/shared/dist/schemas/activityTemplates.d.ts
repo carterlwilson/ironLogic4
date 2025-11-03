@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ActivityType } from '../types/activityTemplates';
+import { ActivityType } from '../types/activityTemplates.js';
 export declare const ActivityTypeSchema: z.ZodNativeEnum<typeof ActivityType>;
 export declare const CreateActivityTemplateSchema: z.ZodObject<{
     name: z.ZodString;

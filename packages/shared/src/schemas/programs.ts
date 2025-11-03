@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { DistanceUnit } from '../types/programs';
-import { ActivityType } from '../types/activityTemplates';
+import { DistanceUnit } from '../types/programs.js';
+import { ActivityType } from '../types/activityTemplates.js';
 
 // MongoDB ObjectId validation
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format');

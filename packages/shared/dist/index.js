@@ -1,36 +1,19 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __exportStar = (this && this.__exportStar) || function(m, exports) {
-    for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./types/users"), exports);
-__exportStar(require("./types/gyms"), exports);
-__exportStar(require("./types/auth"), exports);
-__exportStar(require("./types/api"), exports);
-__exportStar(require("./types/activityTemplates"), exports);
-__exportStar(require("./types/activityGroups"), exports);
-__exportStar(require("./types/benchmarkTemplates"), exports);
-__exportStar(require("./types/clientBenchmarks"), exports);
-__exportStar(require("./types/programs"), exports);
-__exportStar(require("./types/schedules"), exports);
-__exportStar(require("./types/coaches"), exports);
-__exportStar(require("./schemas/activityTemplates"), exports);
-__exportStar(require("./schemas/activityGroups"), exports);
-__exportStar(require("./schemas/clients"), exports);
-__exportStar(require("./schemas/benchmarkTemplates"), exports);
-__exportStar(require("./schemas/programs"), exports);
-__exportStar(require("./schemas/schedules"), exports);
-__exportStar(require("./schemas/coaches"), exports);
-__exportStar(require("./utils"), exports);
+export * from './types/users.js';
+export * from './types/gyms.js';
+export * from './types/auth.js';
+export * from './types/api.js';
+export * from './types/activityTemplates.js';
+export * from './types/activityGroups.js';
+export * from './types/benchmarkTemplates.js';
+export * from './types/clientBenchmarks.js';
+export * from './types/programs.js';
+export * from './types/schedules.js';
+export * from './types/coaches.js';
+export * from './schemas/activityTemplates.js';
+export * from './schemas/activityGroups.js';
+export * from './schemas/clients.js';
+export * from './schemas/benchmarkTemplates.js';
+export * from './schemas/programs.js';
+export * from './schemas/schedules.js';
+export * from './schemas/coaches.js';
 //# sourceMappingURL=index.js.map

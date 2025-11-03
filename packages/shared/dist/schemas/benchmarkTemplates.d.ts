@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BenchmarkType } from '../types/benchmarkTemplates';
+import { BenchmarkType } from '../types/benchmarkTemplates.js';
 /**
  * Schema for listing benchmark templates with pagination and filtering
  */

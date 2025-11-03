@@ -1,6 +1,7 @@
 {
   "name": "@ironlogic4/shared",
   "version": "1.0.0",
+  "type": "module",
   "description": "Shared TypeScript types and utilities",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

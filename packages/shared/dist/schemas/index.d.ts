@@ -1,3 +1,3 @@
-export * from './clients';
-export * from './coaches';
+export * from './clients.js';
+export * from './coaches.js';
 //# sourceMappingURL=index.d.ts.map

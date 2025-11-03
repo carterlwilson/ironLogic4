@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DayOfWeek } from '../types/schedules';
+import { DayOfWeek } from '../types/schedules.js';
 
 // Time format validation (HH:mm)
 const timeFormatRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;

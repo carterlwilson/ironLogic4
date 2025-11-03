@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DayOfWeek } from '../types/schedules';
+import { DayOfWeek } from '../types/schedules.js';
 export declare const TimeSlotSchema: z.ZodEffects<z.ZodObject<{
     id: z.ZodString;
     startTime: z.ZodString;

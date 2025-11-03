@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserType } from '../types/users';
+import { UserType } from '../types/users.js';
 export declare const LoginSchema: z.ZodObject<{
     email: z.ZodString;
     password: z.ZodString;

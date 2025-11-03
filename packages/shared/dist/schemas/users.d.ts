@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserType } from '../types/users';
+import { UserType } from '../types/users.js';
 export declare const UserTypeSchema: z.ZodNativeEnum<typeof UserType>;
 export declare const UserSchema: z.ZodObject<{
     id: z.ZodString;

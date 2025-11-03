@@ -1,4 +1,4 @@
-import { ClientBenchmark } from './clientBenchmarks';
+import { ClientBenchmark } from './clientBenchmarks.js';
 
 export enum UserType {
   ADMIN = 'admin',

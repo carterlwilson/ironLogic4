@@ -7,5 +7,5 @@
 //
 // Import directly from the specific schema files instead of this index
 
-export * from './clients';
-export * from './coaches';
+export * from './clients.js';
+export * from './coaches.js';

@@ -1,4 +1,4 @@
-import { BenchmarkType } from './benchmarkTemplates';
+import { BenchmarkType } from './benchmarkTemplates.js';
 
 // This will be embedded in User documents, not a standalone document
 export interface ClientBenchmark {

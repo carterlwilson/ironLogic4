@@ -1,5 +1,5 @@
-import { User } from './users';
-import { CoachListParamsInput, CreateCoachInput, UpdateCoachInput, ResetCoachPasswordInput, CoachIdInput } from '../schemas/coaches';
+import { User } from './users.js';
+import { CoachListParamsInput, CreateCoachInput, UpdateCoachInput, ResetCoachPasswordInput, CoachIdInput } from '../schemas/coaches.js';
 /**
  * Coach response type (excludes password)
  */

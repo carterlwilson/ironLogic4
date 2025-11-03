@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BenchmarkType } from '../types/benchmarkTemplates';
+import { BenchmarkType } from '../types/benchmarkTemplates.js';
 
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format');
 

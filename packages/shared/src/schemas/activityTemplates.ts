@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { ActivityType } from '../types/activityTemplates';
+import { ActivityType } from '../types/activityTemplates.js';
 
 // MongoDB ObjectId validation
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format');

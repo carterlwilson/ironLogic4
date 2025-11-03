@@ -1,4 +1,4 @@
-import { ActivityType } from './activityTemplates';
+import { ActivityType } from './activityTemplates.js';
 
 export enum DistanceUnit {
   MILES = 'miles',

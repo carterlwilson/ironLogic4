@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DayOfWeek = void 0;
-var DayOfWeek;
+export var DayOfWeek;
 (function (DayOfWeek) {
     DayOfWeek[DayOfWeek["SUNDAY"] = 0] = "SUNDAY";
     DayOfWeek[DayOfWeek["MONDAY"] = 1] = "MONDAY";
@@ -10,5 +7,5 @@ var DayOfWeek;
     DayOfWeek[DayOfWeek["THURSDAY"] = 4] = "THURSDAY";
     DayOfWeek[DayOfWeek["FRIDAY"] = 5] = "FRIDAY";
     DayOfWeek[DayOfWeek["SATURDAY"] = 6] = "SATURDAY";
-})(DayOfWeek || (exports.DayOfWeek = DayOfWeek = {}));
+})(DayOfWeek || (DayOfWeek = {}));
 //# sourceMappingURL=schedules.js.map

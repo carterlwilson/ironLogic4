@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserType = void 0;
-var UserType;
+export var UserType;
 (function (UserType) {
     UserType["ADMIN"] = "admin";
     UserType["OWNER"] = "owner";
     UserType["COACH"] = "coach";
     UserType["CLIENT"] = "client";
-})(UserType || (exports.UserType = UserType = {}));
+})(UserType || (UserType = {}));
 //# sourceMappingURL=users.js.map
