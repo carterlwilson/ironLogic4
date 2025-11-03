@@ -1,17 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateMyBenchmark = exports.createMyBenchmark = exports.getMyBenchmarks = void 0;
-const User_1 = require("../models/User");
-const BenchmarkTemplate_1 = require("../models/BenchmarkTemplate");
-const mongoose_1 = require("mongoose");
+import { User } from '../models/User.js';
+import { BenchmarkTemplate } from '../models/BenchmarkTemplate.js';
+import { Types } from 'mongoose';
 /**
  * GET /api/me/benchmarks
  * Get authenticated client's benchmarks
  */
-const getMyBenchmarks = async (req, res) => {
+export const getMyBenchmarks = async (req, res) => {
     try {
         const userId = req.user.id;
-        const user = await User_1.User.findById(userId)
+        const user = await User.findById(userId)
             .select('currentBenchmarks historicalBenchmarks');
         if (!user) {
             res.status(404).json({
@@ -37,18 +34,17 @@ const getMyBenchmarks = async (req, res) => {
         });
     }
 };
-exports.getMyBenchmarks = getMyBenchmarks;
 /**
  * POST /api/me/benchmarks
  * Create new benchmark from template
  * Optionally moves an old benchmark to historical if oldBenchmarkId is provided
  */
-const createMyBenchmark = async (req, res) => {
+export const createMyBenchmark = async (req, res) => {
     try {
         const userId = req.user.id;
         const input = req.body;
         // 1. Validate template exists
-        const template = await BenchmarkTemplate_1.BenchmarkTemplate.findById(input.templateId);
+        const template = await BenchmarkTemplate.findById(input.templateId);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -67,7 +63,7 @@ const createMyBenchmark = async (req, res) => {
         }
         // 3. If replacing an old benchmark, validate it exists and move it to historical
         if (input.oldBenchmarkId) {
-            const user = await User_1.User.findById(userId);
+            const user = await User.findById(userId);
             if (!user) {
                 res.status(404).json({
                     success: false,
@@ -85,14 +81,14 @@ const createMyBenchmark = async (req, res) => {
                 return;
             }
             // Move old benchmark to historical using atomic operation
-            await User_1.User.findByIdAndUpdate(userId, {
+            await User.findByIdAndUpdate(userId, {
                 $pull: { currentBenchmarks: { _id: input.oldBenchmarkId } },
                 $push: { historicalBenchmarks: oldBenchmark },
             });
         }
         // 4. Create new benchmark subdocument
         const newBenchmark = {
-            _id: new mongoose_1.Types.ObjectId(),
+            _id: new Types.ObjectId(),
             templateId: template.id,
             name: template.name,
             type: template.type,
@@ -108,7 +104,7 @@ const createMyBenchmark = async (req, res) => {
             ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
         };
         // 5. Add to user's currentBenchmarks using atomic update
-        const updatedUser = await User_1.User.findByIdAndUpdate(userId, {
+        const updatedUser = await User.findByIdAndUpdate(userId, {
             $push: { currentBenchmarks: newBenchmark },
         }, { new: true, select: 'currentBenchmarks' });
         if (!updatedUser) {
@@ -141,18 +137,17 @@ const createMyBenchmark = async (req, res) => {
         });
     }
 };
-exports.createMyBenchmark = createMyBenchmark;
 /**
  * PUT /api/me/benchmarks/:benchmarkId
  * Update existing benchmark
  */
-const updateMyBenchmark = async (req, res) => {
+export const updateMyBenchmark = async (req, res) => {
     try {
         const userId = req.user.id;
         const { benchmarkId } = req.params;
         const input = req.body;
         // 1. Find user and locate benchmark
-        const user = await User_1.User.findById(userId);
+        const user = await User.findById(userId);
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -207,7 +202,7 @@ const updateMyBenchmark = async (req, res) => {
         Object.keys(updateFields).forEach((key) => {
             updateQuery[`${arrayField}.$.${key}`] = updateFields[key];
         });
-        const updatedUser = await User_1.User.findOneAndUpdate({
+        const updatedUser = await User.findOneAndUpdate({
             _id: userId,
             [`${arrayField}._id`]: benchmarkId,
         }, { $set: updateQuery }, { new: true, select: arrayField });
@@ -241,7 +236,6 @@ const updateMyBenchmark = async (req, res) => {
         });
     }
 };
-exports.updateMyBenchmark = updateMyBenchmark;
 /**
  * Helper: Determine measurement type from input
  */

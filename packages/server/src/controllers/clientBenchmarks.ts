@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { User } from '../models/User';
-import { BenchmarkTemplate } from '../models/BenchmarkTemplate';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { User } from '../models/User.js';
+import { BenchmarkTemplate } from '../models/BenchmarkTemplate.js';
 import { Types } from 'mongoose';
 import {
   CreateMyBenchmarkInput,

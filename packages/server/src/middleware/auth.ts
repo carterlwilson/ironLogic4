@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
 import {UserType} from '@ironlogic4/shared/types/users';
-import {User, UserDocument} from '../models/User';
+import {User, UserDocument} from '../models/User.js';
 
 // Extend Express Request interface to include user
 export interface AuthenticatedRequest extends Request {

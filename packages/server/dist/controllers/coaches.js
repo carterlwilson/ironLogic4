@@ -1,16 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetCoachPassword = exports.deleteCoach = exports.updateCoach = exports.createCoach = exports.getCoachById = exports.getAllCoaches = void 0;
-const User_1 = require("../models/User");
-const ActiveSchedule_1 = require("../models/ActiveSchedule");
-const shared_1 = require("@ironlogic4/shared");
-const auth_1 = require("../utils/auth");
+import { User } from '../models/User.js';
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { UserType, CreateCoachSchema, UpdateCoachSchema, CoachListParamsSchema, CoachIdSchema, ResetCoachPasswordSchema, } from '@ironlogic4/shared';
+import { generateRandomPassword } from '../utils/auth.js';
 /**
  * Get all coaches with pagination, search, and gym scoping
  */
-const getAllCoaches = async (req, res) => {
+export const getAllCoaches = async (req, res) => {
     try {
-        const validation = shared_1.CoachListParamsSchema.safeParse(req.query);
+        const validation = CoachListParamsSchema.safeParse(req.query);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -21,9 +18,9 @@ const getAllCoaches = async (req, res) => {
         }
         const { gymId, search, page, limit } = validation.data;
         const skip = (page - 1) * limit;
-        const query = { userType: shared_1.UserType.COACH };
+        const query = { userType: UserType.COACH };
         // Gym scoping: owners can only see their gym's coaches, admins can filter by gymId
-        if (req.user?.userType === shared_1.UserType.OWNER) {
+        if (req.user?.userType === UserType.OWNER) {
             query.gymId = req.user.gymId;
         }
         else if (gymId) {
@@ -38,12 +35,12 @@ const getAllCoaches = async (req, res) => {
             ];
         }
         const [coaches, total] = await Promise.all([
-            User_1.User.find(query)
+            User.find(query)
                 .select('-password')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit),
-            User_1.User.countDocuments(query),
+            User.countDocuments(query),
         ]);
         const totalPages = Math.ceil(total / limit);
         const response = {
@@ -66,13 +63,12 @@ const getAllCoaches = async (req, res) => {
         });
     }
 };
-exports.getAllCoaches = getAllCoaches;
 /**
  * Get a single coach by ID
  */
-const getCoachById = async (req, res) => {
+export const getCoachById = async (req, res) => {
     try {
-        const validation = shared_1.CoachIdSchema.safeParse(req.params);
+        const validation = CoachIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -81,7 +77,7 @@ const getCoachById = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const coach = await User_1.User.findById(id).select('-password');
+        const coach = await User.findById(id).select('-password');
         if (!coach) {
             res.status(404).json({
                 success: false,
@@ -90,7 +86,7 @@ const getCoachById = async (req, res) => {
             return;
         }
         // Verify coach is actually a COACH user type
-        if (coach.userType !== shared_1.UserType.COACH) {
+        if (coach.userType !== UserType.COACH) {
             res.status(404).json({
                 success: false,
                 error: 'Coach not found',
@@ -98,7 +94,7 @@ const getCoachById = async (req, res) => {
             return;
         }
         // Gym scoping: owners can only access their gym's coaches
-        if (req.user?.userType === shared_1.UserType.OWNER && coach.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && coach.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only access your own gym\'s coaches.',
@@ -119,13 +115,12 @@ const getCoachById = async (req, res) => {
         });
     }
 };
-exports.getCoachById = getCoachById;
 /**
  * Create a new coach
  */
-const createCoach = async (req, res) => {
+export const createCoach = async (req, res) => {
     try {
-        const validation = shared_1.CreateCoachSchema.safeParse(req.body);
+        const validation = CreateCoachSchema.safeParse(req.body);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -137,11 +132,11 @@ const createCoach = async (req, res) => {
         const { email, firstName, lastName, gymId, password } = validation.data;
         // Determine the actual gymId to use
         let actualGymId;
-        if (req.user?.userType === shared_1.UserType.OWNER) {
+        if (req.user?.userType === UserType.OWNER) {
             // Owners always create coaches in their own gym
             actualGymId = req.user.gymId;
         }
-        else if (req.user?.userType === shared_1.UserType.ADMIN) {
+        else if (req.user?.userType === UserType.ADMIN) {
             // Admins must provide a gymId
             if (!gymId) {
                 res.status(400).json({
@@ -160,7 +155,7 @@ const createCoach = async (req, res) => {
             return;
         }
         // Check if user with this email already exists
-        const existingUser = await User_1.User.findOne({ email: email.toLowerCase() });
+        const existingUser = await User.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             res.status(409).json({
                 success: false,
@@ -177,15 +172,15 @@ const createCoach = async (req, res) => {
         }
         else {
             // Generate random password
-            finalPassword = (0, auth_1.generateRandomPassword)(12);
+            finalPassword = generateRandomPassword(12);
             temporaryPassword = finalPassword;
         }
         // Create the coach - ALWAYS set userType to COACH
-        const newCoach = new User_1.User({
+        const newCoach = new User({
             email: email.toLowerCase(),
             firstName,
             lastName,
-            userType: shared_1.UserType.COACH,
+            userType: UserType.COACH,
             gymId: actualGymId,
             password: finalPassword,
         });
@@ -210,14 +205,13 @@ const createCoach = async (req, res) => {
         });
     }
 };
-exports.createCoach = createCoach;
 /**
  * Update a coach
  */
-const updateCoach = async (req, res) => {
+export const updateCoach = async (req, res) => {
     try {
-        const paramsValidation = shared_1.CoachIdSchema.safeParse(req.params);
-        const bodyValidation = shared_1.UpdateCoachSchema.safeParse(req.body);
+        const paramsValidation = CoachIdSchema.safeParse(req.params);
+        const bodyValidation = UpdateCoachSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -239,7 +233,7 @@ const updateCoach = async (req, res) => {
             });
             return;
         }
-        const coach = await User_1.User.findById(id);
+        const coach = await User.findById(id);
         if (!coach) {
             res.status(404).json({
                 success: false,
@@ -248,7 +242,7 @@ const updateCoach = async (req, res) => {
             return;
         }
         // Verify coach is actually a COACH user type
-        if (coach.userType !== shared_1.UserType.COACH) {
+        if (coach.userType !== UserType.COACH) {
             res.status(404).json({
                 success: false,
                 error: 'Coach not found',
@@ -256,7 +250,7 @@ const updateCoach = async (req, res) => {
             return;
         }
         // Gym scoping: owners can only update their gym's coaches
-        if (req.user?.userType === shared_1.UserType.OWNER && coach.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && coach.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only update your own gym\'s coaches.',
@@ -265,7 +259,7 @@ const updateCoach = async (req, res) => {
         }
         // Check if email is being changed and if it's already taken
         if (validatedData.email && validatedData.email !== coach.email) {
-            const existingUser = await User_1.User.findOne({ email: validatedData.email });
+            const existingUser = await User.findOne({ email: validatedData.email });
             if (existingUser) {
                 res.status(409).json({
                     success: false,
@@ -274,7 +268,7 @@ const updateCoach = async (req, res) => {
                 return;
             }
         }
-        const updatedCoach = await User_1.User.findByIdAndUpdate(id, validatedData, { new: true, runValidators: true }).select('-password');
+        const updatedCoach = await User.findByIdAndUpdate(id, validatedData, { new: true, runValidators: true }).select('-password');
         const response = {
             success: true,
             data: updatedCoach ? updatedCoach.toJSON() : null,
@@ -290,13 +284,12 @@ const updateCoach = async (req, res) => {
         });
     }
 };
-exports.updateCoach = updateCoach;
 /**
  * Delete a coach (hard delete with dependency checks)
  */
-const deleteCoach = async (req, res) => {
+export const deleteCoach = async (req, res) => {
     try {
-        const validation = shared_1.CoachIdSchema.safeParse(req.params);
+        const validation = CoachIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -305,7 +298,7 @@ const deleteCoach = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const coach = await User_1.User.findById(id);
+        const coach = await User.findById(id);
         if (!coach) {
             res.status(404).json({
                 success: false,
@@ -314,7 +307,7 @@ const deleteCoach = async (req, res) => {
             return;
         }
         // Verify coach is actually a COACH user type
-        if (coach.userType !== shared_1.UserType.COACH) {
+        if (coach.userType !== UserType.COACH) {
             res.status(404).json({
                 success: false,
                 error: 'Coach not found',
@@ -322,7 +315,7 @@ const deleteCoach = async (req, res) => {
             return;
         }
         // Gym scoping: owners can only delete their gym's coaches
-        if (req.user?.userType === shared_1.UserType.OWNER && coach.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && coach.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only delete your own gym\'s coaches.',
@@ -331,7 +324,7 @@ const deleteCoach = async (req, res) => {
         }
         // Check for dependencies before deletion
         // 1. Check for active schedules
-        const activeSchedules = await ActiveSchedule_1.ActiveSchedule.findOne({
+        const activeSchedules = await ActiveSchedule.findOne({
             coachIds: id,
         });
         if (activeSchedules) {
@@ -342,8 +335,8 @@ const deleteCoach = async (req, res) => {
             return;
         }
         // 2. Check for assigned clients (if assignedCoachId field exists)
-        const assignedClients = await User_1.User.findOne({
-            userType: shared_1.UserType.CLIENT,
+        const assignedClients = await User.findOne({
+            userType: UserType.CLIENT,
             assignedCoachId: id,
         });
         if (assignedClients) {
@@ -354,7 +347,7 @@ const deleteCoach = async (req, res) => {
             return;
         }
         // No dependencies found, proceed with hard delete
-        await User_1.User.findByIdAndDelete(id);
+        await User.findByIdAndDelete(id);
         const response = {
             success: true,
             message: 'Coach deleted successfully',
@@ -369,14 +362,13 @@ const deleteCoach = async (req, res) => {
         });
     }
 };
-exports.deleteCoach = deleteCoach;
 /**
  * Reset a coach's password
  */
-const resetCoachPassword = async (req, res) => {
+export const resetCoachPassword = async (req, res) => {
     try {
-        const paramsValidation = shared_1.CoachIdSchema.safeParse(req.params);
-        const bodyValidation = shared_1.ResetCoachPasswordSchema.safeParse(req.body);
+        const paramsValidation = CoachIdSchema.safeParse(req.params);
+        const bodyValidation = ResetCoachPasswordSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -387,7 +379,7 @@ const resetCoachPassword = async (req, res) => {
         }
         const { id } = paramsValidation.data;
         const { password } = bodyValidation.data;
-        const coach = await User_1.User.findById(id).select('+password');
+        const coach = await User.findById(id).select('+password');
         if (!coach) {
             res.status(404).json({
                 success: false,
@@ -396,7 +388,7 @@ const resetCoachPassword = async (req, res) => {
             return;
         }
         // Verify coach is actually a COACH user type
-        if (coach.userType !== shared_1.UserType.COACH) {
+        if (coach.userType !== UserType.COACH) {
             res.status(404).json({
                 success: false,
                 error: 'Coach not found',
@@ -404,7 +396,7 @@ const resetCoachPassword = async (req, res) => {
             return;
         }
         // Gym scoping: owners can only reset passwords for their gym's coaches
-        if (req.user?.userType === shared_1.UserType.OWNER && coach.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && coach.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only reset passwords for your own gym\'s coaches.',
@@ -420,7 +412,7 @@ const resetCoachPassword = async (req, res) => {
         }
         else {
             // Generate random password
-            finalPassword = (0, auth_1.generateRandomPassword)(12);
+            finalPassword = generateRandomPassword(12);
             temporaryPassword = finalPassword;
         }
         // Hash and update password
@@ -441,5 +433,4 @@ const resetCoachPassword = async (req, res) => {
         });
     }
 };
-exports.resetCoachPassword = resetCoachPassword;
 //# sourceMappingURL=coaches.js.map

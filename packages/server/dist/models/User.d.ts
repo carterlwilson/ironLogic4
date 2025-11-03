@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 import { User as IUser } from '@ironlogic4/shared/types/users';
-import { ClientBenchmarkDocument } from './ClientBenchmark';
+import { ClientBenchmarkDocument } from './ClientBenchmark.js';
 export interface UserDocument extends Omit<IUser, 'id' | 'currentBenchmarks' | 'historicalBenchmarks'>, Document {
     currentBenchmarks?: ClientBenchmarkDocument[];
     historicalBenchmarks?: ClientBenchmarkDocument[];

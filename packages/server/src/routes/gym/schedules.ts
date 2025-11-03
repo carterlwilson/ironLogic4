@@ -3,14 +3,14 @@ import {
   verifyToken,
   requireRole,
   AuthenticatedRequest,
-} from '../../middleware/auth';
+} from '../../middleware/auth.js';
 import {
   getScheduleTemplates,
   getScheduleTemplateById,
   createScheduleTemplate,
   updateScheduleTemplate,
   deleteScheduleTemplate,
-} from '../../controllers/scheduleTemplates';
+} from '../../controllers/scheduleTemplates.js';
 import {
   getActiveSchedules,
   getActiveScheduleById,
@@ -19,13 +19,13 @@ import {
   resetActiveSchedule,
   assignStaff,
   unassignStaff,
-} from '../../controllers/activeSchedules';
+} from '../../controllers/activeSchedules.js';
 import {
   getAvailableSchedules,
   getMySchedule,
   joinTimeslot,
   leaveTimeslot,
-} from '../../controllers/clientSchedules';
+} from '../../controllers/clientSchedules.js';
 import { UserType } from '@ironlogic4/shared';
 
 const router = express.Router();

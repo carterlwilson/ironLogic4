@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { Program } from '../models/Program';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { Program } from '../models/Program.js';
 import { ApiResponse, ProgramIdSchema, JumpToWeekSchema } from '@ironlogic4/shared';
 
 /**

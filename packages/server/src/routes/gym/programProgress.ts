@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken } from '../../middleware/auth';
+import { verifyToken } from '../../middleware/auth.js';
 import {
   startProgram,
   advanceWeek,
@@ -7,7 +7,7 @@ import {
   jumpToWeek,
   resetProgress,
   getCurrentProgress,
-} from '../../controllers/programProgress';
+} from '../../controllers/programProgress.js';
 
 const router = express.Router({ mergeParams: true });
 

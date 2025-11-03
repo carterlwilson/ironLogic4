@@ -3,14 +3,14 @@ import {
   verifyToken,
   requireOwnerOrAdminForGym,
   AuthenticatedRequest,
-} from '../../middleware/auth';
+} from '../../middleware/auth.js';
 import {
   getAllActivityTemplates,
   getActivityTemplateById,
   createActivityTemplate,
   updateActivityTemplate,
   deleteActivityTemplate,
-} from '../../controllers/activityTemplates';
+} from '../../controllers/activityTemplates.js';
 
 const router = express.Router();
 

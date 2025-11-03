@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { BenchmarkTemplate } from '../models/BenchmarkTemplate';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { BenchmarkTemplate } from '../models/BenchmarkTemplate.js';
 import {
   UserType,
   ApiResponse,

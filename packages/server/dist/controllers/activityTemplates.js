@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteActivityTemplate = exports.updateActivityTemplate = exports.createActivityTemplate = exports.getActivityTemplateById = exports.getAllActivityTemplates = void 0;
-const ActivityTemplate_1 = require("../models/ActivityTemplate");
-const shared_1 = require("@ironlogic4/shared");
+import { ActivityTemplate } from '../models/ActivityTemplate.js';
+import { CreateActivityTemplateSchema, UpdateActivityTemplateSchema, ActivityTemplateListParamsSchema, ActivityTemplateIdSchema } from '@ironlogic4/shared';
 /**
  * Get all activity templates with pagination and filtering
  */
-const getAllActivityTemplates = async (req, res) => {
+export const getAllActivityTemplates = async (req, res) => {
     try {
-        const validation = shared_1.ActivityTemplateListParamsSchema.safeParse(req.query);
+        const validation = ActivityTemplateListParamsSchema.safeParse(req.query);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -39,13 +36,13 @@ const getAllActivityTemplates = async (req, res) => {
         }
         // Get templates and total count
         const [templates, total] = await Promise.all([
-            ActivityTemplate_1.ActivityTemplate.find(query)
+            ActivityTemplate.find(query)
                 .populate('gymId', 'name')
                 .populate('createdBy', 'firstName lastName')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit),
-            ActivityTemplate_1.ActivityTemplate.countDocuments(query),
+            ActivityTemplate.countDocuments(query),
         ]);
         const totalPages = Math.ceil(total / limit);
         const response = {
@@ -68,13 +65,12 @@ const getAllActivityTemplates = async (req, res) => {
         });
     }
 };
-exports.getAllActivityTemplates = getAllActivityTemplates;
 /**
  * Get activity template by ID
  */
-const getActivityTemplateById = async (req, res) => {
+export const getActivityTemplateById = async (req, res) => {
     try {
-        const validation = shared_1.ActivityTemplateIdSchema.safeParse(req.params);
+        const validation = ActivityTemplateIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -83,7 +79,7 @@ const getActivityTemplateById = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const template = await ActivityTemplate_1.ActivityTemplate.findById(id)
+        const template = await ActivityTemplate.findById(id)
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         if (!template) {
@@ -115,13 +111,12 @@ const getActivityTemplateById = async (req, res) => {
         });
     }
 };
-exports.getActivityTemplateById = getActivityTemplateById;
 /**
  * Create new activity template
  */
-const createActivityTemplate = async (req, res) => {
+export const createActivityTemplate = async (req, res) => {
     try {
-        const validation = shared_1.CreateActivityTemplateSchema.safeParse(req.body);
+        const validation = CreateActivityTemplateSchema.safeParse(req.body);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -141,7 +136,7 @@ const createActivityTemplate = async (req, res) => {
                 return;
             }
         }
-        const newTemplate = new ActivityTemplate_1.ActivityTemplate({
+        const newTemplate = new ActivityTemplate({
             ...templateData,
             createdBy: req.user.id,
         });
@@ -163,14 +158,13 @@ const createActivityTemplate = async (req, res) => {
         });
     }
 };
-exports.createActivityTemplate = createActivityTemplate;
 /**
  * Update activity template by ID
  */
-const updateActivityTemplate = async (req, res) => {
+export const updateActivityTemplate = async (req, res) => {
     try {
-        const paramsValidation = shared_1.ActivityTemplateIdSchema.safeParse(req.params);
-        const bodyValidation = shared_1.UpdateActivityTemplateSchema.safeParse(req.body);
+        const paramsValidation = ActivityTemplateIdSchema.safeParse(req.params);
+        const bodyValidation = UpdateActivityTemplateSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -181,7 +175,7 @@ const updateActivityTemplate = async (req, res) => {
         }
         const { id } = paramsValidation.data;
         const updateData = bodyValidation.data;
-        const template = await ActivityTemplate_1.ActivityTemplate.findById(id);
+        const template = await ActivityTemplate.findById(id);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -197,7 +191,7 @@ const updateActivityTemplate = async (req, res) => {
             });
             return;
         }
-        const updatedTemplate = await ActivityTemplate_1.ActivityTemplate.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
+        const updatedTemplate = await ActivityTemplate.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         const response = {
@@ -215,13 +209,12 @@ const updateActivityTemplate = async (req, res) => {
         });
     }
 };
-exports.updateActivityTemplate = updateActivityTemplate;
 /**
  * Delete activity template by ID
  */
-const deleteActivityTemplate = async (req, res) => {
+export const deleteActivityTemplate = async (req, res) => {
     try {
-        const validation = shared_1.ActivityTemplateIdSchema.safeParse(req.params);
+        const validation = ActivityTemplateIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -230,7 +223,7 @@ const deleteActivityTemplate = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const template = await ActivityTemplate_1.ActivityTemplate.findById(id);
+        const template = await ActivityTemplate.findById(id);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -246,7 +239,7 @@ const deleteActivityTemplate = async (req, res) => {
             });
             return;
         }
-        await ActivityTemplate_1.ActivityTemplate.findByIdAndDelete(id);
+        await ActivityTemplate.findByIdAndDelete(id);
         const response = {
             success: true,
             message: 'Activity template deleted successfully',
@@ -261,5 +254,4 @@ const deleteActivityTemplate = async (req, res) => {
         });
     }
 };
-exports.deleteActivityTemplate = deleteActivityTemplate;
 //# sourceMappingURL=activityTemplates.js.map

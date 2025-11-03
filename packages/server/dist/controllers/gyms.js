@@ -1,23 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteGym = exports.updateGym = exports.createGym = exports.getGymById = exports.getAllGyms = void 0;
-const Gym_1 = require("../models/Gym");
-const User_1 = require("../models/User");
-const gyms_1 = require("@ironlogic4/shared/schemas/gyms");
-const zod_1 = require("zod");
+import { Gym } from '../models/Gym.js';
+import { User } from '../models/User.js';
+import { CreateGymSchema } from '@ironlogic4/shared/schemas/gyms';
+import { z } from 'zod';
 // Update gym schema for validation
-const UpdateGymSchema = zod_1.z.object({
-    name: zod_1.z.string().min(1).optional(),
-    address: zod_1.z.string().min(1).optional(),
-    phoneNumber: zod_1.z.string().min(1).optional(),
-    ownerId: zod_1.z.string().min(1).optional(),
+const UpdateGymSchema = z.object({
+    name: z.string().min(1).optional(),
+    address: z.string().min(1).optional(),
+    phoneNumber: z.string().min(1).optional(),
+    ownerId: z.string().min(1).optional(),
 }).refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",
 });
 /**
  * Get all gyms with pagination
  */
-const getAllGyms = async (req, res) => {
+export const getAllGyms = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -40,11 +37,11 @@ const getAllGyms = async (req, res) => {
             query.ownerId = ownerIdFilter;
         }
         const [gyms, total] = await Promise.all([
-            Gym_1.Gym.find(query)
+            Gym.find(query)
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(maxLimit),
-            Gym_1.Gym.countDocuments(query)
+            Gym.countDocuments(query)
         ]);
         const totalPages = Math.ceil(total / maxLimit);
         const response = {
@@ -67,14 +64,13 @@ const getAllGyms = async (req, res) => {
         });
     }
 };
-exports.getAllGyms = getAllGyms;
 /**
  * Get gym by ID
  */
-const getGymById = async (req, res) => {
+export const getGymById = async (req, res) => {
     try {
         const { id } = req.params;
-        const gym = await Gym_1.Gym.findById(id);
+        const gym = await Gym.findById(id);
         if (!gym) {
             res.status(404).json({
                 success: false,
@@ -95,14 +91,13 @@ const getGymById = async (req, res) => {
         });
     }
 };
-exports.getGymById = getGymById;
 /**
  * Create new gym (admin only)
  */
-const createGym = async (req, res) => {
+export const createGym = async (req, res) => {
     try {
         // Validate request body
-        const validationResult = gyms_1.CreateGymSchema.safeParse(req.body);
+        const validationResult = CreateGymSchema.safeParse(req.body);
         if (!validationResult.success) {
             res.status(400).json({
                 success: false,
@@ -113,7 +108,7 @@ const createGym = async (req, res) => {
         }
         const { name, address, phoneNumber, ownerId } = validationResult.data;
         // Check if gym with same name already exists
-        const existingGym = await Gym_1.Gym.findOne({ name });
+        const existingGym = await Gym.findOne({ name });
         if (existingGym) {
             res.status(409).json({
                 success: false,
@@ -122,7 +117,7 @@ const createGym = async (req, res) => {
             return;
         }
         // Create new gym
-        const gym = new Gym_1.Gym({
+        const gym = new Gym({
             name,
             address,
             phoneNumber,
@@ -131,7 +126,7 @@ const createGym = async (req, res) => {
         await gym.save();
         // Update owner's gymId if owner was assigned
         if (ownerId) {
-            await User_1.User.findByIdAndUpdate(ownerId, { gymId: gym.id });
+            await User.findByIdAndUpdate(ownerId, { gymId: gym.id });
         }
         // Return gym data
         const gymResponse = gym.toJSON();
@@ -149,11 +144,10 @@ const createGym = async (req, res) => {
         });
     }
 };
-exports.createGym = createGym;
 /**
  * Update gym (admin only)
  */
-const updateGym = async (req, res) => {
+export const updateGym = async (req, res) => {
     try {
         const { id } = req.params;
         // Validate request body
@@ -168,7 +162,7 @@ const updateGym = async (req, res) => {
         }
         const updateData = validationResult.data;
         // Find the gym to update
-        const existingGym = await Gym_1.Gym.findById(id);
+        const existingGym = await Gym.findById(id);
         if (!existingGym) {
             res.status(404).json({
                 success: false,
@@ -178,7 +172,7 @@ const updateGym = async (req, res) => {
         }
         // Check if name is being updated and if it's already taken
         if (updateData.name && updateData.name !== existingGym.name) {
-            const nameExists = await Gym_1.Gym.findOne({ name: updateData.name });
+            const nameExists = await Gym.findOne({ name: updateData.name });
             if (nameExists) {
                 res.status(409).json({
                     success: false,
@@ -191,15 +185,15 @@ const updateGym = async (req, res) => {
         if (updateData.ownerId !== undefined) {
             // Remove gymId from old owner if there was one
             if (existingGym.ownerId) {
-                await User_1.User.findByIdAndUpdate(existingGym.ownerId, { $unset: { gymId: 1 } });
+                await User.findByIdAndUpdate(existingGym.ownerId, { $unset: { gymId: 1 } });
             }
             // Set gymId for new owner
             if (updateData.ownerId) {
-                await User_1.User.findByIdAndUpdate(updateData.ownerId, { gymId: id });
+                await User.findByIdAndUpdate(updateData.ownerId, { gymId: id });
             }
         }
         // Update gym
-        const updatedGym = await Gym_1.Gym.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
+        const updatedGym = await Gym.findByIdAndUpdate(id, updateData, { new: true, runValidators: true });
         if (!updatedGym) {
             res.status(404).json({
                 success: false,
@@ -221,14 +215,13 @@ const updateGym = async (req, res) => {
         });
     }
 };
-exports.updateGym = updateGym;
 /**
  * Delete gym (admin only)
  */
-const deleteGym = async (req, res) => {
+export const deleteGym = async (req, res) => {
     try {
         const { id } = req.params;
-        const gym = await Gym_1.Gym.findByIdAndDelete(id);
+        const gym = await Gym.findByIdAndDelete(id);
         if (!gym) {
             res.status(404).json({
                 success: false,
@@ -249,5 +242,4 @@ const deleteGym = async (req, res) => {
         });
     }
 };
-exports.deleteGym = deleteGym;
 //# sourceMappingURL=gyms.js.map

@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { User } from '../models/User';
-import { ActiveSchedule } from '../models/ActiveSchedule';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { User } from '../models/User.js';
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
 import {
   UserType,
   ApiResponse,
@@ -12,7 +12,7 @@ import {
   CoachIdSchema,
   ResetCoachPasswordSchema,
 } from '@ironlogic4/shared';
-import { generateRandomPassword, hashPassword } from '../utils/auth';
+import { generateRandomPassword, hashPassword } from '../utils/auth.js';
 
 /**
  * Get all coaches with pagination, search, and gym scoping

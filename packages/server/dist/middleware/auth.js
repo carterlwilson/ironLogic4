@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.requireOwnerOrAdminForGym = exports.requireUserManagementPermission = exports.requireAdminOrCoach = exports.requireAdminOrOwner = exports.requireAdmin = exports.requireRole = exports.verifyToken = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const users_1 = require("@ironlogic4/shared/types/users");
-const User_1 = require("../models/User");
+import jwt from 'jsonwebtoken';
+import { UserType } from '@ironlogic4/shared/types/users';
+import { User } from '../models/User.js';
 /**
  * Middleware to verify JWT token and attach user to request
  */
-const verifyToken = async (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
     try {
         const token = extractTokenFromHeader(req);
         if (!token) {
@@ -29,9 +23,9 @@ const verifyToken = async (req, res, next) => {
             return;
         }
         // Verify and decode the token
-        const decoded = jsonwebtoken_1.default.verify(token, secret);
+        const decoded = jwt.verify(token, secret);
         // Find the user in the database
-        const user = await User_1.User.findById(decoded.userId).select('+password');
+        const user = await User.findById(decoded.userId).select('+password');
         if (!user) {
             res.status(401).json({
                 success: false,
@@ -44,7 +38,7 @@ const verifyToken = async (req, res, next) => {
         next();
     }
     catch (error) {
-        if (error instanceof jsonwebtoken_1.default.JsonWebTokenError) {
+        if (error instanceof jwt.JsonWebTokenError) {
             res.status(401).json({
                 success: false,
                 error: 'Invalid or expired token',
@@ -57,13 +51,12 @@ const verifyToken = async (req, res, next) => {
         });
     }
 };
-exports.verifyToken = verifyToken;
 /**
  * Middleware factory for role-based authorization
  * @param allowedRoles Array of UserType values that are allowed to access the route
  * @returns Express middleware function
  */
-const requireRole = (allowedRoles) => {
+export const requireRole = (allowedRoles) => {
     return (req, res, next) => {
         if (!req.user) {
             res.status(401).json({
@@ -82,29 +75,28 @@ const requireRole = (allowedRoles) => {
         next();
     };
 };
-exports.requireRole = requireRole;
 /**
  * Middleware for admin-only access (strict admin only, no other roles)
  */
-exports.requireAdmin = (0, exports.requireRole)([users_1.UserType.ADMIN]);
+export const requireAdmin = requireRole([UserType.ADMIN]);
 /**
  * Middleware for admin and owner access (legacy, kept for compatibility)
  */
-exports.requireAdminOrOwner = (0, exports.requireRole)([users_1.UserType.ADMIN, users_1.UserType.OWNER]);
+export const requireAdminOrOwner = requireRole([UserType.ADMIN, UserType.OWNER]);
 /**
  * Middleware for admin and coach access
  */
-exports.requireAdminOrCoach = (0, exports.requireRole)([
-    users_1.UserType.ADMIN,
-    users_1.UserType.OWNER,
-    users_1.UserType.COACH,
+export const requireAdminOrCoach = requireRole([
+    UserType.ADMIN,
+    UserType.OWNER,
+    UserType.COACH,
 ]);
 /**
  * Authorization middleware that checks if user can create/manage other users
  * Admin/Owner: can create admin/coach users
  * Coach: can create/edit/delete client users only
  */
-const requireUserManagementPermission = (targetUserType) => {
+export const requireUserManagementPermission = (targetUserType) => {
     return (req, res, next) => {
         if (!req.user) {
             res.status(401).json({
@@ -115,20 +107,20 @@ const requireUserManagementPermission = (targetUserType) => {
         }
         const { userType } = req.user;
         // Admin can manage all user types
-        if (userType === users_1.UserType.ADMIN) {
+        if (userType === UserType.ADMIN) {
             next();
             return;
         }
         // Owner can manage Coach and Client Types
-        if (userType === users_1.UserType.OWNER) {
-            if (targetUserType === users_1.UserType.CLIENT || targetUserType === users_1.UserType.COACH) {
+        if (userType === UserType.OWNER) {
+            if (targetUserType === UserType.CLIENT || targetUserType === UserType.COACH) {
                 next();
                 return;
             }
         }
         // Coach can only manage client users
-        if (userType === users_1.UserType.COACH) {
-            if (!targetUserType || targetUserType === users_1.UserType.CLIENT) {
+        if (userType === UserType.COACH) {
+            if (!targetUserType || targetUserType === UserType.CLIENT) {
                 next();
                 return;
             }
@@ -145,7 +137,6 @@ const requireUserManagementPermission = (targetUserType) => {
         });
     };
 };
-exports.requireUserManagementPermission = requireUserManagementPermission;
 /**
  * Extract JWT token from Authorization header
  */
@@ -169,7 +160,7 @@ function extractTokenFromHeader(req) {
  *
  * Controllers are responsible for using req.user.gymId for gym scoping.
  */
-const requireOwnerOrAdminForGym = (req, res, next) => {
+export const requireOwnerOrAdminForGym = (req, res, next) => {
     const user = req.user;
     if (!user) {
         res.status(401).json({
@@ -179,12 +170,12 @@ const requireOwnerOrAdminForGym = (req, res, next) => {
         return;
     }
     // Admins have full access to all gyms
-    if (user.userType === users_1.UserType.ADMIN) {
+    if (user.userType === UserType.ADMIN) {
         next();
         return;
     }
     // Owners and Clients must have a gym assignment
-    if (user.userType === users_1.UserType.OWNER || user.userType === users_1.UserType.CLIENT) {
+    if (user.userType === UserType.OWNER || user.userType === UserType.CLIENT) {
         if (!user.gymId) {
             res.status(400).json({
                 success: false,
@@ -202,5 +193,4 @@ const requireOwnerOrAdminForGym = (req, res, next) => {
         error: 'Access denied. Owner or admin privileges required.',
     });
 };
-exports.requireOwnerOrAdminForGym = requireOwnerOrAdminForGym;
 //# sourceMappingURL=auth.js.map

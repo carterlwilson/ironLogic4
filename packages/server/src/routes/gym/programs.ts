@@ -2,15 +2,15 @@ import express from 'express';
 import {
   verifyToken,
   requireOwnerOrAdminForGym,
-} from '../../middleware/auth';
+} from '../../middleware/auth.js';
 import {
   getAllPrograms,
   getProgramById,
   createProgram,
   updateProgram,
   deleteProgram,
-} from '../../controllers/programs';
-import programProgressRoutes from './programProgress';
+} from '../../controllers/programs.js';
+import programProgressRoutes from './programProgress.js';
 
 const router = express.Router();
 

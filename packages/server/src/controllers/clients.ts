@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { User } from '../models/User';
-import { Program } from '../models/Program';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { User } from '../models/User.js';
+import { Program } from '../models/Program.js';
 import {
   UserType,
   ApiResponse,
@@ -11,7 +11,7 @@ import {
   ClientListParamsSchema,
   ClientIdSchema,
 } from '@ironlogic4/shared';
-import { generateRandomPassword } from '../utils/auth';
+import { generateRandomPassword } from '../utils/auth.js';
 
 /**
  * Get all clients with pagination, search, and gym scoping

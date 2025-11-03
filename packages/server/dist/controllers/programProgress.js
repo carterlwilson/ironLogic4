@@ -1,15 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentProgress = exports.resetProgress = exports.jumpToWeek = exports.previousWeek = exports.advanceWeek = exports.startProgram = void 0;
-const Program_1 = require("../models/Program");
-const shared_1 = require("@ironlogic4/shared");
+import { Program } from '../models/Program.js';
+import { ProgramIdSchema, JumpToWeekSchema } from '@ironlogic4/shared';
 /**
  * Start Program - Initialize progress tracking
  * Sets startedAt timestamp and ensures progress is at block 0, week 0
  */
-const startProgram = async (req, res) => {
+export const startProgram = async (req, res) => {
     try {
-        const validation = shared_1.ProgramIdSchema.safeParse(req.params);
+        const validation = ProgramIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -23,7 +20,7 @@ const startProgram = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOne(query);
+        const program = await Program.findOne(query);
         if (!program) {
             res.status(404).json({
                 success: false,
@@ -72,13 +69,12 @@ const startProgram = async (req, res) => {
         });
     }
 };
-exports.startProgram = startProgram;
 /**
  * Advance Week - Move to next week with block advancement logic
  */
-const advanceWeek = async (req, res) => {
+export const advanceWeek = async (req, res) => {
     try {
-        const validation = shared_1.ProgramIdSchema.safeParse(req.params);
+        const validation = ProgramIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -92,7 +88,7 @@ const advanceWeek = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOne(query);
+        const program = await Program.findOne(query);
         if (!program) {
             res.status(404).json({
                 success: false,
@@ -174,13 +170,12 @@ const advanceWeek = async (req, res) => {
         });
     }
 };
-exports.advanceWeek = advanceWeek;
 /**
  * Previous Week - Go back one week
  */
-const previousWeek = async (req, res) => {
+export const previousWeek = async (req, res) => {
     try {
-        const validation = shared_1.ProgramIdSchema.safeParse(req.params);
+        const validation = ProgramIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -194,7 +189,7 @@ const previousWeek = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOne(query);
+        const program = await Program.findOne(query);
         if (!program) {
             res.status(404).json({
                 success: false,
@@ -261,14 +256,13 @@ const previousWeek = async (req, res) => {
         });
     }
 };
-exports.previousWeek = previousWeek;
 /**
  * Jump to Week - Jump to a specific block and week
  */
-const jumpToWeek = async (req, res) => {
+export const jumpToWeek = async (req, res) => {
     try {
-        const paramsValidation = shared_1.ProgramIdSchema.safeParse(req.params);
-        const bodyValidation = shared_1.JumpToWeekSchema.safeParse(req.body);
+        const paramsValidation = ProgramIdSchema.safeParse(req.params);
+        const bodyValidation = JumpToWeekSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -284,7 +278,7 @@ const jumpToWeek = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOne(query);
+        const program = await Program.findOne(query);
         if (!program) {
             res.status(404).json({
                 success: false,
@@ -348,13 +342,12 @@ const jumpToWeek = async (req, res) => {
         });
     }
 };
-exports.jumpToWeek = jumpToWeek;
 /**
  * Reset Progress - Reset program to beginning
  */
-const resetProgress = async (req, res) => {
+export const resetProgress = async (req, res) => {
     try {
-        const validation = shared_1.ProgramIdSchema.safeParse(req.params);
+        const validation = ProgramIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -368,7 +361,7 @@ const resetProgress = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOne(query);
+        const program = await Program.findOne(query);
         if (!program) {
             res.status(404).json({
                 success: false,
@@ -401,13 +394,12 @@ const resetProgress = async (req, res) => {
         });
     }
 };
-exports.resetProgress = resetProgress;
 /**
  * Get Current Progress - Get progress with metadata
  */
-const getCurrentProgress = async (req, res) => {
+export const getCurrentProgress = async (req, res) => {
     try {
-        const validation = shared_1.ProgramIdSchema.safeParse(req.params);
+        const validation = ProgramIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -421,7 +413,7 @@ const getCurrentProgress = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOne(query)
+        const program = await Program.findOne(query)
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         if (!program) {
@@ -472,5 +464,4 @@ const getCurrentProgress = async (req, res) => {
         });
     }
 };
-exports.getCurrentProgress = getCurrentProgress;
 //# sourceMappingURL=programProgress.js.map

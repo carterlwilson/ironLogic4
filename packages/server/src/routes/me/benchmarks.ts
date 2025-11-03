@@ -1,12 +1,12 @@
 import express from 'express';
-import { verifyToken } from '../../middleware/auth';
-import { requireClient } from '../../middleware/requireClient';
+import { verifyToken } from '../../middleware/auth.js';
+import { requireClient } from '../../middleware/requireClient.js';
 import {
   getMyBenchmarks,
   createMyBenchmark,
   updateMyBenchmark,
-} from '../../controllers/clientBenchmarks';
-import { getBenchmarkProgress } from '../../controllers/benchmarkProgress';
+} from '../../controllers/clientBenchmarks.js';
+import { getBenchmarkProgress } from '../../controllers/benchmarkProgress.js';
 
 const router = express.Router();
 

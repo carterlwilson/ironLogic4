@@ -1,16 +1,13 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.unassignProgram = exports.assignProgram = exports.deleteClient = exports.updateClient = exports.createClient = exports.getClientById = exports.getAllClients = void 0;
-const User_1 = require("../models/User");
-const Program_1 = require("../models/Program");
-const shared_1 = require("@ironlogic4/shared");
-const auth_1 = require("../utils/auth");
+import { User } from '../models/User.js';
+import { Program } from '../models/Program.js';
+import { UserType, CreateClientSchema, UpdateClientSchema, ClientListParamsSchema, ClientIdSchema, } from '@ironlogic4/shared';
+import { generateRandomPassword } from '../utils/auth.js';
 /**
  * Get all clients with pagination, search, and gym scoping
  */
-const getAllClients = async (req, res) => {
+export const getAllClients = async (req, res) => {
     try {
-        const validation = shared_1.ClientListParamsSchema.safeParse(req.query);
+        const validation = ClientListParamsSchema.safeParse(req.query);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -21,9 +18,9 @@ const getAllClients = async (req, res) => {
         }
         const { gymId, search, page, limit } = validation.data;
         const skip = (page - 1) * limit;
-        const query = { userType: shared_1.UserType.CLIENT };
+        const query = { userType: UserType.CLIENT };
         // Gym scoping: owners can only see their gym's clients, admins can filter by gymId
-        if (req.user?.userType === shared_1.UserType.OWNER) {
+        if (req.user?.userType === UserType.OWNER) {
             query.gymId = req.user.gymId;
         }
         else if (gymId) {
@@ -38,12 +35,12 @@ const getAllClients = async (req, res) => {
             ];
         }
         const [clients, total] = await Promise.all([
-            User_1.User.find(query)
+            User.find(query)
                 .select('-password')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit),
-            User_1.User.countDocuments(query),
+            User.countDocuments(query),
         ]);
         const totalPages = Math.ceil(total / limit);
         const response = {
@@ -66,13 +63,12 @@ const getAllClients = async (req, res) => {
         });
     }
 };
-exports.getAllClients = getAllClients;
 /**
  * Get a single client by ID
  */
-const getClientById = async (req, res) => {
+export const getClientById = async (req, res) => {
     try {
-        const validation = shared_1.ClientIdSchema.safeParse(req.params);
+        const validation = ClientIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -81,7 +77,7 @@ const getClientById = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const client = await User_1.User.findById(id).select('-password').populate('programId');
+        const client = await User.findById(id).select('-password').populate('programId');
         if (!client) {
             res.status(404).json({
                 success: false,
@@ -90,7 +86,7 @@ const getClientById = async (req, res) => {
             return;
         }
         // Verify client is actually a CLIENT user type
-        if (client.userType !== shared_1.UserType.CLIENT) {
+        if (client.userType !== UserType.CLIENT) {
             res.status(404).json({
                 success: false,
                 error: 'Client not found',
@@ -98,7 +94,7 @@ const getClientById = async (req, res) => {
             return;
         }
         // Gym scoping: owners can only access their gym's clients
-        if (req.user?.userType === shared_1.UserType.OWNER && client.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && client.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only access your own gym\'s clients.',
@@ -119,13 +115,12 @@ const getClientById = async (req, res) => {
         });
     }
 };
-exports.getClientById = getClientById;
 /**
  * Create a new client
  */
-const createClient = async (req, res) => {
+export const createClient = async (req, res) => {
     try {
-        const validation = shared_1.CreateClientSchema.safeParse(req.body);
+        const validation = CreateClientSchema.safeParse(req.body);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -136,7 +131,7 @@ const createClient = async (req, res) => {
         }
         const { email, firstName, lastName, gymId, password, generatePassword, programId } = validation.data;
         // Gym scoping: owners can only create clients for their gym
-        if (req.user?.userType === shared_1.UserType.OWNER) {
+        if (req.user?.userType === UserType.OWNER) {
             if (gymId !== req.user.gymId) {
                 res.status(403).json({
                     success: false,
@@ -146,7 +141,7 @@ const createClient = async (req, res) => {
             }
         }
         // Check if user with this email already exists
-        const existingUser = await User_1.User.findOne({ email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             res.status(409).json({
                 success: false,
@@ -156,7 +151,7 @@ const createClient = async (req, res) => {
         }
         // If programId is provided, validate it exists and belongs to the same gym
         if (programId) {
-            const program = await Program_1.Program.findById(programId);
+            const program = await Program.findById(programId);
             if (!program) {
                 res.status(404).json({
                     success: false,
@@ -176,7 +171,7 @@ const createClient = async (req, res) => {
         // Password generation logic
         let finalPassword;
         if (generatePassword !== false) {
-            finalPassword = (0, auth_1.generateRandomPassword)(12);
+            finalPassword = generateRandomPassword(12);
         }
         else {
             if (!password) {
@@ -189,11 +184,11 @@ const createClient = async (req, res) => {
             finalPassword = password;
         }
         // Create the client - ALWAYS set userType to CLIENT
-        const newClient = new User_1.User({
+        const newClient = new User({
             email,
             firstName,
             lastName,
-            userType: shared_1.UserType.CLIENT, // Never trust client input - always set to CLIENT
+            userType: UserType.CLIENT, // Never trust client input - always set to CLIENT
             gymId,
             password: finalPassword,
             ...(programId && { programId }),
@@ -201,7 +196,7 @@ const createClient = async (req, res) => {
         const savedClient = await newClient.save();
         // Populate program if it was assigned
         const populatedClient = programId
-            ? await User_1.User.findById(savedClient._id).select('-password').populate('programId')
+            ? await User.findById(savedClient._id).select('-password').populate('programId')
             : savedClient;
         // Return client data without password, but include generated password in response if applicable
         const clientData = populatedClient?.toJSON() || savedClient.toJSON();
@@ -223,14 +218,13 @@ const createClient = async (req, res) => {
         });
     }
 };
-exports.createClient = createClient;
 /**
  * Update a client
  */
-const updateClient = async (req, res) => {
+export const updateClient = async (req, res) => {
     try {
-        const paramsValidation = shared_1.ClientIdSchema.safeParse(req.params);
-        const bodyValidation = shared_1.UpdateClientSchema.safeParse(req.body);
+        const paramsValidation = ClientIdSchema.safeParse(req.params);
+        const bodyValidation = UpdateClientSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -241,7 +235,7 @@ const updateClient = async (req, res) => {
         }
         const { id } = paramsValidation.data;
         const validatedData = bodyValidation.data;
-        const client = await User_1.User.findById(id);
+        const client = await User.findById(id);
         if (!client) {
             res.status(404).json({
                 success: false,
@@ -250,7 +244,7 @@ const updateClient = async (req, res) => {
             return;
         }
         // Verify client is actually a CLIENT user type
-        if (client.userType !== shared_1.UserType.CLIENT) {
+        if (client.userType !== UserType.CLIENT) {
             res.status(404).json({
                 success: false,
                 error: 'Client not found',
@@ -258,7 +252,7 @@ const updateClient = async (req, res) => {
             return;
         }
         // Gym scoping: owners can only update their gym's clients
-        if (req.user?.userType === shared_1.UserType.OWNER && client.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && client.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only update your own gym\'s clients.',
@@ -267,7 +261,7 @@ const updateClient = async (req, res) => {
         }
         // Check if email is being changed and if it's already taken
         if (validatedData.email && validatedData.email !== client.email) {
-            const existingUser = await User_1.User.findOne({ email: validatedData.email });
+            const existingUser = await User.findOne({ email: validatedData.email });
             if (existingUser) {
                 res.status(409).json({
                     success: false,
@@ -286,7 +280,7 @@ const updateClient = async (req, res) => {
             currentBenchmarks: validatedData.currentBenchmarks,
             historicalBenchmarks: validatedData.historicalBenchmarks,
         };
-        const updatedClient = await User_1.User.findByIdAndUpdate(id, sanitizedUpdateData, { new: true, runValidators: true }).select('-password');
+        const updatedClient = await User.findByIdAndUpdate(id, sanitizedUpdateData, { new: true, runValidators: true }).select('-password');
         const response = {
             success: true,
             data: updatedClient ? updatedClient.toJSON() : null,
@@ -302,13 +296,12 @@ const updateClient = async (req, res) => {
         });
     }
 };
-exports.updateClient = updateClient;
 /**
  * Delete a client
  */
-const deleteClient = async (req, res) => {
+export const deleteClient = async (req, res) => {
     try {
-        const validation = shared_1.ClientIdSchema.safeParse(req.params);
+        const validation = ClientIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -317,7 +310,7 @@ const deleteClient = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const client = await User_1.User.findById(id);
+        const client = await User.findById(id);
         if (!client) {
             res.status(404).json({
                 success: false,
@@ -326,7 +319,7 @@ const deleteClient = async (req, res) => {
             return;
         }
         // Verify client is actually a CLIENT user type
-        if (client.userType !== shared_1.UserType.CLIENT) {
+        if (client.userType !== UserType.CLIENT) {
             res.status(404).json({
                 success: false,
                 error: 'Client not found',
@@ -334,14 +327,14 @@ const deleteClient = async (req, res) => {
             return;
         }
         // Gym scoping: owners can only delete their gym's clients
-        if (req.user?.userType === shared_1.UserType.OWNER && client.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && client.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only delete your own gym\'s clients.',
             });
             return;
         }
-        await User_1.User.findByIdAndDelete(id);
+        await User.findByIdAndDelete(id);
         const response = {
             success: true,
             message: 'Client deleted successfully',
@@ -356,13 +349,12 @@ const deleteClient = async (req, res) => {
         });
     }
 };
-exports.deleteClient = deleteClient;
 /**
  * Assign a program to a client
  */
-const assignProgram = async (req, res) => {
+export const assignProgram = async (req, res) => {
     try {
-        const validation = shared_1.ClientIdSchema.safeParse(req.params);
+        const validation = ClientIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -380,7 +372,7 @@ const assignProgram = async (req, res) => {
             return;
         }
         // Find the client
-        const client = await User_1.User.findById(id);
+        const client = await User.findById(id);
         if (!client) {
             res.status(404).json({
                 success: false,
@@ -389,7 +381,7 @@ const assignProgram = async (req, res) => {
             return;
         }
         // Verify client is actually a CLIENT user type
-        if (client.userType !== shared_1.UserType.CLIENT) {
+        if (client.userType !== UserType.CLIENT) {
             res.status(404).json({
                 success: false,
                 error: 'Client not found',
@@ -397,7 +389,7 @@ const assignProgram = async (req, res) => {
             return;
         }
         // Gym scoping: owners/coaches can only assign programs to their gym's clients
-        if (req.user?.userType === shared_1.UserType.OWNER && client.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && client.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only assign programs to your own gym\'s clients.',
@@ -405,7 +397,7 @@ const assignProgram = async (req, res) => {
             return;
         }
         // Find and validate the program
-        const program = await Program_1.Program.findById(programId);
+        const program = await Program.findById(programId);
         if (!program) {
             res.status(404).json({
                 success: false,
@@ -438,7 +430,7 @@ const assignProgram = async (req, res) => {
         client.programId = programId;
         await client.save();
         // Return updated client with populated program
-        const updatedClient = await User_1.User.findById(id).select('-password').populate('programId');
+        const updatedClient = await User.findById(id).select('-password').populate('programId');
         const response = {
             success: true,
             data: updatedClient ? updatedClient.toJSON() : null,
@@ -454,13 +446,12 @@ const assignProgram = async (req, res) => {
         });
     }
 };
-exports.assignProgram = assignProgram;
 /**
  * Unassign a program from a client
  */
-const unassignProgram = async (req, res) => {
+export const unassignProgram = async (req, res) => {
     try {
-        const validation = shared_1.ClientIdSchema.safeParse(req.params);
+        const validation = ClientIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -470,7 +461,7 @@ const unassignProgram = async (req, res) => {
         }
         const { id } = validation.data;
         // Find the client
-        const client = await User_1.User.findById(id);
+        const client = await User.findById(id);
         if (!client) {
             res.status(404).json({
                 success: false,
@@ -479,7 +470,7 @@ const unassignProgram = async (req, res) => {
             return;
         }
         // Verify client is actually a CLIENT user type
-        if (client.userType !== shared_1.UserType.CLIENT) {
+        if (client.userType !== UserType.CLIENT) {
             res.status(404).json({
                 success: false,
                 error: 'Client not found',
@@ -487,7 +478,7 @@ const unassignProgram = async (req, res) => {
             return;
         }
         // Gym scoping: owners/coaches can only unassign programs from their gym's clients
-        if (req.user?.userType === shared_1.UserType.OWNER && client.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && client.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only unassign programs from your own gym\'s clients.',
@@ -498,7 +489,7 @@ const unassignProgram = async (req, res) => {
         client.programId = undefined;
         await client.save();
         // Return updated client
-        const updatedClient = await User_1.User.findById(id).select('-password');
+        const updatedClient = await User.findById(id).select('-password');
         const response = {
             success: true,
             data: updatedClient ? updatedClient.toJSON() : null,
@@ -514,5 +505,4 @@ const unassignProgram = async (req, res) => {
         });
     }
 };
-exports.unassignProgram = unassignProgram;
 //# sourceMappingURL=clients.js.map

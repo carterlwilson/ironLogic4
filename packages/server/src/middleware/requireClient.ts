@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from './auth';
+import { AuthenticatedRequest } from './auth.js';
 import { UserType } from '@ironlogic4/shared';
 
 /**

@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
+import { AuthenticatedRequest } from '../middleware/auth.js';
 /**
  * Get available schedules for client self-scheduling
  * Returns all active schedules for the user's gym with availability info

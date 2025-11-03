@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { Gym } from '../models/Gym';
-import { User } from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { Gym } from '../models/Gym.js';
+import { User } from '../models/User.js';
 import { CreateGymSchema } from '@ironlogic4/shared/schemas/gyms';
 import { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 import { z } from 'zod';

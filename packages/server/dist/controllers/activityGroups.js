@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteActivityGroup = exports.updateActivityGroup = exports.createActivityGroup = exports.getActivityGroupById = exports.getAllActivityGroups = void 0;
-const ActivityGroup_1 = require("../models/ActivityGroup");
-const shared_1 = require("@ironlogic4/shared");
-const activityGroupCleanup_1 = require("../services/activityGroupCleanup");
-const getAllActivityGroups = async (req, res) => {
+import { ActivityGroup } from '../models/ActivityGroup.js';
+import { CreateActivityGroupSchema, UpdateActivityGroupSchema, ActivityGroupListParamsSchema, ActivityGroupIdSchema } from '@ironlogic4/shared';
+import { cleanupActivityTemplateReferences } from '../services/activityGroupCleanup.js';
+export const getAllActivityGroups = async (req, res) => {
     try {
-        const validation = shared_1.ActivityGroupListParamsSchema.safeParse(req.query);
+        const validation = ActivityGroupListParamsSchema.safeParse(req.query);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -28,13 +25,13 @@ const getAllActivityGroups = async (req, res) => {
             query.$text = { $search: search };
         }
         const [groups, total] = await Promise.all([
-            ActivityGroup_1.ActivityGroup.find(query)
+            ActivityGroup.find(query)
                 .populate('gymId', 'name')
                 .populate('createdBy', 'firstName lastName')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit),
-            ActivityGroup_1.ActivityGroup.countDocuments(query),
+            ActivityGroup.countDocuments(query),
         ]);
         const totalPages = Math.ceil(total / limit);
         const response = {
@@ -57,10 +54,9 @@ const getAllActivityGroups = async (req, res) => {
         });
     }
 };
-exports.getAllActivityGroups = getAllActivityGroups;
-const getActivityGroupById = async (req, res) => {
+export const getActivityGroupById = async (req, res) => {
     try {
-        const validation = shared_1.ActivityGroupIdSchema.safeParse(req.params);
+        const validation = ActivityGroupIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -69,7 +65,7 @@ const getActivityGroupById = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const group = await ActivityGroup_1.ActivityGroup.findById(id)
+        const group = await ActivityGroup.findById(id)
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         if (!group) {
@@ -100,10 +96,9 @@ const getActivityGroupById = async (req, res) => {
         });
     }
 };
-exports.getActivityGroupById = getActivityGroupById;
-const createActivityGroup = async (req, res) => {
+export const createActivityGroup = async (req, res) => {
     try {
-        const validation = shared_1.CreateActivityGroupSchema.safeParse(req.body);
+        const validation = CreateActivityGroupSchema.safeParse(req.body);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -122,7 +117,7 @@ const createActivityGroup = async (req, res) => {
                 return;
             }
         }
-        const newGroup = new ActivityGroup_1.ActivityGroup({
+        const newGroup = new ActivityGroup({
             ...groupData,
             createdBy: req.user.id,
         });
@@ -144,11 +139,10 @@ const createActivityGroup = async (req, res) => {
         });
     }
 };
-exports.createActivityGroup = createActivityGroup;
-const updateActivityGroup = async (req, res) => {
+export const updateActivityGroup = async (req, res) => {
     try {
-        const paramsValidation = shared_1.ActivityGroupIdSchema.safeParse(req.params);
-        const bodyValidation = shared_1.UpdateActivityGroupSchema.safeParse(req.body);
+        const paramsValidation = ActivityGroupIdSchema.safeParse(req.params);
+        const bodyValidation = UpdateActivityGroupSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -159,7 +153,7 @@ const updateActivityGroup = async (req, res) => {
         }
         const { id } = paramsValidation.data;
         const updateData = bodyValidation.data;
-        const group = await ActivityGroup_1.ActivityGroup.findById(id);
+        const group = await ActivityGroup.findById(id);
         if (!group) {
             res.status(404).json({
                 success: false,
@@ -174,7 +168,7 @@ const updateActivityGroup = async (req, res) => {
             });
             return;
         }
-        const updatedGroup = await ActivityGroup_1.ActivityGroup.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
+        const updatedGroup = await ActivityGroup.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         const response = {
@@ -192,10 +186,9 @@ const updateActivityGroup = async (req, res) => {
         });
     }
 };
-exports.updateActivityGroup = updateActivityGroup;
-const deleteActivityGroup = async (req, res) => {
+export const deleteActivityGroup = async (req, res) => {
     try {
-        const validation = shared_1.ActivityGroupIdSchema.safeParse(req.params);
+        const validation = ActivityGroupIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -204,7 +197,7 @@ const deleteActivityGroup = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const group = await ActivityGroup_1.ActivityGroup.findById(id);
+        const group = await ActivityGroup.findById(id);
         if (!group) {
             res.status(404).json({
                 success: false,
@@ -219,9 +212,9 @@ const deleteActivityGroup = async (req, res) => {
             });
             return;
         }
-        await ActivityGroup_1.ActivityGroup.findByIdAndDelete(id);
+        await ActivityGroup.findByIdAndDelete(id);
         setImmediate(() => {
-            (0, activityGroupCleanup_1.cleanupActivityTemplateReferences)(id);
+            cleanupActivityTemplateReferences(id);
         });
         const response = {
             success: true,
@@ -237,5 +230,4 @@ const deleteActivityGroup = async (req, res) => {
         });
     }
 };
-exports.deleteActivityGroup = deleteActivityGroup;
 //# sourceMappingURL=activityGroups.js.map

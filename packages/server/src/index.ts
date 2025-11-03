@@ -4,17 +4,17 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth';
-import adminUserRoutes from './routes/admin/users';
-import adminGymRoutes from './routes/admin/gyms';
-import gymActivityTemplateRoutes from './routes/gym/activityTemplates';
-import gymActivityGroupRoutes from './routes/gym/activityGroups';
-import gymClientRoutes from './routes/gym/clients';
-import gymCoachRoutes from './routes/gym/coaches';
-import gymBenchmarkTemplateRoutes from './routes/gym/benchmarkTemplates';
-import gymProgramRoutes from './routes/gym/programs';
-import gymScheduleRoutes from './routes/gym/schedules';
-import meRoutes from './routes/me';
+import authRoutes from './routes/auth.js';
+import adminUserRoutes from './routes/admin/users.js';
+import adminGymRoutes from './routes/admin/gyms.js';
+import gymActivityTemplateRoutes from './routes/gym/activityTemplates.js';
+import gymActivityGroupRoutes from './routes/gym/activityGroups.js';
+import gymClientRoutes from './routes/gym/clients.js';
+import gymCoachRoutes from './routes/gym/coaches.js';
+import gymBenchmarkTemplateRoutes from './routes/gym/benchmarkTemplates.js';
+import gymProgramRoutes from './routes/gym/programs.js';
+import gymScheduleRoutes from './routes/gym/schedules.js';
+import meRoutes from './routes/me/index.js';
 
 dotenv.config();
 

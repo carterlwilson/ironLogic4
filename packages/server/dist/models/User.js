@@ -1,44 +1,8 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
-const mongoose_1 = __importStar(require("mongoose"));
-const users_1 = require("@ironlogic4/shared/types/users");
-const auth_1 = require("../utils/auth");
-const ClientBenchmark_1 = require("./ClientBenchmark");
-const userSchema = new mongoose_1.Schema({
+import mongoose, { Schema } from 'mongoose';
+import { UserType } from '@ironlogic4/shared/types/users';
+import { hashPassword, comparePassword } from '../utils/auth.js';
+import { clientBenchmarkSchema } from './ClientBenchmark.js';
+const userSchema = new Schema({
     email: {
         type: String,
         required: true,
@@ -58,9 +22,9 @@ const userSchema = new mongoose_1.Schema({
     },
     userType: {
         type: String,
-        enum: Object.values(users_1.UserType),
+        enum: Object.values(UserType),
         required: true,
-        default: users_1.UserType.CLIENT,
+        default: UserType.CLIENT,
     },
     password: {
         type: String,
@@ -77,12 +41,12 @@ const userSchema = new mongoose_1.Schema({
         required: false,
     },
     currentBenchmarks: {
-        type: [ClientBenchmark_1.clientBenchmarkSchema],
+        type: [clientBenchmarkSchema],
         default: [],
         required: false,
     },
     historicalBenchmarks: {
-        type: [ClientBenchmark_1.clientBenchmarkSchema],
+        type: [clientBenchmarkSchema],
         default: [],
         required: false,
     },
@@ -124,7 +88,7 @@ userSchema.pre('save', async function (next) {
     if (!this.isModified('password'))
         return next();
     try {
-        this.password = await (0, auth_1.hashPassword)(this.password);
+        this.password = await hashPassword(this.password);
         next();
     }
     catch (error) {
@@ -133,7 +97,7 @@ userSchema.pre('save', async function (next) {
 });
 // Instance method to compare password
 userSchema.methods.comparePassword = async function (candidatePassword) {
-    return (0, auth_1.comparePassword)(candidatePassword, this.password);
+    return comparePassword(candidatePassword, this.password);
 };
 // Create unique index on email
 userSchema.index({ email: 1 }, { unique: true });
@@ -143,5 +107,5 @@ userSchema.index({ gymId: 1, userType: 1 });
 userSchema.index({ createdAt: -1 });
 // Index for program queries
 userSchema.index({ programId: 1 });
-exports.User = mongoose_1.default.model('User', userSchema);
+export const User = mongoose.model('User', userSchema);
 //# sourceMappingURL=User.js.map

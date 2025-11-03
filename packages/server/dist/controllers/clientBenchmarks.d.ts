@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
+import { AuthenticatedRequest } from '../middleware/auth.js';
 /**
  * GET /api/me/benchmarks
  * Get authenticated client's benchmarks

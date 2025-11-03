@@ -5,8 +5,8 @@ import {
   createGym,
   updateGym,
   deleteGym,
-} from '../../controllers/gyms';
-import { verifyToken, requireAdmin } from '../../middleware/auth';
+} from '../../controllers/gyms.js';
+import { verifyToken, requireAdmin } from '../../middleware/auth.js';
 
 const router = Router();
 

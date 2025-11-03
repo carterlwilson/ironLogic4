@@ -1,5 +1,5 @@
-import { ActiveSchedule } from '../models/ActiveSchedule';
-import { ScheduleTemplate } from '../models/ScheduleTemplate';
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
 
 export interface ResetSummary {
   success: boolean;

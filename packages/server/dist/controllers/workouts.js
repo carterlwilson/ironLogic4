@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCurrentWeekWorkouts = void 0;
-const User_1 = require("../models/User");
-const Program_1 = require("../models/Program");
-const ActivityTemplate_1 = require("../models/ActivityTemplate");
-const BenchmarkTemplate_1 = require("../models/BenchmarkTemplate");
-const shared_1 = require("@ironlogic4/shared");
+import { User } from '../models/User.js';
+import { Program } from '../models/Program.js';
+import { ActivityTemplate } from '../models/ActivityTemplate.js';
+import { BenchmarkTemplate } from '../models/BenchmarkTemplate.js';
+import { BenchmarkType } from '@ironlogic4/shared';
 /**
  * Helper function to round weight to nearest 0.5 kg increment
  */
@@ -16,11 +13,11 @@ function roundToHalf(value) {
  * GET /api/me/workouts/current-week
  * Get current week's workout plan with pre-calculated weights
  */
-const getCurrentWeekWorkouts = async (req, res) => {
+export const getCurrentWeekWorkouts = async (req, res) => {
     try {
         const userId = req.user.id;
         // 1. Get user with current benchmarks
-        const user = await User_1.User.findById(userId)
+        const user = await User.findById(userId)
             .select('programId currentBenchmarks')
             .lean();
         if (!user) {
@@ -39,7 +36,7 @@ const getCurrentWeekWorkouts = async (req, res) => {
             return;
         }
         // 3. Get program with lean query for performance
-        const program = await Program_1.Program.findById(user.programId)
+        const program = await Program.findById(user.programId)
             .select('name description blocks currentProgress')
             .lean();
         if (!program) {
@@ -105,7 +102,7 @@ const getCurrentWeekWorkouts = async (req, res) => {
             });
         });
         // 8. Bulk fetch all activity templates
-        const activityTemplates = await ActivityTemplate_1.ActivityTemplate.find({
+        const activityTemplates = await ActivityTemplate.find({
             _id: { $in: Array.from(activityTemplateIds) }
         })
             .select('name notes type benchmarkTemplateId')
@@ -125,7 +122,7 @@ const getCurrentWeekWorkouts = async (req, res) => {
             benchmarkTemplateIds.add(benchmark.templateId);
         });
         // 10. Bulk fetch all benchmark templates to get names
-        const benchmarkTemplates = await BenchmarkTemplate_1.BenchmarkTemplate.find({
+        const benchmarkTemplates = await BenchmarkTemplate.find({
             _id: { $in: Array.from(benchmarkTemplateIds) }
         })
             .select('name')
@@ -174,7 +171,7 @@ const getCurrentWeekWorkouts = async (req, res) => {
                         // Get benchmark name from template map
                         benchmarkName = benchmarkTemplateNameMap.get(benchmarkTemplateId);
                         // Only calculate weight for WEIGHT type benchmarks
-                        if (benchmark.type === shared_1.BenchmarkType.WEIGHT && benchmark.weightKg) {
+                        if (benchmark.type === BenchmarkType.WEIGHT && benchmark.weightKg) {
                             benchmarkWeightKg = benchmark.weightKg;
                             const rawWeight = (benchmark.weightKg * activity.percentageOfMax) / 100;
                             calculatedWeightKg = roundToHalf(rawWeight);
@@ -245,5 +242,4 @@ const getCurrentWeekWorkouts = async (req, res) => {
         });
     }
 };
-exports.getCurrentWeekWorkouts = getCurrentWeekWorkouts;
 //# sourceMappingURL=workouts.js.map

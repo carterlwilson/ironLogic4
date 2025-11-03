@@ -1,19 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.leaveTimeslot = exports.joinTimeslot = exports.getMySchedule = exports.getAvailableSchedules = void 0;
-const ActiveSchedule_1 = require("../models/ActiveSchedule");
-const User_1 = require("../models/User");
-const shared_1 = require("@ironlogic4/shared");
-const zod_1 = require("zod");
-const TimeslotParamSchema = zod_1.z.object({
-    id: zod_1.z.string().min(1),
-    timeslotId: zod_1.z.string().min(1),
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { User } from '../models/User.js';
+import { AvailableSchedulesQuerySchema, UserType } from '@ironlogic4/shared';
+import { z } from 'zod';
+const TimeslotParamSchema = z.object({
+    id: z.string().min(1),
+    timeslotId: z.string().min(1),
 });
 /**
  * Get available schedules for client self-scheduling
  * Returns all active schedules for the user's gym with availability info
  */
-const getAvailableSchedules = async (req, res) => {
+export const getAvailableSchedules = async (req, res) => {
     try {
         const userId = req.user?.id;
         if (!userId) {
@@ -24,7 +21,7 @@ const getAvailableSchedules = async (req, res) => {
             return;
         }
         // Validate query params
-        const queryValidation = shared_1.AvailableSchedulesQuerySchema.safeParse(req.query);
+        const queryValidation = AvailableSchedulesQuerySchema.safeParse(req.query);
         if (!queryValidation.success) {
             res.status(400).json({
                 success: false,
@@ -34,7 +31,7 @@ const getAvailableSchedules = async (req, res) => {
         }
         // Determine gymId based on user type
         let gymId;
-        if (req.user?.userType === shared_1.UserType.CLIENT) {
+        if (req.user?.userType === UserType.CLIENT) {
             // Clients can only see schedules for their gym
             if (!req.user.gymId) {
                 res.status(400).json({
@@ -45,7 +42,7 @@ const getAvailableSchedules = async (req, res) => {
             }
             gymId = req.user.gymId;
         }
-        else if (req.user?.userType === shared_1.UserType.OWNER) {
+        else if (req.user?.userType === UserType.OWNER) {
             // Owners can only see schedules for their gym
             if (!req.user.gymId) {
                 res.status(400).json({
@@ -65,7 +62,7 @@ const getAvailableSchedules = async (req, res) => {
             query.gymId = gymId;
         }
         // Find all active schedules
-        const schedules = await ActiveSchedule_1.ActiveSchedule.find(query)
+        const schedules = await ActiveSchedule.find(query)
             .populate('gymId', 'name')
             .populate('templateId', 'name')
             .sort({ createdAt: -1 });
@@ -75,9 +72,9 @@ const getAvailableSchedules = async (req, res) => {
             schedule.coachIds.forEach(coachId => allCoachIds.add(coachId));
         });
         // Fetch all coaches in one query
-        const coaches = await User_1.User.find({
+        const coaches = await User.find({
             _id: { $in: Array.from(allCoachIds) },
-            userType: { $in: [shared_1.UserType.COACH, shared_1.UserType.ADMIN, shared_1.UserType.OWNER] },
+            userType: { $in: [UserType.COACH, UserType.ADMIN, UserType.OWNER] },
         }).select('_id firstName lastName email');
         // Create a map for quick coach lookup
         const coachMap = new Map(coaches.map(coach => {
@@ -94,7 +91,7 @@ const getAvailableSchedules = async (req, res) => {
         }));
         // Add computed availability fields and coach information
         const enrichedSchedules = schedules.map(schedule => {
-            const scheduleObj = schedule.toObject();
+            const scheduleObj = schedule.toJSON();
             scheduleObj.days = scheduleObj.days.map((day) => ({
                 ...day,
                 timeSlots: day.timeSlots.map((slot) => ({
@@ -123,11 +120,10 @@ const getAvailableSchedules = async (req, res) => {
         });
     }
 };
-exports.getAvailableSchedules = getAvailableSchedules;
 /**
  * Get authenticated client's current schedule (timeslots they're assigned to)
  */
-const getMySchedule = async (req, res) => {
+export const getMySchedule = async (req, res) => {
     try {
         const clientId = req.user?.id;
         if (!clientId) {
@@ -138,7 +134,7 @@ const getMySchedule = async (req, res) => {
             return;
         }
         // Find all active schedules where the client is assigned to any timeslot
-        const schedules = await ActiveSchedule_1.ActiveSchedule.find({
+        const schedules = await ActiveSchedule.find({
             'days.timeSlots.assignedClients': clientId,
         })
             .populate('gymId', 'name')
@@ -148,7 +144,7 @@ const getMySchedule = async (req, res) => {
             const filteredDays = schedule.days.map(day => {
                 const filteredTimeSlots = day.timeSlots.filter(slot => slot.assignedClients.includes(clientId));
                 return {
-                    ...day.toObject(),
+                    ...day.toJSON(),
                     timeSlots: filteredTimeSlots,
                 };
             }).filter(day => day.timeSlots.length > 0);
@@ -173,12 +169,11 @@ const getMySchedule = async (req, res) => {
         });
     }
 };
-exports.getMySchedule = getMySchedule;
 /**
  * Join a timeslot (client self-service)
  * Uses atomic update to prevent race conditions
  */
-const joinTimeslot = async (req, res) => {
+export const joinTimeslot = async (req, res) => {
     try {
         const validation = TimeslotParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -206,7 +201,7 @@ const joinTimeslot = async (req, res) => {
             return;
         }
         // First check if schedule exists and belongs to user's gym
-        const scheduleCheck = await ActiveSchedule_1.ActiveSchedule.findById(id);
+        const scheduleCheck = await ActiveSchedule.findById(id);
         if (!scheduleCheck) {
             res.status(404).json({
                 success: false,
@@ -238,8 +233,9 @@ const joinTimeslot = async (req, res) => {
             return;
         }
         // Use atomic update to prevent race conditions
-        // This ensures that capacity is not exceeded even with concurrent requests
-        const updatedSchedule = await ActiveSchedule_1.ActiveSchedule.findOneAndUpdate({
+        // Capacity is validated before this update (lines 262-277)
+        // The atomic operation prevents duplicate assignments
+        const updatedSchedule = await ActiveSchedule.findOneAndUpdate({
             _id: id,
             'days.timeSlots._id': timeslotId,
             'days.timeSlots.assignedClients': { $ne: clientId }, // Not already assigned
@@ -249,14 +245,14 @@ const joinTimeslot = async (req, res) => {
             }
         }, {
             arrayFilters: [
-                { 'slot._id': timeslotId, 'slot.assignedClients': { $size: { $lt: targetCapacity } } }
+                { 'slot._id': timeslotId }
             ],
             new: true,
             runValidators: true
         });
         if (!updatedSchedule) {
             // Check if already assigned
-            const recheckSchedule = await ActiveSchedule_1.ActiveSchedule.findById(id);
+            const recheckSchedule = await ActiveSchedule.findById(id);
             if (recheckSchedule) {
                 for (const day of recheckSchedule.days) {
                     const slot = day.timeSlots.find(s => s.id === timeslotId);
@@ -301,11 +297,10 @@ const joinTimeslot = async (req, res) => {
         });
     }
 };
-exports.joinTimeslot = joinTimeslot;
 /**
  * Leave a timeslot (client self-service)
  */
-const leaveTimeslot = async (req, res) => {
+export const leaveTimeslot = async (req, res) => {
     try {
         const validation = TimeslotParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -332,7 +327,7 @@ const leaveTimeslot = async (req, res) => {
             });
             return;
         }
-        const schedule = await ActiveSchedule_1.ActiveSchedule.findById(id);
+        const schedule = await ActiveSchedule.findById(id);
         if (!schedule) {
             res.status(404).json({
                 success: false,
@@ -398,5 +393,4 @@ const leaveTimeslot = async (req, res) => {
         });
     }
 };
-exports.leaveTimeslot = leaveTimeslot;
 //# sourceMappingURL=clientSchedules.js.map

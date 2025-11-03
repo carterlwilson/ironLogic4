@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const User_1 = require("../models/User");
-const users_1 = require("@ironlogic4/shared/types/users");
-dotenv_1.default.config();
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import { User } from '../models/User.js';
+import { UserType } from '@ironlogic4/shared/types/users';
+dotenv.config();
 // CONFIGURABLE CONSTANT - Change this to target different gym
 const GYM_ID = '690175d098cb02160ea8fc39';
 const NUM_CLIENTS = 30;
@@ -65,18 +60,18 @@ function generateEmail(firstName, lastName, index) {
  * Check if an email already exists in the database
  */
 async function emailExists(email) {
-    const existingUser = await User_1.User.findOne({ email });
+    const existingUser = await User.findOne({ email });
     return !!existingUser;
 }
 /**
  * Create a single client with the given details
  */
 async function createClient(firstName, lastName, email, password, gymId) {
-    const user = new User_1.User({
+    const user = new User({
         email,
         firstName,
         lastName,
-        userType: users_1.UserType.CLIENT,
+        userType: UserType.CLIENT,
         password, // Will be hashed by the pre-save hook
         gymId,
         // programId is undefined (not assigned to any program)
@@ -93,7 +88,7 @@ async function main() {
         console.log('Starting client creation...');
         // Connect to MongoDB
         const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ironlogic4';
-        await mongoose_1.default.connect(mongoUri);
+        await mongoose.connect(mongoUri);
         console.log('Connected to MongoDB');
         console.log(`\nCreating ${NUM_CLIENTS} clients for gym: ${GYM_ID}\n`);
         let createdCount = 0;
@@ -146,7 +141,7 @@ async function main() {
     }
     finally {
         // Disconnect from MongoDB
-        await mongoose_1.default.disconnect();
+        await mongoose.disconnect();
         console.log('Disconnected from MongoDB');
     }
 }

@@ -1,17 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.loginUser = exports.registerUser = void 0;
-const auth_1 = require("@ironlogic4/shared/schemas/auth");
-const User_1 = require("../models/User");
-const Gym_1 = require("../models/Gym");
-const auth_2 = require("../utils/auth");
+import { RegisterSchema, LoginSchema } from '@ironlogic4/shared/schemas/auth';
+import { User } from '../models/User.js';
+import { Gym } from '../models/Gym.js';
+import { generateToken } from '../utils/auth.js';
 /**
  * Register a new user
  */
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
         // Validate request body using RegisterSchema
-        const validationResult = auth_1.RegisterSchema.safeParse(req.body);
+        const validationResult = RegisterSchema.safeParse(req.body);
         if (!validationResult.success) {
             const response = {
                 success: false,
@@ -23,7 +20,7 @@ const registerUser = async (req, res) => {
         }
         const { email, password, firstName, lastName, userType, gymId } = validationResult.data;
         // Check if user already exists
-        const existingUser = await User_1.User.findOne({ email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             const response = {
                 success: false,
@@ -34,7 +31,7 @@ const registerUser = async (req, res) => {
             return;
         }
         // Create new user (password will be auto-hashed by the model)
-        const user = new User_1.User({
+        const user = new User({
             email,
             password,
             firstName,
@@ -71,15 +68,14 @@ const registerUser = async (req, res) => {
         res.status(500).json(response);
     }
 };
-exports.registerUser = registerUser;
 /**
  * Login user and return JWT token
  */
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
     try {
         console.log("logging in user");
         // Validate request body using LoginSchema
-        const validationResult = auth_1.LoginSchema.safeParse(req.body);
+        const validationResult = LoginSchema.safeParse(req.body);
         if (!validationResult.success) {
             const response = {
                 success: false,
@@ -92,7 +88,7 @@ const loginUser = async (req, res) => {
         }
         const { email, password } = validationResult.data;
         // Find user by email and include password field
-        const user = await User_1.User.findOne({ email }).select('+password');
+        const user = await User.findOne({ email }).select('+password');
         if (!user) {
             const response = {
                 success: false,
@@ -116,11 +112,11 @@ const loginUser = async (req, res) => {
         // Fetch gym name if user has a gymId
         let gymName;
         if (user.gymId) {
-            const gym = await Gym_1.Gym.findById(user.gymId).select('name');
+            const gym = await Gym.findById(user.gymId).select('name');
             gymName = gym?.name;
         }
         // Generate JWT token using generateToken utility
-        const token = (0, auth_2.generateToken)(user.id);
+        const token = generateToken(user.id);
         // Return success response with token and user data (password excluded)
         const userData = user.toJSON();
         const response = {
@@ -143,5 +139,4 @@ const loginUser = async (req, res) => {
         res.status(500).json(response);
     }
 };
-exports.loginUser = loginUser;
 //# sourceMappingURL=auth.js.map

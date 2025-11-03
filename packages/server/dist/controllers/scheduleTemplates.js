@@ -1,19 +1,16 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteScheduleTemplate = exports.updateScheduleTemplate = exports.createScheduleTemplate = exports.getScheduleTemplateById = exports.getScheduleTemplates = void 0;
-const ScheduleTemplate_1 = require("../models/ScheduleTemplate");
-const ActiveSchedule_1 = require("../models/ActiveSchedule");
-const User_1 = require("../models/User");
-const shared_1 = require("@ironlogic4/shared");
-const zod_1 = require("zod");
-const IdParamSchema = zod_1.z.object({
-    id: zod_1.z.string().min(1),
+import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { User } from '../models/User.js';
+import { CreateScheduleTemplateSchema, UpdateScheduleTemplateSchema, UserType, } from '@ironlogic4/shared';
+import { z } from 'zod';
+const IdParamSchema = z.object({
+    id: z.string().min(1),
 });
 /**
  * Validate that coach IDs exist, belong to the gym, and have appropriate roles
  */
 async function validateCoachIds(coachIds, gymId) {
-    const coaches = await User_1.User.find({
+    const coaches = await User.find({
         _id: { $in: coachIds },
     });
     if (coaches.length !== coachIds.length) {
@@ -34,23 +31,23 @@ async function validateCoachIds(coachIds, gymId) {
 /**
  * Get all schedule templates with filtering
  */
-const getScheduleTemplates = async (req, res) => {
+export const getScheduleTemplates = async (req, res) => {
     try {
         const { gymId, coachId } = req.query;
         const query = {};
         // Gym filtering - required for owners, optional for admins
-        if (req.user?.userType === shared_1.UserType.OWNER) {
+        if (req.user?.userType === UserType.OWNER) {
             query.gymId = req.user.gymId;
         }
         else if (gymId) {
             query.gymId = gymId;
         }
         // Coach filtering - coaches can only see schedules they're assigned to
-        if (req.user?.userType === shared_1.UserType.COACH || coachId) {
+        if (req.user?.userType === UserType.COACH || coachId) {
             const filterCoachId = coachId || req.user?.id;
             query.coachIds = filterCoachId;
         }
-        const templates = await ScheduleTemplate_1.ScheduleTemplate.find(query)
+        const templates = await ScheduleTemplate.find(query)
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName')
             .sort({ createdAt: -1 });
@@ -68,11 +65,10 @@ const getScheduleTemplates = async (req, res) => {
         });
     }
 };
-exports.getScheduleTemplates = getScheduleTemplates;
 /**
  * Get schedule template by ID
  */
-const getScheduleTemplateById = async (req, res) => {
+export const getScheduleTemplateById = async (req, res) => {
     try {
         const validation = IdParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -83,7 +79,7 @@ const getScheduleTemplateById = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const template = await ScheduleTemplate_1.ScheduleTemplate.findById(id);
+        const template = await ScheduleTemplate.findById(id);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -92,7 +88,7 @@ const getScheduleTemplateById = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && template.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only access your own gym\'s schedules.',
@@ -100,7 +96,7 @@ const getScheduleTemplateById = async (req, res) => {
             return;
         }
         // Coaches can only view schedules they're assigned to
-        if (req.user?.userType === shared_1.UserType.COACH) {
+        if (req.user?.userType === UserType.COACH) {
             const isAssigned = template.coachIds.includes(req.user.id);
             if (!isAssigned) {
                 res.status(403).json({
@@ -127,13 +123,12 @@ const getScheduleTemplateById = async (req, res) => {
         });
     }
 };
-exports.getScheduleTemplateById = getScheduleTemplateById;
 /**
  * Create new schedule template
  */
-const createScheduleTemplate = async (req, res) => {
+export const createScheduleTemplate = async (req, res) => {
     try {
-        const validation = shared_1.CreateScheduleTemplateSchema.safeParse(req.body);
+        const validation = CreateScheduleTemplateSchema.safeParse(req.body);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -159,7 +154,7 @@ const createScheduleTemplate = async (req, res) => {
         // Determine gymId based on user type
         // For OWNER/CLIENT, always use their gym. For ADMIN, allow specifying gymId
         let gymId;
-        if (req.user?.userType === shared_1.UserType.OWNER || req.user?.userType === shared_1.UserType.CLIENT) {
+        if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.CLIENT) {
             if (!req.user.gymId) {
                 res.status(400).json({
                     success: false,
@@ -189,7 +184,7 @@ const createScheduleTemplate = async (req, res) => {
             });
             return;
         }
-        const newTemplate = new ScheduleTemplate_1.ScheduleTemplate({
+        const newTemplate = new ScheduleTemplate({
             name: templateData.name,
             description: templateData.description,
             coachIds: templateData.coachIds,
@@ -223,14 +218,13 @@ const createScheduleTemplate = async (req, res) => {
         });
     }
 };
-exports.createScheduleTemplate = createScheduleTemplate;
 /**
  * Update schedule template by ID
  */
-const updateScheduleTemplate = async (req, res) => {
+export const updateScheduleTemplate = async (req, res) => {
     try {
         const paramsValidation = IdParamSchema.safeParse(req.params);
-        const bodyValidation = shared_1.UpdateScheduleTemplateSchema.safeParse(req.body);
+        const bodyValidation = UpdateScheduleTemplateSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -241,7 +235,7 @@ const updateScheduleTemplate = async (req, res) => {
         }
         const { id } = paramsValidation.data;
         const updateData = bodyValidation.data;
-        const template = await ScheduleTemplate_1.ScheduleTemplate.findById(id);
+        const template = await ScheduleTemplate.findById(id);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -250,7 +244,7 @@ const updateScheduleTemplate = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && template.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only update your own gym\'s templates.',
@@ -268,7 +262,7 @@ const updateScheduleTemplate = async (req, res) => {
                 return;
             }
         }
-        const updatedTemplate = await ScheduleTemplate_1.ScheduleTemplate.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
+        const updatedTemplate = await ScheduleTemplate.findByIdAndUpdate(id, updateData, { new: true, runValidators: true })
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         const response = {
@@ -294,11 +288,10 @@ const updateScheduleTemplate = async (req, res) => {
         });
     }
 };
-exports.updateScheduleTemplate = updateScheduleTemplate;
 /**
  * Delete schedule template by ID
  */
-const deleteScheduleTemplate = async (req, res) => {
+export const deleteScheduleTemplate = async (req, res) => {
     try {
         const validation = IdParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -309,7 +302,7 @@ const deleteScheduleTemplate = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const template = await ScheduleTemplate_1.ScheduleTemplate.findById(id);
+        const template = await ScheduleTemplate.findById(id);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -318,7 +311,7 @@ const deleteScheduleTemplate = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && template.gymId !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only delete your own gym\'s templates.',
@@ -326,7 +319,7 @@ const deleteScheduleTemplate = async (req, res) => {
             return;
         }
         // Check if there's an active schedule using this template
-        const activeSchedule = await ActiveSchedule_1.ActiveSchedule.findOne({ templateId: id });
+        const activeSchedule = await ActiveSchedule.findOne({ templateId: id });
         if (activeSchedule) {
             res.status(400).json({
                 success: false,
@@ -334,7 +327,7 @@ const deleteScheduleTemplate = async (req, res) => {
             });
             return;
         }
-        await ScheduleTemplate_1.ScheduleTemplate.findByIdAndDelete(id);
+        await ScheduleTemplate.findByIdAndDelete(id);
         const response = {
             success: true,
             message: 'Schedule template deleted successfully',
@@ -349,5 +342,4 @@ const deleteScheduleTemplate = async (req, res) => {
         });
     }
 };
-exports.deleteScheduleTemplate = deleteScheduleTemplate;
 //# sourceMappingURL=scheduleTemplates.js.map

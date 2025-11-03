@@ -1,29 +1,24 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const auth_1 = require("../../middleware/auth");
-const programProgress_1 = require("../../controllers/programProgress");
-const router = express_1.default.Router({ mergeParams: true });
+import express from 'express';
+import { verifyToken } from '../../middleware/auth.js';
+import { startProgram, advanceWeek, previousWeek, jumpToWeek, resetProgress, getCurrentProgress, } from '../../controllers/programProgress.js';
+const router = express.Router({ mergeParams: true });
 // GET /api/gym/programs/:id/progress - Get current progress with metadata
 // Owner/Admin access with gym scoping
-router.get('/', auth_1.verifyToken, programProgress_1.getCurrentProgress);
+router.get('/', verifyToken, getCurrentProgress);
 // POST /api/gym/programs/:id/progress/start - Initialize progress tracking
 // Owner/Admin access with gym scoping
-router.post('/start', auth_1.verifyToken, programProgress_1.startProgram);
+router.post('/start', verifyToken, startProgram);
 // POST /api/gym/programs/:id/progress/advance - Move to next week
 // Owner/Admin access with gym scoping
-router.post('/advance', auth_1.verifyToken, programProgress_1.advanceWeek);
+router.post('/advance', verifyToken, advanceWeek);
 // POST /api/gym/programs/:id/progress/previous - Go back one week
 // Owner/Admin access with gym scoping
-router.post('/previous', auth_1.verifyToken, programProgress_1.previousWeek);
+router.post('/previous', verifyToken, previousWeek);
 // POST /api/gym/programs/:id/progress/jump - Jump to specific block/week
 // Owner/Admin access with gym scoping
-router.post('/jump', auth_1.verifyToken, programProgress_1.jumpToWeek);
+router.post('/jump', verifyToken, jumpToWeek);
 // POST /api/gym/programs/:id/progress/reset - Reset progress to beginning
 // Owner/Admin access with gym scoping
-router.post('/reset', auth_1.verifyToken, programProgress_1.resetProgress);
-exports.default = router;
+router.post('/reset', verifyToken, resetProgress);
+export default router;
 //# sourceMappingURL=programProgress.js.map

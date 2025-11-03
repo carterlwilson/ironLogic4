@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { ActiveSchedule } from '../models/ActiveSchedule';
-import { User } from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { User } from '../models/User.js';
 import { ApiResponse, AvailableSchedulesQuerySchema, UserType } from '@ironlogic4/shared';
 import { z } from 'zod';
 

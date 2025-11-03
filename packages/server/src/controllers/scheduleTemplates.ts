@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { ScheduleTemplate } from '../models/ScheduleTemplate';
-import { ActiveSchedule } from '../models/ActiveSchedule';
-import { User } from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { User } from '../models/User.js';
 import {
   ApiResponse,
   CreateScheduleTemplateSchema,

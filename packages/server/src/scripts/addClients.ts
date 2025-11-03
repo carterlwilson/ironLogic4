@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { User } from '../models/User';
+import { User } from '../models/User.js';
 import { UserType } from '@ironlogic4/shared/types/users';
 
 dotenv.config();

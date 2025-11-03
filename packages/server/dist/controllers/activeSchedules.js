@@ -1,35 +1,32 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.unassignStaff = exports.assignStaff = exports.resetActiveSchedule = exports.deleteActiveSchedule = exports.createActiveSchedule = exports.getActiveScheduleById = exports.getActiveSchedules = void 0;
-const ActiveSchedule_1 = require("../models/ActiveSchedule");
-const ScheduleTemplate_1 = require("../models/ScheduleTemplate");
-const User_1 = require("../models/User");
-const shared_1 = require("@ironlogic4/shared");
-const zod_1 = require("zod");
-const IdParamSchema = zod_1.z.object({
-    id: zod_1.z.string().min(1),
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
+import { User } from '../models/User.js';
+import { CreateActiveScheduleSchema, AssignStaffSchema, UserType, } from '@ironlogic4/shared';
+import { z } from 'zod';
+const IdParamSchema = z.object({
+    id: z.string().min(1),
 });
-const TimeslotParamSchema = zod_1.z.object({
-    id: zod_1.z.string().min(1),
-    timeslotId: zod_1.z.string().min(1),
+const TimeslotParamSchema = z.object({
+    id: z.string().min(1),
+    timeslotId: z.string().min(1),
 });
-const UnassignStaffParamSchema = zod_1.z.object({
-    id: zod_1.z.string().min(1),
-    timeslotId: zod_1.z.string().min(1),
-    coachId: zod_1.z.string().min(1),
+const UnassignStaffParamSchema = z.object({
+    id: z.string().min(1),
+    timeslotId: z.string().min(1),
+    coachId: z.string().min(1),
 });
 /**
  * Get all active schedules with filtering
  */
-const getActiveSchedules = async (req, res) => {
+export const getActiveSchedules = async (req, res) => {
     try {
         const { gymId, coachId } = req.query;
         const query = {};
         // Gym filtering - required for owners and clients, optional for admins
-        if (req.user?.userType === shared_1.UserType.OWNER) {
+        if (req.user?.userType === UserType.OWNER) {
             query.gymId = req.user.gymId;
         }
-        else if (req.user?.userType === shared_1.UserType.CLIENT) {
+        else if (req.user?.userType === UserType.CLIENT) {
             // Clients can only see schedules for their gym
             if (!req.user.gymId) {
                 res.status(400).json({
@@ -44,17 +41,17 @@ const getActiveSchedules = async (req, res) => {
             query.gymId = gymId;
         }
         // Coach filtering - coaches can only see schedules they're assigned to
-        if (req.user?.userType === shared_1.UserType.COACH || coachId) {
+        if (req.user?.userType === UserType.COACH || coachId) {
             const filterCoachId = coachId || req.user?.id;
             query.coachIds = filterCoachId;
         }
-        const schedules = await ActiveSchedule_1.ActiveSchedule.find(query)
+        const schedules = await ActiveSchedule.find(query)
             .populate('gymId', 'name')
             .populate('templateId', 'name')
             .sort({ createdAt: -1 });
         // Add computed availability fields for clients
         const enrichedSchedules = schedules.map(schedule => {
-            const scheduleObj = schedule.toObject();
+            const scheduleObj = schedule.toJSON();
             // Add computed fields to each timeslot
             scheduleObj.days = scheduleObj.days.map((day) => ({
                 ...day,
@@ -80,11 +77,10 @@ const getActiveSchedules = async (req, res) => {
         });
     }
 };
-exports.getActiveSchedules = getActiveSchedules;
 /**
  * Get active schedule by ID
  */
-const getActiveScheduleById = async (req, res) => {
+export const getActiveScheduleById = async (req, res) => {
     try {
         const validation = IdParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -95,7 +91,7 @@ const getActiveScheduleById = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const schedule = await ActiveSchedule_1.ActiveSchedule.findById(id)
+        const schedule = await ActiveSchedule.findById(id)
             .populate('gymId', 'name')
             .populate('templateId', 'name');
         if (!schedule) {
@@ -106,7 +102,7 @@ const getActiveScheduleById = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only access your own gym\'s schedules.',
@@ -114,7 +110,7 @@ const getActiveScheduleById = async (req, res) => {
             return;
         }
         // Coaches can only view schedules they're assigned to
-        if (req.user?.userType === shared_1.UserType.COACH) {
+        if (req.user?.userType === UserType.COACH) {
             const isAssigned = schedule.coachIds.includes(req.user.id);
             if (!isAssigned) {
                 res.status(403).json({
@@ -125,7 +121,7 @@ const getActiveScheduleById = async (req, res) => {
             }
         }
         // Clients can only view schedules from their gym
-        if (req.user?.userType === shared_1.UserType.CLIENT) {
+        if (req.user?.userType === UserType.CLIENT) {
             if (!req.user.gymId) {
                 res.status(400).json({
                     success: false,
@@ -142,7 +138,7 @@ const getActiveScheduleById = async (req, res) => {
             }
         }
         // Add computed availability fields
-        const scheduleObj = schedule.toObject();
+        const scheduleObj = schedule.toJSON();
         scheduleObj.days = scheduleObj.days.map((day) => ({
             ...day,
             timeSlots: day.timeSlots.map((slot) => ({
@@ -165,13 +161,12 @@ const getActiveScheduleById = async (req, res) => {
         });
     }
 };
-exports.getActiveScheduleById = getActiveScheduleById;
 /**
  * Create active schedule from template (lazy create)
  */
-const createActiveSchedule = async (req, res) => {
+export const createActiveSchedule = async (req, res) => {
     try {
-        const validation = shared_1.CreateActiveScheduleSchema.safeParse(req.body);
+        const validation = CreateActiveScheduleSchema.safeParse(req.body);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -182,7 +177,7 @@ const createActiveSchedule = async (req, res) => {
         }
         const { templateId } = validation.data;
         // Check if active schedule already exists for this template
-        const existingSchedule = await ActiveSchedule_1.ActiveSchedule.findOne({ templateId });
+        const existingSchedule = await ActiveSchedule.findOne({ templateId });
         if (existingSchedule) {
             res.status(400).json({
                 success: false,
@@ -191,7 +186,7 @@ const createActiveSchedule = async (req, res) => {
             return;
         }
         // Fetch the template
-        const template = await ScheduleTemplate_1.ScheduleTemplate.findById(templateId);
+        const template = await ScheduleTemplate.findById(templateId);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -200,7 +195,7 @@ const createActiveSchedule = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && template.gymId.toString() !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && template.gymId.toString() !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only create schedules for your own gym.',
@@ -208,7 +203,7 @@ const createActiveSchedule = async (req, res) => {
             return;
         }
         // Create active schedule from template
-        const newSchedule = new ActiveSchedule_1.ActiveSchedule({
+        const newSchedule = new ActiveSchedule({
             gymId: template.gymId,
             templateId: template.id,
             coachIds: template.coachIds, // Copy coach IDs from template
@@ -233,11 +228,10 @@ const createActiveSchedule = async (req, res) => {
         });
     }
 };
-exports.createActiveSchedule = createActiveSchedule;
 /**
  * Delete active schedule
  */
-const deleteActiveSchedule = async (req, res) => {
+export const deleteActiveSchedule = async (req, res) => {
     try {
         const validation = IdParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -248,7 +242,7 @@ const deleteActiveSchedule = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const schedule = await ActiveSchedule_1.ActiveSchedule.findById(id);
+        const schedule = await ActiveSchedule.findById(id);
         if (!schedule) {
             res.status(404).json({
                 success: false,
@@ -257,14 +251,14 @@ const deleteActiveSchedule = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only delete your own gym\'s schedules.',
             });
             return;
         }
-        await ActiveSchedule_1.ActiveSchedule.findByIdAndDelete(id);
+        await ActiveSchedule.findByIdAndDelete(id);
         const response = {
             success: true,
             message: 'Active schedule deleted successfully',
@@ -279,11 +273,10 @@ const deleteActiveSchedule = async (req, res) => {
         });
     }
 };
-exports.deleteActiveSchedule = deleteActiveSchedule;
 /**
  * Reset active schedule from template
  */
-const resetActiveSchedule = async (req, res) => {
+export const resetActiveSchedule = async (req, res) => {
     try {
         const validation = IdParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -294,7 +287,7 @@ const resetActiveSchedule = async (req, res) => {
             return;
         }
         const { id } = validation.data;
-        const schedule = await ActiveSchedule_1.ActiveSchedule.findById(id);
+        const schedule = await ActiveSchedule.findById(id);
         if (!schedule) {
             res.status(404).json({
                 success: false,
@@ -303,7 +296,7 @@ const resetActiveSchedule = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied. You can only reset your own gym\'s schedules.',
@@ -311,7 +304,7 @@ const resetActiveSchedule = async (req, res) => {
             return;
         }
         // Fetch the template
-        const template = await ScheduleTemplate_1.ScheduleTemplate.findById(schedule.templateId);
+        const template = await ScheduleTemplate.findById(schedule.templateId);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -320,6 +313,8 @@ const resetActiveSchedule = async (req, res) => {
             return;
         }
         // Reset schedule with template data while preserving client assignments
+        // Note: Using toObject() here because we're assigning to Mongoose document fields
+        // The final toJSON() call will transform _id to id when returning to client
         schedule.days = template.days.map((templateDay, dayIndex) => {
             const existingDay = schedule.days[dayIndex];
             return {
@@ -355,14 +350,13 @@ const resetActiveSchedule = async (req, res) => {
         });
     }
 };
-exports.resetActiveSchedule = resetActiveSchedule;
 /**
  * Assign staff (coach) to active schedule
  */
-const assignStaff = async (req, res) => {
+export const assignStaff = async (req, res) => {
     try {
         const paramsValidation = IdParamSchema.safeParse(req.params);
-        const bodyValidation = shared_1.AssignStaffSchema.safeParse(req.body);
+        const bodyValidation = AssignStaffSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -372,7 +366,7 @@ const assignStaff = async (req, res) => {
         }
         const { id } = paramsValidation.data;
         const { coachId } = bodyValidation.data;
-        const schedule = await ActiveSchedule_1.ActiveSchedule.findById(id);
+        const schedule = await ActiveSchedule.findById(id);
         if (!schedule) {
             res.status(404).json({
                 success: false,
@@ -381,7 +375,7 @@ const assignStaff = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied.',
@@ -397,7 +391,7 @@ const assignStaff = async (req, res) => {
             return;
         }
         // Validate coach
-        const coach = await User_1.User.findById(coachId);
+        const coach = await User.findById(coachId);
         if (!coach) {
             res.status(404).json({
                 success: false,
@@ -439,11 +433,10 @@ const assignStaff = async (req, res) => {
         });
     }
 };
-exports.assignStaff = assignStaff;
 /**
  * Unassign staff (coach) from active schedule
  */
-const unassignStaff = async (req, res) => {
+export const unassignStaff = async (req, res) => {
     try {
         const validation = UnassignStaffParamSchema.safeParse(req.params);
         if (!validation.success) {
@@ -454,7 +447,7 @@ const unassignStaff = async (req, res) => {
             return;
         }
         const { id, coachId } = validation.data;
-        const schedule = await ActiveSchedule_1.ActiveSchedule.findById(id);
+        const schedule = await ActiveSchedule.findById(id);
         if (!schedule) {
             res.status(404).json({
                 success: false,
@@ -463,7 +456,7 @@ const unassignStaff = async (req, res) => {
             return;
         }
         // Check access permissions
-        if (req.user?.userType === shared_1.UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+        if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
             res.status(403).json({
                 success: false,
                 error: 'Access denied.',
@@ -507,5 +500,4 @@ const unassignStaff = async (req, res) => {
         });
     }
 };
-exports.unassignStaff = unassignStaff;
 //# sourceMappingURL=activeSchedules.js.map

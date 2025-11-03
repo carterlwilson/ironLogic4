@@ -1,13 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ScheduleResetService = void 0;
-const ActiveSchedule_1 = require("../models/ActiveSchedule");
-const ScheduleTemplate_1 = require("../models/ScheduleTemplate");
+import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
 /**
  * Service for resetting active schedules from their templates
  * Useful for scheduled jobs (e.g., weekly reset every Sunday)
  */
-class ScheduleResetService {
+export class ScheduleResetService {
     /**
      * Reset all active schedules by fetching their templates and copying the days array
      * Preserves coachIds and other metadata from the active schedule
@@ -20,7 +17,7 @@ class ScheduleResetService {
         let failedCount = 0;
         try {
             // Find all active schedules
-            const activeSchedules = await ActiveSchedule_1.ActiveSchedule.find();
+            const activeSchedules = await ActiveSchedule.find();
             if (activeSchedules.length === 0) {
                 return {
                     success: true,
@@ -34,7 +31,7 @@ class ScheduleResetService {
             for (const schedule of activeSchedules) {
                 try {
                     // Fetch the template
-                    const template = await ScheduleTemplate_1.ScheduleTemplate.findById(schedule.templateId);
+                    const template = await ScheduleTemplate.findById(schedule.templateId);
                     if (!template) {
                         failedCount++;
                         errors.push(`Template not found for active schedule ${schedule.id} (template ID: ${schedule.templateId})`);
@@ -87,7 +84,7 @@ class ScheduleResetService {
      */
     static async resetScheduleById(scheduleId) {
         try {
-            const schedule = await ActiveSchedule_1.ActiveSchedule.findById(scheduleId);
+            const schedule = await ActiveSchedule.findById(scheduleId);
             if (!schedule) {
                 return {
                     success: false,
@@ -98,7 +95,7 @@ class ScheduleResetService {
                 };
             }
             // Fetch the template
-            const template = await ScheduleTemplate_1.ScheduleTemplate.findById(schedule.templateId);
+            const template = await ScheduleTemplate.findById(schedule.templateId);
             if (!template) {
                 return {
                     success: false,
@@ -146,7 +143,7 @@ class ScheduleResetService {
         let failedCount = 0;
         try {
             // Find all active schedules for this gym
-            const activeSchedules = await ActiveSchedule_1.ActiveSchedule.find({ gymId });
+            const activeSchedules = await ActiveSchedule.find({ gymId });
             if (activeSchedules.length === 0) {
                 return {
                     success: true,
@@ -160,7 +157,7 @@ class ScheduleResetService {
             for (const schedule of activeSchedules) {
                 try {
                     // Fetch the template
-                    const template = await ScheduleTemplate_1.ScheduleTemplate.findById(schedule.templateId);
+                    const template = await ScheduleTemplate.findById(schedule.templateId);
                     if (!template) {
                         failedCount++;
                         errors.push(`Template not found for active schedule ${schedule.id} (template ID: ${schedule.templateId})`);
@@ -205,5 +202,4 @@ class ScheduleResetService {
         }
     }
 }
-exports.ScheduleResetService = ScheduleResetService;
 //# sourceMappingURL=ScheduleResetService.js.map

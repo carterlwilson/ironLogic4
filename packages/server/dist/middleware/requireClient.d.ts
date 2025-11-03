@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express';
-import { AuthenticatedRequest } from './auth';
+import { AuthenticatedRequest } from './auth.js';
 /**
  * Middleware to verify user has CLIENT role
  * Must be used after verifyToken middleware

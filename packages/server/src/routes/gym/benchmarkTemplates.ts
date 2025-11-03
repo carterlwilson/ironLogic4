@@ -1,12 +1,12 @@
 import express from 'express';
-import { verifyToken, requireOwnerOrAdminForGym } from '../../middleware/auth';
+import { verifyToken, requireOwnerOrAdminForGym } from '../../middleware/auth.js';
 import {
   getAllBenchmarkTemplates,
   getBenchmarkTemplateById,
   createBenchmarkTemplate,
   updateBenchmarkTemplate,
   deleteBenchmarkTemplate,
-} from '../../controllers/benchmarkTemplates';
+} from '../../controllers/benchmarkTemplates.js';
 
 const router = express.Router();
 

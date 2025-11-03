@@ -1,48 +1,12 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Program = void 0;
-const mongoose_1 = __importStar(require("mongoose"));
-const shared_1 = require("@ironlogic4/shared");
+import mongoose, { Schema } from 'mongoose';
+import { ActivityType, DistanceUnit } from '@ironlogic4/shared';
 // ============================================================================
 // MONGOOSE SCHEMAS
 // ============================================================================
 /**
  * Activity Schema
  */
-const activitySchema = new mongoose_1.Schema({
+const activitySchema = new Schema({
     activityTemplateId: {
         type: String,
         ref: 'ActivityTemplate',
@@ -51,7 +15,7 @@ const activitySchema = new mongoose_1.Schema({
     type: {
         type: String,
         required: true,
-        enum: Object.values(shared_1.ActivityType),
+        enum: Object.values(ActivityType),
     },
     order: {
         type: Number,
@@ -81,13 +45,13 @@ const activitySchema = new mongoose_1.Schema({
     },
     distanceUnit: {
         type: String,
-        enum: Object.values(shared_1.DistanceUnit),
+        enum: Object.values(DistanceUnit),
     },
 }, { _id: true });
 /**
  * Day Schema
  */
-const daySchema = new mongoose_1.Schema({
+const daySchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -109,7 +73,7 @@ const daySchema = new mongoose_1.Schema({
 /**
  * ActivityGroupTarget Schema
  */
-const activityGroupTargetSchema = new mongoose_1.Schema({
+const activityGroupTargetSchema = new Schema({
     activityGroupId: {
         type: String,
         ref: 'ActivityGroup',
@@ -125,7 +89,7 @@ const activityGroupTargetSchema = new mongoose_1.Schema({
 /**
  * Week Schema
  */
-const weekSchema = new mongoose_1.Schema({
+const weekSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -152,7 +116,7 @@ const weekSchema = new mongoose_1.Schema({
 /**
  * Block Schema
  */
-const blockSchema = new mongoose_1.Schema({
+const blockSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -179,7 +143,7 @@ const blockSchema = new mongoose_1.Schema({
 /**
  * Program Progress Schema
  */
-const programProgressSchema = new mongoose_1.Schema({
+const programProgressSchema = new Schema({
     blockIndex: {
         type: Number,
         required: true,
@@ -222,7 +186,7 @@ const programProgressSchema = new mongoose_1.Schema({
  * - gymId + isActive: For finding active programs in a gym
  * - createdBy: For finding programs created by a specific user
  */
-const programSchema = new mongoose_1.Schema({
+const programSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -345,7 +309,7 @@ programSchema.pre(['deleteOne', 'findOneAndDelete'], async function (next) {
     try {
         const programId = this.getQuery()._id;
         // Import User model dynamically to avoid circular dependency
-        const User = mongoose_1.default.model('User');
+        const User = mongoose.model('User');
         // Unassign this program from all clients
         await User.updateMany({ programId: programId }, { $unset: { programId: 1 } });
         next();
@@ -357,5 +321,5 @@ programSchema.pre(['deleteOne', 'findOneAndDelete'], async function (next) {
 // ============================================================================
 // MODEL EXPORT
 // ============================================================================
-exports.Program = mongoose_1.default.model('Program', programSchema);
+export const Program = mongoose.model('Program', programSchema);
 //# sourceMappingURL=Program.js.map

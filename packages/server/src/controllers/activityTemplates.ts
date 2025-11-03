@@ -1,6 +1,6 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { ActivityTemplate } from '../models/ActivityTemplate';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { ActivityTemplate } from '../models/ActivityTemplate.js';
 import { ApiResponse, PaginatedResponse, ActivityTemplateListParams, CreateActivityTemplateSchema, UpdateActivityTemplateSchema, ActivityTemplateListParamsSchema, ActivityTemplateIdSchema } from '@ironlogic4/shared';
 
 /**

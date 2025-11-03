@@ -2,7 +2,7 @@ import express from 'express';
 import {
   verifyToken,
   requireOwnerOrAdminForGym,
-} from '../../middleware/auth';
+} from '../../middleware/auth.js';
 import {
   getAllClients,
   getClientById,
@@ -11,7 +11,7 @@ import {
   deleteClient,
   assignProgram,
   unassignProgram,
-} from '../../controllers/clients';
+} from '../../controllers/clients.js';
 
 const router = express.Router();
 

@@ -1,26 +1,23 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.resetUserPassword = exports.deleteUser = exports.updateUser = exports.createUser = exports.getUserById = exports.getAllUsers = void 0;
-const User_1 = require("../models/User");
-const users_1 = require("@ironlogic4/shared/schemas/users");
-const users_2 = require("@ironlogic4/shared/types/users");
-const zod_1 = require("zod");
-const auth_1 = require("../utils/auth");
+import { User } from '../models/User.js';
+import { CreateUserSchema } from '@ironlogic4/shared/schemas/users';
+import { UserType } from '@ironlogic4/shared/types/users';
+import { z } from 'zod';
+import { generateRandomPassword } from '../utils/auth.js';
 // Update user schema for validation
-const UpdateUserSchema = zod_1.z.object({
-    email: zod_1.z.string().email().optional(),
-    firstName: zod_1.z.string().min(1).optional(),
-    lastName: zod_1.z.string().min(1).optional(),
-    userType: zod_1.z.nativeEnum(users_2.UserType).optional(),
-    password: zod_1.z.string().min(6).optional(),
-    gymId: zod_1.z.string().optional(),
+const UpdateUserSchema = z.object({
+    email: z.string().email().optional(),
+    firstName: z.string().min(1).optional(),
+    lastName: z.string().min(1).optional(),
+    userType: z.nativeEnum(UserType).optional(),
+    password: z.string().min(6).optional(),
+    gymId: z.string().optional(),
 }).refine((data) => Object.keys(data).length > 0, {
     message: "At least one field must be provided for update",
 });
 /**
  * Get all users with pagination
  */
-const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
@@ -40,16 +37,16 @@ const getAllUsers = async (req, res) => {
             ];
         }
         // Add role filtering
-        if (roleFilter && Object.values(users_2.UserType).includes(roleFilter)) {
+        if (roleFilter && Object.values(UserType).includes(roleFilter)) {
             query.userType = roleFilter;
         }
         const [users, total] = await Promise.all([
-            User_1.User.find(query)
+            User.find(query)
                 .select('-password')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(maxLimit),
-            User_1.User.countDocuments(query)
+            User.countDocuments(query)
         ]);
         const totalPages = Math.ceil(total / maxLimit);
         const response = {
@@ -72,14 +69,13 @@ const getAllUsers = async (req, res) => {
         });
     }
 };
-exports.getAllUsers = getAllUsers;
 /**
  * Get user by ID
  */
-const getUserById = async (req, res) => {
+export const getUserById = async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User_1.User.findById(id).select('-password');
+        const user = await User.findById(id).select('-password');
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -100,14 +96,13 @@ const getUserById = async (req, res) => {
         });
     }
 };
-exports.getUserById = getUserById;
 /**
  * Create new user (for admin/coach creating other users)
  */
-const createUser = async (req, res) => {
+export const createUser = async (req, res) => {
     try {
         // Validate request body
-        const validationResult = users_1.CreateUserSchema.safeParse(req.body);
+        const validationResult = CreateUserSchema.safeParse(req.body);
         if (!validationResult.success) {
             res.status(400).json({
                 success: false,
@@ -118,7 +113,7 @@ const createUser = async (req, res) => {
         }
         const { email, password, firstName, lastName, userType, gymId } = validationResult.data;
         // Check if user already exists
-        const existingUser = await User_1.User.findOne({ email });
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             res.status(409).json({
                 success: false,
@@ -127,7 +122,7 @@ const createUser = async (req, res) => {
             return;
         }
         // Create new user
-        const user = new User_1.User({
+        const user = new User({
             email,
             password,
             firstName,
@@ -152,11 +147,10 @@ const createUser = async (req, res) => {
         });
     }
 };
-exports.createUser = createUser;
 /**
  * Update user
  */
-const updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         // Validate request body
@@ -171,7 +165,7 @@ const updateUser = async (req, res) => {
         }
         const updateData = validationResult.data;
         // Find the user to update
-        const existingUser = await User_1.User.findById(id);
+        const existingUser = await User.findById(id);
         if (!existingUser) {
             res.status(404).json({
                 success: false,
@@ -181,7 +175,7 @@ const updateUser = async (req, res) => {
         }
         // Check if email is being updated and if it's already taken
         if (updateData.email && updateData.email !== existingUser.email) {
-            const emailExists = await User_1.User.findOne({ email: updateData.email });
+            const emailExists = await User.findOne({ email: updateData.email });
             if (emailExists) {
                 res.status(409).json({
                     success: false,
@@ -191,7 +185,7 @@ const updateUser = async (req, res) => {
             }
         }
         // Update user
-        const updatedUser = await User_1.User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
+        const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
         if (!updatedUser) {
             res.status(404).json({
                 success: false,
@@ -213,11 +207,10 @@ const updateUser = async (req, res) => {
         });
     }
 };
-exports.updateUser = updateUser;
 /**
  * Delete user
  */
-const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
         // Prevent users from deleting themselves
@@ -228,7 +221,7 @@ const deleteUser = async (req, res) => {
             });
             return;
         }
-        const user = await User_1.User.findByIdAndDelete(id);
+        const user = await User.findByIdAndDelete(id);
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -249,16 +242,15 @@ const deleteUser = async (req, res) => {
         });
     }
 };
-exports.deleteUser = deleteUser;
 /**
  * Reset user password (admin only)
  */
-const resetUserPassword = async (req, res) => {
+export const resetUserPassword = async (req, res) => {
     try {
         const { id } = req.params;
         const { generateRandom } = req.body;
         // Find the user
-        const user = await User_1.User.findById(id);
+        const user = await User.findById(id);
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -277,11 +269,11 @@ const resetUserPassword = async (req, res) => {
         let newPassword;
         if (generateRandom) {
             // Generate a random password
-            newPassword = (0, auth_1.generateRandomPassword)(12);
+            newPassword = generateRandomPassword(12);
         }
         else {
             // Use provided password or generate random if not provided
-            newPassword = req.body.newPassword || (0, auth_1.generateRandomPassword)(12);
+            newPassword = req.body.newPassword || generateRandomPassword(12);
             // Validate password if provided
             if (req.body.newPassword && req.body.newPassword.length < 6) {
                 res.status(400).json({
@@ -313,5 +305,4 @@ const resetUserPassword = async (req, res) => {
         });
     }
 };
-exports.resetUserPassword = resetUserPassword;
 //# sourceMappingURL=users.js.map

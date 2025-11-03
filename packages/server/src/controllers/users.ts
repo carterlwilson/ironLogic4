@@ -1,11 +1,11 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { User } from '../models/User';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { User } from '../models/User.js';
 import { CreateUserSchema } from '@ironlogic4/shared/schemas/users';
 import { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 import { UserType } from '@ironlogic4/shared/types/users';
 import { z } from 'zod';
-import { generateRandomPassword } from '../utils/auth';
+import { generateRandomPassword } from '../utils/auth.js';
 
 // Update user schema for validation
 const UpdateUserSchema = z.object({

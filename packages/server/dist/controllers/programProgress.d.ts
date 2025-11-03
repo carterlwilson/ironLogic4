@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
+import { AuthenticatedRequest } from '../middleware/auth.js';
 /**
  * Start Program - Initialize progress tracking
  * Sets startedAt timestamp and ensures progress is at block 0, week 0

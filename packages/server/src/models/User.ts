@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { User as IUser, UserType } from '@ironlogic4/shared/types/users';
-import { hashPassword, comparePassword } from '../utils/auth';
-import { clientBenchmarkSchema, ClientBenchmarkDocument } from './ClientBenchmark';
+import { hashPassword, comparePassword } from '../utils/auth.js';
+import { clientBenchmarkSchema, ClientBenchmarkDocument } from './ClientBenchmark.js';
 
 export interface UserDocument extends Omit<IUser, 'id' | 'currentBenchmarks' | 'historicalBenchmarks'>, Document {
   currentBenchmarks?: ClientBenchmarkDocument[];

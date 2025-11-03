@@ -1,14 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteProgram = exports.updateProgram = exports.createProgram = exports.getProgramById = exports.getAllPrograms = void 0;
-const Program_1 = require("../models/Program");
-const shared_1 = require("@ironlogic4/shared");
+import { Program } from '../models/Program.js';
+import { CreateProgramSchema, UpdateProgramSchema, ProgramListParamsSchema, ProgramIdSchema } from '@ironlogic4/shared';
 /**
  * Get all programs with pagination and filtering
  */
-const getAllPrograms = async (req, res) => {
+export const getAllPrograms = async (req, res) => {
     try {
-        const validation = shared_1.ProgramListParamsSchema.safeParse(req.query);
+        const validation = ProgramListParamsSchema.safeParse(req.query);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -42,13 +39,13 @@ const getAllPrograms = async (req, res) => {
         }
         // Get programs and total count
         const [programs, total] = await Promise.all([
-            Program_1.Program.find(query)
+            Program.find(query)
                 .populate('gymId', 'name')
                 .populate('createdBy', 'firstName lastName')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit),
-            Program_1.Program.countDocuments(query),
+            Program.countDocuments(query),
         ]);
         const totalPages = Math.ceil(total / limit);
         const response = {
@@ -71,13 +68,12 @@ const getAllPrograms = async (req, res) => {
         });
     }
 };
-exports.getAllPrograms = getAllPrograms;
 /**
  * Get program by ID
  */
-const getProgramById = async (req, res) => {
+export const getProgramById = async (req, res) => {
     try {
-        const validation = shared_1.ProgramIdSchema.safeParse(req.params);
+        const validation = ProgramIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -91,7 +87,7 @@ const getProgramById = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOne(query)
+        const program = await Program.findOne(query)
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         if (!program) {
@@ -115,13 +111,12 @@ const getProgramById = async (req, res) => {
         });
     }
 };
-exports.getProgramById = getProgramById;
 /**
  * Create new program
  */
-const createProgram = async (req, res) => {
+export const createProgram = async (req, res) => {
     try {
-        const validation = shared_1.CreateProgramSchema.safeParse(req.body);
+        const validation = CreateProgramSchema.safeParse(req.body);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -141,7 +136,7 @@ const createProgram = async (req, res) => {
                 return;
             }
         }
-        const newProgram = new Program_1.Program({
+        const newProgram = new Program({
             ...programData,
             createdBy: req.user.id,
             isActive: true,
@@ -165,14 +160,13 @@ const createProgram = async (req, res) => {
         });
     }
 };
-exports.createProgram = createProgram;
 /**
  * Update program by ID
  */
-const updateProgram = async (req, res) => {
+export const updateProgram = async (req, res) => {
     try {
-        const paramsValidation = shared_1.ProgramIdSchema.safeParse(req.params);
-        const bodyValidation = shared_1.UpdateProgramSchema.safeParse(req.body);
+        const paramsValidation = ProgramIdSchema.safeParse(req.params);
+        const bodyValidation = UpdateProgramSchema.safeParse(req.body);
         if (!paramsValidation.success || !bodyValidation.success) {
             res.status(400).json({
                 success: false,
@@ -190,7 +184,7 @@ const updateProgram = async (req, res) => {
         }
         // If blocks are being updated, check if program has been started
         if (updateData.blocks) {
-            const existingProgram = await Program_1.Program.findOne(query);
+            const existingProgram = await Program.findOne(query);
             if (!existingProgram) {
                 res.status(404).json({
                     success: false,
@@ -207,7 +201,7 @@ const updateProgram = async (req, res) => {
                 return;
             }
         }
-        const updatedProgram = await Program_1.Program.findOneAndUpdate(query, updateData, { new: true, runValidators: true })
+        const updatedProgram = await Program.findOneAndUpdate(query, updateData, { new: true, runValidators: true })
             .populate('gymId', 'name')
             .populate('createdBy', 'firstName lastName');
         if (!updatedProgram) {
@@ -232,13 +226,12 @@ const updateProgram = async (req, res) => {
         });
     }
 };
-exports.updateProgram = updateProgram;
 /**
  * Delete program by ID (soft delete - sets isActive to false)
  */
-const deleteProgram = async (req, res) => {
+export const deleteProgram = async (req, res) => {
     try {
-        const validation = shared_1.ProgramIdSchema.safeParse(req.params);
+        const validation = ProgramIdSchema.safeParse(req.params);
         if (!validation.success) {
             res.status(400).json({
                 success: false,
@@ -252,7 +245,7 @@ const deleteProgram = async (req, res) => {
         if (req.user?.userType === 'owner') {
             query.gymId = req.user.gymId;
         }
-        const program = await Program_1.Program.findOneAndUpdate(query, { isActive: false }, { new: true });
+        const program = await Program.findOneAndUpdate(query, { isActive: false }, { new: true });
         if (!program) {
             res.status(404).json({
                 success: false,
@@ -274,5 +267,4 @@ const deleteProgram = async (req, res) => {
         });
     }
 };
-exports.deleteProgram = deleteProgram;
 //# sourceMappingURL=programs.js.map

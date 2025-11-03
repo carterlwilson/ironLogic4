@@ -1,43 +1,7 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ScheduleTemplate = void 0;
-const mongoose_1 = __importStar(require("mongoose"));
-const shared_1 = require("@ironlogic4/shared");
+import mongoose, { Schema } from 'mongoose';
+import { DayOfWeek } from '@ironlogic4/shared';
 // TimeSlot subdocument schema
-const timeSlotSchema = new mongoose_1.Schema({
+const timeSlotSchema = new Schema({
     startTime: {
         type: String,
         required: true,
@@ -69,11 +33,11 @@ const timeSlotSchema = new mongoose_1.Schema({
     },
 });
 // ScheduleDay subdocument schema
-const scheduleDaySchema = new mongoose_1.Schema({
+const scheduleDaySchema = new Schema({
     dayOfWeek: {
         type: Number,
         required: true,
-        enum: Object.values(shared_1.DayOfWeek).filter(v => typeof v === 'number'),
+        enum: Object.values(DayOfWeek).filter(v => typeof v === 'number'),
     },
     timeSlots: {
         type: [timeSlotSchema],
@@ -84,7 +48,7 @@ const scheduleDaySchema = new mongoose_1.Schema({
     _id: false, // Don't generate _id for schedule days
 });
 // Main ScheduleTemplate schema
-const scheduleTemplateSchema = new mongoose_1.Schema({
+const scheduleTemplateSchema = new Schema({
     gymId: {
         type: String,
         ref: 'Gym',
@@ -148,5 +112,5 @@ scheduleTemplateSchema.virtual('coaches', {
     localField: 'coachIds',
     foreignField: '_id',
 });
-exports.ScheduleTemplate = mongoose_1.default.model('ScheduleTemplate', scheduleTemplateSchema);
+export const ScheduleTemplate = mongoose.model('ScheduleTemplate', scheduleTemplateSchema);
 //# sourceMappingURL=ScheduleTemplate.js.map

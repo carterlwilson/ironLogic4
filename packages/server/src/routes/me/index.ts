@@ -1,6 +1,6 @@
 import express from 'express';
-import benchmarksRouter from './benchmarks';
-import workoutsRouter from './workouts';
+import benchmarksRouter from './benchmarks.js';
+import workoutsRouter from './workouts.js';
 
 const router = express.Router();
 

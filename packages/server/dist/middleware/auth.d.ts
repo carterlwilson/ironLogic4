@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { UserType } from '@ironlogic4/shared/types/users';
-import { UserDocument } from '../models/User';
+import { UserDocument } from '../models/User.js';
 export interface AuthenticatedRequest extends Request {
     user?: UserDocument;
 }

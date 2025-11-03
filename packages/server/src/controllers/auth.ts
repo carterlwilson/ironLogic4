@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { RegisterSchema, LoginSchema } from '@ironlogic4/shared/schemas/auth';
 import { ApiResponse } from '@ironlogic4/shared/types/api';
-import { User } from '../models/User';
-import { Gym } from '../models/Gym';
-import { generateToken } from '../utils/auth';
+import { User } from '../models/User.js';
+import { Gym } from '../models/Gym.js';
+import { generateToken } from '../utils/auth.js';
 
 /**
  * Register a new user

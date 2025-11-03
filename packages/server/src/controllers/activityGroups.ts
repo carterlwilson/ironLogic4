@@ -1,8 +1,8 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { ActivityGroup } from '../models/ActivityGroup';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { ActivityGroup } from '../models/ActivityGroup.js';
 import { ApiResponse, PaginatedResponse, ActivityGroupListParams, CreateActivityGroupSchema, UpdateActivityGroupSchema, ActivityGroupListParamsSchema, ActivityGroupIdSchema } from '@ironlogic4/shared';
-import { cleanupActivityTemplateReferences } from '../services/activityGroupCleanup';
+import { cleanupActivityTemplateReferences } from '../services/activityGroupCleanup.js';
 
 export const getAllActivityGroups = async (
   req: AuthenticatedRequest,

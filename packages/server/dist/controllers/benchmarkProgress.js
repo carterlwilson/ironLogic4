@@ -1,21 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBenchmarkProgress = void 0;
-const User_1 = require("../models/User");
-const BenchmarkTemplate_1 = require("../models/BenchmarkTemplate");
-const shared_1 = require("@ironlogic4/shared");
+import { User } from '../models/User.js';
+import { BenchmarkTemplate } from '../models/BenchmarkTemplate.js';
+import { BenchmarkType } from '@ironlogic4/shared';
 /**
  * Helper: Extract numeric value from benchmark based on type
  */
 function extractValue(benchmark) {
     switch (benchmark.type) {
-        case shared_1.BenchmarkType.WEIGHT:
+        case BenchmarkType.WEIGHT:
             return benchmark.weightKg ?? null;
-        case shared_1.BenchmarkType.TIME:
+        case BenchmarkType.TIME:
             return benchmark.timeSeconds ?? null;
-        case shared_1.BenchmarkType.REPS:
+        case BenchmarkType.REPS:
             return benchmark.reps ?? null;
-        case shared_1.BenchmarkType.OTHER:
+        case BenchmarkType.OTHER:
             // Try to parse as number, return null if can't
             const parsed = parseFloat(benchmark.otherNotes);
             return isNaN(parsed) ? null : parsed;
@@ -43,13 +40,13 @@ function formatDate(date, includeYear) {
  */
 function getUnitLabel(benchmarkType) {
     switch (benchmarkType) {
-        case shared_1.BenchmarkType.WEIGHT:
+        case BenchmarkType.WEIGHT:
             return 'kg';
-        case shared_1.BenchmarkType.TIME:
+        case BenchmarkType.TIME:
             return 'seconds';
-        case shared_1.BenchmarkType.REPS:
+        case BenchmarkType.REPS:
             return 'reps';
-        case shared_1.BenchmarkType.OTHER:
+        case BenchmarkType.OTHER:
             return 'value';
         default:
             return '';
@@ -64,13 +61,13 @@ function getUnitLabel(benchmarkType) {
  * - startDate: ISO date string for filtering (optional)
  * - endDate: ISO date string for filtering (optional)
  */
-const getBenchmarkProgress = async (req, res) => {
+export const getBenchmarkProgress = async (req, res) => {
     try {
         const userId = req.user.id;
         const { templateId } = req.params;
         const { limit, startDate, endDate } = req.query;
         // Fetch user with benchmarks
-        const user = await User_1.User.findById(userId).select('currentBenchmarks historicalBenchmarks');
+        const user = await User.findById(userId).select('currentBenchmarks historicalBenchmarks');
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -79,7 +76,7 @@ const getBenchmarkProgress = async (req, res) => {
             return;
         }
         // Fetch benchmark template
-        const template = await BenchmarkTemplate_1.BenchmarkTemplate.findById(templateId);
+        const template = await BenchmarkTemplate.findById(templateId);
         if (!template) {
             res.status(404).json({
                 success: false,
@@ -160,5 +157,4 @@ const getBenchmarkProgress = async (req, res) => {
         });
     }
 };
-exports.getBenchmarkProgress = getBenchmarkProgress;
 //# sourceMappingURL=benchmarkProgress.js.map

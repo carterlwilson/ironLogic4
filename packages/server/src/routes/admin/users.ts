@@ -3,7 +3,7 @@ import {
   verifyToken,
   requireAdmin,
   AuthenticatedRequest,
-} from '../../middleware/auth';
+} from '../../middleware/auth.js';
 import {
   getAllUsers,
   getUserById,
@@ -11,7 +11,7 @@ import {
   updateUser,
   deleteUser,
   resetUserPassword,
-} from '../../controllers/users';
+} from '../../controllers/users.js';
 
 const router = express.Router();
 

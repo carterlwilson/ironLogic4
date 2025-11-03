@@ -1,4 +1,4 @@
-import { ActivityTemplate } from '../models/ActivityTemplate';
+import { ActivityTemplate } from '../models/ActivityTemplate.js';
 
 export const cleanupActivityTemplateReferences = async (groupId: string): Promise<void> => {
   try {

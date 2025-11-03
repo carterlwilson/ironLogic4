@@ -3,14 +3,14 @@ import {
   verifyToken,
   requireOwnerOrAdminForGym,
   AuthenticatedRequest,
-} from '../../middleware/auth';
+} from '../../middleware/auth.js';
 import {
   getAllActivityGroups,
   getActivityGroupById,
   createActivityGroup,
   updateActivityGroup,
   deleteActivityGroup,
-} from '../../controllers/activityGroups';
+} from '../../controllers/activityGroups.js';
 
 const router = express.Router();
 

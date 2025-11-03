@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
+import { AuthenticatedRequest } from '../middleware/auth.js';
 export declare const getAllActivityGroups: (req: AuthenticatedRequest, res: Response) => Promise<void>;
 export declare const getActivityGroupById: (req: AuthenticatedRequest, res: Response) => Promise<void>;
 export declare const createActivityGroup: (req: AuthenticatedRequest, res: Response) => Promise<void>;

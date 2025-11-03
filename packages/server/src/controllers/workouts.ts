@@ -1,9 +1,9 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../middleware/auth';
-import { User } from '../models/User';
-import { Program } from '../models/Program';
-import { ActivityTemplate } from '../models/ActivityTemplate';
-import { BenchmarkTemplate } from '../models/BenchmarkTemplate';
+import { AuthenticatedRequest } from '../middleware/auth.js';
+import { User } from '../models/User.js';
+import { Program } from '../models/Program.js';
+import { ActivityTemplate } from '../models/ActivityTemplate.js';
+import { BenchmarkTemplate } from '../models/BenchmarkTemplate.js';
 import { BenchmarkType } from '@ironlogic4/shared';
 
 /**

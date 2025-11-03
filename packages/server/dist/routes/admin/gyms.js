@@ -1,20 +1,18 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = require("express");
-const gyms_1 = require("../../controllers/gyms");
-const auth_1 = require("../../middleware/auth");
-const router = (0, express_1.Router)();
+import { Router } from 'express';
+import { getAllGyms, getGymById, createGym, updateGym, deleteGym, } from '../../controllers/gyms.js';
+import { verifyToken, requireAdmin } from '../../middleware/auth.js';
+const router = Router();
 // Apply authentication and admin requirement to all routes
-router.use(auth_1.verifyToken, auth_1.requireAdmin);
+router.use(verifyToken, requireAdmin);
 // GET /api/admin/gyms - Get all gyms with pagination and filtering
-router.get('/', gyms_1.getAllGyms);
+router.get('/', getAllGyms);
 // GET /api/admin/gyms/:id - Get specific gym by ID
-router.get('/:id', gyms_1.getGymById);
+router.get('/:id', getGymById);
 // POST /api/admin/gyms - Create new gym
-router.post('/', gyms_1.createGym);
+router.post('/', createGym);
 // PUT /api/admin/gyms/:id - Update gym
-router.put('/:id', gyms_1.updateGym);
+router.put('/:id', updateGym);
 // DELETE /api/admin/gyms/:id - Delete gym
-router.delete('/:id', gyms_1.deleteGym);
-exports.default = router;
+router.delete('/:id', deleteGym);
+export default router;
 //# sourceMappingURL=gyms.js.map
