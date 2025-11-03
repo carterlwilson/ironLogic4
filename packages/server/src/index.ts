@@ -19,7 +19,7 @@ import meRoutes from './routes/me/index.js';
 dotenv.config();
 
 const app = express();
-app.set('trust proxy', 2);
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3001;
 
 const limiter = rateLimit({
@@ -62,6 +62,10 @@ app.use('/api/me', meRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
+});
+
+app.get('/ip', (request, response) => {
+    response.send(request.ip);
 });
 
 const connectDB = async () => {
