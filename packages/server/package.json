@@ -1,6 +1,7 @@
 {
   "name": "@ironlogic4/server",
   "version": "1.0.0",
+  "type": "module",
   "description": "Express.js API server with MongoDB and JWT authentication",
   "main": "dist/index.js",
   "scripts": {
