@@ -64,8 +64,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-app.get('/ip', (request, response) => {
-    response.send(request.ip);
+app.get('/ip', (req, res) => {
+    res.json({
+        ip: req.ip,
+        ips: req.ips,
+        headers: {
+            'x-forwarded-for': req.headers['x-forwarded-for']
+        }
+    });
 });
 
 const connectDB = async () => {
