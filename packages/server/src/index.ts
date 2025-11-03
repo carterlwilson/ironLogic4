@@ -19,7 +19,7 @@ import meRoutes from './routes/me/index.js';
 dotenv.config();
 
 const app = express();
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 3001;
 
 const limiter = rateLimit({
