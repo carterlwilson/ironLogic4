@@ -1,1 +1,1 @@
-{"version":3,"file":"activityTemplates.js","sourceRoot":"","sources":["../../src/types/activityTemplates.ts"],"names":[],"mappings":"AAAA,MAAM,CAAN,IAAY,YAKX;AALD,WAAY,YAAY;IACtB,6BAAa,CAAA;IACb,iCAAiB,CAAA;IACjB,+BAAe,CAAA;IACf,uCAAuB,CAAA;AACzB,CAAC,EALW,YAAY,KAAZ,YAAY,QAKvB"}
+{"version":3,"file":"activityTemplates.js","sourceRoot":"","sources":["../../src/types/activityTemplates.ts"],"names":[],"mappings":";;;AAAA,IAAY,YAKX;AALD,WAAY,YAAY;IACtB,6BAAa,CAAA;IACb,iCAAiB,CAAA;IACjB,+BAAe,CAAA;IACf,uCAAuB,CAAA;AACzB,CAAC,EALW,YAAY,4BAAZ,YAAY,QAKvB"}
