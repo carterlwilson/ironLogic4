@@ -39,7 +39,7 @@ export const CreateClientSchema = z.object({
   gymId: objectId,
   password: z.string().min(8, 'Password must be at least 8 characters').optional(),
   generatePassword: z.boolean().optional().default(true),
-  programId: objectId.optional(),
+  programId: objectId.nullish(),
 });
 
 /**
