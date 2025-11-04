@@ -112,9 +112,19 @@ const startServer = async () => {
     await connectDB();
     console.log('[STARTUP] Database connection complete, starting HTTP server...');
 
-    app.listen(PORT, () => {
+    const server = app.listen(PORT, () => {
       console.log('[STARTUP] ✓ Server successfully running on port', PORT);
       console.log('[STARTUP] Server is ready to accept connections');
+    });
+
+    server.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error('[STARTUP ERROR] Port', PORT, 'is already in use');
+        console.error('[STARTUP ERROR] Another process is using this port');
+      } else {
+        console.error('[STARTUP ERROR] Server error:', error);
+      }
+      process.exit(1);
     });
   } catch (error) {
     console.error('[STARTUP ERROR] Failed to start server:', error);
