@@ -19,7 +19,11 @@ import meRoutes from './routes/me/index.js';
 dotenv.config();
 
 const app = express();
+
+// IMPORTANT: Set trust proxy BEFORE creating any middleware
+// This must be set early for Railway's reverse proxy to work correctly
 app.set('trust proxy', 1);
+
 const PORT = process.env.PORT || 3001;
 
 const limiter = rateLimit({
