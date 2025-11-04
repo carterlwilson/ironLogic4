@@ -5,7 +5,7 @@ services:
     runtime: node
     region: oregon
     plan: free
-    buildCommand: npm install && npm run build -w @ironlogic4/shared && npm run build -w @ironlogic4/server
+    buildCommand: npm install --include=dev && npm run build -w @ironlogic4/shared && npm run build -w @ironlogic4/server
     startCommand: npm run start -w @ironlogic4/server
     healthCheckPath: /health
     envVars:
