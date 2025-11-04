@@ -84,21 +84,39 @@ app.get('/ip', (req, res) => {
 
 const connectDB = async () => {
   try {
+    console.log('[STARTUP] Attempting to connect to MongoDB...');
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ironlogic4';
+    console.log('[STARTUP] MongoDB URI configured:', mongoUri ? 'YES (length: ' + mongoUri.length + ')' : 'NO');
+
     await mongoose.connect(mongoUri);
-    console.log('MongoDB connected successfully');
+    console.log('[STARTUP] MongoDB connected successfully');
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    console.error('[STARTUP ERROR] MongoDB connection error:', error);
     process.exit(1);
   }
 };
 
 const startServer = async () => {
-  await connectDB();
+  console.log('[STARTUP] Starting server initialization...');
+  console.log('[STARTUP] Node environment:', process.env.NODE_ENV || 'not set');
+  console.log('[STARTUP] Port configured:', PORT);
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
+  try {
+    await connectDB();
+    console.log('[STARTUP] Database connection complete, starting HTTP server...');
+
+    app.listen(PORT, () => {
+      console.log('[STARTUP] ✓ Server successfully running on port', PORT);
+      console.log('[STARTUP] Server is ready to accept connections');
+    });
+  } catch (error) {
+    console.error('[STARTUP ERROR] Failed to start server:', error);
+    process.exit(1);
+  }
 };
 
-startServer().catch(console.error);
+console.log('[STARTUP] Initializing application...');
+startServer().catch((error) => {
+  console.error('[STARTUP ERROR] Unhandled error in startServer:', error);
+  process.exit(1);
+});
