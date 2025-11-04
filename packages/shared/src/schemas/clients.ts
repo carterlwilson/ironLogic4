@@ -3,6 +3,12 @@ import { BenchmarkType } from '../types/benchmarkTemplates.js';
 
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format');
 
+// Helper for nullable ObjectId fields that may receive empty strings from forms
+const nullableObjectId = z.preprocess(
+  (val) => val === '' ? undefined : val,
+  objectId.optional()
+);
+
 /**
  * Schema for ClientBenchmark subdocuments
  */
@@ -23,7 +29,7 @@ export const ClientBenchmarkSchema = z.object({
  * Schema for listing clients with pagination and filtering
  */
 export const ClientListParamsSchema = z.object({
-  gymId: objectId.optional(),
+  gymId: nullableObjectId,
   search: z.string().optional(),
   page: z.coerce.number().min(1, 'Page must be at least 1').default(1),
   limit: z.coerce.number().min(1, 'Limit must be at least 1').max(100, 'Limit cannot exceed 100').default(10),
@@ -39,7 +45,7 @@ export const CreateClientSchema = z.object({
   gymId: objectId,
   password: z.string().min(8, 'Password must be at least 8 characters').optional(),
   generatePassword: z.boolean().optional().default(true),
-  programId: objectId.nullish(),
+  programId: nullableObjectId,
 });
 
 /**
