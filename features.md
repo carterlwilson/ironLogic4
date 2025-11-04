@@ -1,24 +1,22 @@
-Go into plan mode.
+Go into plan mode. 
 
-Forget that endpoint. I configured it to use the /health endpoint, and now
-the logs look like this:
+The url being called in the users tab (one place this is happening) is
+https://ironlogic-client-preprod.vercel.app/api/admin/users?page=1&limit=10
 
-(node:15) [MONGOOSE] Warning: Duplicate schema index on {"templateId":1} found. This is often due to declaring an index using both "index: true" and "schema.index()". Please remove the duplicate index definition.
-[STARTUP] MongoDB connected successfully
-[STARTUP] Database connection complete, starting HTTP server...
-[STARTUP] ✓ Server successfully running on port 8080
-[STARTUP] Server is ready to accept connections
-[REQUEST] GET /health from ::ffff:100.64.0.2
-[HEALTH CHECK] Health endpoint hit
-Stopping Container
-npm error Lifecycle script `start` failed with error:
-npm error path /app/packages/server
-npm error workspace @ironlogic4/server@1.0.0
-npm error location /app/packages/server
-npm error command failed
-npm error signal SIGTERM
-npm error command sh -c node dist/index.js
+the http status code is a 304
 
-I can run a curl to that endpoint and get the following response:
-{"status":"OK","timestamp":"2025-11-04T17:52:38.627Z"}
-Railway is expecting a 200 status, should that response have 200 somewhere in it?
+the html response is
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IronLogic4</title>
+    <script type="module" crossorigin src="/assets/index-DpC1wd8L.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BrLTDx1c.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

@@ -2,7 +2,8 @@ import type { IProgram, CreateProgramRequest, UpdateProgramRequest, ProgramListP
 import type { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 
 class ProgramApiService {
-  private baseUrl = '/api/gym/programs';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/gym/programs`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)
@@ -19,7 +20,7 @@ class ProgramApiService {
   }
 
   async getPrograms(params: ProgramListParams = {}): Promise<PaginatedResponse<IProgram>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {

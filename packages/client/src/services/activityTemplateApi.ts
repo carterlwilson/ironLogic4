@@ -2,7 +2,8 @@ import type { ActivityTemplate, CreateActivityTemplateRequest, UpdateActivityTem
 import type { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 
 class ActivityTemplateApiService {
-  private baseUrl = '/api/gym/activity-templates';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/gym/activity-templates`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)
@@ -19,7 +20,7 @@ class ActivityTemplateApiService {
   }
 
   async getActivityTemplates(params: ActivityTemplateListParams = {}): Promise<PaginatedResponse<ActivityTemplate>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {

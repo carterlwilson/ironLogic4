@@ -8,7 +8,8 @@ export interface MyBenchmarksResponse {
 }
 
 class ClientBenchmarkApiService {
-  private baseUrl = '/api/me/benchmarks';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/me/benchmarks`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)

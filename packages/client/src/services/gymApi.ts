@@ -2,7 +2,8 @@ import type { Gym, CreateGymRequest, UpdateGymRequest, GymListParams } from '@ir
 import type { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 
 class GymApiService {
-  private baseUrl = '/api/admin/gyms';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/admin/gyms`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)
@@ -19,7 +20,7 @@ class GymApiService {
   }
 
   async getGyms(params: GymListParams = {}): Promise<PaginatedResponse<Gym>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {

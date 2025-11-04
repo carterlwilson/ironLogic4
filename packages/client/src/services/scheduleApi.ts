@@ -13,7 +13,8 @@ import type {
  * Handles both schedule templates and active schedules
  */
 class ScheduleApiService {
-  private baseUrl = '/api/gym/schedules';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/gym/schedules`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     const authTokens = localStorage.getItem('authTokens');

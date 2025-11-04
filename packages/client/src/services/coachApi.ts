@@ -10,7 +10,8 @@ import type {
 import type { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 
 class CoachApiService {
-  private baseUrl = '/api/gym/coaches';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/gym/coaches`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)
@@ -27,7 +28,7 @@ class CoachApiService {
   }
 
   async getCoaches(params: CoachListParams = { page: 1, limit: 10 }): Promise<PaginatedResponse<CoachResponse>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {

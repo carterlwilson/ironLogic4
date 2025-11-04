@@ -25,7 +25,8 @@ export interface UpdateBenchmarkTemplateRequest {
 }
 
 class BenchmarkTemplateApiService {
-  private baseUrl = '/api/gym/benchmark-templates';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/gym/benchmark-templates`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)
@@ -42,7 +43,7 @@ class BenchmarkTemplateApiService {
   }
 
   async getBenchmarkTemplates(params: BenchmarkTemplateListParams = { page: 1, limit: 10 }): Promise<PaginatedResponse<BenchmarkTemplate>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {

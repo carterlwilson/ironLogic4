@@ -40,7 +40,8 @@ export interface ResetPasswordResponse extends ApiResponse {
 }
 
 class UserApiService {
-  private baseUrl = '/api/admin/users';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/admin/users`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)
@@ -57,7 +58,7 @@ class UserApiService {
   }
 
   async getUsers(params: UserListParams = {}): Promise<PaginatedResponse<User>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {

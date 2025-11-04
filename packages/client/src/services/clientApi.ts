@@ -34,7 +34,8 @@ export interface UpdateClientRequest {
 }
 
 class ClientApiService {
-  private baseUrl = '/api/gym/clients';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/gym/clients`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     const authTokens = localStorage.getItem('authTokens');
@@ -50,7 +51,7 @@ class ClientApiService {
   }
 
   async getClients(params: ClientListParams = {}): Promise<PaginatedResponse<User>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {

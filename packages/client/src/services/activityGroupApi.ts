@@ -13,7 +13,8 @@ export interface UpdateActivityGroupRequest {
 }
 
 class ActivityGroupApiService {
-  private baseUrl = '/api/gym/activity-groups';
+  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseUrl = `${this.apiBaseUrl}/api/gym/activity-groups`;
 
   private async getAuthHeaders(): Promise<HeadersInit> {
     // Get token from localStorage (from AuthProvider)
@@ -30,7 +31,7 @@ class ActivityGroupApiService {
   }
 
   async getActivityGroups(params: ActivityGroupListParams = { page: 1, limit: 10 }): Promise<PaginatedResponse<ActivityGroup>> {
-    const url = new URL(this.baseUrl, window.location.origin);
+    const url = new URL(this.baseUrl);
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {
