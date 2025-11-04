@@ -74,9 +74,17 @@ app.use('/api/gym/programs', gymProgramRoutes);
 app.use('/api/gym/schedules', gymScheduleRoutes);
 app.use('/api/me', meRoutes);
 
+// Root path for Railway health checks
+app.get('/', (req, res) => {
+  console.log('[HEALTH CHECK] Root endpoint hit');
+  res.status(200).send('OK');
+});
+
 app.get('/health', (req, res) => {
   console.log('[HEALTH CHECK] Health endpoint hit');
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+    res.status(200).send({
+        success: true,
+    });
 });
 
 app.get('/ip', (req, res) => {
