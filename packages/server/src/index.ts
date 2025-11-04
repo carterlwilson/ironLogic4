@@ -25,7 +25,10 @@ const PORT = process.env.PORT || 3001;
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 100 in prod, 1000 in dev
-  message: 'Too many requests from this IP, please try again later.'
+  message: 'Too many requests from this IP, please try again later.',
+  validate: {
+    trustProxy: false, // Disable trust proxy validation for Railway
+  },
 });
 
 // Configure CORS
