@@ -32,8 +32,16 @@ const corsOptions = corsOrigin
   ? {
       origin: corsOrigin.split(',').map(origin => origin.trim()),
       credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      optionsSuccessStatus: 200
     }
-  : {}; // Default: allow all origins in development
+  : {
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+      optionsSuccessStatus: 200
+    }; // Default: allow all origins in development
 
 app.use(helmet());
 app.use(cors(corsOptions));
