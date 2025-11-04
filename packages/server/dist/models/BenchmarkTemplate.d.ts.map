@@ -1,1 +1,0 @@
-{"version":3,"file":"BenchmarkTemplate.d.ts","sourceRoot":"","sources":["../../src/models/BenchmarkTemplate.ts"],"names":[],"mappings":"AAAA,OAAO,QAAQ,EAAE,EAAE,QAAQ,EAAU,MAAM,UAAU,CAAC;AACtD,OAAO,EAAE,iBAAiB,IAAI,kBAAkB,EAAiB,MAAM,oBAAoB,CAAC;AAE5F,MAAM,WAAW,yBAA0B,SAAQ,IAAI,CAAC,kBAAkB,EAAE,IAAI,CAAC,EAAE,QAAQ;CAAG;AAwD9F,eAAO,MAAM,iBAAiB;;;;OAA0F,CAAC"}
