@@ -26,15 +26,6 @@ app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3001;
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 100 in prod, 1000 in dev
-  message: 'Too many requests from this IP, please try again later.',
-  validate: {
-    trustProxy: false, // Disable trust proxy validation for Railway
-  },
-});
-
 // Configure CORS
 const corsOrigin = process.env.CORS_ORIGIN;
 const corsOptions = corsOrigin
@@ -47,10 +38,20 @@ const corsOptions = corsOrigin
 app.use(helmet());
 app.use(cors(corsOptions));
 
-// Only apply rate limiting if not explicitly disabled
-if (process.env.DISABLE_RATE_LIMIT !== 'true') {
-  app.use(limiter);
-}
+// Temporarily disable rate limiting to diagnose Railway deployment issue
+// The rate limiter validation was causing SIGTERM on startup
+// TODO: Re-enable once trust proxy issue is resolved
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 100 in prod, 1000 in dev
+//   message: 'Too many requests from this IP, please try again later.',
+//   validate: {
+//     trustProxy: false, // Disable trust proxy validation for Railway
+//   },
+// });
+// if (process.env.DISABLE_RATE_LIMIT !== 'true') {
+//   app.use(limiter);
+// }
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
