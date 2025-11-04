@@ -1,3 +1,4 @@
 Stay in plan mode.
 
-What would happen if you did string().objectId().nullish?
+I'm getting the following error trying to call a patch endpoint.
+Let's make sure CORS is allowing for patch requests.
