@@ -55,6 +55,12 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Request logging middleware for debugging
+app.use((req, res, next) => {
+  console.log(`[REQUEST] ${req.method} ${req.path} from ${req.ip}`);
+  next();
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin/users', adminUserRoutes);
@@ -69,6 +75,7 @@ app.use('/api/gym/schedules', gymScheduleRoutes);
 app.use('/api/me', meRoutes);
 
 app.get('/health', (req, res) => {
+  console.log('[HEALTH CHECK] Health endpoint hit');
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
@@ -114,6 +121,17 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
+// Global error handlers
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[CRITICAL] Unhandled Promise Rejection:', reason);
+  console.error('[CRITICAL] Promise:', promise);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('[CRITICAL] Uncaught Exception:', error);
+  process.exit(1);
+});
 
 console.log('[STARTUP] Initializing application...');
 startServer().catch((error) => {
