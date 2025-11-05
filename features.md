@@ -1,8 +1,5 @@
 Stay in plan mode.
 
-Whenn I try to create a new vercel project with the mobile app,
-I'm seeing the following error: 
-
-Header at index 2 has invalid `source` pattern "/workbox-*.js".
-
-Can you make sure the mobile configuration file is set up correctly?
+In the mobile app, for every query to the server I'm getting back html
+and seeing an error that says something 'is not a valid json'. this
+happened in the client app before and we fixed it but I don't remember how, do you?

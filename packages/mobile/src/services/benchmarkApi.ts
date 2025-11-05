@@ -6,7 +6,8 @@ import {
   BenchmarkType
 } from '@ironlogic4/shared';
 
-const API_BASE = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const API_BASE = `${API_BASE_URL}/api`;
 
 interface GetBenchmarksResponse {
   success: true;
