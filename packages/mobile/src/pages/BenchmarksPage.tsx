@@ -1,11 +1,14 @@
 import { Container, Title, Text, Stack, Tabs, ActionIcon, Group } from '@mantine/core';
 import { IconPlus, IconRefresh } from '@tabler/icons-react';
+import { useState, useEffect } from 'react';
 import { useBenchmarks } from '../hooks/useBenchmarks';
 import { BenchmarkList } from '../components/benchmarks/BenchmarkList';
 import { BenchmarkProgressList } from '../components/benchmarks/BenchmarkProgressList';
 import { CreateBenchmarkModal } from '../components/benchmarks/CreateBenchmarkModal';
 import { EditBenchmarkModal } from '../components/benchmarks/EditBenchmarkModal';
 import { CreateNewFromOldModal } from '../components/benchmarks/CreateNewFromOldModal';
+import { TagFilter } from '../components/benchmarks/TagFilter';
+import { getAllUniqueTags, filterBenchmarksByTag } from '../utils/tagUtils';
 
 export const BenchmarksPage = () => {
   const {
@@ -25,6 +28,34 @@ export const BenchmarksPage = () => {
     openCreateNewFromOld,
     closeModals,
   } = useBenchmarks();
+
+  // Tag filtering state
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [filteredCurrentBenchmarks, setFilteredCurrentBenchmarks] = useState(currentBenchmarks);
+  const [filteredHistoricalBenchmarks, setFilteredHistoricalBenchmarks] = useState(historicalBenchmarks);
+
+  // Update available tags and filtered benchmarks when benchmarks change
+  useEffect(() => {
+    const allBenchmarks = [...currentBenchmarks, ...historicalBenchmarks];
+    const tags = getAllUniqueTags(allBenchmarks);
+    setAvailableTags(tags);
+
+    // Auto-reset selectedTag if it no longer exists in available tags
+    if (selectedTag && !tags.includes(selectedTag)) {
+      setSelectedTag(null);
+    }
+
+    // Filter benchmarks
+    const filteredCurrent = filterBenchmarksByTag(currentBenchmarks, selectedTag);
+    const filteredHistorical = filterBenchmarksByTag(historicalBenchmarks, selectedTag);
+    setFilteredCurrentBenchmarks(filteredCurrent);
+    setFilteredHistoricalBenchmarks(filteredHistorical);
+  }, [currentBenchmarks, historicalBenchmarks, selectedTag]);
+
+  const handleTagSelect = (tag: string | null) => {
+    setSelectedTag(tag);
+  };
 
   return (
     <Container size="sm" py="md">
@@ -57,20 +88,29 @@ export const BenchmarksPage = () => {
           </Group>
         </Group>
 
+        {/* Tag Filter */}
+        <TagFilter
+          tags={availableTags}
+          selectedTag={selectedTag}
+          onTagSelect={handleTagSelect}
+          currentCount={currentBenchmarks.length + historicalBenchmarks.length}
+          filteredCount={filteredCurrentBenchmarks.length + filteredHistoricalBenchmarks.length}
+        />
+
         {/* Tabs */}
         <Tabs defaultValue="current" variant="pills">
           <Tabs.List grow mb="md">
             <Tabs.Tab value="current">
-              Current ({currentBenchmarks.length})
+              Current ({filteredCurrentBenchmarks.length})
             </Tabs.Tab>
             <Tabs.Tab value="historical">
-              Historical ({historicalBenchmarks.length})
+              Historical ({filteredHistoricalBenchmarks.length})
             </Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="current">
             <BenchmarkList
-              benchmarks={currentBenchmarks}
+              benchmarks={filteredCurrentBenchmarks}
               isHistorical={false}
               loading={loading}
               onEdit={openEdit}
@@ -79,7 +119,7 @@ export const BenchmarksPage = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="historical">
-            <BenchmarkProgressList currentBenchmarks={currentBenchmarks} />
+            <BenchmarkProgressList currentBenchmarks={filteredCurrentBenchmarks} />
           </Tabs.Panel>
         </Tabs>
       </Stack>

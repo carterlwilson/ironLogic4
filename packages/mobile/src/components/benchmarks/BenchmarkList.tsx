@@ -47,7 +47,7 @@ export function BenchmarkList({
   }
 
   return (
-    <Stack gap="md">
+    <Stack gap="sm">
       {benchmarks.map((benchmark) => (
         <BenchmarkCard
           key={benchmark.id}

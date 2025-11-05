@@ -1,5 +1,5 @@
-import { Card, Text, Group, Badge, Button, Stack, Paper } from '@mantine/core';
-import { IconPencil, IconRefresh, IconClock } from '@tabler/icons-react';
+import { Card, Text, Group, Badge, Button, Stack, Paper, Collapse, ActionIcon } from '@mantine/core';
+import { IconPencil, IconRefresh, IconClock, IconChevronDown } from '@tabler/icons-react';
 import { ClientBenchmark } from '@ironlogic4/shared';
 import {
   isBenchmarkEditable,
@@ -7,6 +7,7 @@ import {
   formatMeasurement,
   getBenchmarkAgeInDays,
 } from '../../utils/benchmarkUtils';
+import { useState } from 'react';
 
 interface BenchmarkCardProps {
   benchmark: ClientBenchmark;
@@ -21,6 +22,7 @@ export function BenchmarkCard({
   onEdit,
   onCreateNew,
 }: BenchmarkCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const isEditable = !isHistorical && isBenchmarkEditable(benchmark);
   const ageInDays = getBenchmarkAgeInDays(benchmark);
 
@@ -75,48 +77,71 @@ export function BenchmarkCard({
   };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Stack gap="md">
-        {/* Header */}
-        <Group justify="space-between" align="flex-start">
-          <div style={{ flex: 1 }}>
-            <Text fw={600} size="lg" lineClamp={2}>
-              {benchmark.name}
-            </Text>
-          </div>
-          <Badge color={getBadgeColor()} variant="light" size="lg">
-            {benchmark.type}
-          </Badge>
+    <Card shadow="sm" padding={isExpanded ? "lg" : "sm"} radius="md" withBorder>
+      <Stack gap="xs">
+        {/* Always visible clickable header - only name and chevron */}
+        <Group
+          justify="space-between"
+          align="center"
+          onClick={() => setIsExpanded(!isExpanded)}
+          style={{ cursor: 'pointer' }}
+        >
+          <Text fw={600} size="md" lineClamp={2} style={{ flex: 1 }}>
+            {benchmark.name}
+          </Text>
+          <ActionIcon
+            variant="subtle"
+            color="gray"
+            size="lg"
+            aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
+          >
+            <IconChevronDown
+              size={20}
+              style={{
+                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                transition: 'transform 200ms ease',
+              }}
+            />
+          </ActionIcon>
         </Group>
 
-        {/* Measurement Value */}
-        <Paper p="md" radius="md" bg="gray.0">
-          <Text size="xl" fw={700} ta="center" c="forestGreen">
-            {measurementValue}
-          </Text>
-        </Paper>
+        {/* Collapsible section with all details */}
+        <Collapse in={isExpanded}>
+          <Stack gap="md">
+            {/* Type badge */}
+            <Badge color={getBadgeColor()} variant="light" size="lg" style={{ alignSelf: 'flex-start' }}>
+              {benchmark.type}
+            </Badge>
 
-        {/* Metadata */}
-        <Stack gap="xs">
-          <Group gap="xs" align="center">
-            <IconClock size={16} style={{ opacity: 0.6 }} />
-            <Text size="sm" c="dimmed">
-              {formatDate(benchmark.recordedAt)}
-              {!isHistorical && ` (${ageInDays} day${ageInDays !== 1 ? 's' : ''} ago)`}
-            </Text>
-          </Group>
-
-          {benchmark.notes && (
-            <Paper p="sm" radius="sm" bg="gray.0">
-              <Text size="sm" c="dimmed" lineClamp={2}>
-                {benchmark.notes}
+            {/* Measurement value */}
+            <Paper p="md" radius="md" bg="gray.0">
+              <Text size="xl" fw={700} ta="center" c="forestGreen">
+                {measurementValue}
               </Text>
             </Paper>
-          )}
-        </Stack>
 
-        {/* Action Button */}
-        {getActionButton()}
+            {/* Date and age information */}
+            <Group gap="xs" align="center">
+              <IconClock size={16} style={{ opacity: 0.6 }} />
+              <Text size="sm" c="dimmed">
+                {formatDate(benchmark.recordedAt)}
+                {!isHistorical && ` (${ageInDays} day${ageInDays !== 1 ? 's' : ''} ago)`}
+              </Text>
+            </Group>
+
+            {/* Notes section */}
+            {benchmark.notes && (
+              <Paper p="sm" radius="sm" bg="gray.0">
+                <Text size="sm" c="dimmed">
+                  {benchmark.notes}
+                </Text>
+              </Paper>
+            )}
+
+            {/* Action Button */}
+            {getActionButton()}
+          </Stack>
+        </Collapse>
       </Stack>
     </Card>
   );
