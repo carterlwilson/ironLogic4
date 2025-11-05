@@ -282,8 +282,12 @@ export const joinTimeslot = async (
     const updatedSchedule = await ActiveSchedule.findOneAndUpdate(
       {
         _id: id,
-        'days.timeSlots._id': timeslotId,
-        'days.timeSlots.assignedClients': { $ne: clientId }, // Not already assigned
+        'days.timeSlots': {
+          $elemMatch: {
+            _id: timeslotId,
+            assignedClients: { $ne: clientId } // Not already assigned to THIS specific timeslot
+          }
+        },
       },
       {
         $addToSet: {
