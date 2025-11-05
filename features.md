@@ -1,4 +1,8 @@
 Stay in plan mode.
 
-I'm getting the following error trying to call a patch endpoint.
-Let's make sure CORS is allowing for patch requests.
+Whenn I try to create a new vercel project with the mobile app,
+I'm seeing the following error: 
+
+Header at index 2 has invalid `source` pattern "/workbox-*.js".
+
+Can you make sure the mobile configuration file is set up correctly?
