@@ -1,6 +1,8 @@
 import { Card, Stack, Text, Group, Button, ActionIcon, Badge, Paper } from '@mantine/core';
-import { IconCheck, IconWeight, IconAlertCircle } from '@tabler/icons-react';
+import { IconCheck, IconWeight, IconAlertCircle, IconBarbell } from '@tabler/icons-react';
 import { ActivityProgress } from '../../pages/WorkoutPage';
+import { useBarbellCalculator } from './barbell-calculator/useBarbellCalculator';
+import { BarbellCalculatorDrawer } from './barbell-calculator/BarbellCalculatorDrawer';
 
 interface LiftActivity {
   id: string;
@@ -30,6 +32,16 @@ export function LiftActivityCard({
 }: LiftActivityCardProps) {
   const allSetsComplete = progress.sets.every(s => s.completed);
   const anySetsComplete = progress.sets.some(s => s.completed);
+
+  // Initialize barbell calculator hook
+  const {
+    calculation,
+    barType,
+    setBarType,
+    isOpen,
+    open,
+    close,
+  } = useBarbellCalculator(activity.calculatedWeightKg || 0);
 
   const getCardColor = () => {
     if (progress.completed) return 'green.0';
@@ -68,23 +80,37 @@ export function LiftActivityCard({
         {/* Weight Information */}
         {activity.calculatedWeightKg !== undefined && (
           <Paper p="md" radius="md" withBorder bg="white">
-            <Group gap="xs" align="center">
-              <IconWeight size={20} style={{ opacity: 0.6 }} />
-              <div style={{ flex: 1 }}>
-                <Text size="sm" c="dimmed">
-                  Recommended Weight
-                </Text>
-                <Text size="xl" fw={700} c="forestGreen">
-                  {activity.calculatedWeightKg} kg
-                </Text>
-                {activity.percentageOfMax && activity.benchmarkWeightKg !== undefined && (
-                  <Text size="xs" c="dimmed">
-                    {activity.percentageOfMax}% of {activity.benchmarkWeightKg} kg
-                    {activity.benchmarkName && ` (${activity.benchmarkName})`}
+            <Stack gap="sm">
+              <Group gap="xs" align="center">
+                <IconWeight size={20} style={{ opacity: 0.6 }} />
+                <div style={{ flex: 1 }}>
+                  <Text size="sm" c="dimmed">
+                    Recommended Weight
                   </Text>
-                )}
-              </div>
-            </Group>
+                  <Text size="xl" fw={700} c="forestGreen">
+                    {activity.calculatedWeightKg} kg
+                  </Text>
+                  {activity.percentageOfMax && activity.benchmarkWeightKg !== undefined && (
+                    <Text size="xs" c="dimmed">
+                      {activity.percentageOfMax}% of {activity.benchmarkWeightKg} kg
+                      {activity.benchmarkName && ` (${activity.benchmarkName})`}
+                    </Text>
+                  )}
+                </div>
+              </Group>
+
+              {/* Plate Calculator Button */}
+              <Button
+                variant="light"
+                color="forestGreen"
+                size="lg"
+                leftSection={<IconBarbell size={20} />}
+                onClick={open}
+                fullWidth
+              >
+                Plate Calculator
+              </Button>
+            </Stack>
           </Paper>
         )}
 
@@ -137,6 +163,15 @@ export function LiftActivityCard({
           {progress.completed ? 'Mark Incomplete' : 'Mark Complete'}
         </Button>
       </Stack>
+
+      {/* Barbell Calculator Drawer */}
+      <BarbellCalculatorDrawer
+        opened={isOpen}
+        onClose={close}
+        calculation={calculation}
+        barType={barType}
+        onBarTypeChange={setBarType}
+      />
     </Card>
   );
 }
