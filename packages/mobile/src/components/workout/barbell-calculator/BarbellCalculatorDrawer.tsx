@@ -72,8 +72,8 @@ export function BarbellCalculatorDrawer({
             value={barType}
             onChange={(value) => onBarTypeChange(value as BarType)}
             data={[
-              { label: 'Standard (20kg)', value: 'standard' },
-              { label: "Women's (15kg)", value: 'womens' },
+              { label: '20kg', value: 'standard' },
+              { label: "15kg", value: 'womens' },
             ]}
             size="lg"
             fullWidth

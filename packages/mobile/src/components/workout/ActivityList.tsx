@@ -5,24 +5,10 @@ import { CardioActivityCard } from './CardioActivityCard';
 import { OtherActivityCard } from './OtherActivityCard';
 import { ActivityProgress } from '../../pages/WorkoutPage';
 
-interface Activity {
-  id: string;
-  type: ActivityType;
-  templateName: string;
-  sets?: number;
-  reps?: number;
-  percentageOfMax?: number;
-  // New server fields for benchmark data
-  calculatedWeightKg?: number;
-  benchmarkWeightKg?: number;
-  benchmarkName?: string;
-  benchmarkTemplateId?: string;
-  durationMinutes?: number;
-  description?: string;
-}
+import type { WorkoutActivity } from '@ironlogic4/shared/types/programs';
 
 interface ActivityListProps {
-  activities: Activity[];
+  activities: WorkoutActivity[];
   getProgress: (activityId: string) => ActivityProgress;
   onSetComplete: (activityId: string, setIndex: number) => void;
   onActivityComplete: (activityId: string) => void;

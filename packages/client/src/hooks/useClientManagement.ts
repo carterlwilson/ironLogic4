@@ -26,8 +26,6 @@ interface UseClientManagementReturn extends UseClientManagementState {
   createClient: (data: CreateClientRequest) => Promise<string | undefined>;
   updateClient: (id: string, data: UpdateClientRequest) => Promise<void>;
   deleteClient: (id: string) => Promise<void>;
-  assignProgram: (clientId: string, programId: string) => Promise<void>;
-  unassignProgram: (clientId: string) => Promise<void>;
   openAddModal: () => void;
   openEditModal: (client: User) => void;
   openDeleteModal: (client: User) => void;
@@ -184,66 +182,6 @@ export const useClientManagement = (): UseClientManagementReturn => {
     }
   }, [loadClients, lastParams]);
 
-  const assignProgram = useCallback(async (clientId: string, programId: string) => {
-    try {
-      setState(prev => ({ ...prev, loading: true }));
-
-      await clientApi.assignProgram(clientId, programId);
-
-      setState(prev => ({ ...prev, loading: false }));
-
-      notifications.show({
-        title: 'Success',
-        message: 'Program assigned successfully',
-        color: 'green',
-        autoClose: 3000,
-      });
-
-      await loadClients(lastParams);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to assign program';
-      setState(prev => ({ ...prev, loading: false }));
-
-      notifications.show({
-        title: 'Error',
-        message: errorMessage,
-        color: 'red',
-        autoClose: 5000,
-      });
-      throw error;
-    }
-  }, [loadClients, lastParams]);
-
-  const unassignProgram = useCallback(async (clientId: string) => {
-    try {
-      setState(prev => ({ ...prev, loading: true }));
-
-      await clientApi.unassignProgram(clientId);
-
-      setState(prev => ({ ...prev, loading: false }));
-
-      notifications.show({
-        title: 'Success',
-        message: 'Program unassigned successfully',
-        color: 'green',
-        autoClose: 3000,
-      });
-
-      await loadClients(lastParams);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to unassign program';
-      setState(prev => ({ ...prev, loading: false }));
-
-      notifications.show({
-        title: 'Error',
-        message: errorMessage,
-        color: 'red',
-        autoClose: 5000,
-      });
-      throw error;
-    }
-  }, [loadClients, lastParams]);
-
   const openAddModal = useCallback(() => {
     setState(prev => ({ ...prev, isAddModalOpen: true }));
   }, []);
@@ -284,8 +222,6 @@ export const useClientManagement = (): UseClientManagementReturn => {
     createClient,
     updateClient,
     deleteClient,
-    assignProgram,
-    unassignProgram,
     openAddModal,
     openEditModal,
     openDeleteModal,

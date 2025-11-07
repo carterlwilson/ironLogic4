@@ -59,16 +59,51 @@ export function ActivityCard({ activity, program, onProgramChange, templateMap, 
   const getActivityDetails = () => {
     const details: string[] = [];
 
-    if (activity.sets && activity.reps) {
-      details.push(`${activity.sets}x${activity.reps}`);
-    } else if (activity.sets) {
-      details.push(`${activity.sets} sets`);
-    } else if (activity.reps) {
-      details.push(`${activity.reps} reps`);
-    }
+    // Handle sets array (for lift activities)
+    if (activity.sets && Array.isArray(activity.sets) && activity.sets.length > 0) {
+      // Check if all sets have the same reps and percentage
+      const firstSet = activity.sets[0];
+      const allSameReps = activity.sets.every(set => set.reps === firstSet.reps);
+      const allSamePercentage = activity.sets.every(set => set.percentageOfMax === firstSet.percentageOfMax);
 
-    if (activity.percentageOfMax) {
-      details.push(`@ ${activity.percentageOfMax}%`);
+      if (allSameReps && allSamePercentage) {
+        // Simple format: "3x5 @ 70%"
+        details.push(`${activity.sets.length}x${firstSet.reps}`);
+        if (firstSet.percentageOfMax > 0) {
+          details.push(`@ ${firstSet.percentageOfMax}%`);
+        }
+      } else if (allSameReps) {
+        // Same reps but different percentages: "3x5 @ 70-80%"
+        const percentages = activity.sets.map(set => set.percentageOfMax).filter(p => p > 0);
+        if (percentages.length > 0) {
+          const minPercentage = Math.min(...percentages);
+          const maxPercentage = Math.max(...percentages);
+          details.push(`${activity.sets.length}x${firstSet.reps}`);
+          if (minPercentage === maxPercentage) {
+            details.push(`@ ${minPercentage}%`);
+          } else {
+            details.push(`@ ${minPercentage}-${maxPercentage}%`);
+          }
+        } else {
+          details.push(`${activity.sets.length}x${firstSet.reps}`);
+        }
+      } else {
+        // Different reps: show as list "5, 5, 3, 1 reps"
+        const repsList = activity.sets.map(set => set.reps).join(', ');
+        details.push(`${repsList} reps`);
+
+        // Show percentage range if present
+        const percentages = activity.sets.map(set => set.percentageOfMax).filter(p => p > 0);
+        if (percentages.length > 0) {
+          const minPercentage = Math.min(...percentages);
+          const maxPercentage = Math.max(...percentages);
+          if (minPercentage === maxPercentage) {
+            details.push(`@ ${minPercentage}%`);
+          } else {
+            details.push(`@ ${minPercentage}-${maxPercentage}%`);
+          }
+        }
+      }
     }
 
     if (activity.time) {

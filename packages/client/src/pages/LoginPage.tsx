@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Container,
   Paper,
@@ -14,6 +15,7 @@ import {
   Box,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
+import { Link, useNavigate } from 'react-router-dom';
 import { IconMail, IconLock, IconAlertCircle, IconShield } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useAppTitle } from '../hooks/useAppTitle';
@@ -24,10 +26,16 @@ interface LoginFormValues {
 }
 
 export function LoginPage() {
-  const { login, isLoading, error, clearError } = useAuth();
+  const { login, isLoading, error, clearError, isAuthenticated } = useAuth();
   const appTitle = useAppTitle();
+  const navigate = useNavigate();
 
-  // Note: Redirect logic is handled by AuthGuard component
+  // Redirect to home if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const form = useForm<LoginFormValues>({
     initialValues: {
@@ -50,8 +58,10 @@ export function LoginPage() {
 
   const handleSubmit = async (values: LoginFormValues) => {
     clearError();
-    await login(values);
-    // Navigation will be handled automatically by AuthGuard when isAuthenticated becomes true
+    const result = await login(values);
+    if (result.success) {
+      navigate('/');
+    }
   };
 
   const handleInputChange = () => {
@@ -129,16 +139,12 @@ export function LoginPage() {
                 }}
               />
 
-              <Group justify="space-between" mt="xs">
+              <Group justify="flex-end" mt="xs">
                 <Anchor
-                  component="button"
-                  type="button"
+                  component={Link}
+                  to="/forgot-password"
                   c="forestGreen.6"
                   size="sm"
-                  onClick={() => {
-                    // TODO: Implement forgot password functionality
-                    console.log('Forgot password clicked');
-                  }}
                 >
                   Forgot your password?
                 </Anchor>

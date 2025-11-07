@@ -3,12 +3,17 @@ import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplate
 
 /**
  * Calculate total volume (sets * reps) for activities in a given list
+ * For lift activities with sets array, sums reps across all sets
  */
 export function calculateVolume(activities: IActivity[]): number {
   return activities.reduce((total, activity) => {
-    const sets = activity.sets || 0;
-    const reps = activity.reps || 0;
-    return total + (sets * reps);
+    // For lift activities, use sets array
+    if (activity.sets && Array.isArray(activity.sets)) {
+      const setsVolume = activity.sets.reduce((sum, set) => sum + set.reps, 0);
+      return total + setsVolume;
+    }
+    // For backward compatibility or non-lift activities
+    return total;
   }, 0);
 }
 
@@ -42,7 +47,13 @@ export function calculateDayGroupVolumes(
     const template = activityTemplates.find(t => t.id === activity.activityTemplateId);
     if (template?.groupId) {
       const currentVolume = volumeMap.get(template.groupId) || 0;
-      const activityVolume = (activity.sets || 0) * (activity.reps || 0);
+
+      // Calculate volume based on sets array if present
+      let activityVolume = 0;
+      if (activity.sets && Array.isArray(activity.sets)) {
+        activityVolume = activity.sets.reduce((sum, set) => sum + set.reps, 0);
+      }
+
       volumeMap.set(template.groupId, currentVolume + activityVolume);
     }
   });

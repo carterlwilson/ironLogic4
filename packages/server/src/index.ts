@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
+import passwordResetRoutes from './routes/passwordReset.js';
 import adminUserRoutes from './routes/admin/users.js';
 import adminGymRoutes from './routes/admin/gyms.js';
 import gymActivityTemplateRoutes from './routes/gym/activityTemplates.js';
@@ -71,6 +72,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/auth', passwordResetRoutes);
 app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/admin/gyms', adminGymRoutes);
 app.use('/api/gym/activity-templates', gymActivityTemplateRoutes);

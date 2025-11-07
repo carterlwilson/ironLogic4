@@ -35,8 +35,6 @@ export function ClientsPage() {
     createClient,
     updateClient,
     deleteClient,
-    assignProgram,
-    unassignProgram,
     loadClients,
   } = useClientManagement();
 
@@ -121,8 +119,6 @@ export function ClientsPage() {
           onClose={closeModals}
           client={selectedClient}
           onSubmit={updateClient}
-          onAssignProgram={assignProgram}
-          onUnassignProgram={unassignProgram}
           loading={loading}
         />
 

@@ -2,9 +2,10 @@ import { Modal, Stack, Select, NumberInput, Button, Group } from '@mantine/core'
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { ActivityType } from '@ironlogic4/shared/types/activityTemplates';
-import { DistanceUnit } from '@ironlogic4/shared/types/programs';
+import { DistanceUnit, ISet } from '@ironlogic4/shared/types/programs';
 import type { IActivity } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import { SetsArrayInput } from './SetsArrayInput';
 
 interface ActivityFormModalProps {
   opened: boolean;
@@ -21,15 +22,25 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
     initialValues: {
       activityTemplateId: existingActivity?.activityTemplateId || '',
       type: existingActivity?.type || ActivityType.LIFT,
-      sets: existingActivity?.sets || undefined,
-      reps: existingActivity?.reps || undefined,
-      percentageOfMax: existingActivity?.percentageOfMax || undefined,
+      sets: existingActivity?.sets || [{ reps: 5, percentageOfMax: 0 }],
       time: existingActivity?.time || undefined,
       distance: existingActivity?.distance || undefined,
       distanceUnit: existingActivity?.distanceUnit || undefined,
     },
     validate: {
       activityTemplateId: (value) => (!value ? 'Activity template is required' : null),
+      sets: (value, values) => {
+        // For lift activities, sets array is required
+        if (values.type === ActivityType.LIFT) {
+          if (!value || !Array.isArray(value) || value.length === 0) {
+            return 'At least one set is required for lift activities';
+          }
+          if (value.length > 20) {
+            return 'Maximum 20 sets allowed';
+          }
+        }
+        return null;
+      },
     },
   });
 
@@ -39,9 +50,7 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
       form.setValues({
         activityTemplateId: existingActivity.activityTemplateId,
         type: existingActivity.type,
-        sets: existingActivity.sets,
-        reps: existingActivity.reps,
-        percentageOfMax: existingActivity.percentageOfMax,
+        sets: existingActivity.sets || [{ reps: 5, percentageOfMax: 0 }],
         time: existingActivity.time,
         distance: existingActivity.distance,
         distanceUnit: existingActivity.distanceUnit,
@@ -54,7 +63,22 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
   }, [existingActivity]);
 
   const handleSubmit = (values: Omit<IActivity, 'id' | 'order'>) => {
-    onSubmit(values);
+    // Clean up the values based on activity type
+    const cleanedValues = { ...values };
+
+    // Only lift activities should have sets array
+    if (values.type !== ActivityType.LIFT) {
+      cleanedValues.sets = undefined;
+    }
+
+    // Only cardio activities should have time/distance
+    if (values.type !== ActivityType.CARDIO) {
+      cleanedValues.time = undefined;
+      cleanedValues.distance = undefined;
+      cleanedValues.distanceUnit = undefined;
+    }
+
+    onSubmit(cleanedValues);
     form.reset();
     setSelectedType(null);
     onClose();
@@ -100,28 +124,11 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
           />
 
           {showLiftFields && (
-            <>
-              <NumberInput
-                label="Sets"
-                placeholder="Enter number of sets"
-                min={1}
-                {...form.getInputProps('sets')}
-              />
-              <NumberInput
-                label="Reps"
-                placeholder="Enter number of reps"
-                min={1}
-                {...form.getInputProps('reps')}
-              />
-              <NumberInput
-                label="Percentage of Max"
-                placeholder="Enter percentage (e.g., 75)"
-                min={0}
-                max={200}
-                suffix="%"
-                {...form.getInputProps('percentageOfMax')}
-              />
-            </>
+            <SetsArrayInput
+              value={form.values.sets as ISet[] || []}
+              onChange={(sets) => form.setFieldValue('sets', sets)}
+              error={form.errors.sets as string}
+            />
           )}
 
           {showCardioFields && (
@@ -153,14 +160,6 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
             </>
           )}
 
-          {selectedType === ActivityType.OTHER && (
-            <NumberInput
-              label="Sets"
-              placeholder="Enter number of sets"
-              min={1}
-              {...form.getInputProps('sets')}
-            />
-          )}
 
           <Group justify="flex-end" mt="md">
             <Button variant="subtle" onClick={handleClose}>

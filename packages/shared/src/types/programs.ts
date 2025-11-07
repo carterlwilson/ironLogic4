@@ -8,17 +8,24 @@ export enum DistanceUnit {
 }
 
 /**
+ * Set - represents a single set within a lift activity
+ * Total fields: 2
+ */
+export interface ISet {
+  reps: number;              // 1-100
+  percentageOfMax: number;   // 0-200
+}
+
+/**
  * Activity - represents a single planned activity within a day
- * Total fields: 10
+ * Total fields: 8
  */
 export interface IActivity {
   id: string;
   activityTemplateId: string;
   type: ActivityType;
   order: number;
-  sets?: number;
-  reps?: number;
-  percentageOfMax?: number;
+  sets?: ISet[];  // Array of sets (required for lift activities)
   time?: number;
   distance?: number;
   distanceUnit?: DistanceUnit;
@@ -129,6 +136,16 @@ export interface JumpToWeekRequest {
 }
 
 /**
+ * Set Calculation - calculated weights for a single set in workout response
+ */
+export interface ISetCalculation {
+  setNumber: number;            // 1-based index for display
+  reps: number;
+  percentageOfMax: number;
+  calculatedWeightKg?: number;  // Based on benchmark
+}
+
+/**
  * Workout Activity - extends IActivity with template info and calculated weights
  */
 export interface WorkoutActivity extends IActivity {
@@ -139,6 +156,7 @@ export interface WorkoutActivity extends IActivity {
   hasBenchmark?: boolean;
   durationMinutes?: number;
   description?: string;
+  setCalculations?: ISetCalculation[];  // Per-set weight calculations for lifts
 }
 
 /**

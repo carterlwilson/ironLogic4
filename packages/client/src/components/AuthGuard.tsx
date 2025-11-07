@@ -1,6 +1,6 @@
 import { LoadingOverlay } from '@mantine/core';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider';
-import { LoginPage } from '../pages/LoginPage';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -14,9 +14,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return <LoadingOverlay visible={true} />;
   }
 
-  // If not authenticated, show login page
+  // If not authenticated, redirect to login page
   if (!isAuthenticated) {
-    return <LoginPage />;
+    return <Navigate to="/login" replace />;
   }
 
   // If authenticated, show protected content

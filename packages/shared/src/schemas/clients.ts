@@ -5,7 +5,7 @@ const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format'
 
 // Helper for nullable ObjectId fields that may receive empty strings from forms
 const nullableObjectId = z.preprocess(
-  (val) => val === '' ? undefined : val,
+  (val) => (val === '' || val === null) ? undefined : val,
   objectId.optional()
 );
 
@@ -57,6 +57,7 @@ export const UpdateClientSchema = z.object({
   lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters').trim().optional(),
   currentBenchmarks: z.array(ClientBenchmarkSchema).optional(),
   historicalBenchmarks: z.array(ClientBenchmarkSchema).optional(),
+  programId: nullableObjectId,
 });
 
 /**

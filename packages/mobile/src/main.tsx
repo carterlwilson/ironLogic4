@@ -1,9 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { AuthProvider } from './providers/AuthProvider';
+import { AuthGuard } from './components/AuthGuard';
+import { LoginPage } from './pages/LoginPage';
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
 import { theme } from './theme/theme';
 import App from './App';
 import '@mantine/core/styles.css';
@@ -27,7 +30,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <MantineProvider theme={theme}>
         <Notifications />
         <AuthProvider>
-          <App />
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/*" element={
+              <AuthGuard>
+                <App />
+              </AuthGuard>
+            } />
+          </Routes>
         </AuthProvider>
       </MantineProvider>
     </BrowserRouter>

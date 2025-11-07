@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { LoadingOverlay } from '@mantine/core';
 import { useAuth } from '../providers/AuthProvider';
-import { LoginPage } from '../pages/LoginPage';
 
 interface AuthGuardProps {
   children: ReactNode;
@@ -25,7 +25,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   }
 
   if (!isAuthenticated) {
-    return <LoginPage />;
+    return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;

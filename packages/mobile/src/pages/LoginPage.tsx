@@ -11,6 +11,7 @@ import {
   Stack,
   Alert,
   Box,
+  Anchor,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconAlertCircle, IconLogin } from '@tabler/icons-react';
@@ -102,6 +103,19 @@ export function LoginPage() {
                 {...form.getInputProps('password')}
                 disabled={isLoading}
               />
+
+              <Box ta="right">
+                <Anchor
+                  component="button"
+                  type="button"
+                  size="sm"
+                  onClick={() => navigate('/forgot-password')}
+                  style={{ color: 'var(--mantine-color-green-6)' }}
+                  disabled={isLoading}
+                >
+                  Forgot password?
+                </Anchor>
+              </Box>
 
               <Button
                 type="submit"

@@ -330,12 +330,62 @@ export const updateClient = async (
       }
     }
 
+    // Handle program assignment/unassignment if provided
+    if (validatedData.programId !== undefined) {
+      if (validatedData.programId === null || validatedData.programId === '') {
+        // Unassign program
+        client.programId = undefined;
+      } else {
+        // Validate and assign program
+        const program = await Program.findById(validatedData.programId);
+
+        if (!program) {
+          res.status(404).json({
+            success: false,
+            error: 'Program not found',
+          });
+          return;
+        }
+
+        // Verify program belongs to same gym as client
+        if (program.gymId !== client.gymId) {
+          res.status(400).json({
+            success: false,
+            error: 'Program must belong to the same gym as the client',
+          });
+          return;
+        }
+
+        // Auto-start program if not already started and has blocks
+        if (
+          program.currentProgress.startedAt === null &&
+          program.blocks.length > 0
+        ) {
+          program.currentProgress = {
+            blockIndex: 0,
+            weekIndex: 0,
+            startedAt: new Date(),
+            completedAt: null,
+            lastAdvancedAt: null,
+            totalWeeksCompleted: 0,
+          };
+          await program.save();
+        }
+
+        client.programId = validatedData.programId;
+      }
+
+      // Save the client to persist programId changes
+      await client.save();
+    }
+
     // Field sanitization - strip protected fields
     const sanitizedUpdateData = {
       ...validatedData,
       userType: undefined, // Never allow changing user type
       gymId: undefined, // Never allow changing gym
       password: undefined, // Don't allow password change through this endpoint
+      programId: undefined, // Handled separately above
       // Explicitly allow benchmark updates (they're already validated)
       currentBenchmarks: validatedData.currentBenchmarks,
       historicalBenchmarks: validatedData.historicalBenchmarks,

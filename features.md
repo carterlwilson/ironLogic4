@@ -1,6 +1,21 @@
 Stay in Plan mode.
 
-When I try to join a schedule timeslot as a client in the mobile app,
-I get the following error with a 400 status :
-{"success":false,"error":"Failed to join timeslot"}
-and no error is showing in the server logs.
+Incredible, you have completely fucked up my ability to edit clients.
+Now, along with the program assignment issue, if I try to edit a client at all
+that doesn't have a program assigned, I see this. That's fucking stupid.
+
+{
+"success": false,
+"error": "Invalid request data",
+"details": [
+{
+"code": "invalid_type",
+"expected": "string",
+"received": "null",
+"path": [
+"programId"
+],
+"message": "Expected string, received null"
+}
+]
+}

@@ -1,14 +1,9 @@
 import { Card, Stack, Text, Group, Button, Badge, Paper } from '@mantine/core';
 import { ActivityProgress } from '../../pages/WorkoutPage';
-
-interface OtherActivity {
-  id: string;
-  templateName: string;
-  description?: string;
-}
+import type { WorkoutActivity } from '@ironlogic4/shared/types/programs';
 
 interface OtherActivityCardProps {
-  activity: OtherActivity;
+  activity: WorkoutActivity;
   progress: ActivityProgress;
   onActivityComplete: (activityId: string) => void;
 }

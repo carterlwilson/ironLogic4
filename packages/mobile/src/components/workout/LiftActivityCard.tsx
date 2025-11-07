@@ -1,24 +1,13 @@
-import { Card, Stack, Text, Group, Button, ActionIcon, Badge, Paper } from '@mantine/core';
+import { useState } from 'react';
+import { Card, Stack, Text, Group, Button, ActionIcon, Badge, Paper, SegmentedControl } from '@mantine/core';
 import { IconCheck, IconWeight, IconAlertCircle, IconBarbell } from '@tabler/icons-react';
 import { ActivityProgress } from '../../pages/WorkoutPage';
 import { useBarbellCalculator } from './barbell-calculator/useBarbellCalculator';
 import { BarbellCalculatorDrawer } from './barbell-calculator/BarbellCalculatorDrawer';
-
-interface LiftActivity {
-  id: string;
-  templateName: string;
-  sets?: number;
-  reps?: number;
-  percentageOfMax?: number;
-  // New server fields for benchmark data
-  calculatedWeightKg?: number;
-  benchmarkWeightKg?: number;
-  benchmarkName?: string;
-  benchmarkTemplateId?: string;
-}
+import type { WorkoutActivity, ISetCalculation } from '@ironlogic4/shared/types/programs';
 
 interface LiftActivityCardProps {
-  activity: LiftActivity;
+  activity: WorkoutActivity;
   progress: ActivityProgress;
   onSetComplete: (activityId: string, setIndex: number) => void;
   onActivityComplete: (activityId: string) => void;
@@ -30,10 +19,16 @@ export function LiftActivityCard({
   onSetComplete,
   onActivityComplete,
 }: LiftActivityCardProps) {
+  const [selectedSetIndex, setSelectedSetIndex] = useState(0);
+
   const allSetsComplete = progress.sets.every(s => s.completed);
   const anySetsComplete = progress.sets.some(s => s.completed);
 
-  // Initialize barbell calculator hook
+  // Get the current set data
+  const currentSet: ISetCalculation | undefined = activity.setCalculations?.[selectedSetIndex];
+  const totalSets = activity.setCalculations?.length || 0;
+
+  // Initialize barbell calculator hook with current set's weight
   const {
     calculation,
     barType,
@@ -41,7 +36,7 @@ export function LiftActivityCard({
     isOpen,
     open,
     close,
-  } = useBarbellCalculator(activity.calculatedWeightKg || 0);
+  } = useBarbellCalculator(currentSet?.calculatedWeightKg || 0);
 
   const getCardColor = () => {
     if (progress.completed) return 'green.0';
@@ -64,9 +59,10 @@ export function LiftActivityCard({
             <Text fw={600} size="lg">
               {activity.templateName}
             </Text>
-            {activity.sets && activity.reps && (
+            {totalSets > 0 && currentSet && (
               <Text size="sm" c="dimmed">
-                {activity.sets} sets × {activity.reps} reps
+                {totalSets} {totalSets === 1 ? 'set' : 'sets'} × {currentSet.reps} reps
+                {totalSets > 1 && ` (Set ${selectedSetIndex + 1})`}
               </Text>
             )}
           </div>
@@ -77,23 +73,41 @@ export function LiftActivityCard({
           )}
         </Group>
 
+        {/* Set Selector - only show if multiple sets */}
+        {totalSets > 1 && (
+          <div>
+            <Text size="sm" c="dimmed" mb="xs">
+              Select Set
+            </Text>
+            <SegmentedControl
+              value={selectedSetIndex.toString()}
+              onChange={(value) => setSelectedSetIndex(parseInt(value))}
+              data={Array.from({ length: totalSets }, (_, i) => ({
+                label: `Set ${i + 1}`,
+                value: i.toString(),
+              }))}
+              fullWidth
+              size="md"
+            />
+          </div>
+        )}
+
         {/* Weight Information */}
-        {activity.calculatedWeightKg !== undefined && (
+        {currentSet?.calculatedWeightKg !== undefined && (
           <Paper p="md" radius="md" withBorder bg="white">
             <Stack gap="sm">
               <Group gap="xs" align="center">
                 <IconWeight size={20} style={{ opacity: 0.6 }} />
                 <div style={{ flex: 1 }}>
                   <Text size="sm" c="dimmed">
-                    Recommended Weight
+                    Recommended Weight {totalSets > 1 && `(Set ${selectedSetIndex + 1})`}
                   </Text>
                   <Text size="xl" fw={700} c="forestGreen">
-                    {activity.calculatedWeightKg} kg
+                    {currentSet.calculatedWeightKg} kg
                   </Text>
-                  {activity.percentageOfMax && activity.benchmarkWeightKg !== undefined && (
+                  {currentSet.percentageOfMax && activity.benchmarkWeight && (
                     <Text size="xs" c="dimmed">
-                      {activity.percentageOfMax}% of {activity.benchmarkWeightKg} kg
-                      {activity.benchmarkName && ` (${activity.benchmarkName})`}
+                      {currentSet.percentageOfMax}% of {activity.benchmarkWeight} kg
                     </Text>
                   )}
                 </div>
@@ -114,7 +128,7 @@ export function LiftActivityCard({
           </Paper>
         )}
 
-        {activity.calculatedWeightKg === undefined && activity.percentageOfMax !== undefined && (
+        {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && (
           <Paper p="sm" radius="md" withBorder bg="orange.0">
             <Group gap="xs">
               <IconAlertCircle size={18} color="var(--mantine-color-orange-7)" />
@@ -126,28 +140,32 @@ export function LiftActivityCard({
         )}
 
         {/* Set Progress Tracker */}
-        {activity.sets && activity.sets > 0 && (
+        {totalSets > 0 && (
           <div>
             <Text size="sm" c="dimmed" mb="xs">
               Set Progress
             </Text>
             <Group gap="xs">
-              {Array.from({ length: activity.sets }, (_, i) => (
-                <ActionIcon
-                  key={i}
-                  size={44}
-                  radius="xl"
-                  variant={progress.sets[i]?.completed ? 'filled' : 'outline'}
-                  color={progress.sets[i]?.completed ? 'green' : 'gray'}
-                  onClick={() => onSetComplete(activity.id, i)}
-                >
-                  {progress.sets[i]?.completed ? (
-                    <IconCheck size={20} />
-                  ) : (
-                    <Text size="sm" fw={600}>{i + 1}</Text>
-                  )}
-                </ActionIcon>
-              ))}
+              {Array.from({ length: totalSets }, (_, i) => {
+                const setCalc = activity.setCalculations?.[i];
+                return (
+                  <ActionIcon
+                    key={i}
+                    size={44}
+                    radius="xl"
+                    variant={progress.sets[i]?.completed ? 'filled' : 'outline'}
+                    color={progress.sets[i]?.completed ? 'green' : 'gray'}
+                    onClick={() => onSetComplete(activity.id, i)}
+                    title={setCalc ? `Set ${i + 1}: ${setCalc.reps} reps` : `Set ${i + 1}`}
+                  >
+                    {progress.sets[i]?.completed ? (
+                      <IconCheck size={20} />
+                    ) : (
+                      <Text size="sm" fw={600}>{i + 1}</Text>
+                    )}
+                  </ActionIcon>
+                );
+              })}
             </Group>
           </div>
         )}

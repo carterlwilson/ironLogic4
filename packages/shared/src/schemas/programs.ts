@@ -9,18 +9,49 @@ const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format'
 const ActivityTypeSchema = z.nativeEnum(ActivityType);
 export const DistanceUnitSchema = z.nativeEnum(DistanceUnit);
 
-// Activity schema
-export const ActivitySchema = z.object({
+// Set schema - single set with reps and percentage
+export const SetSchema = z.object({
+  reps: z.number().int().min(1, 'Reps must be at least 1').max(100, 'Reps cannot exceed 100'),
+  percentageOfMax: z.number().min(0, 'Percentage must be at least 0').max(200, 'Percentage cannot exceed 200')
+});
+
+// Base activity schema (without refinements)
+const BaseActivitySchema = z.object({
   activityTemplateId: objectId,
   type: ActivityTypeSchema,
   order: z.number().int().min(0),
-  sets: z.number().int().min(1).optional(),
-  reps: z.number().int().min(1).optional(),
-  percentageOfMax: z.number().min(0).max(200).optional(),
+  sets: z.array(SetSchema).min(1, 'At least 1 set required').max(20, 'Cannot exceed 20 sets').optional(),
   time: z.number().int().min(0).optional(), // in minutes
   distance: z.number().min(0).optional(),
   distanceUnit: DistanceUnitSchema.optional()
 });
+
+// Activity schema with refinements
+export const ActivitySchema = BaseActivitySchema.refine(
+  (data) => {
+    // Lift activities MUST have sets array
+    if (data.type === ActivityType.LIFT) {
+      return data.sets !== undefined && data.sets.length > 0;
+    }
+    return true;
+  },
+  {
+    message: 'Lift activities must have at least one set',
+    path: ['sets']
+  }
+).refine(
+  (data) => {
+    // Non-lift activities MUST NOT have sets array
+    if (data.type !== ActivityType.LIFT) {
+      return data.sets === undefined;
+    }
+    return true;
+  },
+  {
+    message: 'Only lift activities can have sets',
+    path: ['sets']
+  }
+);
 
 // Day schema
 export const DaySchema = z.object({
@@ -95,7 +126,7 @@ export const UpdateDaySchema = DaySchema.partial();
 
 // Activity management schemas
 export const CreateActivitySchema = ActivitySchema;
-export const UpdateActivitySchema = ActivitySchema.partial();
+export const UpdateActivitySchema = BaseActivitySchema.partial();
 
 // Program progress schemas
 export const JumpToWeekSchema = z.object({

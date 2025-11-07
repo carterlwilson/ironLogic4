@@ -26,18 +26,30 @@ import { ActivityType, DistanceUnit } from '@ironlogic4/shared';
 // ============================================================================
 
 /**
+ * Set Subdocument
+ * ----------------
+ * Represents a single set within a lift activity.
+ *
+ * FIELDS (2 total):
+ * - reps: Number of reps (1-100)
+ * - percentageOfMax: Percentage of 1RM (0-200)
+ */
+export interface ISet {
+  reps: number;
+  percentageOfMax: number;
+}
+
+/**
  * Activity Subdocument
  * -------------------
  * Represents a single planned activity within a day.
  *
- * FIELDS (10 total):
+ * FIELDS (8 total):
  * - _id: Auto-generated unique identifier
  * - activityTemplateId: Reference to ActivityTemplate
  * - type: Type of activity (lift, cardio, other, benchmark)
  * - order: Position within the day
- * - sets: Number of sets (optional)
- * - reps: Number of reps (optional)
- * - percentageOfMax: Percentage of 1RM (optional)
+ * - sets: Array of sets (required for lift activities)
  * - time: Duration in minutes (optional)
  * - distance: Distance value (optional)
  * - distanceUnit: Unit for distance (optional)
@@ -47,9 +59,7 @@ export interface IActivity {
   activityTemplateId: string;
   type: ActivityType;
   order: number;
-  sets?: number;
-  reps?: number;
-  percentageOfMax?: number;
+  sets?: ISet[];
   time?: number;
   distance?: number;
   distanceUnit?: DistanceUnit;
@@ -183,6 +193,27 @@ export interface ProgramDocument extends Document {
 // ============================================================================
 
 /**
+ * Set Schema
+ */
+const setSchema = new Schema<ISet>(
+  {
+    reps: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 100,
+    },
+    percentageOfMax: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 200,
+    },
+  },
+  { _id: false }
+);
+
+/**
  * Activity Schema
  */
 const activitySchema = new Schema<IActivity>(
@@ -203,17 +234,16 @@ const activitySchema = new Schema<IActivity>(
       min: 0,
     },
     sets: {
-      type: Number,
-      min: 1,
-    },
-    reps: {
-      type: Number,
-      min: 1,
-    },
-    percentageOfMax: {
-      type: Number,
-      min: 0,
-      max: 200,
+      type: [setSchema],
+      validate: {
+        validator: function(sets: ISet[]) {
+          if (sets && sets.length > 0) {
+            return sets.length <= 20;
+          }
+          return true;
+        },
+        message: 'Cannot exceed 20 sets'
+      }
     },
     time: {
       type: Number,
@@ -230,6 +260,29 @@ const activitySchema = new Schema<IActivity>(
   },
   { _id: true }
 );
+
+/**
+ * Pre-validation hook to ensure lift activities have sets array
+ */
+activitySchema.pre('validate', function(next) {
+  const activity = this as any;
+
+  // Lift activities MUST have sets array
+  if (activity.type === ActivityType.LIFT) {
+    if (!activity.sets || activity.sets.length === 0) {
+      return next(new Error('Lift activities must have at least one set'));
+    }
+  }
+
+  // Non-lift activities MUST NOT have sets array
+  if (activity.type !== ActivityType.LIFT) {
+    if (activity.sets && activity.sets.length > 0) {
+      return next(new Error('Only lift activities can have sets'));
+    }
+  }
+
+  next();
+});
 
 /**
  * Day Schema

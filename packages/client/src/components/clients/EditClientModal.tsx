@@ -11,13 +11,10 @@ interface EditClientModalProps {
   onClose: () => void;
   client: User | null;
   onSubmit: (id: string, data: UpdateClientRequest) => Promise<void>;
-  onAssignProgram: (clientId: string, programId: string) => Promise<void>;
-  onUnassignProgram: (clientId: string) => Promise<void>;
   loading?: boolean;
 }
 
-export function EditClientModal({ opened, onClose, client, onSubmit, onAssignProgram, onUnassignProgram, loading = false }: EditClientModalProps) {
-  const [initialProgramId, setInitialProgramId] = useState<string | undefined>(undefined);
+export function EditClientModal({ opened, onClose, client, onSubmit, loading = false }: EditClientModalProps) {
   const [programId, setProgramId] = useState<string>('');
   const { options: programOptions, isLoading: programsLoading } = useProgramOptions(client?.gymId);
 
@@ -52,7 +49,6 @@ export function EditClientModal({ opened, onClose, client, onSubmit, onAssignPro
         lastName: client.lastName,
         email: client.email,
       });
-      setInitialProgramId(client.programId);
       setProgramId(client.programId || '');
     }
   }, [client]);
@@ -61,26 +57,16 @@ export function EditClientModal({ opened, onClose, client, onSubmit, onAssignPro
     if (!client) return;
 
     try {
-      // Update basic client info
-      await onSubmit(client.id, values);
+      // Include programId in the update payload
+      const updateData: UpdateClientRequest = {
+        ...values,
+        programId: programId || null,
+      };
 
-      // Handle program assignment changes
-      const hasInitialProgram = initialProgramId && initialProgramId !== '';
-      const hasNewProgram = programId && programId !== '';
-
-      if (hasInitialProgram && !hasNewProgram) {
-        // Unassign program
-        await onUnassignProgram(client.id);
-      } else if (!hasInitialProgram && hasNewProgram) {
-        // Assign new program
-        await onAssignProgram(client.id, programId);
-      } else if (hasInitialProgram && hasNewProgram && initialProgramId !== programId) {
-        // Change program (assign new one)
-        await onAssignProgram(client.id, programId);
-      }
+      // Single API call handles everything
+      await onSubmit(client.id, updateData);
 
       form.reset();
-      setInitialProgramId(undefined);
       setProgramId('');
       onClose();
     } catch (error) {
@@ -90,7 +76,6 @@ export function EditClientModal({ opened, onClose, client, onSubmit, onAssignPro
 
   const handleClose = () => {
     form.reset();
-    setInitialProgramId(undefined);
     setProgramId('');
     onClose();
   };

@@ -6,6 +6,9 @@ import { clientBenchmarkSchema, ClientBenchmarkDocument } from './ClientBenchmar
 export interface UserDocument extends Omit<IUser, 'id' | 'currentBenchmarks' | 'historicalBenchmarks'>, Document {
   currentBenchmarks?: ClientBenchmarkDocument[];
   historicalBenchmarks?: ClientBenchmarkDocument[];
+  resetToken?: string;
+  resetTokenExpiry?: Date;
+  resetTokenUsed?: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -56,6 +59,22 @@ const userSchema = new Schema<UserDocument>(
     historicalBenchmarks: {
       type: [clientBenchmarkSchema],
       default: [],
+      required: false,
+    },
+    resetToken: {
+      type: String,
+      select: false, // Don't include reset token in queries by default
+      required: false,
+    },
+    resetTokenExpiry: {
+      type: Date,
+      select: false, // Don't include expiry in queries by default
+      required: false,
+    },
+    resetTokenUsed: {
+      type: Boolean,
+      select: false, // Don't include used flag in queries by default
+      default: false,
       required: false,
     },
   },
@@ -126,5 +145,9 @@ userSchema.index({ createdAt: -1 });
 
 // Index for program queries
 userSchema.index({ programId: 1 });
+
+// TTL index for automatic cleanup of expired reset tokens
+// MongoDB will automatically remove documents where resetTokenExpiry is older than 1 hour
+userSchema.index({ resetTokenExpiry: 1 }, { expireAfterSeconds: 3600 });
 
 export const User = mongoose.model<UserDocument>('User', userSchema);

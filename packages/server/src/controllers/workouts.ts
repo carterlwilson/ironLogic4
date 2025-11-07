@@ -59,24 +59,6 @@ export const getCurrentWeekWorkouts = async (
       return;
     }
 
-    // 4. Check if program has been started
-    if (!program.currentProgress.startedAt) {
-      res.status(400).json({
-        success: false,
-        error: 'Program has not been started yet',
-      });
-      return;
-    }
-
-    // 5. Check if program is completed
-    if (program.currentProgress.completedAt) {
-      res.status(400).json({
-        success: false,
-        error: 'Program has been completed',
-      });
-      return;
-    }
-
     // 6. Get current block and week
     const { blockIndex, weekIndex } = program.currentProgress;
 
@@ -184,24 +166,27 @@ export const getCurrentWeekWorkouts = async (
             type: activity.type,
             order: activity.order,
             sets: activity.sets,
-            reps: activity.reps,
-            percentageOfMax: activity.percentageOfMax,
             time: activity.time,
             distance: activity.distance,
             distanceUnit: activity.distanceUnit,
             templateName: 'Unknown Activity',
             templateNotes: undefined,
-            calculatedWeightKg: undefined,
           };
         }
 
-        // Calculate weight if percentageOfMax is specified
-        let calculatedWeightKg: number | undefined;
+        // Calculate weight for each set if sets array exists (lift activities)
+        let setCalculations: Array<{
+          setNumber: number;
+          reps: number;
+          percentageOfMax: number;
+          calculatedWeightKg?: number;
+        }> | undefined;
+
         let benchmarkWeightKg: number | undefined;
         let benchmarkName: string | undefined;
         let benchmarkTemplateId: string | undefined;
 
-        if (activity.percentageOfMax !== undefined) {
+        if (activity.sets && activity.sets.length > 0) {
           // Use benchmarkTemplateId from template if available, otherwise fallback to activityTemplateId
           benchmarkTemplateId = template.benchmarkTemplateId || activity.activityTemplateId;
           const benchmark = benchmarkMap.get(benchmarkTemplateId);
@@ -213,10 +198,25 @@ export const getCurrentWeekWorkouts = async (
             // Only calculate weight for WEIGHT type benchmarks
             if (benchmark.type === BenchmarkType.WEIGHT && benchmark.weightKg) {
               benchmarkWeightKg = benchmark.weightKg;
-              const rawWeight = (benchmark.weightKg * activity.percentageOfMax) / 100;
-              calculatedWeightKg = roundToHalf(rawWeight);
             }
           }
+
+          // Calculate weight for each set
+          setCalculations = activity.sets.map((set, index) => {
+            let calculatedWeightKg: number | undefined;
+
+            if (benchmarkWeightKg !== undefined) {
+              const rawWeight = (benchmarkWeightKg * set.percentageOfMax) / 100;
+              calculatedWeightKg = roundToHalf(rawWeight);
+            }
+
+            return {
+              setNumber: index + 1, // 1-based index for display
+              reps: set.reps,
+              percentageOfMax: set.percentageOfMax,
+              calculatedWeightKg,
+            };
+          });
         }
 
         return {
@@ -225,15 +225,13 @@ export const getCurrentWeekWorkouts = async (
           type: activity.type,
           order: activity.order,
           sets: activity.sets,
-          reps: activity.reps,
-          percentageOfMax: activity.percentageOfMax,
           time: activity.time,
           distance: activity.distance,
           distanceUnit: activity.distanceUnit,
           templateName: template.name,
           templateNotes: template.notes,
-          calculatedWeightKg,
-          // Benchmark debugging fields (optional, only present when percentageOfMax is defined)
+          setCalculations,
+          // Benchmark debugging fields (optional, only present when sets array exists)
           benchmarkWeightKg,
           benchmarkName,
           benchmarkTemplateId,

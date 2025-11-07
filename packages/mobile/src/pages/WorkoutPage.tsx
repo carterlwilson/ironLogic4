@@ -40,8 +40,11 @@ export const WorkoutPage = () => {
   const handleSetComplete = (activityId: string, setIndex: number) => {
     setActivityProgress(prev => {
       const newMap = new Map(prev);
+      const activity = dayActivities.find(a => a.id === activityId);
+      const setsCount = activity?.setCalculations?.length || 0;
+
       const progress = newMap.get(activityId) || {
-        sets: Array(dayActivities.find(a => a.id === activityId)?.sets || 0).fill({ completed: false }),
+        sets: Array(setsCount).fill({ completed: false }),
         completed: false,
       };
 
@@ -71,10 +74,12 @@ export const WorkoutPage = () => {
 
       if (!activity) return newMap;
 
+      const setsCount = activity.type === ActivityType.LIFT
+        ? (activity.setCalculations?.length || 0)
+        : 0;
+
       const progress = newMap.get(activityId) || {
-        sets: activity.type === ActivityType.LIFT
-          ? Array(activity.sets || 0).fill({ completed: false })
-          : [],
+        sets: Array(setsCount).fill({ completed: false }),
         completed: false,
       };
 
@@ -90,10 +95,12 @@ export const WorkoutPage = () => {
   // Get progress for an activity
   const getActivityProgress = (activityId: string): ActivityProgress => {
     const activity = dayActivities.find(a => a.id === activityId);
+    const setsCount = activity?.type === ActivityType.LIFT
+      ? (activity.setCalculations?.length || 0)
+      : 0;
+
     return activityProgress.get(activityId) || {
-      sets: activity?.type === ActivityType.LIFT
-        ? Array(activity.sets || 0).fill({ completed: false })
-        : [],
+      sets: Array(setsCount).fill({ completed: false }),
       completed: false,
     };
   };

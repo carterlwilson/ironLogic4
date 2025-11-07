@@ -31,6 +31,7 @@ export interface UpdateClientRequest {
   lastName?: string;
   currentBenchmarks?: ClientBenchmark[];
   historicalBenchmarks?: ClientBenchmark[];
+  programId?: string | null;
 }
 
 class ClientApiService {

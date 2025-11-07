@@ -1,16 +1,10 @@
 import { Card, Stack, Text, Group, Button, Badge, Paper } from '@mantine/core';
 import { IconClock } from '@tabler/icons-react';
 import { ActivityProgress } from '../../pages/WorkoutPage';
-
-interface CardioActivity {
-  id: string;
-  templateName: string;
-  durationMinutes?: number;
-  description?: string;
-}
+import type { WorkoutActivity } from '@ironlogic4/shared/types/programs';
 
 interface CardioActivityCardProps {
-  activity: CardioActivity;
+  activity: WorkoutActivity;
   progress: ActivityProgress;
   onActivityComplete: (activityId: string) => void;
 }
