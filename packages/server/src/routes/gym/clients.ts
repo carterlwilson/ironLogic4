@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   verifyToken,
-  requireOwnerOrAdminForGym,
+  requireGymStaffAccess,
 } from '../../middleware/auth.js';
 import {
   getAllClients,
@@ -21,8 +21,8 @@ router.get('/', verifyToken, getAllClients);
 // Get a single client by ID
 router.get('/:id', verifyToken, getClientById);
 
-// Create a new client (requires owner or admin permissions)
-router.post('/', verifyToken, requireOwnerOrAdminForGym, createClient);
+// Create a new client (requires gym staff permissions)
+router.post('/', verifyToken, requireGymStaffAccess, createClient);
 
 // Update a client
 router.put('/:id', verifyToken, updateClient);

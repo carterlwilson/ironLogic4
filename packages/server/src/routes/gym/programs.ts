@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   verifyToken,
-  requireOwnerOrAdminForGym,
+  requireGymStaffAccess,
 } from '../../middleware/auth.js';
 import {
   getAllPrograms,
@@ -23,8 +23,8 @@ router.get('/', verifyToken, getAllPrograms);
 router.get('/:id', verifyToken, getProgramById);
 
 // POST /api/gym/programs - Create new program
-// Owner/Admin access with gym scoping
-router.post('/', verifyToken, requireOwnerOrAdminForGym, createProgram);
+// Gym staff access with gym scoping
+router.post('/', verifyToken, requireGymStaffAccess, createProgram);
 
 // PUT /api/gym/programs/:id - Update program
 // Owner/Admin access with gym scoping

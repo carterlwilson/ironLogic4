@@ -56,8 +56,8 @@ export const getScheduleTemplates = async (
 
     const query: any = {};
 
-    // Gym filtering - required for owners, optional for admins
-    if (req.user?.userType === UserType.OWNER) {
+    // Gym filtering - required for owners and coaches, optional for admins
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
       query.gymId = req.user.gymId;
     } else if (gymId) {
       query.gymId = gymId;
@@ -120,7 +120,7 @@ export const getScheduleTemplateById = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only access your own gym\'s schedules.',
@@ -195,9 +195,9 @@ export const createScheduleTemplate = async (
     }
 
     // Determine gymId based on user type
-    // For OWNER/CLIENT, always use their gym. For ADMIN, allow specifying gymId
+    // For OWNER/COACH/CLIENT, always use their gym. For ADMIN, allow specifying gymId
     let gymId: string | undefined;
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.CLIENT) {
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.CLIENT) {
       if (!req.user.gymId) {
         res.status(400).json({
           success: false,
@@ -301,7 +301,7 @@ export const updateScheduleTemplate = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only update your own gym\'s templates.',
@@ -386,7 +386,7 @@ export const deleteScheduleTemplate = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only delete your own gym\'s templates.',

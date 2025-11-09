@@ -51,29 +51,29 @@ router.get(
 );
 
 // POST /api/gym/schedules/templates - Create new schedule template
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.post(
   '/templates',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   createScheduleTemplate
 );
 
 // PUT /api/gym/schedules/templates/:id - Update schedule template
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.put(
   '/templates/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   updateScheduleTemplate
 );
 
 // DELETE /api/gym/schedules/templates/:id - Delete schedule template
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.delete(
   '/templates/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   deleteScheduleTemplate
 );
 
@@ -98,49 +98,49 @@ router.get(
 );
 
 // POST /api/gym/schedules/active - Create active schedule from template
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.post(
   '/active',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   createActiveSchedule
 );
 
 // DELETE /api/gym/schedules/active/:id - Delete active schedule
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.delete(
   '/active/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   deleteActiveSchedule
 );
 
 // POST /api/gym/schedules/active/:id/reset - Reset active schedule from template
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.post(
   '/active/:id/reset',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   resetActiveSchedule
 );
 
 // ===== Staff Assignment Routes =====
 
 // POST /api/gym/schedules/active/:id/assign - Assign coach to active schedule
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.post(
   '/active/:id/assign',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   assignStaff
 );
 
 // DELETE /api/gym/schedules/active/:id/unassign/:coachId - Unassign coach from active schedule
-// Admin/Owner only
+// Admin/Owner/Coach only
 router.delete(
   '/active/:id/unassign/:coachId',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
   unassignStaff
 );
 

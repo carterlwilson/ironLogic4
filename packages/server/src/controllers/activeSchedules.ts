@@ -38,8 +38,8 @@ export const getActiveSchedules = async (
 
     const query: any = {};
 
-    // Gym filtering - required for owners and clients, optional for admins
-    if (req.user?.userType === UserType.OWNER) {
+    // Gym filtering - required for owners, coaches and clients, optional for admins
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
       query.gymId = req.user.gymId;
     } else if (req.user?.userType === UserType.CLIENT) {
       // Clients can only see schedules for their gym
@@ -131,7 +131,7 @@ export const getActiveScheduleById = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && schedule.gymId.toString() !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only access your own gym\'s schedules.',
@@ -237,7 +237,7 @@ export const createActiveSchedule = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && template.gymId.toString() !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId.toString() !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only create schedules for your own gym.',
@@ -305,7 +305,7 @@ export const deleteActiveSchedule = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && schedule.gymId.toString() !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only delete your own gym\'s schedules.',
@@ -361,7 +361,7 @@ export const resetActiveSchedule = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && schedule.gymId.toString() !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only reset your own gym\'s schedules.',
@@ -455,7 +455,7 @@ export const assignStaff = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && schedule.gymId.toString() !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied.',
@@ -551,7 +551,7 @@ export const unassignStaff = async (
     }
 
     // Check access permissions
-    if (req.user?.userType === UserType.OWNER && schedule.gymId.toString() !== req.user.gymId) {
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && schedule.gymId.toString() !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied.',

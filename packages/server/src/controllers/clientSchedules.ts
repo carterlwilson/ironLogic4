@@ -51,8 +51,8 @@ export const getAvailableSchedules = async (
         return;
       }
       gymId = req.user.gymId;
-    } else if (req.user?.userType === UserType.OWNER) {
-      // Owners can only see schedules for their gym
+    } else if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
+      // Owners and coaches can only see schedules for their gym
       if (!req.user.gymId) {
         res.status(400).json({
           success: false,

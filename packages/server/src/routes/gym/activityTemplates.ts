@@ -1,7 +1,7 @@
 import express from 'express';
 import {
   verifyToken,
-  requireOwnerOrAdminForGym,
+  requireGymStaffAccess,
   AuthenticatedRequest,
 } from '../../middleware/auth.js';
 import {
@@ -23,8 +23,8 @@ router.get('/', verifyToken, getAllActivityTemplates);
 router.get('/:id', verifyToken, getActivityTemplateById);
 
 // POST /api/gym/activity-templates - Create new activity template
-// Owner/Admin access with gym scoping
-router.post('/', verifyToken, requireOwnerOrAdminForGym, createActivityTemplate);
+// Gym staff access with gym scoping
+router.post('/', verifyToken, requireGymStaffAccess, createActivityTemplate);
 
 // PUT /api/gym/activity-templates/:id - Update activity template
 // Owner/Admin access with gym scoping

@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken, requireOwnerOrAdminForGym } from '../../middleware/auth.js';
+import { verifyToken, requireGymStaffAccess } from '../../middleware/auth.js';
 import {
   getAllBenchmarkTemplates,
   getBenchmarkTemplateById,
@@ -25,19 +25,19 @@ router.get('/:id', verifyToken, getBenchmarkTemplateById);
 // POST /api/gym/benchmark-templates
 // Create new template
 // Auth: Required (verifyToken)
-// Access: OWNER or ADMIN only (requireOwnerOrAdminForGym)
-router.post('/', verifyToken, requireOwnerOrAdminForGym, createBenchmarkTemplate);
+// Access: Gym staff only (requireGymStaffAccess)
+router.post('/', verifyToken, requireGymStaffAccess, createBenchmarkTemplate);
 
 // PUT /api/gym/benchmark-templates/:id
 // Update template
 // Auth: Required (verifyToken)
-// Access: OWNER or ADMIN only (requireOwnerOrAdminForGym)
-router.put('/:id', verifyToken, requireOwnerOrAdminForGym, updateBenchmarkTemplate);
+// Access: Gym staff only (requireGymStaffAccess)
+router.put('/:id', verifyToken, requireGymStaffAccess, updateBenchmarkTemplate);
 
 // DELETE /api/gym/benchmark-templates/:id
 // Delete template
 // Auth: Required (verifyToken)
-// Access: OWNER or ADMIN only (requireOwnerOrAdminForGym)
-router.delete('/:id', verifyToken, requireOwnerOrAdminForGym, deleteBenchmarkTemplate);
+// Access: Gym staff only (requireGymStaffAccess)
+router.delete('/:id', verifyToken, requireGymStaffAccess, deleteBenchmarkTemplate);
 
 export default router;

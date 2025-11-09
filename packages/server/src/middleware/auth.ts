@@ -232,3 +232,50 @@ export const requireOwnerOrAdminForGym = (req: AuthenticatedRequest, res: Respon
     error: 'Access denied. Owner or admin privileges required.',
   });
 };
+
+/**
+ * Middleware for gym-scoped access - allows ADMIN, OWNER, and COACH users
+ *
+ * For OWNER/COACH users: Verifies they have a gym assignment (req.user.gymId exists)
+ * For ADMIN users: Allows full access across all gyms
+ *
+ * Controllers are responsible for using req.user.gymId for gym scoping.
+ */
+export const requireGymStaffAccess = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  const user = req.user;
+
+  if (!user) {
+    res.status(401).json({
+      success: false,
+      error: 'Authentication required',
+    });
+    return;
+  }
+
+  // Admins have full access to all gyms
+  if (user.userType === UserType.ADMIN) {
+    next();
+    return;
+  }
+
+  // Owners and Coaches must have a gym assignment
+  if (user.userType === UserType.OWNER || user.userType === UserType.COACH) {
+    if (!user.gymId) {
+      res.status(400).json({
+        success: false,
+        error: 'You must be assigned to a gym to perform this action',
+      });
+      return;
+    }
+
+    // User has a gym assignment, allow the request
+    // Controllers will use req.user.gymId for gym scoping
+    next();
+    return;
+  }
+
+  res.status(403).json({
+    success: false,
+    error: 'Access denied. Admin, owner, or coach privileges required.',
+  });
+};

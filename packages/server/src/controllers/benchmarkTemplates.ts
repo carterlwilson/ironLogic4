@@ -35,8 +35,8 @@ export const getAllBenchmarkTemplates = async (
 
     const query: any = {};
 
-    // Gym scoping: owners can only see their gym's templates, admins can filter by gymId
-    if (req.user?.userType === UserType.OWNER) {
+    // Gym scoping: owners and coaches can only see their gym's templates, admins can filter by gymId
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
       query.gymId = req.user.gymId;
     } else if (gymId) {
       query.gymId = gymId;
@@ -119,8 +119,8 @@ export const getBenchmarkTemplateById = async (
       return;
     }
 
-    // Gym scoping: owners can only access their gym's templates
-    if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
+    // Gym scoping: owners and coaches can only access their gym's templates
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only access your own gym\'s templates.',
@@ -239,8 +239,8 @@ export const updateBenchmarkTemplate = async (
       return;
     }
 
-    // Gym scoping: owners can only update their gym's templates
-    if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
+    // Gym scoping: owners and coaches can only update their gym's templates
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only update your own gym\'s templates.',
@@ -307,8 +307,8 @@ export const deleteBenchmarkTemplate = async (
       return;
     }
 
-    // Gym scoping: owners can only delete their gym's templates
-    if (req.user?.userType === UserType.OWNER && template.gymId !== req.user.gymId) {
+    // Gym scoping: owners and coaches can only delete their gym's templates
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only delete your own gym\'s templates.',
