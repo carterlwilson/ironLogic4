@@ -278,19 +278,17 @@ export function deleteActivity(program: IProgram, activityId: string): IProgram 
 /**
  * Reorder activities in a day
  */
-export function reorderActivities(program: IProgram, dayId: string, activityIds: string[]): IProgram {
+export function reorderActivities(program: IProgram, dayId: string, reorderedActivities: IActivity[]): IProgram {
   return produce(program, draft => {
     for (const block of draft.blocks) {
       for (const week of block.weeks) {
         const day = week.days.find(d => d.id === dayId);
         if (day) {
-          // Create a map of activities by ID
-          const activityMap = new Map(day.activities.map(a => [a.id, a]));
-          // Reorder based on the new order
-          day.activities = activityIds.map((id, index) => {
-            const activity = activityMap.get(id)!;
-            activity.order = index;
-            return activity;
+          // Use the reordered IDs to sort the draft's activities
+          // This keeps us working within the draft, avoiding immer adding fields
+          const idOrder = reorderedActivities.map(a => a.id);
+          day.activities.sort((a, b) => {
+            return idOrder.indexOf(a.id) - idOrder.indexOf(b.id);
           });
           return;
         }
