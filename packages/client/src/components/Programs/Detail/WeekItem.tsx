@@ -152,6 +152,17 @@ export function WeekItem({ week, program, onProgramChange, templateMap, template
                 templates={templates}
               />
             </div>
+
+            {/* Add Day Button */}
+            <Button
+              variant="light"
+              size="sm"
+              leftSection={<IconPlus size={14} />}
+              onClick={handleAddDay}
+              fullWidth
+            >
+              Add Day
+            </Button>
           </Stack>
         </Collapse>
       </Stack>

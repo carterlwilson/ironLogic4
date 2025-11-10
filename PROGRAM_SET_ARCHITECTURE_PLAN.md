@@ -9,7 +9,7 @@
 - Add: `setConfigurations` array to IActivity (required for lift activities)
 - Result: Clean, single-format data model with no technical debt
 
----
+---blah
 
 ## Phase 1: Define Clean Data Model (Day 1)
 

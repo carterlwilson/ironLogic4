@@ -1,21 +1,12 @@
-Stay in Plan mode.
+Go into plan mode.
 
-Incredible, you have completely fucked up my ability to edit clients.
-Now, along with the program assignment issue, if I try to edit a client at all
-that doesn't have a program assigned, I see this. That's fucking stupid.
+I'm getting the following error in git when I try to pull 
+the latest changes from the remote:
 
-{
-"success": false,
-"error": "Invalid request data",
-"details": [
-{
-"code": "invalid_type",
-"expected": "string",
-"received": "null",
-"path": [
-"programId"
-],
-"message": "Expected string, received null"
-}
-]
-}
+error: failed to push some refs to 'https://github.com/carterlwilson/ironLogic4.git'
+hint: Updates were rejected because the tip of your current branch is behind                                                                    
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+What can I do to fix this? I want to keep my current local changes
