@@ -154,6 +154,16 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
                 activityGroups={activityGroups}
               />
             </div>
+
+            {/* Add Week Button */}
+            <Button
+              variant="light"
+              leftSection={<IconPlus size={16} />}
+              onClick={handleAddWeek}
+              fullWidth
+            >
+              Add Week
+            </Button>
           </Stack>
         </Collapse>
       </Stack>

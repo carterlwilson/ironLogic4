@@ -128,16 +128,29 @@ export function DayItem({ day, program, onProgramChange, templateMap, templates 
 
           {/* Activity List */}
           <Collapse in={isExpanded}>
-            <div style={{ paddingLeft: 20 }}>
-              <ActivityList
-                dayId={day.id}
-                activities={day.activities}
-                program={program}
-                onProgramChange={onProgramChange}
-                templateMap={templateMap}
-                templates={templates}
-              />
-            </div>
+            <Stack gap="md">
+              <div style={{ paddingLeft: 20 }}>
+                <ActivityList
+                  dayId={day.id}
+                  activities={day.activities}
+                  program={program}
+                  onProgramChange={onProgramChange}
+                  templateMap={templateMap}
+                  templates={templates}
+                />
+              </div>
+
+              {/* Add Activity Button */}
+              <Button
+                variant="light"
+                size="sm"
+                leftSection={<IconPlus size={14} />}
+                onClick={() => setIsActivityModalOpen(true)}
+                fullWidth
+              >
+                Add Activity
+              </Button>
+            </Stack>
           </Collapse>
         </Stack>
       </Paper>
