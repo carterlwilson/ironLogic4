@@ -1,6 +1,4 @@
-Go into plan mode.
+Stay in plan mode.
 
-Ok, even after all that simplification, when I try to re-order a non-lift activity
-in a day in the program builder, it adds a sets field with an empty array to 
-the non-lift activity. I was able to confirm with the dev console that the
-sets field is ONLY present after the re-order. Why?
+That still didn't work. It's still reaching out to the preprod db. Do you see anything
+in the server code that would cause this?
