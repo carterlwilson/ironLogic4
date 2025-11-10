@@ -1,7 +1,7 @@
 services:
   # Backend API Server
   - type: web
-    name: ironlogic4-server
+    name: ironlogic4s-server
     runtime: node
     region: oregon
     plan: free

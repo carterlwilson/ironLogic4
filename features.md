@@ -1,4 +1,5 @@
 Stay in plan mode.
 
-That still didn't work. It's still reaching out to the preprod db. Do you see anything
-in the server code that would cause this?
+I see what's wrong. the preprod server service is set up with the same domain as
+the prod service. How can I change the domain the preprod server is running on? Do I have to
+delete the service and create a new one?
