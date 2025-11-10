@@ -243,15 +243,6 @@ export const updateProgram = async (
         });
         return;
       }
-
-      // Prevent structure changes if program has been started
-      if (existingProgram.currentProgress.startedAt !== null) {
-        res.status(400).json({
-          success: false,
-          error: 'Cannot modify block/week structure of a program that has been started. Please reset progress first.',
-        });
-        return;
-      }
     }
 
     const updatedProgram = await Program.findOneAndUpdate(

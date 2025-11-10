@@ -20,38 +20,14 @@ const BaseActivitySchema = z.object({
   activityTemplateId: objectId,
   type: ActivityTypeSchema,
   order: z.number().int().min(0),
-  sets: z.array(SetSchema).min(1, 'At least 1 set required').max(20, 'Cannot exceed 20 sets').optional(),
+  sets: z.array(SetSchema).min(0).max(20, 'Cannot exceed 20 sets').optional(),
   time: z.number().int().min(0).optional(), // in minutes
   distance: z.number().min(0).optional(),
   distanceUnit: DistanceUnitSchema.optional()
 });
 
 // Activity schema with refinements
-export const ActivitySchema = BaseActivitySchema.refine(
-  (data) => {
-    // Lift activities MUST have sets array
-    if (data.type === ActivityType.LIFT) {
-      return data.sets !== undefined && data.sets.length > 0;
-    }
-    return true;
-  },
-  {
-    message: 'Lift activities must have at least one set',
-    path: ['sets']
-  }
-).refine(
-  (data) => {
-    // Non-lift activities MUST NOT have sets array
-    if (data.type !== ActivityType.LIFT) {
-      return data.sets === undefined;
-    }
-    return true;
-  },
-  {
-    message: 'Only lift activities can have sets',
-    path: ['sets']
-  }
-);
+export const ActivitySchema = BaseActivitySchema;
 
 // Day schema
 export const DaySchema = z.object({

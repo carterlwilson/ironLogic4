@@ -113,8 +113,30 @@ const connectDB = async () => {
     const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/ironlogic4';
     console.log('[STARTUP] MongoDB URI configured:', mongoUri ? 'YES (length: ' + mongoUri.length + ')' : 'NO');
 
+    // Diagnostic logging to debug connection issues
+    if (mongoUri) {
+      try {
+        // Extract and log cluster/host (without exposing password)
+        const uriParts = mongoUri.split('@');
+        const hostAndPath = uriParts[1] || 'unknown';
+        const host = hostAndPath.split('/')[0] || 'unknown';
+        const pathParts = hostAndPath.split('/')[1] || '';
+        const database = pathParts.split('?')[0] || 'default';
+
+        console.log('[STARTUP] MongoDB Cluster:', host);
+        console.log('[STARTUP] MongoDB Database:', database);
+        console.log('[STARTUP] URI has password:', mongoUri.includes('@') ? 'YES' : 'NO');
+      } catch (e) {
+        console.log('[STARTUP] Could not parse URI for diagnostics');
+      }
+    }
+
     await mongoose.connect(mongoUri);
     console.log('[STARTUP] MongoDB connected successfully');
+
+    // Log the actual connected database name
+    const dbName = mongoose.connection.db?.databaseName;
+    console.log('[STARTUP] Connected to database:', dbName);
   } catch (error) {
     console.error('[STARTUP ERROR] MongoDB connection error:', error);
     process.exit(1);

@@ -12,6 +12,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
+  arrayMove,
 } from '@dnd-kit/sortable';
 import { SortableActivityCard } from './SortableActivityCard';
 import { reorderActivities } from '../../../utils/programHelpers';
@@ -35,23 +36,15 @@ export function ActivityList({ dayId, activities, program, onProgramChange, temp
     })
   );
 
-  const sortedActivities = [...activities].sort((a, b) => a.order - b.order);
-  const activityIds = sortedActivities.map(a => a.id);
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = activityIds.indexOf(active.id as string);
-      const newIndex = activityIds.indexOf(over.id as string);
+      const oldIndex = activities.findIndex(a => a.id === active.id);
+      const newIndex = activities.findIndex(a => a.id === over.id);
 
-      // Create new order array
-      const newOrder = [...activityIds];
-      const [movedItem] = newOrder.splice(oldIndex, 1);
-      newOrder.splice(newIndex, 0, movedItem);
-
-      // Update program with new order
-      const updated = reorderActivities(program, dayId, newOrder);
+      const reorderedActivities = arrayMove(activities, oldIndex, newIndex);
+      const updated = reorderActivities(program, dayId, reorderedActivities);
       onProgramChange(updated);
     }
   };
@@ -70,9 +63,9 @@ export function ActivityList({ dayId, activities, program, onProgramChange, temp
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={activityIds} strategy={verticalListSortingStrategy}>
+      <SortableContext items={activities} strategy={verticalListSortingStrategy}>
         <Stack gap="sm">
-          {sortedActivities.map((activity) => (
+          {activities.map((activity) => (
             <SortableActivityCard
               key={activity.id}
               activity={activity}
