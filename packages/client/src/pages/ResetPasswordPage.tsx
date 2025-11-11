@@ -127,15 +127,10 @@ export function ResetPasswordPage() {
 
         notifications.show({
           title: 'Password Reset Successful',
-          message: 'Your password has been updated. You can now log in with your new password.',
+          message: 'Your password has been updated.',
           color: 'forestGreen',
           autoClose: 5000,
         });
-
-        // Redirect to login after 3 seconds
-        setTimeout(() => {
-          navigate('/login');
-        }, 3000);
       } else {
         throw new Error(response.message || 'Failed to reset password');
       }
@@ -303,25 +298,33 @@ export function ResetPasswordPage() {
               </Title>
 
               <Text ta="center" size="sm" c="dimmed" mb="xl">
-                Your password has been successfully updated. You will be redirected to the login page shortly.
+                Your password has been successfully updated. Choose your app below to continue.
               </Text>
 
-              <Alert color="forestGreen" variant="light" mb="md">
-                <Text size="sm">
-                  You can now log in with your new password.
-                </Text>
-              </Alert>
+              <Stack gap="md">
+                <Button
+                  component="a"
+                  href={import.meta.env.VITE_CLIENT_APP_URL || 'http://localhost:3000'}
+                  size="md"
+                  radius="md"
+                  fullWidth
+                  color="forestGreen"
+                >
+                  Go to Coach/Admin Dashboard
+                </Button>
 
-              <Button
-                component={Link}
-                to="/login"
-                size="md"
-                radius="md"
-                fullWidth
-                color="forestGreen"
-              >
-                Go to Login
-              </Button>
+                <Button
+                  component="a"
+                  href={import.meta.env.VITE_MOBILE_APP_URL || 'http://localhost:3002'}
+                  size="md"
+                  radius="md"
+                  fullWidth
+                  variant="outline"
+                  color="forestGreen"
+                >
+                  Go to Client Mobile App
+                </Button>
+              </Stack>
             </>
           )}
         </Paper>
