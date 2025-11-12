@@ -9,11 +9,12 @@ export enum DistanceUnit {
 
 /**
  * Set - represents a single set within a lift activity
- * Total fields: 2
+ * Total fields: 3
  */
 export interface ISet {
   reps: number;              // 1-100
   percentageOfMax: number;   // 0-200
+  benchmarkTemplateId?: string;  // Optional reference to benchmark template for this set
 }
 
 /**
@@ -143,6 +144,8 @@ export interface ISetCalculation {
   reps: number;
   percentageOfMax: number;
   calculatedWeightKg?: number;  // Based on benchmark
+  benchmarkTemplateId?: string;  // Benchmark template used for this set
+  benchmarkName?: string;        // Name of the benchmark template
 }
 
 /**

@@ -105,9 +105,9 @@ export function LiftActivityCard({
                   <Text size="xl" fw={700} c="forestGreen">
                     {currentSet.calculatedWeightKg} kg
                   </Text>
-                  {currentSet.percentageOfMax && activity.benchmarkWeight && (
+                  {currentSet.percentageOfMax && currentSet.benchmarkName && (
                     <Text size="xs" c="dimmed">
-                      {currentSet.percentageOfMax}% of {activity.benchmarkWeight} kg
+                      {currentSet.percentageOfMax}% of {currentSet.benchmarkName}
                     </Text>
                   )}
                 </div>
