@@ -9,7 +9,6 @@ import { useActivityGroupManagement } from '../hooks/useActivityGroupManagement'
 import { useActivityGroupSearch } from '../hooks/useActivityGroupSearch';
 import { useActivityTemplateManagement } from '../hooks/useActivityTemplateManagement';
 import { useActivityTemplateSearch } from '../hooks/useActivityTemplateSearch';
-import { useBenchmarkTemplates } from '../hooks/useBenchmarkTemplates';
 
 // Activity Group Components
 import {
@@ -40,9 +39,6 @@ export function ActivitiesPage() {
 
   // Get gymId from user
   const gymId = user.gymId || '';
-
-  // Fetch benchmark templates once for the entire page
-  const { templates: benchmarkTemplates, loading: benchmarksLoading } = useBenchmarkTemplates(gymId);
 
   // Activity Group Management
   const {
@@ -273,8 +269,6 @@ export function ActivitiesPage() {
           gymId={gymId}
           groupOptions={groupOptions}
           groupsLoading={groupsLoading}
-          benchmarkTemplates={benchmarkTemplates}
-          benchmarksLoading={benchmarksLoading}
         />
 
         <EditActivityTemplateModal
@@ -286,8 +280,6 @@ export function ActivitiesPage() {
           loading={templatesLoading}
           groupOptions={groupOptions}
           groupsLoading={groupsLoading}
-          benchmarkTemplates={benchmarkTemplates}
-          benchmarksLoading={benchmarksLoading}
         />
 
         <DeleteActivityTemplateModal

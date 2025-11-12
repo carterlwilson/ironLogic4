@@ -108,7 +108,7 @@ export const getCurrentWeekWorkouts = async (
     const activityTemplates = await ActivityTemplate.find({
       _id: { $in: Array.from(activityTemplateIds) }
     })
-      .select('name notes type benchmarkTemplateId')
+      .select('name notes type')
       .lean();
 
     // Create a map for quick lookup
@@ -116,14 +116,20 @@ export const getCurrentWeekWorkouts = async (
       activityTemplates.map(template => [template._id.toString(), template])
     );
 
-    // 9. Collect all unique benchmark template IDs
+    // 9. Collect all unique benchmark template IDs from sets only
     const benchmarkTemplateIds = new Set<string>();
 
-    // Add benchmark template IDs from activity templates
-    activityTemplates.forEach(template => {
-      if (template.benchmarkTemplateId) {
-        benchmarkTemplateIds.add(template.benchmarkTemplateId);
-      }
+    // Collect benchmark IDs from sets across all activities
+    currentWeek.days.forEach(day => {
+      day.activities.forEach(activity => {
+        if (activity.sets) {
+          activity.sets.forEach(set => {
+            if (set.benchmarkTemplateId) {
+              benchmarkTemplateIds.add(set.benchmarkTemplateId);
+            }
+          });
+        }
+      });
     });
 
     // Add benchmark template IDs from user's current benchmarks
@@ -180,34 +186,25 @@ export const getCurrentWeekWorkouts = async (
           reps: number;
           percentageOfMax: number;
           calculatedWeightKg?: number;
+          benchmarkTemplateId?: string;
+          benchmarkName?: string;
         }> | undefined;
 
-        let benchmarkWeightKg: number | undefined;
-        let benchmarkName: string | undefined;
-        let benchmarkTemplateId: string | undefined;
-
         if (activity.sets && activity.sets.length > 0) {
-          // Use benchmarkTemplateId from template if available, otherwise fallback to activityTemplateId
-          benchmarkTemplateId = template.benchmarkTemplateId || activity.activityTemplateId;
-          const benchmark = benchmarkMap.get(benchmarkTemplateId);
-
-          if (benchmark) {
-            // Get benchmark name from template map
-            benchmarkName = benchmarkTemplateNameMap.get(benchmarkTemplateId);
-
-            // Only calculate weight for WEIGHT type benchmarks
-            if (benchmark.type === BenchmarkType.WEIGHT && benchmark.weightKg) {
-              benchmarkWeightKg = benchmark.weightKg;
-            }
-          }
-
           // Calculate weight for each set
           setCalculations = activity.sets.map((set, index) => {
             let calculatedWeightKg: number | undefined;
+            let benchmarkName: string | undefined;
 
-            if (benchmarkWeightKg !== undefined) {
-              const rawWeight = (benchmarkWeightKg * set.percentageOfMax) / 100;
-              calculatedWeightKg = roundToHalf(rawWeight);
+            if (set.benchmarkTemplateId) {
+              const benchmark = benchmarkMap.get(set.benchmarkTemplateId);
+              benchmarkName = benchmarkTemplateNameMap.get(set.benchmarkTemplateId);
+
+              // Only calculate weight for WEIGHT type benchmarks
+              if (benchmark?.type === BenchmarkType.WEIGHT && benchmark.weightKg) {
+                const rawWeight = (benchmark.weightKg * set.percentageOfMax) / 100;
+                calculatedWeightKg = roundToHalf(rawWeight);
+              }
             }
 
             return {
@@ -215,6 +212,8 @@ export const getCurrentWeekWorkouts = async (
               reps: set.reps,
               percentageOfMax: set.percentageOfMax,
               calculatedWeightKg,
+              benchmarkTemplateId: set.benchmarkTemplateId,
+              benchmarkName,
             };
           });
         }
@@ -231,10 +230,6 @@ export const getCurrentWeekWorkouts = async (
           templateName: template.name,
           templateNotes: template.notes,
           setCalculations,
-          // Benchmark debugging fields (optional, only present when sets array exists)
-          benchmarkWeightKg,
-          benchmarkName,
-          benchmarkTemplateId,
         };
       });
 

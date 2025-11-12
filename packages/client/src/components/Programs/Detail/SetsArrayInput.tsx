@@ -1,14 +1,21 @@
-import { Stack, Table, NumberInput, ActionIcon, Button, Group, Text } from '@mantine/core';
+import { Stack, Table, NumberInput, ActionIcon, Button, Group, Text, Select } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { ISet } from '@ironlogic4/shared/types/programs';
+
+interface BenchmarkOption {
+  value: string;
+  label: string;
+}
 
 interface SetsArrayInputProps {
   value: ISet[];
   onChange: (sets: ISet[]) => void;
   error?: string;
+  benchmarkOptions?: BenchmarkOption[];
+  benchmarksLoading?: boolean;
 }
 
-export function SetsArrayInput({ value, onChange, error }: SetsArrayInputProps) {
+export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], benchmarksLoading = false }: SetsArrayInputProps) {
   const handleAddSet = () => {
     // Add a new set with default values
     const newSet: ISet = { reps: 5, percentageOfMax: 0 };
@@ -20,9 +27,13 @@ export function SetsArrayInput({ value, onChange, error }: SetsArrayInputProps) 
     onChange(newSets);
   };
 
-  const handleUpdateSet = (index: number, field: keyof ISet, newValue: number | undefined) => {
+  const handleUpdateSet = (index: number, field: keyof ISet, newValue: number | string | undefined) => {
     const newSets = [...value];
-    newSets[index] = { ...newSets[index], [field]: newValue || 0 };
+    if (field === 'benchmarkTemplateId') {
+      newSets[index] = { ...newSets[index], [field]: newValue as string | undefined };
+    } else {
+      newSets[index] = { ...newSets[index], [field]: (newValue as number) || 0 };
+    }
     onChange(newSets);
   };
 
@@ -54,6 +65,7 @@ export function SetsArrayInput({ value, onChange, error }: SetsArrayInputProps) 
               <Table.Th>Set</Table.Th>
               <Table.Th>Reps</Table.Th>
               <Table.Th>% of Max</Table.Th>
+              {benchmarkOptions.length > 0 && <Table.Th>Benchmark</Table.Th>}
               <Table.Th style={{ width: '50px' }}></Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -87,6 +99,21 @@ export function SetsArrayInput({ value, onChange, error }: SetsArrayInputProps) 
                     styles={{ input: { textAlign: 'center' } }}
                   />
                 </Table.Td>
+                {benchmarkOptions.length > 0 && (
+                  <Table.Td>
+                    <Select
+                      size="xs"
+                      placeholder="Select benchmark"
+                      data={benchmarkOptions}
+                      value={set.benchmarkTemplateId || null}
+                      onChange={(val) => handleUpdateSet(index, 'benchmarkTemplateId', val || undefined)}
+                      disabled={benchmarksLoading}
+                      clearable
+                      searchable
+                      styles={{ input: { minWidth: '150px' } }}
+                    />
+                  </Table.Td>
+                )}
                 <Table.Td>
                   <ActionIcon
                     color="red"

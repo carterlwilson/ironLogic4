@@ -2,10 +2,13 @@ import { Modal, Stack, Select, NumberInput, Button, Group } from '@mantine/core'
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { ActivityType } from '@ironlogic4/shared/types/activityTemplates';
+import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import { DistanceUnit, ISet } from '@ironlogic4/shared/types/programs';
 import type { IActivity } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
 import { SetsArrayInput } from './SetsArrayInput';
+import { useBenchmarkTemplates } from '../../../hooks/useBenchmarkTemplates';
+import { useAuth } from '../../../providers/AuthProvider';
 
 interface ActivityFormModalProps {
   opened: boolean;
@@ -16,7 +19,20 @@ interface ActivityFormModalProps {
 }
 
 export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity, templates }: ActivityFormModalProps) {
+  const { user } = useAuth();
+  const gymId = user?.gymId || '';
   const [selectedType, setSelectedType] = useState<ActivityType | null>(null);
+
+  // Fetch benchmark templates for set-level benchmark selection
+  const { templates: benchmarkTemplates, loading: benchmarksLoading } = useBenchmarkTemplates(gymId);
+
+  // Filter to only weight-based benchmarks for lift activities
+  const weightBenchmarkOptions = benchmarkTemplates
+    .filter((template) => template.type === BenchmarkType.WEIGHT)
+    .map((template) => ({
+      value: template.id,
+      label: template.name,
+    }));
 
   const form = useForm<Omit<IActivity, 'id' | 'order'>>({
     initialValues: {
@@ -128,6 +144,8 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
               value={form.values.sets as ISet[] || []}
               onChange={(sets) => form.setFieldValue('sets', sets)}
               error={form.errors.sets as string}
+              benchmarkOptions={weightBenchmarkOptions}
+              benchmarksLoading={benchmarksLoading}
             />
           )}
 

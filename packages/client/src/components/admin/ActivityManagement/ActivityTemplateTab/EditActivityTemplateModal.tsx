@@ -1,11 +1,9 @@
-import { Modal, Stack, Group, TextInput, Textarea, Button, Select, Text } from '@mantine/core';
+import { Modal, Stack, Group, TextInput, Textarea, Button, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconActivity } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import { ActivityType } from '@ironlogic4/shared/types/activityTemplates';
-import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ActivityTemplate, UpdateActivityTemplateRequest } from '@ironlogic4/shared/types/activityTemplates';
-import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ActivityGroupOption } from '../../../../hooks/useActivityGroupOptions';
 
 interface EditActivityTemplateModalProps {
@@ -17,8 +15,6 @@ interface EditActivityTemplateModalProps {
   loading?: boolean;
   groupOptions: ActivityGroupOption[];
   groupsLoading: boolean;
-  benchmarkTemplates: BenchmarkTemplate[];
-  benchmarksLoading: boolean;
 }
 
 const typeOptions = [
@@ -37,17 +33,7 @@ export function EditActivityTemplateModal({
   loading = false,
   groupOptions,
   groupsLoading,
-  benchmarkTemplates,
-  benchmarksLoading,
 }: EditActivityTemplateModalProps) {
-
-  // Filter to only weight-based benchmarks
-  const weightBenchmarkOptions = benchmarkTemplates
-    .filter((benchmarkTemplate) => benchmarkTemplate.type === BenchmarkType.WEIGHT)
-    .map((benchmarkTemplate) => ({
-      value: benchmarkTemplate.id,
-      label: benchmarkTemplate.name,
-    }));
 
   const form = useForm<UpdateActivityTemplateRequest>({
     initialValues: {
@@ -55,7 +41,6 @@ export function EditActivityTemplateModal({
       notes: '',
       groupId: '',
       type: ActivityType.LIFT,
-      benchmarkTemplateId: '',
     },
     validate: {
       name: (value) => {
@@ -83,7 +68,6 @@ export function EditActivityTemplateModal({
         notes: template.notes || '',
         groupId: template.groupId || '',
         type: template.type,
-        benchmarkTemplateId: template.benchmarkTemplateId || '',
       });
     }
   }, [template]);
@@ -92,11 +76,10 @@ export function EditActivityTemplateModal({
     if (!template) return;
 
     try {
-      // Remove groupId and benchmarkTemplateId if they're empty strings
+      // Remove groupId if it's an empty string
       const submitData = {
         ...values,
         groupId: values.groupId || undefined,
-        benchmarkTemplateId: values.benchmarkTemplateId || undefined,
       };
       await onSubmit(template.id, submitData);
       form.reset();
@@ -154,27 +137,6 @@ export function EditActivityTemplateModal({
             clearable
             {...form.getInputProps('groupId')}
           />
-
-          {/* Conditionally show benchmark template selector for LIFT activities */}
-          {form.values.type === ActivityType.LIFT && (
-            <Select
-              label="Benchmark Template"
-              placeholder="Select benchmark template (optional)"
-              description="Link to a benchmark for percentage-based weight calculations"
-              data={weightBenchmarkOptions}
-              disabled={benchmarksLoading}
-              searchable
-              clearable
-              {...form.getInputProps('benchmarkTemplateId')}
-            />
-          )}
-
-          {/* Show message if no weight benchmarks available for LIFT type */}
-          {form.values.type === ActivityType.LIFT && weightBenchmarkOptions.length === 0 && !benchmarksLoading && (
-            <Text size="sm" c="dimmed">
-              No weight-based benchmark templates available. Create a weight benchmark template to link it here.
-            </Text>
-          )}
 
           <Textarea
             label="Notes"

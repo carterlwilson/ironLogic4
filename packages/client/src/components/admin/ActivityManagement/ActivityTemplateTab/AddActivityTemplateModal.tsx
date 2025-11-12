@@ -1,10 +1,8 @@
-import { Modal, Stack, Group, TextInput, Textarea, Button, Select, Text } from '@mantine/core';
+import { Modal, Stack, Group, TextInput, Textarea, Button, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconActivity } from '@tabler/icons-react';
 import { ActivityType } from '@ironlogic4/shared/types/activityTemplates';
-import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { CreateActivityTemplateRequest } from '@ironlogic4/shared/types/activityTemplates';
-import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ActivityGroupOption } from '../../../../hooks/useActivityGroupOptions';
 
 interface AddActivityTemplateModalProps {
@@ -15,8 +13,6 @@ interface AddActivityTemplateModalProps {
   gymId: string;
   groupOptions: ActivityGroupOption[];
   groupsLoading: boolean;
-  benchmarkTemplates: BenchmarkTemplate[];
-  benchmarksLoading: boolean;
 }
 
 const typeOptions = [
@@ -34,17 +30,7 @@ export function AddActivityTemplateModal({
   gymId,
   groupOptions,
   groupsLoading,
-  benchmarkTemplates,
-  benchmarksLoading,
 }: AddActivityTemplateModalProps) {
-
-  // Filter to only weight-based benchmarks
-  const weightBenchmarkOptions = benchmarkTemplates
-    .filter((template) => template.type === BenchmarkType.WEIGHT)
-    .map((template) => ({
-      value: template.id,
-      label: template.name,
-    }));
 
   const form = useForm<CreateActivityTemplateRequest>({
     initialValues: {
@@ -52,7 +38,6 @@ export function AddActivityTemplateModal({
       notes: '',
       groupId: '',
       type: ActivityType.LIFT,
-      benchmarkTemplateId: '',
       gymId,
     },
     validate: {
@@ -75,12 +60,11 @@ export function AddActivityTemplateModal({
 
   const handleSubmit = async (values: CreateActivityTemplateRequest) => {
     try {
-      // Remove groupId and benchmarkTemplateId if they're empty strings
+      // Remove groupId if it's an empty string
       const submitData = {
         ...values,
         gymId,
         groupId: values.groupId || undefined,
-        benchmarkTemplateId: values.benchmarkTemplateId || undefined,
       };
       await onSubmit(submitData);
       form.reset();
@@ -130,27 +114,6 @@ export function AddActivityTemplateModal({
             clearable
             {...form.getInputProps('groupId')}
           />
-
-          {/* Conditionally show benchmark template selector for LIFT activities */}
-          {form.values.type === ActivityType.LIFT && (
-            <Select
-              label="Benchmark Template"
-              placeholder="Select benchmark template (optional)"
-              description="Link to a benchmark for percentage-based weight calculations"
-              data={weightBenchmarkOptions}
-              disabled={benchmarksLoading}
-              searchable
-              clearable
-              {...form.getInputProps('benchmarkTemplateId')}
-            />
-          )}
-
-          {/* Show message if no weight benchmarks available for LIFT type */}
-          {form.values.type === ActivityType.LIFT && weightBenchmarkOptions.length === 0 && !benchmarksLoading && (
-            <Text size="sm" c="dimmed">
-              No weight-based benchmark templates available. Create a weight benchmark template to link it here.
-            </Text>
-          )}
 
           <Textarea
             label="Notes"
