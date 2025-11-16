@@ -136,12 +136,13 @@ export async function updateBenchmark(
 }
 
 /**
- * Get all available benchmark templates
+ * Get all available benchmark templates (non-paginated)
  */
 export async function getBenchmarkTemplates(): Promise<GetTemplatesResponse> {
   const token = getAuthToken();
 
-  const response = await fetch(`${API_BASE}/gym/benchmark-templates`, {
+  // Use the non-paginated /all endpoint to get all templates for dropdowns
+  const response = await fetch(`${API_BASE}/gym/benchmark-templates/all`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,

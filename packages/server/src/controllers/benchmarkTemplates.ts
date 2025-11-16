@@ -8,6 +8,7 @@ import {
   CreateBenchmarkTemplateSchema,
   UpdateBenchmarkTemplateSchema,
   BenchmarkTemplateListParamsSchema,
+  BenchmarkTemplateListAllParamsSchema,
   BenchmarkTemplateIdSchema,
 } from '@ironlogic4/shared';
 
@@ -82,6 +83,72 @@ export const getAllBenchmarkTemplates = async (
     res.json(response);
   } catch (error) {
     console.error('Error fetching benchmark templates:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch benchmark templates',
+    });
+  }
+};
+
+/**
+ * Get all benchmark templates without pagination (for dropdowns)
+ * Supports optional filtering by search, type, and tags
+ * Always respects gym scoping
+ */
+export const getAllBenchmarkTemplatesNoPagination = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const validation = BenchmarkTemplateListAllParamsSchema.safeParse(req.query);
+
+    if (!validation.success) {
+      res.status(400).json({
+        success: false,
+        error: 'Invalid query parameters',
+        details: validation.error.errors,
+      });
+      return;
+    }
+
+    const { gymId, search, type, tags } = validation.data;
+
+    const query: any = {};
+
+    // Gym scoping: owners and coaches can only see their gym's templates, admins can filter by gymId
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
+      query.gymId = req.user.gymId;
+    } else if (gymId) {
+      query.gymId = gymId;
+    }
+
+    // Text search on name and notes
+    if (search) {
+      query.$text = { $search: search };
+    }
+
+    // Filter by type
+    if (type) {
+      query.type = type;
+    }
+
+    // Filter by tags (comma-separated)
+    if (tags) {
+      const tagsArray = tags.split(',').map(tag => tag.trim());
+      query.tags = { $in: tagsArray };
+    }
+
+    const templates = await BenchmarkTemplate.find(query)
+      .sort({ name: 1 }); // Alphabetical sorting for dropdowns
+
+    const response: ApiResponse<any[]> = {
+      success: true,
+      data: templates.map(t => t.toJSON()),
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('Error fetching all benchmark templates:', error);
     res.status(500).json({
       success: false,
       error: 'Failed to fetch benchmark templates',
