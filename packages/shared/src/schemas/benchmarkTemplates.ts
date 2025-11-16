@@ -16,6 +16,16 @@ export const BenchmarkTemplateListParamsSchema = z.object({
 });
 
 /**
+ * Schema for listing all benchmark templates without pagination (for dropdowns)
+ */
+export const BenchmarkTemplateListAllParamsSchema = z.object({
+  gymId: objectId.optional(),
+  search: z.string().optional(),
+  type: z.nativeEnum(BenchmarkType).optional(),
+  tags: z.string().optional(), // Comma-separated tags
+});
+
+/**
  * Schema for creating a new benchmark template
  */
 export const CreateBenchmarkTemplateSchema = z.object({
@@ -43,6 +53,7 @@ export const BenchmarkTemplateIdSchema = z.object({
 });
 
 export type BenchmarkTemplateListParamsInput = z.infer<typeof BenchmarkTemplateListParamsSchema>;
+export type BenchmarkTemplateListAllParamsInput = z.infer<typeof BenchmarkTemplateListAllParamsSchema>;
 export type CreateBenchmarkTemplateInput = z.infer<typeof CreateBenchmarkTemplateSchema>;
 export type UpdateBenchmarkTemplateInput = z.infer<typeof UpdateBenchmarkTemplateSchema>;
 export type BenchmarkTemplateIdInput = z.infer<typeof BenchmarkTemplateIdSchema>;
