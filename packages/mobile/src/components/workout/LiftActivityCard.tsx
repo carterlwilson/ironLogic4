@@ -17,11 +17,9 @@ export function LiftActivityCard({
   activity,
   progress,
   onSetComplete,
-  onActivityComplete,
 }: LiftActivityCardProps) {
   const [selectedSetIndex, setSelectedSetIndex] = useState(0);
 
-  const allSetsComplete = progress.sets.every(s => s.completed);
   const anySetsComplete = progress.sets.some(s => s.completed);
 
   // Get the current set data
