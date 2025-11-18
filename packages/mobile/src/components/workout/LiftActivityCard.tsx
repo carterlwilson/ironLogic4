@@ -44,6 +44,16 @@ export function LiftActivityCard({
     return undefined;
   };
 
+  const handleCompleteCurrentSet = () => {
+    // Mark current set as complete
+    onSetComplete(activity.id, selectedSetIndex);
+
+    // Auto-advance to next set if not on last set
+    if (selectedSetIndex < totalSets - 1) {
+      setSelectedSetIndex(selectedSetIndex + 1);
+    }
+  };
+
   return (
     <Card
       shadow="sm"
@@ -59,12 +69,6 @@ export function LiftActivityCard({
             <Text fw={600} size="lg">
               {activity.templateName}
             </Text>
-            {totalSets > 0 && currentSet && (
-              <Text size="sm" c="dimmed">
-                {totalSets} {totalSets === 1 ? 'set' : 'sets'} × {currentSet.reps} reps
-                {totalSets > 1 && ` (Set ${selectedSetIndex + 1})`}
-              </Text>
-            )}
           </div>
           {progress.completed && (
             <Badge color="green" variant="filled" size="lg">
@@ -100,10 +104,10 @@ export function LiftActivityCard({
                 <IconWeight size={20} style={{ opacity: 0.6 }} />
                 <div style={{ flex: 1 }}>
                   <Text size="sm" c="dimmed">
-                    Recommended Weight {totalSets > 1 && `(Set ${selectedSetIndex + 1})`}
+                    {totalSets > 1 && `Set ${selectedSetIndex + 1}`}
                   </Text>
                   <Text size="xl" fw={700} c="forestGreen">
-                    {currentSet.calculatedWeightKg} kg
+                    {currentSet.reps ? `${currentSet.reps} reps @ ` : ''}{currentSet.calculatedWeightKg} kg
                   </Text>
                   {currentSet.percentageOfMax && currentSet.benchmarkName && (
                     <Text size="xs" c="dimmed">
@@ -139,6 +143,21 @@ export function LiftActivityCard({
           </Paper>
         )}
 
+        {/* Complete Set Button */}
+        <Button
+          variant="filled"
+          color={progress.sets[selectedSetIndex]?.completed ? 'gray' : 'forestGreen'}
+          size="lg"
+          leftSection={<IconCheck size={20} />}
+          onClick={handleCompleteCurrentSet}
+          fullWidth
+          disabled={progress.sets[selectedSetIndex]?.completed}
+        >
+          {progress.sets[selectedSetIndex]?.completed
+            ? `Set ${selectedSetIndex + 1} Complete`
+            : `Complete Set ${selectedSetIndex + 1}`}
+        </Button>
+
         {/* Set Progress Tracker */}
         {totalSets > 0 && (
           <div>
@@ -169,17 +188,6 @@ export function LiftActivityCard({
             </Group>
           </div>
         )}
-
-        {/* Mark Complete Button */}
-        <Button
-          variant={progress.completed ? 'outline' : 'filled'}
-          color={progress.completed ? 'gray' : allSetsComplete ? 'green' : 'forestGreen'}
-          size="md"
-          onClick={() => onActivityComplete(activity.id)}
-          fullWidth
-        >
-          {progress.completed ? 'Mark Incomplete' : 'Mark Complete'}
-        </Button>
       </Stack>
 
       {/* Barbell Calculator Drawer */}

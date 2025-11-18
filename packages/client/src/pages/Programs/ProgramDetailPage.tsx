@@ -7,13 +7,14 @@ import { useActivityTemplateMap } from '../../hooks/useActivityTemplateMap';
 import { useActivityGroups } from '../../hooks/useActivityGroups';
 import { useAuth } from '../../providers/AuthProvider';
 import { BlockList } from '../../components/Programs/Detail/BlockList';
+import { ProgramProgressControl } from '../../components/Programs/Detail/ProgramProgressControl';
 import type { IProgram } from '@ironlogic4/shared/types/programs';
 
 export function ProgramDetailPage() {
   const { programId } = useParams<{ programId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data, isLoading, error } = useProgram(programId);
+  const { data, isLoading, error, refetch } = useProgram(programId);
   const updateProgramStructure = useUpdateProgramStructure();
   const { templateMap, templates } = useActivityTemplateMap(user?.gymId);
   const { groups: activityGroups } = useActivityGroups(user?.gymId);
@@ -127,6 +128,12 @@ export function ProgramDetailPage() {
             </Button>
           </Group>
         </Group>
+
+        {/* Program Progress Control */}
+        <ProgramProgressControl
+          program={localProgram}
+          onProgressUpdate={() => refetch()}
+        />
 
         {/* Block List */}
         <BlockList

@@ -139,6 +139,41 @@ class ProgramApiService {
 
     return response.json();
   }
+
+  // Get current progress with metadata
+  async getCurrentProgress(programId: string): Promise<ApiResponse<any>> {
+    const response = await fetch(`${this.baseUrl}/${programId}/progress`, {
+      method: 'GET',
+      headers: await this.getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || 'Failed to fetch program progress');
+    }
+
+    return response.json();
+  }
+
+  // Update progress position
+  async updateProgress(
+    programId: string,
+    blockIndex: number,
+    weekIndex: number
+  ): Promise<ApiResponse<IProgram>> {
+    const response = await fetch(`${this.baseUrl}/${programId}/progress`, {
+      method: 'PUT',
+      headers: await this.getAuthHeaders(),
+      body: JSON.stringify({ blockIndex, weekIndex }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.message || 'Failed to update program progress');
+    }
+
+    return response.json();
+  }
 }
 
 export const programApi = new ProgramApiService();

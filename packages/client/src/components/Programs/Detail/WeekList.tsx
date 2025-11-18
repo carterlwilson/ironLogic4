@@ -12,9 +12,10 @@ interface WeekListProps {
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   activityGroups: ActivityGroup[];
+  isCurrentBlock?: boolean;
 }
 
-export function WeekList({ blockId, weeks, program, onProgramChange, templateMap, templates, activityGroups }: WeekListProps) {
+export function WeekList({ blockId, weeks, program, onProgramChange, templateMap, templates, activityGroups, isCurrentBlock }: WeekListProps) {
   if (weeks.length === 0) {
     return (
       <Text size="sm" c="dimmed" ta="center" py="md">
@@ -27,18 +28,22 @@ export function WeekList({ blockId, weeks, program, onProgramChange, templateMap
     <Stack gap="md">
       {[...weeks]
         .sort((a, b) => a.order - b.order)
-        .map((week) => (
-          <WeekItem
-            key={week.id}
-            week={week}
-            blockId={blockId}
-            program={program}
-            onProgramChange={onProgramChange}
-            templateMap={templateMap}
-            templates={templates}
-            activityGroups={activityGroups}
-          />
-        ))}
+        .map((week) => {
+          const isCurrentWeek = isCurrentBlock && week.order === program.currentProgress.weekIndex;
+          return (
+            <WeekItem
+              key={week.id}
+              week={week}
+              blockId={blockId}
+              program={program}
+              onProgramChange={onProgramChange}
+              templateMap={templateMap}
+              templates={templates}
+              activityGroups={activityGroups}
+              isCurrentWeek={isCurrentWeek}
+            />
+          );
+        })}
     </Stack>
   );
 }

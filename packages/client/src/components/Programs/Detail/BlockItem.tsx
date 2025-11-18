@@ -15,9 +15,10 @@ interface BlockItemProps {
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   activityGroups: ActivityGroup[];
+  isCurrentBlock?: boolean;
 }
 
-export function BlockItem({ block, program, onProgramChange, templateMap, templates, activityGroups }: BlockItemProps) {
+export function BlockItem({ block, program, onProgramChange, templateMap, templates, activityGroups, isCurrentBlock }: BlockItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(block.name);
@@ -107,6 +108,11 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
             <Badge size="sm" variant="light">
               {block.weeks.length} {block.weeks.length === 1 ? 'week' : 'weeks'}
             </Badge>
+            {isCurrentBlock && (
+              <Badge size="sm" color="forestGreen">
+                CURRENT
+              </Badge>
+            )}
           </Group>
 
           <Menu withinPortal position="bottom-end">
@@ -152,6 +158,7 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
                 templateMap={templateMap}
                 templates={templates}
                 activityGroups={activityGroups}
+                isCurrentBlock={isCurrentBlock}
               />
             </div>
 

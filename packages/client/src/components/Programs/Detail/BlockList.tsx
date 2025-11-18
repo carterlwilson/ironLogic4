@@ -43,17 +43,21 @@ export function BlockList({ program, onProgramChange, templateMap, templates, ac
     <Stack gap="lg">
       {[...program.blocks]
         .sort((a, b) => a.order - b.order)
-        .map((block) => (
-          <BlockItem
-            key={block.id}
-            block={block}
-            program={program}
-            onProgramChange={onProgramChange}
-            templateMap={templateMap}
-            templates={templates}
-            activityGroups={activityGroups}
-          />
-        ))}
+        .map((block) => {
+          const isCurrentBlock = block.order === program.currentProgress.blockIndex;
+          return (
+            <BlockItem
+              key={block.id}
+              block={block}
+              program={program}
+              onProgramChange={onProgramChange}
+              templateMap={templateMap}
+              templates={templates}
+              activityGroups={activityGroups}
+              isCurrentBlock={isCurrentBlock}
+            />
+          );
+        })}
 
       <Button
         leftSection={<IconPlus size={16} />}
