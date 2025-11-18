@@ -1,11 +1,8 @@
 import express from 'express';
 import { verifyToken } from '../../middleware/auth.js';
 import {
-  startProgram,
+  updateProgress,
   advanceWeek,
-  previousWeek,
-  jumpToWeek,
-  resetProgress,
   getCurrentProgress,
 } from '../../controllers/programProgress.js';
 
@@ -15,24 +12,12 @@ const router = express.Router({ mergeParams: true });
 // Owner/Admin access with gym scoping
 router.get('/', verifyToken, getCurrentProgress);
 
-// POST /api/gym/programs/:id/progress/start - Initialize progress tracking
+// PUT /api/gym/programs/:id/progress - Update progress to specific block/week
 // Owner/Admin access with gym scoping
-router.post('/start', verifyToken, startProgram);
+router.put('/', verifyToken, updateProgress);
 
 // POST /api/gym/programs/:id/progress/advance - Move to next week
 // Owner/Admin access with gym scoping
 router.post('/advance', verifyToken, advanceWeek);
-
-// POST /api/gym/programs/:id/progress/previous - Go back one week
-// Owner/Admin access with gym scoping
-router.post('/previous', verifyToken, previousWeek);
-
-// POST /api/gym/programs/:id/progress/jump - Jump to specific block/week
-// Owner/Admin access with gym scoping
-router.post('/jump', verifyToken, jumpToWeek);
-
-// POST /api/gym/programs/:id/progress/reset - Reset progress to beginning
-// Owner/Admin access with gym scoping
-router.post('/reset', verifyToken, resetProgress);
 
 export default router;

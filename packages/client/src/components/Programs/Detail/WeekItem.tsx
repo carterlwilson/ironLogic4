@@ -16,9 +16,10 @@ interface WeekItemProps {
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   activityGroups: ActivityGroup[];
+  isCurrentWeek?: boolean;
 }
 
-export function WeekItem({ week, program, onProgramChange, templateMap, templates, activityGroups }: WeekItemProps) {
+export function WeekItem({ week, program, onProgramChange, templateMap, templates, activityGroups, isCurrentWeek }: WeekItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(week.name);
@@ -106,6 +107,11 @@ export function WeekItem({ week, program, onProgramChange, templateMap, template
             <Badge size="sm" variant="light" color="gray">
               {week.days.length} {week.days.length === 1 ? 'day' : 'days'}
             </Badge>
+            {isCurrentWeek && (
+              <Badge size="sm" color="forestGreen">
+                CURRENT
+              </Badge>
+            )}
           </Group>
 
           <Menu withinPortal position="bottom-end">

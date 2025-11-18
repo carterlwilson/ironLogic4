@@ -1,8 +1,6 @@
-Go into plan mode.
+Answers to your questions:
+1. No, the 'advance week' endpoint is only intended for programmatic use at this point
+2. No need to validate, just set the iterations to the next possible block/week
+3. yes, only owners/coaches
 
-Clients are running into an issue in the mobile app when they try to create a 
-new benchmark for themselves. Their coach has created about 30 benchmark templates
-but when the client in the mobile app tries to create a new benchmark, they only
-have 10 of those templates to choose from in the benhcmark templates dropdown.
-investigate why this is happening. I suspect we are using a paginated endpoint
-in a situation where it's not appropriate.
+Go ahead with the implementation, I'll manually approve edits.

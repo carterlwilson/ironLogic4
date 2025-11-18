@@ -4,25 +4,28 @@ import { Program } from '../models/Program.js';
 import { ApiResponse, ProgramIdSchema, JumpToWeekSchema } from '@ironlogic4/shared';
 
 /**
- * Start Program - Initialize progress tracking
- * Sets startedAt timestamp and ensures progress is at block 0, week 0
+ * Update Progress - Set program to a specific block and week position
+ * Auto-calculates totalWeeksCompleted, manages startedAt and completedAt timestamps
  */
-export const startProgram = async (
+export const updateProgress = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const validation = ProgramIdSchema.safeParse(req.params);
+    const paramsValidation = ProgramIdSchema.safeParse(req.params);
+    const bodyValidation = JumpToWeekSchema.safeParse(req.body);
 
-    if (!validation.success) {
+    if (!paramsValidation.success || !bodyValidation.success) {
       res.status(400).json({
         success: false,
-        error: 'Invalid program ID',
+        error: 'Invalid request data',
+        details: [...(paramsValidation.error?.errors || []), ...(bodyValidation.error?.errors || [])],
       });
       return;
     }
 
-    const { id } = validation.data;
+    const { id } = paramsValidation.data;
+    const { blockIndex, weekIndex } = bodyValidation.data;
 
     // Build query with gym scoping for owners
     const query: any = { _id: id };
@@ -40,48 +43,69 @@ export const startProgram = async (
       return;
     }
 
-    // Check if program has no blocks
-    if (program.blocks.length === 0) {
+    // Validate blockIndex is within program structure
+    if (blockIndex >= program.blocks.length) {
       res.status(400).json({
         success: false,
-        error: 'Cannot start program with no blocks',
+        error: `Block index ${blockIndex} is out of range. Program has ${program.blocks.length} blocks.`,
       });
       return;
     }
 
-    // Check if already started
-    if (program.currentProgress.startedAt !== null) {
+    const targetBlock = program.blocks[blockIndex];
+
+    // Validate weekIndex is within block structure
+    if (weekIndex >= targetBlock.weeks.length) {
       res.status(400).json({
         success: false,
-        error: 'Program has already been started',
+        error: `Week index ${weekIndex} is out of range. Block ${blockIndex} has ${targetBlock.weeks.length} weeks.`,
       });
       return;
     }
 
-    // Initialize progress
-    program.currentProgress = {
-      blockIndex: 0,
-      weekIndex: 0,
-      startedAt: new Date(),
-      completedAt: null,
-      lastAdvancedAt: null,
-      totalWeeksCompleted: 0,
-    };
+    // Auto-calculate totalWeeksCompleted
+    // Sum all weeks in blocks before the current blockIndex, then add weekIndex
+    let totalWeeksCompleted = 0;
+    for (let i = 0; i < blockIndex; i++) {
+      totalWeeksCompleted += program.blocks[i].weeks.length;
+    }
+    totalWeeksCompleted += weekIndex;
+
+    // Auto-set startedAt if null (first time setting progress)
+    if (program.currentProgress.startedAt === null) {
+      program.currentProgress.startedAt = new Date();
+    }
+
+    // Update progress position
+    program.currentProgress.blockIndex = blockIndex;
+    program.currentProgress.weekIndex = weekIndex;
+    program.currentProgress.totalWeeksCompleted = totalWeeksCompleted;
+    program.currentProgress.lastAdvancedAt = new Date();
+
+    // Auto-detect completion: if on last block AND last week, set completedAt
+    const isLastBlock = blockIndex === program.blocks.length - 1;
+    const isLastWeek = weekIndex === targetBlock.weeks.length - 1;
+
+    if (isLastBlock && isLastWeek) {
+      program.currentProgress.completedAt = new Date();
+    } else {
+      program.currentProgress.completedAt = null;
+    }
 
     await program.save();
 
     const response: ApiResponse<any> = {
       success: true,
       data: program.toJSON(),
-      message: 'Program started successfully',
+      message: `Updated progress to block ${blockIndex}, week ${weekIndex}`,
     };
 
     res.json(response);
   } catch (error) {
-    console.error('Error starting program:', error);
+    console.error('Error updating progress:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to start program',
+      error: 'Failed to update progress',
     });
   }
 };
@@ -202,278 +226,6 @@ export const advanceWeek = async (
     res.status(500).json({
       success: false,
       error: 'Failed to advance week',
-    });
-  }
-};
-
-/**
- * Previous Week - Go back one week
- */
-export const previousWeek = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const validation = ProgramIdSchema.safeParse(req.params);
-
-    if (!validation.success) {
-      res.status(400).json({
-        success: false,
-        error: 'Invalid program ID',
-      });
-      return;
-    }
-
-    const { id } = validation.data;
-
-    // Build query with gym scoping for owners
-    const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
-
-    const program = await Program.findOne(query);
-
-    if (!program) {
-      res.status(404).json({
-        success: false,
-        error: 'Program not found',
-      });
-      return;
-    }
-
-    // Check if program has been started
-    if (program.currentProgress.startedAt === null) {
-      res.status(400).json({
-        success: false,
-        error: 'Program must be started before going back',
-      });
-      return;
-    }
-
-    const { blockIndex, weekIndex } = program.currentProgress;
-
-    // Check if we're at the very beginning
-    if (blockIndex === 0 && weekIndex === 0) {
-      res.status(400).json({
-        success: false,
-        error: 'Already at the first week of the program',
-      });
-      return;
-    }
-
-    // If we're at the first week of a block, go to last week of previous block
-    if (weekIndex === 0) {
-      const previousBlock = program.blocks[blockIndex - 1];
-      if (!previousBlock) {
-        res.status(400).json({
-          success: false,
-          error: 'Previous block not found',
-        });
-        return;
-      }
-
-      program.currentProgress.blockIndex -= 1;
-      program.currentProgress.weekIndex = previousBlock.weeks.length - 1;
-    } else {
-      // Go back one week in current block
-      program.currentProgress.weekIndex -= 1;
-    }
-
-    // If program was completed, uncomplete it
-    if (program.currentProgress.completedAt !== null) {
-      program.currentProgress.completedAt = null;
-    }
-
-    // Decrement total weeks completed if greater than 0
-    if (program.currentProgress.totalWeeksCompleted > 0) {
-      program.currentProgress.totalWeeksCompleted -= 1;
-    }
-
-    program.currentProgress.lastAdvancedAt = new Date();
-
-    await program.save();
-
-    const response: ApiResponse<any> = {
-      success: true,
-      data: program.toJSON(),
-      message: 'Moved to previous week successfully',
-    };
-
-    res.json(response);
-  } catch (error) {
-    console.error('Error going to previous week:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to go to previous week',
-    });
-  }
-};
-
-/**
- * Jump to Week - Jump to a specific block and week
- */
-export const jumpToWeek = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const paramsValidation = ProgramIdSchema.safeParse(req.params);
-    const bodyValidation = JumpToWeekSchema.safeParse(req.body);
-
-    if (!paramsValidation.success || !bodyValidation.success) {
-      res.status(400).json({
-        success: false,
-        error: 'Invalid request data',
-        details: [...(paramsValidation.error?.errors || []), ...(bodyValidation.error?.errors || [])],
-      });
-      return;
-    }
-
-    const { id } = paramsValidation.data;
-    const { blockIndex, weekIndex } = bodyValidation.data;
-
-    // Build query with gym scoping for owners
-    const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
-
-    const program = await Program.findOne(query);
-
-    if (!program) {
-      res.status(404).json({
-        success: false,
-        error: 'Program not found',
-      });
-      return;
-    }
-
-    // Check if program has been started
-    if (program.currentProgress.startedAt === null) {
-      res.status(400).json({
-        success: false,
-        error: 'Program must be started before jumping to a week',
-      });
-      return;
-    }
-
-    // Validate blockIndex
-    if (blockIndex >= program.blocks.length) {
-      res.status(400).json({
-        success: false,
-        error: `Block index ${blockIndex} is out of range. Program has ${program.blocks.length} blocks.`,
-      });
-      return;
-    }
-
-    const targetBlock = program.blocks[blockIndex];
-
-    // Validate weekIndex
-    if (weekIndex >= targetBlock.weeks.length) {
-      res.status(400).json({
-        success: false,
-        error: `Week index ${weekIndex} is out of range. Block ${blockIndex} has ${targetBlock.weeks.length} weeks.`,
-      });
-      return;
-    }
-
-    // Calculate total weeks completed up to this point
-    let totalWeeks = 0;
-    for (let i = 0; i < blockIndex; i++) {
-      totalWeeks += program.blocks[i].weeks.length;
-    }
-    totalWeeks += weekIndex;
-
-    // Update progress
-    program.currentProgress.blockIndex = blockIndex;
-    program.currentProgress.weekIndex = weekIndex;
-    program.currentProgress.totalWeeksCompleted = totalWeeks;
-    program.currentProgress.lastAdvancedAt = new Date();
-
-    // If jumping to a position, uncomplete the program if it was completed
-    if (program.currentProgress.completedAt !== null) {
-      program.currentProgress.completedAt = null;
-    }
-
-    await program.save();
-
-    const response: ApiResponse<any> = {
-      success: true,
-      data: program.toJSON(),
-      message: `Jumped to block ${blockIndex}, week ${weekIndex} successfully`,
-    };
-
-    res.json(response);
-  } catch (error) {
-    console.error('Error jumping to week:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to jump to week',
-    });
-  }
-};
-
-/**
- * Reset Progress - Reset program to beginning
- */
-export const resetProgress = async (
-  req: AuthenticatedRequest,
-  res: Response
-): Promise<void> => {
-  try {
-    const validation = ProgramIdSchema.safeParse(req.params);
-
-    if (!validation.success) {
-      res.status(400).json({
-        success: false,
-        error: 'Invalid program ID',
-      });
-      return;
-    }
-
-    const { id } = validation.data;
-
-    // Build query with gym scoping for owners
-    const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
-
-    const program = await Program.findOne(query);
-
-    if (!program) {
-      res.status(404).json({
-        success: false,
-        error: 'Program not found',
-      });
-      return;
-    }
-
-    // Reset progress to initial state
-    program.currentProgress = {
-      blockIndex: 0,
-      weekIndex: 0,
-      startedAt: null,
-      completedAt: null,
-      lastAdvancedAt: null,
-      totalWeeksCompleted: 0,
-    };
-
-    await program.save();
-
-    const response: ApiResponse<any> = {
-      success: true,
-      data: program.toJSON(),
-      message: 'Program progress reset successfully',
-    };
-
-    res.json(response);
-  } catch (error) {
-    console.error('Error resetting progress:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to reset progress',
     });
   }
 };
