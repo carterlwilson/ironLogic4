@@ -85,7 +85,7 @@ export function LiftActivityCard({
               value={selectedSetIndex.toString()}
               onChange={(value) => setSelectedSetIndex(parseInt(value))}
               data={Array.from({ length: totalSets }, (_, i) => ({
-                label: `Set ${i + 1}`,
+                label: `${i + 1}`,
                 value: i.toString(),
               }))}
               fullWidth
