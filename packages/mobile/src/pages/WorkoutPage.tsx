@@ -181,6 +181,7 @@ export const WorkoutPage = () => {
             getProgress={getActivityProgress}
             onSetComplete={handleSetComplete}
             onActivityComplete={handleActivityComplete}
+            onDataRefresh={refetch}
           />
         )}
       </Stack>

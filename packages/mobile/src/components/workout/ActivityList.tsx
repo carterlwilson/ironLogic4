@@ -12,6 +12,7 @@ interface ActivityListProps {
   getProgress: (activityId: string) => ActivityProgress;
   onSetComplete: (activityId: string, setIndex: number) => void;
   onActivityComplete: (activityId: string) => void;
+  onDataRefresh?: () => void;
 }
 
 export function ActivityList({
@@ -19,6 +20,7 @@ export function ActivityList({
   getProgress,
   onSetComplete,
   onActivityComplete,
+  onDataRefresh,
 }: ActivityListProps) {
   return (
     <Stack gap="md">
@@ -33,6 +35,7 @@ export function ActivityList({
               progress={progress}
               onSetComplete={onSetComplete}
               onActivityComplete={onActivityComplete}
+              onDataRefresh={onDataRefresh}
             />
           );
         }
