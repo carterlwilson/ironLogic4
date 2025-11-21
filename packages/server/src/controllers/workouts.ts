@@ -7,13 +7,6 @@ import { BenchmarkTemplate } from '../models/BenchmarkTemplate.js';
 import { BenchmarkType } from '@ironlogic4/shared';
 
 /**
- * Helper function to round weight to nearest 0.5 kg increment
- */
-function roundToHalf(value: number): number {
-  return Math.round(value * 2) / 2;
-}
-
-/**
  * GET /api/me/workouts/current-week
  * Get current week's workout plan with pre-calculated weights
  */
@@ -203,7 +196,7 @@ export const getCurrentWeekWorkouts = async (
               // Only calculate weight for WEIGHT type benchmarks
               if (benchmark?.type === BenchmarkType.WEIGHT && benchmark.weightKg) {
                 const rawWeight = (benchmark.weightKg * set.percentageOfMax) / 100;
-                calculatedWeightKg = roundToHalf(rawWeight);
+                calculatedWeightKg = Math.round(rawWeight);
               }
             }
 

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Card, Stack, Text, Group, Button, ActionIcon, Badge, Paper, SegmentedControl } from '@mantine/core';
-import { IconCheck, IconWeight, IconAlertCircle, IconBarbell } from '@tabler/icons-react';
+import { IconCheck, IconWeight, IconAlertCircle, IconBarbell, IconPlus } from '@tabler/icons-react';
 import { ActivityProgress } from '../../pages/WorkoutPage';
 import { useBarbellCalculator } from './barbell-calculator/useBarbellCalculator';
 import { BarbellCalculatorDrawer } from './barbell-calculator/BarbellCalculatorDrawer';
+import { AddBenchmarkModal } from './AddBenchmarkModal';
 import type { WorkoutActivity, ISetCalculation } from '@ironlogic4/shared/types/programs';
 
 interface LiftActivityCardProps {
@@ -11,14 +12,17 @@ interface LiftActivityCardProps {
   progress: ActivityProgress;
   onSetComplete: (activityId: string, setIndex: number) => void;
   onActivityComplete: (activityId: string) => void;
+  onDataRefresh?: () => void;
 }
 
 export function LiftActivityCard({
   activity,
   progress,
   onSetComplete,
+  onDataRefresh,
 }: LiftActivityCardProps) {
   const [selectedSetIndex, setSelectedSetIndex] = useState(0);
+  const [addBenchmarkModalOpened, setAddBenchmarkModalOpened] = useState(false);
 
   const anySetsComplete = progress.sets.some(s => s.completed);
 
@@ -131,13 +135,25 @@ export function LiftActivityCard({
         )}
 
         {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && (
-          <Paper p="sm" radius="md" withBorder bg="orange.0">
-            <Group gap="xs">
-              <IconAlertCircle size={18} color="var(--mantine-color-orange-7)" />
-              <Text size="sm" c="orange.9">
-                No benchmark set - update your benchmarks to see recommended weight
-              </Text>
-            </Group>
+          <Paper p="md" radius="md" withBorder bg="orange.0">
+            <Stack gap="sm">
+              <Group gap="xs">
+                <IconAlertCircle size={18} color="var(--mantine-color-orange-7)" />
+                <Text size="sm" c="orange.9">
+                  No benchmark set for {currentSet.benchmarkName || 'this exercise'}
+                </Text>
+              </Group>
+              <Button
+                variant="filled"
+                color="orange"
+                size="sm"
+                leftSection={<IconPlus size={16} />}
+                onClick={() => setAddBenchmarkModalOpened(true)}
+                fullWidth
+              >
+                Add Benchmark
+              </Button>
+            </Stack>
           </Paper>
         )}
 
@@ -196,6 +212,20 @@ export function LiftActivityCard({
         barType={barType}
         onBarTypeChange={setBarType}
       />
+
+      {/* Add Benchmark Modal */}
+      {currentSet?.benchmarkTemplateId && currentSet?.benchmarkName && (
+        <AddBenchmarkModal
+          opened={addBenchmarkModalOpened}
+          onClose={() => setAddBenchmarkModalOpened(false)}
+          benchmarkTemplateId={currentSet.benchmarkTemplateId}
+          benchmarkName={currentSet.benchmarkName}
+          onSuccess={() => {
+            setAddBenchmarkModalOpened(false);
+            onDataRefresh?.();
+          }}
+        />
+      )}
     </Card>
   );
 }

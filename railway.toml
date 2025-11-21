@@ -1,8 +1,0 @@
-[build]
-builder = "NIXPACKS"
-buildCommand = "npm install && npm run build -w @ironlogic4/shared && npm run build -w @ironlogic4/server"
-
-[deploy]
-startCommand = "npm run start -w @ironlogic4/server"
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
