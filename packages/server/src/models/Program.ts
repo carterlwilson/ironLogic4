@@ -33,12 +33,12 @@ import { ActivityType, DistanceUnit } from '@ironlogic4/shared';
  * FIELDS (3 total):
  * - reps: Number of reps (1-100)
  * - percentageOfMax: Percentage of 1RM (0-200)
- * - benchmarkTemplateId: Optional reference to benchmark template for this set
+ * - templateRepMaxId: Optional reference to TemplateRepMax for this set
  */
 export interface ISet {
   reps: number;
   percentageOfMax: number;
-  benchmarkTemplateId?: string;
+  templateRepMaxId?: string;
 }
 
 /**
@@ -211,9 +211,8 @@ const setSchema = new Schema<ISet>(
       min: 0,
       max: 200,
     },
-    benchmarkTemplateId: {
+    templateRepMaxId: {
       type: String,
-      ref: 'BenchmarkTemplate',
       required: false,
     },
   },

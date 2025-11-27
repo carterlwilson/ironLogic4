@@ -6,7 +6,7 @@ import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks'
 import type { UpdateMyBenchmarkInput } from '@ironlogic4/shared';
 import { BenchmarkMeasurementInput } from './BenchmarkMeasurementInput';
 import { formatDateForInput } from '../../utils/benchmarkUtils';
-import { parseTimeString, validateTimeString } from '../../utils/benchmarkFormatters';
+import { parseTimeString, validateTimeString, parseDateStringToLocalDate } from '../../utils/benchmarkFormatters';
 
 interface EditBenchmarkModalProps {
   opened: boolean;
@@ -58,11 +58,9 @@ export function EditBenchmarkModal({
   useEffect(() => {
     if (benchmark) {
       // Get the current measurement value based on type
+      // Note: WEIGHT benchmarks would use a separate modal for editing individual rep maxes
       let measurementValue: number | string | undefined;
       switch (benchmark.type) {
-        case BenchmarkType.WEIGHT:
-          measurementValue = benchmark.weightKg;
-          break;
         case BenchmarkType.TIME:
           measurementValue = benchmark.timeSeconds;
           break;
@@ -74,8 +72,11 @@ export function EditBenchmarkModal({
           break;
       }
 
+      // Get recordedAt - prefer recordedAt field, fallback to first repMax for WEIGHT type
+      const recordedDate = benchmark.recordedAt || benchmark.repMaxes?.[0]?.recordedAt;
+
       form.setValues({
-        recordedAt: formatDateForInput(benchmark.recordedAt),
+        recordedAt: recordedDate ? formatDateForInput(recordedDate) : formatDateForInput(new Date()),
         notes: benchmark.notes || '',
         measurementValue,
       });
@@ -89,15 +90,13 @@ export function EditBenchmarkModal({
     try {
       // Build the update request
       const data: UpdateMyBenchmarkInput = {
-        recordedAt: new Date(values.recordedAt),
+        recordedAt: parseDateStringToLocalDate(values.recordedAt),
         notes: values.notes || undefined,
       };
 
       // Add the appropriate measurement field
+      // Note: WEIGHT benchmarks now use EditRepMaxModal for editing individual rep maxes
       switch (benchmark.type) {
-        case BenchmarkType.WEIGHT:
-          data.weightKg = values.measurementValue as number;
-          break;
         case BenchmarkType.TIME:
           // Convert time string to seconds if needed
           if (typeof values.measurementValue === 'string') {

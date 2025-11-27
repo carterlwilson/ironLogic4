@@ -49,6 +49,7 @@ export function BenchmarkTemplateTable({
             <Table.Tr>
               <Table.Th>Name</Table.Th>
               <Table.Th>Type</Table.Th>
+              <Table.Th>Rep Maxes</Table.Th>
               <Table.Th>Tags</Table.Th>
               <Table.Th>Notes</Table.Th>
               <Table.Th>Created</Table.Th>
@@ -63,6 +64,9 @@ export function BenchmarkTemplateTable({
                 </Table.Td>
                 <Table.Td>
                   <Skeleton height={20} width="50%" />
+                </Table.Td>
+                <Table.Td>
+                  <Skeleton height={20} width="60%" />
                 </Table.Td>
                 <Table.Td>
                   <Skeleton height={20} width="70%" />
@@ -106,6 +110,7 @@ export function BenchmarkTemplateTable({
             <Table.Tr>
               <Table.Th>Name</Table.Th>
               <Table.Th>Type</Table.Th>
+              <Table.Th>Rep Maxes</Table.Th>
               <Table.Th>Tags</Table.Th>
               <Table.Th>Notes</Table.Th>
               <Table.Th>Created</Table.Th>

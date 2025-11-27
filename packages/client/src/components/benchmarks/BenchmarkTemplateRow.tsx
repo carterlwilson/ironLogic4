@@ -1,6 +1,7 @@
 import { Table, Group, ActionIcon, Tooltip, Text, Badge } from '@mantine/core';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
+import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import { BenchmarkTypeBadge } from './BenchmarkTypeBadge';
 
 interface BenchmarkTemplateRowProps {
@@ -25,6 +26,21 @@ export function BenchmarkTemplateRow({ template, onEdit, onDelete }: BenchmarkTe
       </Table.Td>
       <Table.Td>
         <BenchmarkTypeBadge type={template.type} />
+      </Table.Td>
+      <Table.Td>
+        {template.type === BenchmarkType.WEIGHT && template.templateRepMaxes && template.templateRepMaxes.length > 0 ? (
+          <Group gap="xs">
+            {template.templateRepMaxes
+              .sort((a, b) => a.reps - b.reps)
+              .map((trm) => (
+                <Badge key={trm.id} size="sm" variant="light" color="forestGreen">
+                  {trm.name}
+                </Badge>
+              ))}
+          </Group>
+        ) : (
+          <Text size="sm" c="dimmed">-</Text>
+        )}
       </Table.Td>
       <Table.Td>
         <Group gap="xs">

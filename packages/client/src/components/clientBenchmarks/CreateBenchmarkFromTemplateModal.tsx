@@ -6,6 +6,7 @@ import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
 import { parseTimeString, validateTimeString } from '../../utils/benchmarkFormatters';
+import { getBenchmarkTemplate } from '../../services/benchmarkApi';
 
 interface CreateBenchmarkFromTemplateModalProps {
   opened: boolean;
@@ -17,7 +18,7 @@ interface CreateBenchmarkFromTemplateModalProps {
 
 interface FormValues {
   templateId: string;
-  weightKg?: number;
+  weightKg?: number; // Deprecated, kept for backward compatibility
   timeString?: string;
   reps?: number;
   otherNotes?: string;
@@ -33,6 +34,7 @@ export function CreateBenchmarkFromTemplateModal({
   loading = false,
 }: CreateBenchmarkFromTemplateModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<BenchmarkTemplate | null>(null);
+  const [fullTemplate, setFullTemplate] = useState<BenchmarkTemplate | null>(null);
   const [isHistorical, setIsHistorical] = useState(false);
 
   const form = useForm<FormValues>({
@@ -43,15 +45,6 @@ export function CreateBenchmarkFromTemplateModal({
     },
     validate: {
       templateId: (value) => (!value ? 'Please select a template' : null),
-      weightKg: (value) => {
-        if (selectedTemplate?.type === BenchmarkType.WEIGHT && !value) {
-          return 'Weight is required';
-        }
-        if (selectedTemplate?.type === BenchmarkType.WEIGHT && value !== undefined && value <= 0) {
-          return 'Weight must be greater than 0';
-        }
-        return null;
-      },
       timeString: (value) => {
         if (selectedTemplate?.type === BenchmarkType.TIME && !value) {
           return 'Time is required';
@@ -80,12 +73,30 @@ export function CreateBenchmarkFromTemplateModal({
   });
 
   useEffect(() => {
-    if (form.values.templateId) {
-      const template = templates.find((t) => t.id === form.values.templateId);
-      setSelectedTemplate(template || null);
-    } else {
-      setSelectedTemplate(null);
-    }
+    const loadTemplate = async () => {
+      if (form.values.templateId) {
+        const template = templates.find((t) => t.id === form.values.templateId);
+        setSelectedTemplate(template || null);
+
+        // Fetch full template with templateRepMaxes for WEIGHT type
+        if (template?.type === BenchmarkType.WEIGHT) {
+          try {
+            const response = await getBenchmarkTemplate(template.id);
+            setFullTemplate(response.data);
+          } catch (error) {
+            console.error('Failed to load template details:', error);
+            setFullTemplate(null);
+          }
+        } else {
+          setFullTemplate(null);
+        }
+      } else {
+        setSelectedTemplate(null);
+        setFullTemplate(null);
+      }
+    };
+
+    loadTemplate();
   }, [form.values.templateId, templates]);
 
   const handleSubmit = async (values: FormValues) => {
@@ -101,8 +112,17 @@ export function CreateBenchmarkFromTemplateModal({
     };
 
     // Add measurement based on type
-    if (selectedTemplate.type === BenchmarkType.WEIGHT && values.weightKg) {
-      benchmarkData.weightKg = values.weightKg;
+    if (selectedTemplate.type === BenchmarkType.WEIGHT) {
+      // Auto-create empty repMaxes for standard rep ranges (1, 2, 3, 5, 8)
+      if (fullTemplate?.templateRepMaxes) {
+        benchmarkData.repMaxes = fullTemplate.templateRepMaxes.map(trm => ({
+          templateRepMaxId: trm.id,
+          weightKg: 0,  // Empty weight - coach/owner will fill in via Edit modal
+          recordedAt: values.recordedAt,
+        })) as any; // Backend will add id, createdAt, updatedAt
+      } else {
+        benchmarkData.repMaxes = []; // Fallback if template not loaded
+      }
     } else if (selectedTemplate.type === BenchmarkType.TIME && values.timeString) {
       benchmarkData.timeSeconds = parseTimeString(values.timeString);
     } else if (selectedTemplate.type === BenchmarkType.REPS && values.reps) {
@@ -185,18 +205,6 @@ export function CreateBenchmarkFromTemplateModal({
                 )}
               </Stack>
             </Paper>
-          )}
-
-          {selectedTemplate?.type === BenchmarkType.WEIGHT && (
-            <NumberInput
-              label="Weight"
-              placeholder="Enter weight"
-              min={0}
-              step={0.5}
-              suffix=" kg"
-              required
-              {...form.getInputProps('weightKg')}
-            />
           )}
 
           {selectedTemplate?.type === BenchmarkType.TIME && (

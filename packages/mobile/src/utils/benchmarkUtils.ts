@@ -1,16 +1,54 @@
-import { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
+import { ClientBenchmark, RepMax } from '@ironlogic4/shared/types/clientBenchmarks';
 import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 /**
  * Check if a benchmark is editable (less than 1 week old)
  */
 export function isBenchmarkEditable(benchmark: ClientBenchmark): boolean {
+  if (!benchmark.recordedAt && !benchmark.repMaxes?.[0]?.recordedAt) return false;
+
   const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
   const now = new Date();
-  const recordedDate = new Date(benchmark.recordedAt);
+  const recordedDate = benchmark.recordedAt
+    ? new Date(benchmark.recordedAt)
+    : new Date(benchmark.repMaxes![0].recordedAt);
   const ageMs = now.getTime() - recordedDate.getTime();
 
   return ageMs < ONE_WEEK_MS;
+}
+
+/**
+ * Check if a specific repMax is editable (recorded within last 14 days)
+ */
+export function isRepMaxEditable(repMax: RepMax): boolean {
+  const ageInDays = getRepMaxAgeInDays(repMax);
+  return ageInDays <= 14;
+}
+
+/**
+ * Get age of repMax in days
+ */
+export function getRepMaxAgeInDays(repMax: RepMax): number {
+  const recordedDate = new Date(repMax.recordedAt);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - recordedDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+}
+
+/**
+ * Sort repMaxes by reps count (1RM, 3RM, 5RM, etc.)
+ * Requires template data to get reps count
+ */
+export function sortRepMaxesByReps(
+  repMaxes: RepMax[],
+  getTemplateReps: (templateRepMaxId: string) => number | undefined
+): RepMax[] {
+  return [...repMaxes].sort((a, b) => {
+    const aReps = getTemplateReps(a.templateRepMaxId) || 999;
+    const bReps = getTemplateReps(b.templateRepMaxId) || 999;
+    return aReps - bReps;
+  });
 }
 
 /**
@@ -37,11 +75,28 @@ export function formatDateForInput(date: Date | string): string {
 }
 
 /**
+ * Parse date string from HTML date input to Date object at local midnight
+ * Prevents timezone offset issues when converting "2024-11-24" string to Date
+ *
+ * @param dateString - Date in YYYY-MM-DD format from HTML date input
+ * @returns Date object at midnight in local timezone
+ */
+export function parseDateStringToLocalDate(dateString: string): Date {
+  const [year, month, day] = dateString.split('-').map(Number);
+  // Month is 0-indexed in JavaScript Date
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
+}
+
+/**
  * Get the age of a benchmark in days
  */
 export function getBenchmarkAgeInDays(benchmark: ClientBenchmark): number {
   const now = new Date();
-  const recordedDate = new Date(benchmark.recordedAt);
+  const recordedDate = benchmark.recordedAt
+    ? new Date(benchmark.recordedAt)
+    : benchmark.repMaxes?.[0]
+    ? new Date(benchmark.repMaxes[0].recordedAt)
+    : now;
   const ageMs = now.getTime() - recordedDate.getTime();
   return Math.floor(ageMs / (24 * 60 * 60 * 1000));
 }
@@ -54,11 +109,15 @@ export function formatMeasurement(
   weightKg?: number,
   timeSeconds?: number,
   reps?: number,
-  otherNotes?: string
+  otherNotes?: string,
+  repMaxes?: RepMax[]
 ): string {
   switch (type) {
     case BenchmarkType.WEIGHT:
-      return weightKg !== undefined ? `${weightKg} kg` : 'N/A';
+      if (repMaxes && repMaxes.length > 0) {
+        return `${repMaxes.length} rep max${repMaxes.length > 1 ? 'es' : ''}`;
+      }
+      return weightKg !== undefined ? `${weightKg} kg` : 'No data';
     case BenchmarkType.TIME:
       return timeSeconds !== undefined ? formatTimeSeconds(timeSeconds) : 'N/A';
     case BenchmarkType.REPS:
@@ -116,7 +175,11 @@ export function validateTimeString(timeStr: string): boolean {
 export function getMeasurementValue(benchmark: ClientBenchmark): number | null {
   switch (benchmark.type) {
     case BenchmarkType.WEIGHT:
-      return benchmark.weightKg ?? null;
+      // For WEIGHT benchmarks with repMaxes, return the heaviest weight (typically 1RM)
+      if (benchmark.repMaxes && benchmark.repMaxes.length > 0) {
+        return Math.max(...benchmark.repMaxes.map(rm => rm.weightKg));
+      }
+      return null;
     case BenchmarkType.TIME:
       return benchmark.timeSeconds ?? null;
     case BenchmarkType.REPS:

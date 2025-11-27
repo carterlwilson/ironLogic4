@@ -1,6 +1,6 @@
 import { Stack, Text, Loader, Center, Paper } from '@mantine/core';
 import { IconMoodEmpty } from '@tabler/icons-react';
-import { ClientBenchmark } from '@ironlogic4/shared';
+import { ClientBenchmark, BenchmarkTemplate, RepMax } from '@ironlogic4/shared';
 import { BenchmarkCard } from './BenchmarkCard';
 
 interface BenchmarkListProps {
@@ -9,6 +9,8 @@ interface BenchmarkListProps {
   loading: boolean;
   onEdit: (benchmark: ClientBenchmark) => void;
   onCreateNew: (benchmark: ClientBenchmark) => void;
+  benchmarkTemplates?: Map<string, BenchmarkTemplate>;
+  onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => void;
 }
 
 export function BenchmarkList({
@@ -17,6 +19,8 @@ export function BenchmarkList({
   loading,
   onEdit,
   onCreateNew,
+  benchmarkTemplates,
+  onEditRepMax,
 }: BenchmarkListProps) {
   if (loading) {
     return (
@@ -55,6 +59,10 @@ export function BenchmarkList({
           isHistorical={isHistorical}
           onEdit={onEdit}
           onCreateNew={onCreateNew}
+          template={benchmarkTemplates?.get(benchmark.templateId)}
+          onEditRepMax={onEditRepMax ? (repMax, benchmarkId, allRepMaxes, templateRepMaxName) => {
+            onEditRepMax(repMax, benchmarkId, allRepMaxes, templateRepMaxName, benchmark.name);
+          } : undefined}
         />
       ))}
     </Stack>

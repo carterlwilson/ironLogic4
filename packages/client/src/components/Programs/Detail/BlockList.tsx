@@ -4,17 +4,17 @@ import { BlockItem } from './BlockItem';
 import { addBlock } from '../../../utils/programHelpers';
 import type { IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
-import type { ActivityGroup } from '@ironlogic4/shared/types/activityGroups';
+import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface BlockListProps {
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
-  activityGroups: ActivityGroup[];
+  groupOptions: ActivityGroupOption[];
 }
 
-export function BlockList({ program, onProgramChange, templateMap, templates, activityGroups }: BlockListProps) {
+export function BlockList({ program, onProgramChange, templateMap, templates, groupOptions }: BlockListProps) {
   const handleAddBlock = () => {
     const updated = addBlock(program, {
       name: `Block ${program.blocks.length + 1}`,
@@ -53,7 +53,7 @@ export function BlockList({ program, onProgramChange, templateMap, templates, ac
               onProgramChange={onProgramChange}
               templateMap={templateMap}
               templates={templates}
-              activityGroups={activityGroups}
+              groupOptions={groupOptions}
               isCurrentBlock={isCurrentBlock}
             />
           );

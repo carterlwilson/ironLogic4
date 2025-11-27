@@ -1,9 +1,8 @@
 import { Modal, Stack, Select, NumberInput, Button, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
-import { useActivityGroupOptions } from '../../../hooks/useActivityGroupOptions';
-import { useAuth } from '../../../providers/AuthProvider';
 import type { IActivityGroupTarget } from '@ironlogic4/shared/types/programs';
+import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface ActivityGroupTargetModalProps {
   opened: boolean;
@@ -11,6 +10,7 @@ interface ActivityGroupTargetModalProps {
   onSubmit: (target: Omit<IActivityGroupTarget, 'id'>) => void;
   existingTarget?: IActivityGroupTarget | null;
   existingGroupIds?: string[]; // IDs already in use (for validation)
+  groupOptions: ActivityGroupOption[];
 }
 
 export function ActivityGroupTargetModal({
@@ -18,10 +18,9 @@ export function ActivityGroupTargetModal({
   onClose,
   onSubmit,
   existingTarget,
-  existingGroupIds = []
+  existingGroupIds = [],
+  groupOptions
 }: ActivityGroupTargetModalProps) {
-  const { user } = useAuth();
-  const { groupOptions, loading } = useActivityGroupOptions(user?.gymId);
 
   const form = useForm<Omit<IActivityGroupTarget, 'id'>>({
     initialValues: {
@@ -83,7 +82,7 @@ export function ActivityGroupTargetModal({
             data={groupOptions.filter(opt => opt.value !== '')} // Remove "No group" option
             searchable
             required
-            disabled={loading || !!existingTarget} // Disable when editing
+            disabled={!!existingTarget} // Disable when editing
             {...form.getInputProps('activityGroupId')}
           />
 

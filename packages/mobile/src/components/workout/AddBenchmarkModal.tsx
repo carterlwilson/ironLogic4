@@ -78,10 +78,11 @@ export function AddBenchmarkModal({
     setLoading(true);
 
     try {
+      // TODO: Update this to support repMaxes for WEIGHT type benchmarks
       await createBenchmark({
         templateId: benchmarkTemplateId,
         recordedAt: new Date(date),
-        weightKg: weightValue,
+        // weightKg has been removed - need to implement repMaxes support
         notes: notes.trim() || undefined,
       });
 

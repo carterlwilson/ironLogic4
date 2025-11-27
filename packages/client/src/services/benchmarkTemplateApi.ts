@@ -1,4 +1,4 @@
-import type { BenchmarkTemplate, BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
+import type { BenchmarkTemplate, BenchmarkType, TemplateRepMax } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 
 export interface BenchmarkTemplateListParams {
@@ -15,6 +15,7 @@ export interface CreateBenchmarkTemplateRequest {
   type: BenchmarkType;
   tags: string[];
   gymId: string;
+  templateRepMaxes?: Omit<TemplateRepMax, 'id'>[];
 }
 
 export interface UpdateBenchmarkTemplateRequest {
@@ -71,6 +72,7 @@ class BenchmarkTemplateApiService {
       notes: templateData.notes,
       type: templateData.type,
       tags: templateData.tags || [],
+      templateRepMaxes: templateData.templateRepMaxes,
       gymId: templateData.gymId,
       createdBy: templateData.createdBy,
       createdAt: new Date(templateData.createdAt),
