@@ -6,6 +6,7 @@ import { BenchmarkList } from '../components/benchmarks/BenchmarkList';
 import { BenchmarkProgressList } from '../components/benchmarks/BenchmarkProgressList';
 import { CreateBenchmarkModal } from '../components/benchmarks/CreateBenchmarkModal';
 import { EditBenchmarkModal } from '../components/benchmarks/EditBenchmarkModal';
+import { EditRepMaxModal } from '../components/benchmarks/EditRepMaxModal';
 import { CreateNewFromOldModal } from '../components/benchmarks/CreateNewFromOldModal';
 import { TagFilter } from '../components/benchmarks/TagFilter';
 import { getAllUniqueTags, filterBenchmarksByTag } from '../utils/tagUtils';
@@ -15,17 +16,22 @@ export const BenchmarksPage = () => {
     currentBenchmarks,
     historicalBenchmarks,
     templates,
+    benchmarkTemplates,
     loading,
     isCreateOpen,
     isEditOpen,
     isCreateNewFromOldOpen,
+    isEditRepMaxOpen,
     selectedBenchmark,
+    selectedRepMax,
     loadBenchmarks,
     handleCreateBenchmark,
     handleUpdateBenchmark,
+    handleUpdateRepMax,
     openCreate,
     openEdit,
     openCreateNewFromOld,
+    openEditRepMax,
     closeModals,
   } = useBenchmarks();
 
@@ -115,6 +121,8 @@ export const BenchmarksPage = () => {
               loading={loading}
               onEdit={openEdit}
               onCreateNew={openCreateNewFromOld}
+              benchmarkTemplates={benchmarkTemplates}
+              onEditRepMax={openEditRepMax}
             />
           </Tabs.Panel>
 
@@ -138,6 +146,18 @@ export const BenchmarksPage = () => {
         onClose={closeModals}
         onUpdate={handleUpdateBenchmark}
         benchmark={selectedBenchmark}
+        loading={loading}
+      />
+
+      <EditRepMaxModal
+        opened={isEditRepMaxOpen}
+        onClose={closeModals}
+        repMax={selectedRepMax?.repMax || null}
+        benchmarkId={selectedRepMax?.benchmarkId || ''}
+        benchmarkName={selectedRepMax?.benchmarkName || ''}
+        templateRepMaxName={selectedRepMax?.templateRepMaxName || ''}
+        allRepMaxes={selectedRepMax?.allRepMaxes || []}
+        onUpdate={handleUpdateRepMax}
         loading={loading}
       />
 

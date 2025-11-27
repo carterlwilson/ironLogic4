@@ -64,7 +64,26 @@ export function BenchmarkTemplateModal({
         const { gymId: _, ...updateData } = values;
         await onSubmit(updateData);
       } else {
-        await onSubmit({ ...values, gymId });
+        // Remove any existing templateRepMaxes from values to avoid contamination
+        const { templateRepMaxes: _, ...cleanValues } = values as any;
+
+        // For WEIGHT type benchmarks, automatically create default templateRepMaxes
+        const templateRepMaxes = cleanValues.type === BenchmarkType.WEIGHT
+          ? [
+              { reps: 1, name: '1RM' },
+                { reps: 2, name: '2RM' },
+              { reps: 3, name: '3RM' },
+              { reps: 5, name: '5RM' },
+              { reps: 8, name: '8RM' },
+            ]
+          : undefined;
+
+        // Only include templateRepMaxes if it's defined (WEIGHT type)
+        const payload = templateRepMaxes
+          ? { ...cleanValues, templateRepMaxes, gymId }
+          : { ...cleanValues, gymId };
+
+        await onSubmit(payload);
       }
       form.reset();
       onClose();

@@ -229,7 +229,7 @@ export const createBenchmarkTemplate = async (
       return;
     }
 
-    const { name, notes, type, tags } = validation.data;
+    const { name, notes, type, tags, templateRepMaxes } = validation.data;
 
     // Check if template with same name already exists in gym (optional duplicate check)
     const existingTemplate = await BenchmarkTemplate.findOne({
@@ -251,6 +251,7 @@ export const createBenchmarkTemplate = async (
       notes,
       type,
       tags,
+      templateRepMaxes,
       gymId: req.user!.gymId,
       createdBy: req.user!.id,
     });

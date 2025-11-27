@@ -26,13 +26,16 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
   // Fetch benchmark templates for set-level benchmark selection
   const { templates: benchmarkTemplates, loading: benchmarksLoading } = useBenchmarkTemplates(gymId);
 
-  // Filter to only weight-based benchmarks for lift activities
+  // Flatten rep maxes from all weight-based benchmarks for lift activities
   const weightBenchmarkOptions = benchmarkTemplates
-    .filter((template) => template.type === BenchmarkType.WEIGHT)
-    .map((template) => ({
-      value: template.id,
-      label: template.name,
-    }));
+    .filter((template) => template.type === BenchmarkType.WEIGHT && template.templateRepMaxes)
+    .flatMap((template) =>
+      template.templateRepMaxes?.map((repMax) => ({
+        value: repMax.id,  // Use templateRepMax ID
+        label: `${template.name} - ${repMax.name}`,  // "Back Squat - 1RM"
+      })) || []
+    )
+    .sort((a, b) => a.label.localeCompare(b.label));  // Alphabetical sorting for searchability
 
   const form = useForm<Omit<IActivity, 'id' | 'order'>>({
     initialValues: {

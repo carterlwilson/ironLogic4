@@ -29,7 +29,7 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
 
   const handleUpdateSet = (index: number, field: keyof ISet, newValue: number | string | undefined) => {
     const newSets = [...value];
-    if (field === 'benchmarkTemplateId') {
+    if (field === 'templateRepMaxId') {
       newSets[index] = { ...newSets[index], [field]: newValue as string | undefined };
     } else {
       newSets[index] = { ...newSets[index], [field]: (newValue as number) || 0 };
@@ -65,7 +65,7 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
               <Table.Th>Set</Table.Th>
               <Table.Th>Reps</Table.Th>
               <Table.Th>% of Max</Table.Th>
-              {benchmarkOptions.length > 0 && <Table.Th>Benchmark</Table.Th>}
+              {benchmarkOptions.length > 0 && <Table.Th>Rep Max</Table.Th>}
               <Table.Th style={{ width: '50px' }}></Table.Th>
             </Table.Tr>
           </Table.Thead>
@@ -103,10 +103,10 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
                   <Table.Td>
                     <Select
                       size="xs"
-                      placeholder="Select benchmark"
+                      placeholder="Select rep max"
                       data={benchmarkOptions}
-                      value={set.benchmarkTemplateId || null}
-                      onChange={(val) => handleUpdateSet(index, 'benchmarkTemplateId', val || undefined)}
+                      value={set.templateRepMaxId || null}
+                      onChange={(val) => handleUpdateSet(index, 'templateRepMaxId', val || undefined)}
                       disabled={benchmarksLoading}
                       clearable
                       searchable

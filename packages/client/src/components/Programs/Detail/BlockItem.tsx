@@ -6,7 +6,7 @@ import { BlockActivityGroupTargets } from './BlockActivityGroupTargets';
 import { addWeek, deleteBlock, updateBlock, copyBlock } from '../../../utils/programHelpers';
 import type { IBlock, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
-import type { ActivityGroup } from '@ironlogic4/shared/types/activityGroups';
+import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface BlockItemProps {
   block: IBlock;
@@ -14,11 +14,11 @@ interface BlockItemProps {
   onProgramChange: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
-  activityGroups: ActivityGroup[];
+  groupOptions: ActivityGroupOption[];
   isCurrentBlock?: boolean;
 }
 
-export function BlockItem({ block, program, onProgramChange, templateMap, templates, activityGroups, isCurrentBlock }: BlockItemProps) {
+export function BlockItem({ block, program, onProgramChange, templateMap, templates, groupOptions, isCurrentBlock }: BlockItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(block.name);
@@ -145,7 +145,7 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
               program={program}
               onProgramChange={onProgramChange}
               activityTemplates={templates}
-              activityGroups={activityGroups}
+              groupOptions={groupOptions}
             />
 
             {/* Week List */}
@@ -157,7 +157,7 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
                 onProgramChange={onProgramChange}
                 templateMap={templateMap}
                 templates={templates}
-                activityGroups={activityGroups}
+                groupOptions={groupOptions}
                 isCurrentBlock={isCurrentBlock}
               />
             </div>

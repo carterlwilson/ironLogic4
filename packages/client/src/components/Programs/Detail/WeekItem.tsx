@@ -6,7 +6,7 @@ import { WeekActivityGroupTargets } from './WeekActivityGroupTargets';
 import { addDay, deleteWeek, updateWeek, copyWeek } from '../../../utils/programHelpers';
 import type { IWeek, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
-import type { ActivityGroup } from '@ironlogic4/shared/types/activityGroups';
+import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface WeekItemProps {
   week: IWeek;
@@ -15,11 +15,11 @@ interface WeekItemProps {
   onProgramChange: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
-  activityGroups: ActivityGroup[];
+  groupOptions: ActivityGroupOption[];
   isCurrentWeek?: boolean;
 }
 
-export function WeekItem({ week, program, onProgramChange, templateMap, templates, activityGroups, isCurrentWeek }: WeekItemProps) {
+export function WeekItem({ week, program, onProgramChange, templateMap, templates, groupOptions, isCurrentWeek }: WeekItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(week.name);
@@ -144,7 +144,7 @@ export function WeekItem({ week, program, onProgramChange, templateMap, template
               program={program}
               onProgramChange={onProgramChange}
               activityTemplates={templates}
-              activityGroups={activityGroups}
+              groupOptions={groupOptions}
             />
 
             {/* Day List */}

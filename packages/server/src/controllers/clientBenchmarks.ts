@@ -120,11 +120,11 @@ export const createMyBenchmark = async (
       type: template.type,
       tags: template.tags || [],
       notes: input.notes,
-      recordedAt: new Date(input.recordedAt),
+      recordedAt: input.recordedAt ? new Date(input.recordedAt) : undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
       // Spread measurement field
-      ...(input.weightKg !== undefined && { weightKg: input.weightKg }),
+      ...(input.repMaxes !== undefined && { repMaxes: input.repMaxes }),
       ...(input.timeSeconds !== undefined && { timeSeconds: input.timeSeconds }),
       ...(input.reps !== undefined && { reps: input.reps }),
       ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
@@ -236,8 +236,8 @@ export const updateMyBenchmark = async (
     if (input.notes !== undefined) {
       updateFields.notes = input.notes;
     }
-    if (input.weightKg !== undefined) {
-      updateFields.weightKg = input.weightKg;
+    if (input.repMaxes !== undefined) {
+      updateFields.repMaxes = input.repMaxes;
     }
     if (input.timeSeconds !== undefined) {
       updateFields.timeSeconds = input.timeSeconds;
@@ -306,7 +306,7 @@ export const updateMyBenchmark = async (
  * Helper: Determine measurement type from input
  */
 function getMeasurementTypeFromInput(input: CreateMyBenchmarkInput): string {
-  if (input.weightKg !== undefined) return 'weight';
+  if (input.repMaxes !== undefined && input.repMaxes.length > 0) return 'weight';
   if (input.timeSeconds !== undefined) return 'time';
   if (input.reps !== undefined) return 'reps';
   if (input.otherNotes !== undefined) return 'other';

@@ -1,19 +1,25 @@
-import { Card, Text, Group, Badge, Button, Stack, Paper, Collapse, ActionIcon } from '@mantine/core';
+import { Card, Text, Group, Badge, Button, Stack, Paper, Collapse, ActionIcon, SimpleGrid, Skeleton } from '@mantine/core';
 import { IconPencil, IconRefresh, IconClock, IconChevronDown } from '@tabler/icons-react';
-import { ClientBenchmark } from '@ironlogic4/shared';
+import { ClientBenchmark, BenchmarkTemplate, RepMax } from '@ironlogic4/shared';
+import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import {
   isBenchmarkEditable,
   formatDate,
   formatMeasurement,
   getBenchmarkAgeInDays,
+  sortRepMaxesByReps,
+  isRepMaxEditable,
 } from '../../utils/benchmarkUtils';
 import { useState } from 'react';
+import { RepMaxCard } from './RepMaxCard';
 
 interface BenchmarkCardProps {
   benchmark: ClientBenchmark;
   isHistorical: boolean;
   onEdit: (benchmark: ClientBenchmark) => void;
   onCreateNew: (benchmark: ClientBenchmark) => void;
+  template?: BenchmarkTemplate;  // Template data to get rep max names
+  onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string) => void;
 }
 
 export function BenchmarkCard({
@@ -21,6 +27,8 @@ export function BenchmarkCard({
   isHistorical,
   onEdit,
   onCreateNew,
+  template,
+  onEditRepMax,
 }: BenchmarkCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isEditable = !isHistorical && isBenchmarkEditable(benchmark);
@@ -28,11 +36,37 @@ export function BenchmarkCard({
 
   const measurementValue = formatMeasurement(
     benchmark.type,
-    benchmark.weightKg,
+    undefined, // weightKg is deprecated, use repMaxes instead
     benchmark.timeSeconds,
     benchmark.reps,
-    benchmark.otherNotes
+    benchmark.otherNotes,
+    benchmark.repMaxes
   );
+
+  // Helper functions for rep max template data
+  const getTemplateRepMax = (templateRepMaxId: string) => {
+    return template?.templateRepMaxes?.find((trm) => trm.id === templateRepMaxId);
+  };
+
+  const getTemplateName = (templateRepMaxId: string) => {
+    return getTemplateRepMax(templateRepMaxId)?.name || 'Unknown';
+  };
+
+  const getTemplateReps = (templateRepMaxId: string) => {
+    return getTemplateRepMax(templateRepMaxId)?.reps;
+  };
+
+  // Sort rep maxes for display
+  const sortedRepMaxes = benchmark.repMaxes
+    ? sortRepMaxesByReps(benchmark.repMaxes, getTemplateReps)
+    : [];
+
+  const handleEditRepMax = (repMax: RepMax) => {
+    if (onEditRepMax && benchmark.repMaxes) {
+      const templateRepMaxName = getTemplateName(repMax.templateRepMaxId);
+      onEditRepMax(repMax, benchmark.id, benchmark.repMaxes, templateRepMaxName);
+    }
+  };
 
   const getBadgeColor = () => {
     if (isHistorical) return 'gray';
@@ -113,21 +147,74 @@ export function BenchmarkCard({
               {benchmark.type}
             </Badge>
 
-            {/* Measurement value */}
-            <Paper p="md" radius="md" bg="gray.0">
-              <Text size="xl" fw={700} ta="center" c="forestGreen">
-                {measurementValue}
-              </Text>
-            </Paper>
+            {/* Rep Maxes Grid for WEIGHT benchmarks */}
+            {benchmark.type === BenchmarkType.WEIGHT ? (
+              !template ? (
+                // Loading skeleton while template is being fetched
+                <Stack gap="sm">
+                  <Text size="sm" fw={500} c="dimmed">Rep Maxes</Text>
+                  <SimpleGrid cols={2} spacing="sm">
+                    <Skeleton height={100} radius="md" />
+                    <Skeleton height={100} radius="md" />
+                    <Skeleton height={100} radius="md" />
+                    <Skeleton height={100} radius="md" />
+                  </SimpleGrid>
+                </Stack>
+              ) : sortedRepMaxes.length > 0 ? (
+                <Stack gap="sm">
+                  <Text size="sm" fw={500} c="dimmed">Rep Maxes</Text>
+                  <SimpleGrid cols={2} spacing="sm">
+                    {sortedRepMaxes.map((repMax) => {
+                      const templateRepMax = getTemplateRepMax(repMax.templateRepMaxId);
+                      if (!templateRepMax) {
+                        // Only warn if template exists but templateRepMax doesn't (genuine error)
+                        console.warn(`Template rep max not found for ID: ${repMax.templateRepMaxId} in template ${template.id}`);
+                        return null;
+                      }
+                      return (
+                        <RepMaxCard
+                          key={repMax.id}
+                          repMax={repMax}
+                          benchmarkId={benchmark.id}
+                          benchmarkName={benchmark.name}
+                          templateRepMaxName={templateRepMax.name}
+                          templateRepMaxReps={templateRepMax.reps}
+                          isHistorical={isHistorical}
+                          isEditable={isRepMaxEditable(repMax)}
+                          onEdit={() => handleEditRepMax(repMax)}
+                        />
+                      );
+                    })}
+                  </SimpleGrid>
+                </Stack>
+              ) : (
+                <Paper p="md" radius="md" bg="gray.0">
+                  <Text size="sm" ta="center" c="dimmed">
+                    No rep maxes recorded
+                  </Text>
+                </Paper>
+              )
+            ) : (
+              <>
+                {/* Measurement value for non-WEIGHT benchmarks */}
+                <Paper p="md" radius="md" bg="gray.0">
+                  <Text size="xl" fw={700} ta="center" c="forestGreen">
+                    {measurementValue}
+                  </Text>
+                </Paper>
 
-            {/* Date and age information */}
-            <Group gap="xs" align="center">
-              <IconClock size={16} style={{ opacity: 0.6 }} />
-              <Text size="sm" c="dimmed">
-                {formatDate(benchmark.recordedAt)}
-                {!isHistorical && ` (${ageInDays} day${ageInDays !== 1 ? 's' : ''} ago)`}
-              </Text>
-            </Group>
+                {/* Date and age information */}
+                {benchmark.recordedAt && (
+                  <Group gap="xs" align="center">
+                    <IconClock size={16} style={{ opacity: 0.6 }} />
+                    <Text size="sm" c="dimmed">
+                      {formatDate(benchmark.recordedAt)}
+                      {!isHistorical && ` (${ageInDays} day${ageInDays !== 1 ? 's' : ''} ago)`}
+                    </Text>
+                  </Group>
+                )}
+              </>
+            )}
 
             {/* Notes section */}
             {benchmark.notes && (

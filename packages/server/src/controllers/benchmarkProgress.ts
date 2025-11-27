@@ -110,21 +110,22 @@ export const getBenchmarkProgress = async (req: AuthenticatedRequest, res: Respo
     if (startDate) {
       const start = new Date(startDate as string);
       benchmarksForTemplate = benchmarksForTemplate.filter(
-        b => new Date(b.recordedAt) >= start
+        b => b.recordedAt && new Date(b.recordedAt) >= start
       );
     }
 
     if (endDate) {
       const end = new Date(endDate as string);
       benchmarksForTemplate = benchmarksForTemplate.filter(
-        b => new Date(b.recordedAt) <= end
+        b => b.recordedAt && new Date(b.recordedAt) <= end
       );
     }
 
     // Sort by recordedAt (oldest to newest)
-    benchmarksForTemplate.sort((a, b) =>
-      new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
-    );
+    benchmarksForTemplate.sort((a, b) => {
+      if (!a.recordedAt || !b.recordedAt) return 0;
+      return new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime();
+    });
 
     // Apply limit if provided
     if (limit) {
@@ -150,7 +151,9 @@ export const getBenchmarkProgress = async (req: AuthenticatedRequest, res: Respo
     }
 
     // Determine if we need to include year in dates
-    const dates = benchmarksForTemplate.map(b => new Date(b.recordedAt));
+    const dates = benchmarksForTemplate
+      .filter(b => b.recordedAt)
+      .map(b => new Date(b.recordedAt!));
     const years = new Set(dates.map(d => d.getFullYear()));
     const includeYear = years.size > 1;
 
@@ -158,7 +161,7 @@ export const getBenchmarkProgress = async (req: AuthenticatedRequest, res: Respo
     const chartData = benchmarksForTemplate
       .map(benchmark => {
         const value = extractValue(benchmark);
-        if (value === null) return null;
+        if (value === null || !benchmark.recordedAt) return null;
 
         return {
           date: formatDate(new Date(benchmark.recordedAt), includeYear),

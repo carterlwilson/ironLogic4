@@ -1,4 +1,5 @@
 import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
+import { RepMax } from '@ironlogic4/shared/types/clientBenchmarks';
 
 /**
  * Formats a measurement value based on the benchmark type
@@ -8,10 +9,16 @@ export function formatMeasurement(
   weightKg?: number,
   timeSeconds?: number,
   reps?: number,
-  otherNotes?: string
+  otherNotes?: string,
+  repMaxes?: RepMax[]
 ): string {
   switch (type) {
     case BenchmarkType.WEIGHT:
+      // Prefer repMaxes if available (new format)
+      if (repMaxes && repMaxes.length > 0) {
+        return `${repMaxes.length} rep max${repMaxes.length > 1 ? 'es' : ''}`;
+      }
+      // Fallback to weightKg for backwards compatibility
       return weightKg !== undefined ? `${weightKg} kg` : 'N/A';
     case BenchmarkType.TIME:
       return timeSeconds !== undefined ? formatTimeSeconds(timeSeconds) : 'N/A';
@@ -62,4 +69,17 @@ export function validateTimeString(timeStr: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Parse date string from HTML date input to Date object at local midnight
+ * Prevents timezone offset issues when converting "2024-11-24" string to Date
+ *
+ * @param dateString - Date in YYYY-MM-DD format from HTML date input
+ * @returns Date object at midnight in local timezone
+ */
+export function parseDateStringToLocalDate(dateString: string): Date {
+  const [year, month, day] = dateString.split('-').map(Number);
+  // Month is 0-indexed in JavaScript Date
+  return new Date(year, month - 1, day, 0, 0, 0, 0);
 }
