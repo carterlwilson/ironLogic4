@@ -109,43 +109,53 @@ export const getCurrentWeekWorkouts = async (
       activityTemplates.map(template => [template._id.toString(), template])
     );
 
-    // 9. Collect all unique benchmark template IDs from sets only
-    const benchmarkTemplateIds = new Set<string>();
+    // 9. Collect all unique templateRepMax IDs from sets
+    const templateRepMaxIds = new Set<string>();
 
-    // Collect benchmark IDs from sets across all activities
     currentWeek.days.forEach(day => {
       day.activities.forEach(activity => {
         if (activity.sets) {
           activity.sets.forEach(set => {
-            if (set.benchmarkTemplateId) {
-              benchmarkTemplateIds.add(set.benchmarkTemplateId);
+            if (set.templateRepMaxId) {
+              templateRepMaxIds.add(set.templateRepMaxId);
             }
           });
         }
       });
     });
 
-    // Add benchmark template IDs from user's current benchmarks
-    (user.currentBenchmarks || []).forEach(benchmark => {
-      benchmarkTemplateIds.add(benchmark.templateId);
-    });
-
-    // 10. Bulk fetch all benchmark templates to get names
+    // 10. Find all BenchmarkTemplates that contain these templateRepMaxIds
     const benchmarkTemplates = await BenchmarkTemplate.find({
-      _id: { $in: Array.from(benchmarkTemplateIds) }
+      'templateRepMaxes._id': { $in: Array.from(templateRepMaxIds) }
     })
-      .select('name')
+      .select('name templateRepMaxes')
       .lean();
 
-    // Create a map for benchmark template names
-    const benchmarkTemplateNameMap = new Map<string, string>(
-      benchmarkTemplates.map((template: { _id: { toString: () => string }; name: string }) => [
-        template._id.toString(),
-        template.name
-      ])
+    // Create map from templateRepMaxId to benchmark info
+    const templateRepMaxToBenchmarkMap = new Map<string, {
+      benchmarkTemplateId: string;
+      benchmarkName: string;
+      repMaxReps: number;
+      repMaxName: string;
+    }>();
+
+    benchmarkTemplates.forEach((template: any) => {
+      template.templateRepMaxes?.forEach((trm: any) => {
+        templateRepMaxToBenchmarkMap.set(trm._id.toString(), {
+          benchmarkTemplateId: template._id.toString(),
+          benchmarkName: template.name,
+          repMaxReps: trm.reps,
+          repMaxName: trm.name
+        });
+      });
+    });
+
+    // Get unique benchmark template IDs for user benchmarks lookup
+    const benchmarkTemplateIds = new Set(
+      Array.from(templateRepMaxToBenchmarkMap.values()).map(v => v.benchmarkTemplateId)
     );
 
-    // 11. Create benchmark lookup map
+    // 11. Create benchmark lookup map (by templateId)
     const benchmarkMap = new Map(
       (user.currentBenchmarks || []).map(benchmark => [
         benchmark.templateId,
@@ -179,8 +189,9 @@ export const getCurrentWeekWorkouts = async (
           reps: number;
           percentageOfMax: number;
           calculatedWeightKg?: number;
-          benchmarkTemplateId?: string;
+          templateRepMaxId?: string;
           benchmarkName?: string;
+          repMaxReps?: number;
         }> | undefined;
 
         if (activity.sets && activity.sets.length > 0) {
@@ -188,15 +199,31 @@ export const getCurrentWeekWorkouts = async (
           setCalculations = activity.sets.map((set, index) => {
             let calculatedWeightKg: number | undefined;
             let benchmarkName: string | undefined;
+            let repMaxReps: number | undefined;
 
-            if (set.benchmarkTemplateId) {
-              const benchmark = benchmarkMap.get(set.benchmarkTemplateId);
-              benchmarkName = benchmarkTemplateNameMap.get(set.benchmarkTemplateId);
+            if (set.templateRepMaxId) {
+              // Get template info for this templateRepMaxId
+              const templateInfo = templateRepMaxToBenchmarkMap.get(set.templateRepMaxId);
 
-              // Only calculate weight for WEIGHT type benchmarks
-              if (benchmark?.type === BenchmarkType.WEIGHT && benchmark.weightKg) {
-                const rawWeight = (benchmark.weightKg * set.percentageOfMax) / 100;
-                calculatedWeightKg = Math.round(rawWeight);
+              if (templateInfo) {
+                const { benchmarkTemplateId, benchmarkName: baseName, repMaxReps: reps, repMaxName } = templateInfo;
+
+                // Get client's benchmark for this template
+                const clientBenchmark = benchmarkMap.get(benchmarkTemplateId);
+
+                if (clientBenchmark?.type === BenchmarkType.WEIGHT && clientBenchmark.repMaxes) {
+                  // Find the specific RepMax that matches this templateRepMaxId
+                  const repMax = clientBenchmark.repMaxes.find((rm: any) => rm.templateRepMaxId === set.templateRepMaxId);
+
+                  if (repMax?.weightKg) {
+                    const rawWeight = (repMax.weightKg * set.percentageOfMax) / 100;
+                    calculatedWeightKg = Math.round(rawWeight);
+                  }
+
+                  // Build full benchmark name: "Back Squat - 3RM"
+                  benchmarkName = `${baseName} - ${repMaxName}`;
+                  repMaxReps = reps;
+                }
               }
             }
 
@@ -205,8 +232,9 @@ export const getCurrentWeekWorkouts = async (
               reps: set.reps,
               percentageOfMax: set.percentageOfMax,
               calculatedWeightKg,
-              benchmarkTemplateId: set.benchmarkTemplateId,
+              templateRepMaxId: set.templateRepMaxId,
               benchmarkName,
+              repMaxReps,
             };
           });
         }

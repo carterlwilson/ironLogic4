@@ -13,7 +13,7 @@ export const DistanceUnitSchema = z.nativeEnum(DistanceUnit);
 export const SetSchema = z.object({
   reps: z.number().int().min(1, 'Reps must be at least 1').max(100, 'Reps cannot exceed 100'),
   percentageOfMax: z.number().min(0, 'Percentage must be at least 0').max(200, 'Percentage cannot exceed 200'),
-  benchmarkTemplateId: objectId.optional()
+  templateRepMaxId: objectId.optional()
 });
 
 // Base activity schema (without refinements)

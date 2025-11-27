@@ -5,12 +5,14 @@ import {
   BenchmarkTemplate,
   CreateMyBenchmarkInput,
   UpdateMyBenchmarkInput,
+  RepMax,
 } from '@ironlogic4/shared';
 import {
   getBenchmarks,
   createBenchmark,
   updateBenchmark,
   getBenchmarkTemplates,
+  getBenchmarkTemplate,
 } from '../services/benchmarkApi';
 
 interface BenchmarksState {
@@ -45,6 +47,16 @@ export function useBenchmarks() {
     selectedBenchmark: null,
     selectedTemplate: null,
   });
+
+  const [benchmarkTemplates, setBenchmarkTemplates] = useState<Map<string, BenchmarkTemplate>>(new Map());
+  const [selectedRepMax, setSelectedRepMax] = useState<{
+    repMax: RepMax;
+    benchmarkId: string;
+    allRepMaxes: RepMax[];
+    templateRepMaxName: string;
+    benchmarkName: string;
+  } | null>(null);
+  const [isEditRepMaxOpen, setIsEditRepMaxOpen] = useState(false);
 
   /**
    * Load benchmarks from API
@@ -205,7 +217,49 @@ export function useBenchmarks() {
       selectedBenchmark: null,
       selectedTemplate: null,
     });
+    setIsEditRepMaxOpen(false);
+    setSelectedRepMax(null);
   }, []);
+
+  /**
+   * Load benchmark templates for benchmarks
+   */
+  const loadBenchmarkTemplates = useCallback(async (templateIds: string[]) => {
+    try {
+      const templates = await Promise.all(
+        templateIds.map((id) => getBenchmarkTemplate(id))
+      );
+      const templateMap = new Map(
+        templates.map((t) => [t.data.id, t.data])
+      );
+      setBenchmarkTemplates(templateMap);
+    } catch (error) {
+      console.error('Failed to load templates:', error);
+    }
+  }, []);
+
+  /**
+   * Open edit rep max modal
+   */
+  const openEditRepMax = useCallback(
+    (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => {
+      setSelectedRepMax({ repMax, benchmarkId, allRepMaxes, templateRepMaxName, benchmarkName });
+      setIsEditRepMaxOpen(true);
+    },
+    []
+  );
+
+  /**
+   * Update a specific rep max
+   */
+  const handleUpdateRepMax = useCallback(
+    async (benchmarkId: string, updatedRepMaxes: RepMax[]) => {
+      await handleUpdateBenchmark(benchmarkId, { repMaxes: updatedRepMaxes });
+      setIsEditRepMaxOpen(false);
+      setSelectedRepMax(null);
+    },
+    [handleUpdateBenchmark]
+  );
 
   /**
    * Load benchmarks and templates on mount
@@ -215,11 +269,22 @@ export function useBenchmarks() {
     loadTemplates();
   }, [loadBenchmarks, loadTemplates]);
 
+  /**
+   * Load full templates when benchmarks change
+   */
+  useEffect(() => {
+    if (state.currentBenchmarks.length > 0) {
+      const templateIds = [...new Set(state.currentBenchmarks.map((b) => b.templateId))];
+      loadBenchmarkTemplates(templateIds);
+    }
+  }, [state.currentBenchmarks, loadBenchmarkTemplates]);
+
   return {
     // Data
     currentBenchmarks: state.currentBenchmarks,
     historicalBenchmarks: state.historicalBenchmarks,
     templates: state.templates,
+    benchmarkTemplates,
     loading: state.loading,
     error: state.error,
 
@@ -227,17 +292,21 @@ export function useBenchmarks() {
     isCreateOpen: modalState.isCreateOpen,
     isEditOpen: modalState.isEditOpen,
     isCreateNewFromOldOpen: modalState.isCreateNewFromOldOpen,
+    isEditRepMaxOpen,
     selectedBenchmark: modalState.selectedBenchmark,
     selectedTemplate: modalState.selectedTemplate,
+    selectedRepMax,
 
     // Actions
     loadBenchmarks,
     loadTemplates,
     handleCreateBenchmark,
     handleUpdateBenchmark,
+    handleUpdateRepMax,
     openCreate,
     openEdit,
     openCreateNewFromOld,
+    openEditRepMax,
     closeModals,
   };
 }

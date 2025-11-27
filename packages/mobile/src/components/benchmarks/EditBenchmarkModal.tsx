@@ -56,13 +56,12 @@ export function EditBenchmarkModal({
   useEffect(() => {
     if (benchmark && opened) {
       const measurementValue =
-        benchmark.type === BenchmarkType.WEIGHT ? benchmark.weightKg :
         benchmark.type === BenchmarkType.TIME ? benchmark.timeSeconds :
         benchmark.type === BenchmarkType.REPS ? benchmark.reps :
         benchmark.otherNotes;
 
       form.setValues({
-        recordedAt: formatDateForInput(benchmark.recordedAt),
+        recordedAt: benchmark.recordedAt ? formatDateForInput(benchmark.recordedAt) : formatDateForInput(new Date()),
         notes: benchmark.notes || '',
         measurementValue,
       });
@@ -78,10 +77,8 @@ export function EditBenchmarkModal({
     };
 
     // Add measurement based on type
+    // Note: WEIGHT benchmarks now use EditRepMaxModal for editing individual rep maxes
     switch (benchmark.type) {
-      case BenchmarkType.WEIGHT:
-        data.weightKg = values.measurementValue as number;
-        break;
       case BenchmarkType.TIME:
         data.timeSeconds = values.measurementValue as number;
         break;

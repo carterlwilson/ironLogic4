@@ -2,7 +2,6 @@ import { Table, Group, ActionIcon, Tooltip, Badge } from '@mantine/core';
 import { IconEdit, IconTrash, IconArrowsExchange } from '@tabler/icons-react';
 import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
 import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
-import { formatMeasurement } from '../../utils/benchmarkFormatters';
 
 interface ClientBenchmarkRowProps {
   benchmark: ClientBenchmark;
@@ -34,18 +33,6 @@ export function ClientBenchmarkRow({ benchmark, onEdit, onDelete, onMove }: Clie
         <Badge color={getBenchmarkTypeColor(benchmark.type)} variant="light">
           {benchmark.type}
         </Badge>
-      </Table.Td>
-      <Table.Td>
-        {formatMeasurement(
-          benchmark.type,
-          benchmark.weightKg,
-          benchmark.timeSeconds,
-          benchmark.reps,
-          benchmark.otherNotes
-        )}
-      </Table.Td>
-      <Table.Td>
-        {benchmark.recordedAt ? new Date(benchmark.recordedAt).toLocaleDateString() : 'N/A'}
       </Table.Td>
       <Table.Td>
         {benchmark.tags.length > 0 ? (

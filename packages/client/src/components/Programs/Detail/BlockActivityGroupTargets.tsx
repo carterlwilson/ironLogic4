@@ -7,14 +7,14 @@ import { updateBlock } from '../../../utils/programHelpers';
 import { getBlockVolumeStatuses } from '../../../utils/volumeCalculations';
 import type { IBlock, IProgram, IActivityGroupTarget } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
-import type { ActivityGroup } from '@ironlogic4/shared/types/activityGroups';
+import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface BlockActivityGroupTargetsProps {
   block: IBlock;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
   activityTemplates: ActivityTemplate[];
-  activityGroups: ActivityGroup[];
+  groupOptions: ActivityGroupOption[];
 }
 
 export function BlockActivityGroupTargets({
@@ -22,7 +22,7 @@ export function BlockActivityGroupTargets({
   program,
   onProgramChange,
   activityTemplates,
-  activityGroups,
+  groupOptions,
 }: BlockActivityGroupTargetsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTarget, setEditingTarget] = useState<{ target: IActivityGroupTarget; index: number } | null>(null);
@@ -83,8 +83,8 @@ export function BlockActivityGroupTargets({
 
   // Get activity group name by ID
   const getGroupName = (groupId: string) => {
-    const group = activityGroups.find(g => g.id === groupId);
-    return group?.name || 'Unknown Group';
+    const option = groupOptions.find(opt => opt.value === groupId);
+    return option?.label || 'Unknown Group';
   };
 
   // Get existing group IDs (for validation)
@@ -115,6 +115,7 @@ export function BlockActivityGroupTargets({
           onSubmit={handleSubmit}
           existingTarget={editingTarget?.target}
           existingGroupIds={existingGroupIds}
+          groupOptions={groupOptions}
         />
       </>
     );
@@ -151,6 +152,7 @@ export function BlockActivityGroupTargets({
         onSubmit={handleSubmit}
         existingTarget={editingTarget?.target}
         existingGroupIds={existingGroupIds}
+        groupOptions={groupOptions}
       />
     </>
   );

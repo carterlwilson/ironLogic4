@@ -6,6 +6,24 @@ export interface ClientBenchmarkDocument extends Omit<IClientBenchmark, 'id'> {
   _id: string;
 }
 
+const repMaxSchema = new Schema({
+  templateRepMaxId: {
+    type: String,
+    required: true
+  },
+  weightKg: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  recordedAt: {
+    type: Date,
+    required: true
+  }
+}, {
+  timestamps: true  // RepMax HAS timestamps
+});
+
 export const clientBenchmarkSchema = new Schema<ClientBenchmarkDocument>(
   {
     templateId: {
@@ -34,9 +52,10 @@ export const clientBenchmarkSchema = new Schema<ClientBenchmarkDocument>(
       default: [],
     },
     // Measurement fields - only one should be populated based on type
-    weightKg: {
-      type: Number,
-      min: 0,
+    repMaxes: {
+      type: [repMaxSchema],
+      default: [],
+      required: false
     },
     timeSeconds: {
       type: Number,
@@ -53,7 +72,7 @@ export const clientBenchmarkSchema = new Schema<ClientBenchmarkDocument>(
     },
     recordedAt: {
       type: Date,
-      required: true,
+      required: false,  // Only required for non-WEIGHT types
     },
   },
   {
@@ -67,8 +86,8 @@ clientBenchmarkSchema.pre('save', function (next) {
 
   switch (benchmark.type) {
     case BenchmarkType.WEIGHT:
-      if (benchmark.weightKg === undefined || benchmark.weightKg === null) {
-        return next(new Error('weightKg is required for WEIGHT type benchmarks'));
+      if (!benchmark.repMaxes || benchmark.repMaxes.length === 0) {
+        return next(new Error('At least one repMax is required for WEIGHT type benchmarks'));
       }
       break;
     case BenchmarkType.TIME:
@@ -96,6 +115,19 @@ clientBenchmarkSchema.set('toJSON', {
   transform: function (doc, ret) {
     (ret as any).id = ret._id;
     delete (ret as any)._id;
+
+    // Transform repMaxes subdocuments
+    if (ret.repMaxes && Array.isArray(ret.repMaxes)) {
+      ret.repMaxes = ret.repMaxes.map((rm: any) => ({
+        id: rm._id.toString(),
+        templateRepMaxId: rm.templateRepMaxId,
+        weightKg: rm.weightKg,
+        recordedAt: rm.recordedAt,
+        createdAt: rm.createdAt,
+        updatedAt: rm.updatedAt
+      }));
+    }
+
     return ret;
   },
 });

@@ -10,6 +10,15 @@ const nullableObjectId = z.preprocess(
 );
 
 /**
+ * Schema for RepMax subdocument
+ */
+const repMaxSchema = z.object({
+  templateRepMaxId: z.string().min(1),
+  weightKg: z.number().min(0),
+  recordedAt: z.string().datetime().or(z.date())
+});
+
+/**
  * Schema for ClientBenchmark subdocuments
  */
 export const ClientBenchmarkSchema = z.object({
@@ -18,11 +27,11 @@ export const ClientBenchmarkSchema = z.object({
   notes: z.string().max(500, 'Notes must be 500 characters or less').optional(),
   type: z.nativeEnum(BenchmarkType),
   tags: z.array(z.string()).default([]),
-  weightKg: z.number().min(0, 'Weight must be non-negative').optional(),
+  repMaxes: z.array(repMaxSchema).optional(),
   timeSeconds: z.number().min(0, 'Time must be non-negative').optional(),
   reps: z.number().min(0, 'Reps must be non-negative').optional(),
   otherNotes: z.string().max(1000, 'Other notes must be 1000 characters or less').optional(),
-  recordedAt: z.coerce.date(),
+  recordedAt: z.coerce.date().optional(),
 });
 
 /**
@@ -72,18 +81,23 @@ export const ClientIdSchema = z.object({
  */
 export const CreateMyBenchmarkSchema = z.object({
   templateId: z.string().min(1, 'Template ID is required'),
-  recordedAt: z.coerce.date(),
   notes: z.string().max(1000).optional(),
-  weightKg: z.number().positive().max(1000).optional(),
+
+  // For WEIGHT type
+  repMaxes: z.array(repMaxSchema).optional(),
+
+  // For other types
   timeSeconds: z.number().positive().max(86400).optional(),
   reps: z.number().int().positive().max(10000).optional(),
   otherNotes: z.string().min(1).max(500).optional(),
+  recordedAt: z.coerce.date().optional(),
+
   oldBenchmarkId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format').optional(),
 }).refine(
   (data) => {
     // Exactly one measurement field should be provided
-    const fields = [data.weightKg, data.timeSeconds, data.reps, data.otherNotes];
-    const nonNullFields = fields.filter(f => f !== undefined && f !== null);
+    const fields = [data.repMaxes, data.timeSeconds, data.reps, data.otherNotes];
+    const nonNullFields = fields.filter(f => f !== undefined && f !== null && (!Array.isArray(f) || f.length > 0));
     return nonNullFields.length === 1;
   },
   { message: 'Exactly one measurement type must be provided' }
@@ -93,18 +107,21 @@ export const CreateMyBenchmarkSchema = z.object({
  * Schema for updating a benchmark (client self-service)
  */
 export const UpdateMyBenchmarkSchema = z.object({
-  recordedAt: z.coerce.date().optional(),
   notes: z.string().max(1000).optional(),
-  weightKg: z.number().positive().max(1000).optional(),
+  repMaxes: z.array(repMaxSchema).optional(),
   timeSeconds: z.number().positive().max(86400).optional(),
   reps: z.number().int().positive().max(10000).optional(),
   otherNotes: z.string().min(1).max(500).optional(),
+  recordedAt: z.coerce.date().optional(),
 }).refine(
   (data) => {
     // At least one field must be provided
-    return data.recordedAt || data.notes ||
-           data.weightKg !== undefined || data.timeSeconds !== undefined ||
-           data.reps !== undefined || data.otherNotes !== undefined;
+    return data.notes !== undefined ||
+           data.repMaxes !== undefined ||
+           data.timeSeconds !== undefined ||
+           data.reps !== undefined ||
+           data.otherNotes !== undefined ||
+           data.recordedAt !== undefined;
   },
   { message: 'At least one field must be updated' }
 );

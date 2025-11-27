@@ -4,6 +4,14 @@ import { BenchmarkType } from '../types/benchmarkTemplates.js';
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format');
 
 /**
+ * Schema for TemplateRepMax subdocument
+ */
+const templateRepMaxSchema = z.object({
+  reps: z.number().int().min(1).max(50),
+  name: z.string().min(1).max(20)
+});
+
+/**
  * Schema for listing benchmark templates with pagination and filtering
  */
 export const BenchmarkTemplateListParamsSchema = z.object({
@@ -33,6 +41,7 @@ export const CreateBenchmarkTemplateSchema = z.object({
   notes: z.string().max(500, 'Notes must be 500 characters or less').trim().optional(),
   type: z.nativeEnum(BenchmarkType, { errorMap: () => ({ message: 'Invalid benchmark type' }) }),
   tags: z.array(z.string()).default([]),
+  templateRepMaxes: z.array(templateRepMaxSchema).optional()
 });
 
 /**
@@ -43,6 +52,7 @@ export const UpdateBenchmarkTemplateSchema = z.object({
   notes: z.string().max(500, 'Notes must be 500 characters or less').trim().optional(),
   type: z.nativeEnum(BenchmarkType, { errorMap: () => ({ message: 'Invalid benchmark type' }) }).optional(),
   tags: z.array(z.string()).optional(),
+  templateRepMaxes: z.array(templateRepMaxSchema).optional()
 });
 
 /**

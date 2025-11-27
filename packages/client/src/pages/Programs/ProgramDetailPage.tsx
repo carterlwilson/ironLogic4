@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Title, Stack, Group, Button, Breadcrumbs, Anchor, Text, Loader, Center, Alert } from '@mantine/core';
 import { IconArrowLeft, IconDeviceFloppy, IconAlertCircle } from '@tabler/icons-react';
@@ -9,6 +9,7 @@ import { useAuth } from '../../providers/AuthProvider';
 import { BlockList } from '../../components/Programs/Detail/BlockList';
 import { ProgramProgressControl } from '../../components/Programs/Detail/ProgramProgressControl';
 import type { IProgram } from '@ironlogic4/shared/types/programs';
+import type { ActivityGroupOption } from '../../hooks/useActivityGroupOptions';
 
 export function ProgramDetailPage() {
   const { programId } = useParams<{ programId: string }>();
@@ -21,6 +22,18 @@ export function ProgramDetailPage() {
 
   const [localProgram, setLocalProgram] = useState<IProgram | null>(null);
   const [isDirty, setIsDirty] = useState(false);
+
+  // Convert activityGroups to groupOptions format for dropdown
+  const groupOptions: ActivityGroupOption[] = useMemo(() => {
+    const options: ActivityGroupOption[] = [{ value: '', label: 'No group' }];
+    if (activityGroups && activityGroups.length > 0) {
+      options.push(...activityGroups.map(group => ({
+        value: group.id,
+        label: group.name,
+      })));
+    }
+    return options;
+  }, [activityGroups]);
 
   // Initialize local program state when data loads
   useEffect(() => {
@@ -141,7 +154,7 @@ export function ProgramDetailPage() {
           onProgramChange={handleProgramChange}
           templateMap={templateMap}
           templates={templates}
-          activityGroups={activityGroups}
+          groupOptions={groupOptions}
         />
       </Stack>
     </Container>

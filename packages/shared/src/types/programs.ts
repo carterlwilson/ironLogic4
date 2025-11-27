@@ -14,7 +14,7 @@ export enum DistanceUnit {
 export interface ISet {
   reps: number;              // 1-100
   percentageOfMax: number;   // 0-200
-  benchmarkTemplateId?: string;  // Optional reference to benchmark template for this set
+  templateRepMaxId?: string; // Optional reference to TemplateRepMax for this set
 }
 
 /**
@@ -144,8 +144,9 @@ export interface ISetCalculation {
   reps: number;
   percentageOfMax: number;
   calculatedWeightKg?: number;  // Based on benchmark
-  benchmarkTemplateId?: string;  // Benchmark template used for this set
-  benchmarkName?: string;        // Name of the benchmark template
+  templateRepMaxId?: string;     // TemplateRepMax being used
+  benchmarkName?: string;        // Full name: "Back Squat - 3RM"
+  repMaxReps?: number;           // The rep count (e.g., 3 for 3RM)
 }
 
 /**

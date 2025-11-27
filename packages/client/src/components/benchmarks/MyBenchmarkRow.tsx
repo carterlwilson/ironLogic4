@@ -62,17 +62,21 @@ export function MyBenchmarkRow({
         <Text fw={600}>
           {formatMeasurement(
             benchmark.type,
-            benchmark.weightKg,
+            undefined, // weightKg is deprecated
             benchmark.timeSeconds,
             benchmark.reps,
-            benchmark.otherNotes
+            benchmark.otherNotes,
+            benchmark.repMaxes
           )}
         </Text>
       </Table.Td>
 
       <Table.Td>
         <Group gap={4}>
-          <Text size="sm">{formatDate(benchmark.recordedAt)}</Text>
+          <Text size="sm">
+            {benchmark.recordedAt ? formatDate(benchmark.recordedAt) :
+             benchmark.repMaxes?.[0]?.recordedAt ? formatDate(benchmark.repMaxes[0].recordedAt) : 'N/A'}
+          </Text>
           {ageInDays >= 6 && !isHistorical && (
             <Tooltip label={`${ageInDays} days old - will become historical after 7 days`}>
               <IconClock size={14} style={{ color: 'var(--mantine-color-orange-6)' }} />

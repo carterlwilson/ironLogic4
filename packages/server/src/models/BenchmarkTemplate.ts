@@ -3,6 +3,23 @@ import { BenchmarkTemplate as IBenchmarkTemplate, BenchmarkType } from '@ironlog
 
 export interface BenchmarkTemplateDocument extends Omit<IBenchmarkTemplate, 'id'>, Document {}
 
+const templateRepMaxSchema = new Schema({
+  reps: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 50
+  },
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 20
+  }
+  // DO NOT ADD timestamps: true
+  // DO NOT ADD order field
+});
+
 const benchmarkTemplateSchema = new Schema<BenchmarkTemplateDocument>(
   {
     name: {
@@ -24,6 +41,11 @@ const benchmarkTemplateSchema = new Schema<BenchmarkTemplateDocument>(
     tags: {
       type: [String],
       default: [],
+    },
+    templateRepMaxes: {
+      type: [templateRepMaxSchema],
+      default: [],
+      required: false
     },
     gymId: {
       type: String,
@@ -53,6 +75,16 @@ benchmarkTemplateSchema.set('toJSON', {
     ret.id = ret._id;
     delete (ret as any)._id;
     delete (ret as any).__v;
+
+    // Transform templateRepMaxes subdocuments
+    if (ret.templateRepMaxes && Array.isArray(ret.templateRepMaxes)) {
+      ret.templateRepMaxes = ret.templateRepMaxes.map((trm: any) => ({
+        id: trm._id.toString(),
+        reps: trm.reps,
+        name: trm.name
+      }));
+    }
+
     return ret;
   },
 });

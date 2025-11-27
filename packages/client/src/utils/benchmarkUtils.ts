@@ -5,9 +5,13 @@ import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
  * Check if a benchmark is editable (less than 1 week old)
  */
 export function isBenchmarkEditable(benchmark: ClientBenchmark): boolean {
+  if (!benchmark.recordedAt && !benchmark.repMaxes?.[0]?.recordedAt) return false;
+
   const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
   const now = new Date();
-  const recordedDate = new Date(benchmark.recordedAt);
+  const recordedDate = benchmark.recordedAt
+    ? new Date(benchmark.recordedAt)
+    : new Date(benchmark.repMaxes![0].recordedAt);
   const ageMs = now.getTime() - recordedDate.getTime();
 
   return ageMs < ONE_WEEK_MS;
@@ -51,11 +55,26 @@ export function formatDateForInput(date: Date | string): string {
 }
 
 /**
+ * Get age of a repMax in days
+ */
+export function getRepMaxAgeInDays(repMax: { recordedAt: Date | string }): number {
+  const recordedDate = new Date(repMax.recordedAt);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - recordedDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+}
+
+/**
  * Get the age of a benchmark in days
  */
 export function getBenchmarkAgeInDays(benchmark: ClientBenchmark): number {
   const now = new Date();
-  const recordedDate = new Date(benchmark.recordedAt);
+  const recordedDate = benchmark.recordedAt
+    ? new Date(benchmark.recordedAt)
+    : benchmark.repMaxes?.[0]
+    ? new Date(benchmark.repMaxes[0].recordedAt)
+    : now;
   const ageMs = now.getTime() - recordedDate.getTime();
   return Math.floor(ageMs / (24 * 60 * 60 * 1000));
 }
@@ -73,7 +92,11 @@ export function getMeasurementType(benchmark: ClientBenchmark): BenchmarkType {
 export function getMeasurementValue(benchmark: ClientBenchmark): number | null {
   switch (benchmark.type) {
     case BenchmarkType.WEIGHT:
-      return benchmark.weightKg ?? null;
+      // For WEIGHT benchmarks with repMaxes, return the heaviest weight (typically 1RM)
+      if (benchmark.repMaxes && benchmark.repMaxes.length > 0) {
+        return Math.max(...benchmark.repMaxes.map(rm => rm.weightKg));
+      }
+      return null;
     case BenchmarkType.TIME:
       return benchmark.timeSeconds ?? null;
     case BenchmarkType.REPS:
@@ -88,8 +111,10 @@ export function getMeasurementValue(benchmark: ClientBenchmark): number | null {
  */
 export function sortBenchmarksByDate(benchmarks: ClientBenchmark[], ascending = false): ClientBenchmark[] {
   return [...benchmarks].sort((a, b) => {
-    const dateA = new Date(a.recordedAt).getTime();
-    const dateB = new Date(b.recordedAt).getTime();
+    const dateA = a.recordedAt ? new Date(a.recordedAt).getTime() :
+                   a.repMaxes?.[0] ? new Date(a.repMaxes[0].recordedAt).getTime() : 0;
+    const dateB = b.recordedAt ? new Date(b.recordedAt).getTime() :
+                   b.repMaxes?.[0] ? new Date(b.repMaxes[0].recordedAt).getTime() : 0;
     return ascending ? dateA - dateB : dateB - dateA;
   });
 }

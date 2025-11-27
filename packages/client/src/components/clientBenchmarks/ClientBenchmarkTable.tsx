@@ -38,8 +38,6 @@ export function ClientBenchmarkTable({
           <Table.Tr>
             <Table.Th>Name</Table.Th>
             <Table.Th>Type</Table.Th>
-            <Table.Th>Measurement</Table.Th>
-            <Table.Th>Recorded Date</Table.Th>
             <Table.Th>Tags</Table.Th>
             <Table.Th>Actions</Table.Th>
           </Table.Tr>
