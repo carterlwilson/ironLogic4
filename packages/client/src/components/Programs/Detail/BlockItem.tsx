@@ -6,6 +6,7 @@ import { BlockActivityGroupTargets } from './BlockActivityGroupTargets';
 import { addWeek, deleteBlock, updateBlock, copyBlock } from '../../../utils/programHelpers';
 import type { IBlock, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface BlockItemProps {
@@ -15,10 +16,12 @@ interface BlockItemProps {
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
   isCurrentBlock?: boolean;
 }
 
-export function BlockItem({ block, program, onProgramChange, templateMap, templates, groupOptions, isCurrentBlock }: BlockItemProps) {
+export function BlockItem({ block, program, onProgramChange, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, isCurrentBlock }: BlockItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(block.name);
@@ -158,6 +161,8 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
                 templateMap={templateMap}
                 templates={templates}
                 groupOptions={groupOptions}
+                benchmarkTemplates={benchmarkTemplates}
+                weightBenchmarkOptions={weightBenchmarkOptions}
                 isCurrentBlock={isCurrentBlock}
               />
             </div>

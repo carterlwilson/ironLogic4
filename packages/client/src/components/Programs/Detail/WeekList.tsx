@@ -2,6 +2,7 @@ import { Stack, Text } from '@mantine/core';
 import { WeekItem } from './WeekItem';
 import type { IWeek, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface WeekListProps {
@@ -12,10 +13,12 @@ interface WeekListProps {
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
   isCurrentBlock?: boolean;
 }
 
-export function WeekList({ blockId, weeks, program, onProgramChange, templateMap, templates, groupOptions, isCurrentBlock }: WeekListProps) {
+export function WeekList({ blockId, weeks, program, onProgramChange, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, isCurrentBlock }: WeekListProps) {
   if (weeks.length === 0) {
     return (
       <Text size="sm" c="dimmed" ta="center" py="md">
@@ -40,6 +43,8 @@ export function WeekList({ blockId, weeks, program, onProgramChange, templateMap
               templateMap={templateMap}
               templates={templates}
               groupOptions={groupOptions}
+              benchmarkTemplates={benchmarkTemplates}
+              weightBenchmarkOptions={weightBenchmarkOptions}
               isCurrentWeek={isCurrentWeek}
             />
           );

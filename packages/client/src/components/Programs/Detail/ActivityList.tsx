@@ -18,6 +18,7 @@ import { SortableActivityCard } from './SortableActivityCard';
 import { reorderActivities } from '../../../utils/programHelpers';
 import type { IActivity, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 interface ActivityListProps {
   dayId: string;
@@ -26,9 +27,11 @@ interface ActivityListProps {
   onProgramChange: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function ActivityList({ dayId, activities, program, onProgramChange, templateMap, templates }: ActivityListProps) {
+export function ActivityList({ dayId, activities, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions }: ActivityListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -74,6 +77,8 @@ export function ActivityList({ dayId, activities, program, onProgramChange, temp
               onProgramChange={onProgramChange}
               templateMap={templateMap}
               templates={templates}
+              benchmarkTemplates={benchmarkTemplates}
+              weightBenchmarkOptions={weightBenchmarkOptions}
             />
           ))}
         </Stack>

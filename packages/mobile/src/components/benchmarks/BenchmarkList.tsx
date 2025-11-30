@@ -11,6 +11,7 @@ interface BenchmarkListProps {
   onCreateNew: (benchmark: ClientBenchmark) => void;
   benchmarkTemplates?: Map<string, BenchmarkTemplate>;
   onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => void;
+  onCreateNewRepMax?: (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => void;
 }
 
 export function BenchmarkList({
@@ -21,6 +22,7 @@ export function BenchmarkList({
   onCreateNew,
   benchmarkTemplates,
   onEditRepMax,
+  onCreateNewRepMax,
 }: BenchmarkListProps) {
   if (loading) {
     return (
@@ -63,6 +65,7 @@ export function BenchmarkList({
           onEditRepMax={onEditRepMax ? (repMax, benchmarkId, allRepMaxes, templateRepMaxName) => {
             onEditRepMax(repMax, benchmarkId, allRepMaxes, templateRepMaxName, benchmark.name);
           } : undefined}
+          onCreateNewRepMax={onCreateNewRepMax}
         />
       ))}
     </Stack>
