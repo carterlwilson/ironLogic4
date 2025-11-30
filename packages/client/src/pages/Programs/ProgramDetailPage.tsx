@@ -5,9 +5,11 @@ import { IconArrowLeft, IconDeviceFloppy, IconAlertCircle } from '@tabler/icons-
 import { useProgram, useUpdateProgramStructure } from '../../hooks/usePrograms';
 import { useActivityTemplateMap } from '../../hooks/useActivityTemplateMap';
 import { useActivityGroups } from '../../hooks/useActivityGroups';
+import { useBenchmarkTemplates } from '../../hooks/useBenchmarkTemplates';
 import { useAuth } from '../../providers/AuthProvider';
 import { BlockList } from '../../components/Programs/Detail/BlockList';
 import { ProgramProgressControl } from '../../components/Programs/Detail/ProgramProgressControl';
+import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityGroupOption } from '../../hooks/useActivityGroupOptions';
 
@@ -19,6 +21,7 @@ export function ProgramDetailPage() {
   const updateProgramStructure = useUpdateProgramStructure();
   const { templateMap, templates } = useActivityTemplateMap(user?.gymId);
   const { groups: activityGroups } = useActivityGroups(user?.gymId);
+  const { templates: benchmarkTemplates } = useBenchmarkTemplates(user?.gymId);
 
   const [localProgram, setLocalProgram] = useState<IProgram | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -34,6 +37,19 @@ export function ProgramDetailPage() {
     }
     return options;
   }, [activityGroups]);
+
+  // Flatten rep maxes from all weight-based benchmarks for lift activities
+  const weightBenchmarkOptions = useMemo(() => {
+    return benchmarkTemplates
+      .filter((template) => template.type === BenchmarkType.WEIGHT && template.templateRepMaxes)
+      .flatMap((template) =>
+        template.templateRepMaxes?.map((repMax) => ({
+          value: repMax.id,
+          label: `${template.name} - ${repMax.name}`,
+        })) || []
+      )
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [benchmarkTemplates]);
 
   // Initialize local program state when data loads
   useEffect(() => {
@@ -155,6 +171,8 @@ export function ProgramDetailPage() {
           templateMap={templateMap}
           templates={templates}
           groupOptions={groupOptions}
+          benchmarkTemplates={benchmarkTemplates}
+          weightBenchmarkOptions={weightBenchmarkOptions}
         />
       </Stack>
     </Container>

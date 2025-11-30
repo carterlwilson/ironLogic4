@@ -1,7 +1,9 @@
 Go into plan mode.
 
-Great. Now that we have the mapping file you created for the benchmark templates,
-We need to migrate the client benchmarks to reflect the new structure. I've
-added a file called IronLogic-Production.users.json that contains the users in the database
-with the old structure. For "client" type users, update their client benchmarks to 
-reflect the new structure given the template ID mappings we now know.
+On the mobile page right now, when a client is looking at their benchmarks,
+there is one button for adding/editing benchmarks for a group of rep maxes.
+This doesn't match the new benchmark structure. Instead of that button,
+the user needs to be able to tap on a rep max to edit it or create a new one. 
+The age validation (can only edit if <20 days old) should apply at a rep max level,
+since it's possible for different rep maxes to be recorded on different dates.
+Plan this implementation. 

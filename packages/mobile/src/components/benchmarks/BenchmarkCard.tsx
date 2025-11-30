@@ -75,6 +75,11 @@ export function BenchmarkCard({
   };
 
   const getActionButton = () => {
+    // WEIGHT benchmarks use individual rep max editing - no benchmark-level button
+    if (benchmark.type === BenchmarkType.WEIGHT) {
+      return null;
+    }
+
     // Historical benchmarks are view-only
     if (isHistorical) {
       return null;

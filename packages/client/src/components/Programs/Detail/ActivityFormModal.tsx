@@ -2,13 +2,11 @@ import { Modal, Stack, Select, NumberInput, Button, Group } from '@mantine/core'
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { ActivityType } from '@ironlogic4/shared/types/activityTemplates';
-import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import { DistanceUnit, ISet } from '@ironlogic4/shared/types/programs';
 import type { IActivity } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import { SetsArrayInput } from './SetsArrayInput';
-import { useBenchmarkTemplates } from '../../../hooks/useBenchmarkTemplates';
-import { useAuth } from '../../../providers/AuthProvider';
 
 interface ActivityFormModalProps {
   opened: boolean;
@@ -16,26 +14,12 @@ interface ActivityFormModalProps {
   onSubmit: (activity: Omit<IActivity, 'id' | 'order'>) => void;
   existingActivity?: IActivity | null;
   templates: ActivityTemplate[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity, templates }: ActivityFormModalProps) {
-  const { user } = useAuth();
-  const gymId = user?.gymId || '';
+export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity, templates, weightBenchmarkOptions }: ActivityFormModalProps) {
   const [selectedType, setSelectedType] = useState<ActivityType | null>(null);
-
-  // Fetch benchmark templates for set-level benchmark selection
-  const { templates: benchmarkTemplates, loading: benchmarksLoading } = useBenchmarkTemplates(gymId);
-
-  // Flatten rep maxes from all weight-based benchmarks for lift activities
-  const weightBenchmarkOptions = benchmarkTemplates
-    .filter((template) => template.type === BenchmarkType.WEIGHT && template.templateRepMaxes)
-    .flatMap((template) =>
-      template.templateRepMaxes?.map((repMax) => ({
-        value: repMax.id,  // Use templateRepMax ID
-        label: `${template.name} - ${repMax.name}`,  // "Back Squat - 1RM"
-      })) || []
-    )
-    .sort((a, b) => a.label.localeCompare(b.label));  // Alphabetical sorting for searchability
 
   const form = useForm<Omit<IActivity, 'id' | 'order'>>({
     initialValues: {
@@ -148,7 +132,7 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
               onChange={(sets) => form.setFieldValue('sets', sets)}
               error={form.errors.sets as string}
               benchmarkOptions={weightBenchmarkOptions}
-              benchmarksLoading={benchmarksLoading}
+              benchmarksLoading={false}
             />
           )}
 

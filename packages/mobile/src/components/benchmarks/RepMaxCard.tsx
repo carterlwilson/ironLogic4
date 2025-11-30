@@ -29,7 +29,12 @@ export function RepMaxCard({
       padding="sm"
       radius="md"
       withBorder
-      style={{ position: 'relative', minHeight: '120px' }}
+      style={{
+        position: 'relative',
+        minHeight: '120px',
+        cursor: !isHistorical && isEditable ? 'pointer' : 'default',
+      }}
+      onClick={!isHistorical && isEditable ? onEdit : undefined}
     >
       <Stack gap="xs" h="100%" justify="space-between">
         {/* Header with badge and edit icon */}
@@ -42,7 +47,10 @@ export function RepMaxCard({
               variant="subtle"
               color="forestGreen"
               size="sm"
-              onClick={onEdit}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent double triggering
+                onEdit();
+              }}
               aria-label={`Edit ${templateRepMaxName}`}
             >
               <IconPencil size={14} />

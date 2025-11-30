@@ -4,6 +4,7 @@ import { BlockItem } from './BlockItem';
 import { addBlock } from '../../../utils/programHelpers';
 import type { IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface BlockListProps {
@@ -12,9 +13,11 @@ interface BlockListProps {
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function BlockList({ program, onProgramChange, templateMap, templates, groupOptions }: BlockListProps) {
+export function BlockList({ program, onProgramChange, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions }: BlockListProps) {
   const handleAddBlock = () => {
     const updated = addBlock(program, {
       name: `Block ${program.blocks.length + 1}`,
@@ -54,6 +57,8 @@ export function BlockList({ program, onProgramChange, templateMap, templates, gr
               templateMap={templateMap}
               templates={templates}
               groupOptions={groupOptions}
+              benchmarkTemplates={benchmarkTemplates}
+              weightBenchmarkOptions={weightBenchmarkOptions}
               isCurrentBlock={isCurrentBlock}
             />
           );

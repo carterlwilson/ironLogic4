@@ -6,6 +6,7 @@ import { ActivityFormModal } from './ActivityFormModal';
 import { deleteActivity, updateActivity, copyActivity } from '../../../utils/programHelpers';
 import type { IActivity, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 interface ActivityCardProps {
   activity: IActivity;
@@ -14,10 +15,12 @@ interface ActivityCardProps {
   onProgramChange: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
   dragHandleProps?: any;
 }
 
-export function ActivityCard({ activity, program, onProgramChange, templateMap, templates, dragHandleProps }: ActivityCardProps) {
+export function ActivityCard({ activity, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, dragHandleProps }: ActivityCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleEdit = (updatedActivity: Omit<IActivity, 'id' | 'order'>) => {
@@ -181,6 +184,8 @@ export function ActivityCard({ activity, program, onProgramChange, templateMap, 
         onSubmit={handleEdit}
         existingActivity={activity}
         templates={templates}
+        benchmarkTemplates={benchmarkTemplates}
+        weightBenchmarkOptions={weightBenchmarkOptions}
       />
     </>
   );
