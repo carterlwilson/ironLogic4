@@ -3,6 +3,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { ActivityCard } from './ActivityCard';
 import type { IActivity, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 interface SortableActivityCardProps {
   activity: IActivity;
@@ -11,6 +12,8 @@ interface SortableActivityCardProps {
   onProgramChange: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
 export function SortableActivityCard(props: SortableActivityCardProps) {

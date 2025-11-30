@@ -8,6 +8,7 @@ import { CreateBenchmarkModal } from '../components/benchmarks/CreateBenchmarkMo
 import { EditBenchmarkModal } from '../components/benchmarks/EditBenchmarkModal';
 import { EditRepMaxModal } from '../components/benchmarks/EditRepMaxModal';
 import { CreateNewFromOldModal } from '../components/benchmarks/CreateNewFromOldModal';
+import { CreateNewRepMaxModal } from '../components/benchmarks/CreateNewRepMaxModal';
 import { TagFilter } from '../components/benchmarks/TagFilter';
 import { getAllUniqueTags, filterBenchmarksByTag } from '../utils/tagUtils';
 
@@ -21,9 +22,11 @@ export const BenchmarksPage = () => {
     isCreateOpen,
     isEditOpen,
     isCreateNewFromOldOpen,
+    isCreateNewRepMaxOpen,
     isEditRepMaxOpen,
     selectedBenchmark,
     selectedRepMax,
+    selectedRepMaxForNew,
     loadBenchmarks,
     handleCreateBenchmark,
     handleUpdateBenchmark,
@@ -32,6 +35,7 @@ export const BenchmarksPage = () => {
     openEdit,
     openCreateNewFromOld,
     openEditRepMax,
+    openCreateNewRepMax,
     closeModals,
   } = useBenchmarks();
 
@@ -123,6 +127,7 @@ export const BenchmarksPage = () => {
               onCreateNew={openCreateNewFromOld}
               benchmarkTemplates={benchmarkTemplates}
               onEditRepMax={openEditRepMax}
+              onCreateNewRepMax={openCreateNewRepMax}
             />
           </Tabs.Panel>
 
@@ -166,6 +171,16 @@ export const BenchmarksPage = () => {
         onClose={closeModals}
         onCreate={handleCreateBenchmark}
         oldBenchmark={selectedBenchmark}
+        loading={loading}
+      />
+
+      <CreateNewRepMaxModal
+        opened={isCreateNewRepMaxOpen}
+        onClose={closeModals}
+        onCreate={handleCreateBenchmark}
+        oldBenchmark={selectedRepMaxForNew?.benchmark || null}
+        targetRepMax={selectedRepMaxForNew?.repMax || null}
+        template={selectedRepMaxForNew?.template || null}
         loading={loading}
       />
     </Container>

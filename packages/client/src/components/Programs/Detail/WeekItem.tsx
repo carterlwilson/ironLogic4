@@ -6,6 +6,7 @@ import { WeekActivityGroupTargets } from './WeekActivityGroupTargets';
 import { addDay, deleteWeek, updateWeek, copyWeek } from '../../../utils/programHelpers';
 import type { IWeek, IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions';
 
 interface WeekItemProps {
@@ -16,10 +17,12 @@ interface WeekItemProps {
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
   isCurrentWeek?: boolean;
 }
 
-export function WeekItem({ week, program, onProgramChange, templateMap, templates, groupOptions, isCurrentWeek }: WeekItemProps) {
+export function WeekItem({ week, program, onProgramChange, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, isCurrentWeek }: WeekItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(week.name);
@@ -156,6 +159,8 @@ export function WeekItem({ week, program, onProgramChange, templateMap, template
                 onProgramChange={onProgramChange}
                 templateMap={templateMap}
                 templates={templates}
+                benchmarkTemplates={benchmarkTemplates}
+                weightBenchmarkOptions={weightBenchmarkOptions}
               />
             </div>
 

@@ -6,6 +6,7 @@ import { ActivityFormModal } from './ActivityFormModal';
 import { addActivity, deleteDay, updateDay, copyDay } from '../../../utils/programHelpers';
 import type { IDay, IProgram, IActivity } from '@ironlogic4/shared/types/programs';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
+import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 interface DayItemProps {
   day: IDay;
@@ -14,9 +15,11 @@ interface DayItemProps {
   onProgramChange: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
+  benchmarkTemplates: BenchmarkTemplate[];
+  weightBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function DayItem({ day, program, onProgramChange, templateMap, templates }: DayItemProps) {
+export function DayItem({ day, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions }: DayItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(day.name);
@@ -137,6 +140,8 @@ export function DayItem({ day, program, onProgramChange, templateMap, templates 
                   onProgramChange={onProgramChange}
                   templateMap={templateMap}
                   templates={templates}
+                  benchmarkTemplates={benchmarkTemplates}
+                  weightBenchmarkOptions={weightBenchmarkOptions}
                 />
               </div>
 
@@ -160,6 +165,8 @@ export function DayItem({ day, program, onProgramChange, templateMap, templates 
         onClose={() => setIsActivityModalOpen(false)}
         onSubmit={handleAddActivity}
         templates={templates}
+        benchmarkTemplates={benchmarkTemplates}
+        weightBenchmarkOptions={weightBenchmarkOptions}
       />
     </>
   );
