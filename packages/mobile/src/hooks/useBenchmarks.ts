@@ -27,6 +27,7 @@ interface ModalState {
   isCreateOpen: boolean;
   isEditOpen: boolean;
   isCreateNewFromOldOpen: boolean;
+  isCreateNewRepMaxOpen: boolean;
   selectedBenchmark: ClientBenchmark | null;
   selectedTemplate: BenchmarkTemplate | null;
 }
@@ -44,6 +45,7 @@ export function useBenchmarks() {
     isCreateOpen: false,
     isEditOpen: false,
     isCreateNewFromOldOpen: false,
+    isCreateNewRepMaxOpen: false,
     selectedBenchmark: null,
     selectedTemplate: null,
   });
@@ -57,6 +59,13 @@ export function useBenchmarks() {
     benchmarkName: string;
   } | null>(null);
   const [isEditRepMaxOpen, setIsEditRepMaxOpen] = useState(false);
+  const [selectedRepMaxForNew, setSelectedRepMaxForNew] = useState<{
+    repMax: RepMax;
+    benchmark: ClientBenchmark;
+    template: BenchmarkTemplate;
+    templateRepMaxName: string;
+    templateRepMaxReps: number;
+  } | null>(null);
 
   /**
    * Load benchmarks from API
@@ -214,11 +223,13 @@ export function useBenchmarks() {
       isCreateOpen: false,
       isEditOpen: false,
       isCreateNewFromOldOpen: false,
+      isCreateNewRepMaxOpen: false,
       selectedBenchmark: null,
       selectedTemplate: null,
     });
     setIsEditRepMaxOpen(false);
     setSelectedRepMax(null);
+    setSelectedRepMaxForNew(null);
   }, []);
 
   /**
@@ -245,6 +256,17 @@ export function useBenchmarks() {
     (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => {
       setSelectedRepMax({ repMax, benchmarkId, allRepMaxes, templateRepMaxName, benchmarkName });
       setIsEditRepMaxOpen(true);
+    },
+    []
+  );
+
+  /**
+   * Open create new from old rep max modal
+   */
+  const openCreateNewRepMax = useCallback(
+    (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => {
+      setSelectedRepMaxForNew({ repMax, benchmark, template, templateRepMaxName, templateRepMaxReps });
+      setModalState((prev) => ({ ...prev, isCreateNewRepMaxOpen: true }));
     },
     []
   );
@@ -292,10 +314,12 @@ export function useBenchmarks() {
     isCreateOpen: modalState.isCreateOpen,
     isEditOpen: modalState.isEditOpen,
     isCreateNewFromOldOpen: modalState.isCreateNewFromOldOpen,
+    isCreateNewRepMaxOpen: modalState.isCreateNewRepMaxOpen,
     isEditRepMaxOpen,
     selectedBenchmark: modalState.selectedBenchmark,
     selectedTemplate: modalState.selectedTemplate,
     selectedRepMax,
+    selectedRepMaxForNew,
 
     // Actions
     loadBenchmarks,
@@ -307,6 +331,7 @@ export function useBenchmarks() {
     openEdit,
     openCreateNewFromOld,
     openEditRepMax,
+    openCreateNewRepMax,
     closeModals,
   };
 }

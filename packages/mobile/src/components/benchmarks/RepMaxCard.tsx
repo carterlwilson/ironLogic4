@@ -1,5 +1,5 @@
 import { Card, Text, Group, Badge, ActionIcon, Stack } from '@mantine/core';
-import { IconPencil, IconClock } from '@tabler/icons-react';
+import { IconPencil, IconClock, IconRefresh } from '@tabler/icons-react';
 import { RepMax } from '@ironlogic4/shared/types/clientBenchmarks';
 import { formatDate, getRepMaxAgeInDays } from '../../utils/benchmarkUtils';
 
@@ -12,6 +12,7 @@ interface RepMaxCardProps {
   isHistorical: boolean;
   isEditable: boolean;  // Based on age (< 14 days)
   onEdit: () => void;
+  onCreateNew?: () => void;  // Optional handler for creating new from old
 }
 
 export function RepMaxCard({
@@ -20,8 +21,10 @@ export function RepMaxCard({
   isHistorical,
   isEditable,
   onEdit,
+  onCreateNew,
 }: RepMaxCardProps) {
   const ageInDays = getRepMaxAgeInDays(repMax);
+  const isOldAndCreatable = !isHistorical && !isEditable && onCreateNew;
 
   return (
     <Card
@@ -32,12 +35,12 @@ export function RepMaxCard({
       style={{
         position: 'relative',
         minHeight: '120px',
-        cursor: !isHistorical && isEditable ? 'pointer' : 'default',
+        cursor: !isHistorical && (isEditable || isOldAndCreatable) ? 'pointer' : 'default',
       }}
-      onClick={!isHistorical && isEditable ? onEdit : undefined}
+      onClick={!isHistorical && isEditable ? onEdit : isOldAndCreatable ? onCreateNew : undefined}
     >
       <Stack gap="xs" h="100%" justify="space-between">
-        {/* Header with badge and edit icon */}
+        {/* Header with badge and icon */}
         <Group justify="space-between" align="flex-start">
           <Badge color="forestGreen" variant="light" size="md">
             {templateRepMaxName}
@@ -54,6 +57,20 @@ export function RepMaxCard({
               aria-label={`Edit ${templateRepMaxName}`}
             >
               <IconPencil size={14} />
+            </ActionIcon>
+          )}
+          {isOldAndCreatable && (
+            <ActionIcon
+              variant="subtle"
+              color="orange"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent double triggering
+                onCreateNew();
+              }}
+              aria-label={`Create new ${templateRepMaxName}`}
+            >
+              <IconRefresh size={14} />
             </ActionIcon>
           )}
         </Group>

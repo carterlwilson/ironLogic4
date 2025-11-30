@@ -20,6 +20,7 @@ interface BenchmarkCardProps {
   onCreateNew: (benchmark: ClientBenchmark) => void;
   template?: BenchmarkTemplate;  // Template data to get rep max names
   onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string) => void;
+  onCreateNewRepMax?: (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => void;
 }
 
 export function BenchmarkCard({
@@ -29,6 +30,7 @@ export function BenchmarkCard({
   onCreateNew,
   template,
   onEditRepMax,
+  onCreateNewRepMax,
 }: BenchmarkCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isEditable = !isHistorical && isBenchmarkEditable(benchmark);
@@ -65,6 +67,14 @@ export function BenchmarkCard({
     if (onEditRepMax && benchmark.repMaxes) {
       const templateRepMaxName = getTemplateName(repMax.templateRepMaxId);
       onEditRepMax(repMax, benchmark.id, benchmark.repMaxes, templateRepMaxName);
+    }
+  };
+
+  const handleCreateNewRepMax = (repMax: RepMax) => {
+    if (onCreateNewRepMax && benchmark.repMaxes && template) {
+      const templateRepMaxName = getTemplateName(repMax.templateRepMaxId);
+      const templateRepMaxReps = getTemplateReps(repMax.templateRepMaxId);
+      onCreateNewRepMax(repMax, benchmark, template, templateRepMaxName, templateRepMaxReps || 1);
     }
   };
 
@@ -187,6 +197,7 @@ export function BenchmarkCard({
                           isHistorical={isHistorical}
                           isEditable={isRepMaxEditable(repMax)}
                           onEdit={() => handleEditRepMax(repMax)}
+                          onCreateNew={() => handleCreateNewRepMax(repMax)}
                         />
                       );
                     })}
