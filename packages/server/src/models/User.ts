@@ -9,6 +9,11 @@ export interface UserDocument extends Omit<IUser, 'id' | 'currentBenchmarks' | '
   resetToken?: string;
   resetTokenExpiry?: Date;
   resetTokenUsed?: boolean;
+  refreshTokens: Array<{
+    token: string;
+    createdAt: Date;
+    expiresAt: Date;
+  }>;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -77,6 +82,20 @@ const userSchema = new Schema<UserDocument>(
       default: false,
       required: false,
     },
+    refreshTokens: [{
+      token: {
+        type: String,
+        required: true,
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+      expiresAt: {
+        type: Date,
+        required: true,
+      },
+    }],
   },
   {
     timestamps: true, // Automatically adds createdAt and updatedAt

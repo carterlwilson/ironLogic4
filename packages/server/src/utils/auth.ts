@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 
 /**
  * Generate a JWT token for the given user ID
@@ -45,4 +46,22 @@ export const generateRandomPassword = (length: number = 12): string => {
   }
 
   return password;
+};
+
+/**
+ * Generate a cryptographically secure random refresh token
+ */
+export const generateRefreshToken = (): string => {
+  return crypto.randomBytes(64).toString('hex');
+};
+
+/**
+ * Calculate refresh token expiry date based on environment variable
+ */
+export const getRefreshTokenExpiry = (): Date => {
+  const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '90d';
+  const days = parseInt(expiresIn.replace('d', ''));
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + days);
+  return expiry;
 };
