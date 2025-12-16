@@ -1,7 +1,5 @@
 import { IActiveSchedule, ITimeslotWithAvailability } from '@ironlogic4/shared';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-const API_BASE = `${API_BASE_URL}/api`;
+import { apiRequest } from './api';
 
 interface GetAvailableSchedulesResponse {
   success: true;
@@ -30,37 +28,10 @@ export interface IActiveScheduleWithAvailability extends Omit<IActiveSchedule, '
 }
 
 /**
- * Get auth token from localStorage
- */
-function getAuthToken(): string {
-  const authTokens = localStorage.getItem('authTokens');
-  if (!authTokens) {
-    throw new Error('No authentication token found');
-  }
-  const { accessToken } = JSON.parse(authTokens);
-  return accessToken;
-}
-
-/**
  * Fetch all available schedules for the current gym
  */
 export async function getAvailableSchedules(): Promise<GetAvailableSchedulesResponse> {
-  const token = getAuthToken();
-
-  const response = await fetch(`${API_BASE}/gym/schedules/available`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch schedules');
-  }
-
-  return response.json();
+  return apiRequest<GetAvailableSchedulesResponse>('/api/gym/schedules/available');
 }
 
 /**
@@ -70,25 +41,10 @@ export async function joinTimeslot(
   scheduleId: string,
   timeslotId: string
 ): Promise<JoinTimeslotResponse> {
-  const token = getAuthToken();
-
-  const response = await fetch(
-    `${API_BASE}/gym/schedules/active/${scheduleId}/timeslots/${timeslotId}/join`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    }
+  return apiRequest<JoinTimeslotResponse>(
+    `/api/gym/schedules/active/${scheduleId}/timeslots/${timeslotId}/join`,
+    { method: 'POST' }
   );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to join timeslot');
-  }
-
-  return response.json();
 }
 
 /**
@@ -98,23 +54,8 @@ export async function leaveTimeslot(
   scheduleId: string,
   timeslotId: string
 ): Promise<LeaveTimeslotResponse> {
-  const token = getAuthToken();
-
-  const response = await fetch(
-    `${API_BASE}/gym/schedules/active/${scheduleId}/timeslots/${timeslotId}/leave`,
-    {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    }
+  return apiRequest<LeaveTimeslotResponse>(
+    `/api/gym/schedules/active/${scheduleId}/timeslots/${timeslotId}/leave`,
+    { method: 'DELETE' }
   );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to leave timeslot');
-  }
-
-  return response.json();
 }

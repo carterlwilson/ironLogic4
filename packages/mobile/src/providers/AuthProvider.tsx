@@ -98,11 +98,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       const responseData = await response.json();
-      const { user: serverUser, token } = responseData.data;
-      const tokens = { accessToken: token };
+      const { user: serverUser, accessToken, refreshToken } = responseData.data;
+      const tokens = { accessToken, refreshToken };
       const user = { ...serverUser, role: serverUser.userType };
 
-      // Store tokens in localStorage for persistence
+      // Store both tokens in localStorage for persistence
       localStorage.setItem('authTokens', JSON.stringify(tokens));
       localStorage.setItem('user', JSON.stringify(user));
 
