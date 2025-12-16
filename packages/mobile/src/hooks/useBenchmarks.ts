@@ -129,7 +129,12 @@ export function useBenchmarks() {
         const response = await createBenchmark(data);
         // Reload benchmarks to get fresh data from server
         await loadBenchmarks();
-        setModalState((prev) => ({ ...prev, isCreateOpen: false, isCreateNewFromOldOpen: false }));
+        setModalState((prev) => ({
+          ...prev,
+          isCreateOpen: false,
+          isCreateNewFromOldOpen: false,
+          isCreateNewRepMaxOpen: false
+        }));
         notifications.show({
           title: 'Success',
           message: response.message || 'Benchmark created successfully',
