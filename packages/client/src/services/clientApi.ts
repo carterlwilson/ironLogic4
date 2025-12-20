@@ -1,6 +1,7 @@
 import type { User } from '@ironlogic4/shared/types/users';
 import type { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
+import { authenticatedRequest } from './tokenRefresh';
 
 export interface ClientListParams {
   page?: number;
@@ -35,42 +36,19 @@ export interface UpdateClientRequest {
 }
 
 class ClientApiService {
-  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-  private baseUrl = `${this.apiBaseUrl}/api/gym/clients`;
-
-  private async getAuthHeaders(): Promise<HeadersInit> {
-    const authTokens = localStorage.getItem('authTokens');
-    if (!authTokens) {
-      throw new Error('No authentication token found');
-    }
-
-    const { accessToken } = JSON.parse(authTokens);
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    };
-  }
-
   async getClients(params: ClientListParams = {}): Promise<PaginatedResponse<User>> {
-    const url = new URL(this.baseUrl);
+    const queryParams = new URLSearchParams();
 
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
-        url.searchParams.set(key, String(value));
+        queryParams.set(key, String(value));
       }
     });
 
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: await this.getAuthHeaders(),
-    });
+    const queryString = queryParams.toString();
+    const url = `/api/gym/clients${queryString ? `?${queryString}` : ''}`;
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to fetch clients');
-    }
-
-    const apiResponse = await response.json();
+    const apiResponse = await authenticatedRequest<any>(url);
 
     const clients: User[] = apiResponse.data.map((clientData: any): User => ({
       id: clientData.id,
@@ -104,17 +82,7 @@ class ClientApiService {
   }
 
   async getClientById(id: string): Promise<ApiResponse<User>> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
-      method: 'GET',
-      headers: await this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to fetch client');
-    }
-
-    const apiResponse = await response.json();
+    const apiResponse = await authenticatedRequest<any>(`/api/gym/clients/${id}`);
 
     // Convert benchmark dates
     const client = {
@@ -142,76 +110,36 @@ class ClientApiService {
   }
 
   async createClient(data: CreateClientRequest): Promise<CreateClientResponse> {
-    const response = await fetch(this.baseUrl, {
+    return authenticatedRequest<CreateClientResponse>('/api/gym/clients', {
       method: 'POST',
-      headers: await this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to create client');
-    }
-
-    return response.json();
   }
 
   async updateClient(id: string, data: UpdateClientRequest): Promise<ApiResponse<User>> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
+    return authenticatedRequest<ApiResponse<User>>(`/api/gym/clients/${id}`, {
       method: 'PUT',
-      headers: await this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to update client');
-    }
-
-    return response.json();
   }
 
   async deleteClient(id: string): Promise<ApiResponse> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
+    return authenticatedRequest<ApiResponse>(`/api/gym/clients/${id}`, {
       method: 'DELETE',
-      headers: await this.getAuthHeaders(),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to delete client');
-    }
-
-    return response.json();
   }
 
   async assignProgram(clientId: string, programId: string): Promise<ApiResponse<User>> {
-    const response = await fetch(`${this.baseUrl}/${clientId}/program`, {
+    return authenticatedRequest<ApiResponse<User>>(`/api/gym/clients/${clientId}/program`, {
       method: 'PATCH',
-      headers: await this.getAuthHeaders(),
       body: JSON.stringify({ programId }),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to assign program');
-    }
-
-    return response.json();
   }
 
   async unassignProgram(clientId: string): Promise<ApiResponse<User>> {
-    const response = await fetch(`${this.baseUrl}/${clientId}/program`, {
+    return authenticatedRequest<ApiResponse<User>>(`/api/gym/clients/${clientId}/program`, {
       method: 'DELETE',
-      headers: await this.getAuthHeaders(),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to unassign program');
-    }
-
-    return response.json();
   }
 }
 
