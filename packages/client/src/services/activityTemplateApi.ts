@@ -1,45 +1,22 @@
 import type { ActivityTemplate, CreateActivityTemplateRequest, UpdateActivityTemplateRequest, ActivityTemplateListParams } from '@ironlogic4/shared/types/activityTemplates';
 import type { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
+import { authenticatedRequest } from './tokenRefresh';
 
 class ActivityTemplateApiService {
-  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-  private baseUrl = `${this.apiBaseUrl}/api/gym/activity-templates`;
-
-  private async getAuthHeaders(): Promise<HeadersInit> {
-    // Get token from localStorage (from AuthProvider)
-    const authTokens = localStorage.getItem('authTokens');
-    if (!authTokens) {
-      throw new Error('No authentication token found');
-    }
-
-    const { accessToken } = JSON.parse(authTokens);
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    };
-  }
-
   async getActivityTemplates(params: ActivityTemplateListParams = {}): Promise<PaginatedResponse<ActivityTemplate>> {
-    const url = new URL(this.baseUrl);
+    const queryParams = new URLSearchParams();
 
     // Add query parameters
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
-        url.searchParams.set(key, String(value));
+        queryParams.set(key, String(value));
       }
     });
 
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: await this.getAuthHeaders(),
-    });
+    const queryString = queryParams.toString();
+    const url = `/api/gym/activity-templates${queryString ? `?${queryString}` : ''}`;
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to fetch activity templates');
-    }
-
-    const apiResponse = await response.json();
+    const apiResponse = await authenticatedRequest<any>(url);
 
     // Convert API response to proper ActivityTemplate objects with Date conversion
     const activityTemplates: ActivityTemplate[] = apiResponse.data.map((templateData: any): ActivityTemplate => ({
@@ -61,47 +38,23 @@ class ActivityTemplateApiService {
   }
 
   async createActivityTemplate(data: CreateActivityTemplateRequest): Promise<ApiResponse<ActivityTemplate>> {
-    const response = await fetch(this.baseUrl, {
+    return authenticatedRequest<ApiResponse<ActivityTemplate>>('/api/gym/activity-templates', {
       method: 'POST',
-      headers: await this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to create activity template');
-    }
-
-    return response.json();
   }
 
   async updateActivityTemplate(id: string, data: UpdateActivityTemplateRequest): Promise<ApiResponse<ActivityTemplate>> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
+    return authenticatedRequest<ApiResponse<ActivityTemplate>>(`/api/gym/activity-templates/${id}`, {
       method: 'PUT',
-      headers: await this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to update activity template');
-    }
-
-    return response.json();
   }
 
   async deleteActivityTemplate(id: string): Promise<ApiResponse> {
-    const response = await fetch(`${this.baseUrl}/${id}`, {
+    return authenticatedRequest<ApiResponse>(`/api/gym/activity-templates/${id}`, {
       method: 'DELETE',
-      headers: await this.getAuthHeaders(),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to delete activity template');
-    }
-
-    return response.json();
   }
 }
 

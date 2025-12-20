@@ -1,6 +1,7 @@
 import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
 import type { ApiResponse } from '@ironlogic4/shared/types/api';
 import type { CreateMyBenchmarkInput, UpdateMyBenchmarkInput } from '@ironlogic4/shared';
+import { authenticatedRequest } from './tokenRefresh';
 
 export interface MyBenchmarksResponse {
   currentBenchmarks: ClientBenchmark[];
@@ -8,35 +9,8 @@ export interface MyBenchmarksResponse {
 }
 
 class ClientBenchmarkApiService {
-  private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-  private baseUrl = `${this.apiBaseUrl}/api/me/benchmarks`;
-
-  private async getAuthHeaders(): Promise<HeadersInit> {
-    // Get token from localStorage (from AuthProvider)
-    const authTokens = localStorage.getItem('authTokens');
-    if (!authTokens) {
-      throw new Error('No authentication token found');
-    }
-
-    const { accessToken } = JSON.parse(authTokens);
-    return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    };
-  }
-
   async getMyBenchmarks(): Promise<MyBenchmarksResponse> {
-    const response = await fetch(this.baseUrl, {
-      method: 'GET',
-      headers: await this.getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to fetch benchmarks');
-    }
-
-    const apiResponse = await response.json();
+    const apiResponse = await authenticatedRequest<any>('/api/me/benchmarks');
 
     // Convert API response to proper ClientBenchmark objects with Date conversion
     const convertBenchmark = (benchmarkData: any): ClientBenchmark => ({
@@ -69,33 +43,17 @@ class ClientBenchmarkApiService {
   }
 
   async createMyBenchmark(data: CreateMyBenchmarkInput): Promise<ApiResponse<{ benchmark: ClientBenchmark }>> {
-    const response = await fetch(this.baseUrl, {
+    return authenticatedRequest<ApiResponse<{ benchmark: ClientBenchmark }>>('/api/me/benchmarks', {
       method: 'POST',
-      headers: await this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to create benchmark');
-    }
-
-    return response.json();
   }
 
   async updateMyBenchmark(benchmarkId: string, data: UpdateMyBenchmarkInput): Promise<ApiResponse<{ benchmark: ClientBenchmark }>> {
-    const response = await fetch(`${this.baseUrl}/${benchmarkId}`, {
+    return authenticatedRequest<ApiResponse<{ benchmark: ClientBenchmark }>>(`/api/me/benchmarks/${benchmarkId}`, {
       method: 'PUT',
-      headers: await this.getAuthHeaders(),
       body: JSON.stringify(data),
     });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to update benchmark');
-    }
-
-    return response.json();
   }
 }
 
