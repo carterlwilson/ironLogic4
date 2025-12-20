@@ -66,11 +66,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         },
       });
 
-      const { user: serverUser, token } = response.data.data;
-      const tokens = { accessToken: token };
+      const { user: serverUser, accessToken, refreshToken } = response.data.data;
+      const tokens = { accessToken, refreshToken };
       const user = { ...serverUser, role: serverUser.userType };
 
-      // Store tokens in localStorage for persistence
+      // Store both tokens in localStorage for persistence
       localStorage.setItem('authTokens', JSON.stringify(tokens));
       localStorage.setItem('user', JSON.stringify(user));
 
@@ -162,6 +162,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (storedTokens && storedUser) {
         const tokens = JSON.parse(storedTokens);
         const user = JSON.parse(storedUser);
+
+        // Validate token structure - if accessToken is null/undefined, clear old tokens
+        if (!tokens.accessToken || tokens.accessToken === 'undefined' || tokens.accessToken === 'null') {
+          console.warn('Invalid token structure detected, clearing auth state');
+          localStorage.removeItem('authTokens');
+          localStorage.removeItem('user');
+          return;
+        }
 
         setAuthState({
           user,
