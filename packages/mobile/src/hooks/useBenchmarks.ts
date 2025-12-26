@@ -12,7 +12,6 @@ import {
   createBenchmark,
   updateBenchmark,
   getBenchmarkTemplates,
-  getBenchmarkTemplate,
 } from '../services/benchmarkApi';
 
 interface BenchmarksState {
@@ -68,12 +67,19 @@ export function useBenchmarks() {
   } | null>(null);
 
   /**
-   * Load benchmarks from API
+   * Load benchmarks from API (now includes templates in response)
    */
   const loadBenchmarks = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const response = await getBenchmarks();
+
+      // Templates are now included in the response (fixes N+1 problem)
+      const templateMap = new Map(
+        response.data.templates.map((t) => [t.id, t])
+      );
+      setBenchmarkTemplates(templateMap);
+
       setState((prev) => ({
         ...prev,
         currentBenchmarks: response.data.currentBenchmarks || [],
@@ -238,23 +244,6 @@ export function useBenchmarks() {
   }, []);
 
   /**
-   * Load benchmark templates for benchmarks
-   */
-  const loadBenchmarkTemplates = useCallback(async (templateIds: string[]) => {
-    try {
-      const templates = await Promise.all(
-        templateIds.map((id) => getBenchmarkTemplate(id))
-      );
-      const templateMap = new Map(
-        templates.map((t) => [t.data.id, t.data])
-      );
-      setBenchmarkTemplates(templateMap);
-    } catch (error) {
-      console.error('Failed to load templates:', error);
-    }
-  }, []);
-
-  /**
    * Open edit rep max modal
    */
   const openEditRepMax = useCallback(
@@ -295,16 +284,6 @@ export function useBenchmarks() {
     loadBenchmarks();
     loadTemplates();
   }, [loadBenchmarks, loadTemplates]);
-
-  /**
-   * Load full templates when benchmarks change
-   */
-  useEffect(() => {
-    if (state.currentBenchmarks.length > 0) {
-      const templateIds = [...new Set(state.currentBenchmarks.map((b) => b.templateId))];
-      loadBenchmarkTemplates(templateIds);
-    }
-  }, [state.currentBenchmarks, loadBenchmarkTemplates]);
 
   return {
     // Data
