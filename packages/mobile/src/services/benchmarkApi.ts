@@ -12,6 +12,7 @@ interface GetBenchmarksResponse {
   data: {
     currentBenchmarks: ClientBenchmark[];
     historicalBenchmarks: ClientBenchmark[];
+    templates: BenchmarkTemplate[];
   };
 }
 

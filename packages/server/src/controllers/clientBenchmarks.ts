@@ -32,11 +32,26 @@ export const getMyBenchmarks = async (
 
     const userData = user.toJSON();
 
+    // Collect all benchmarks to extract template IDs
+    const allBenchmarks = [
+      ...(userData.currentBenchmarks || []),
+      ...(userData.historicalBenchmarks || [])
+    ];
+
+    // Extract unique template IDs
+    const templateIds = [...new Set(allBenchmarks.map((b: any) => b.templateId))];
+
+    // Fetch all templates in ONE query (fixes N+1 problem)
+    const templates = await BenchmarkTemplate.find({
+      _id: { $in: templateIds }
+    });
+
     res.status(200).json({
       success: true,
       data: {
         currentBenchmarks: userData.currentBenchmarks || [],
         historicalBenchmarks: userData.historicalBenchmarks || [],
+        templates: templates.map(t => t.toJSON()),
       },
     });
   } catch (error) {
