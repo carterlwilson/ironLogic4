@@ -1,5 +1,8 @@
-Go into plan mode.
+Stay in plan mode.
 
-the authentication is working fine, I was able to log in. The authorization 
-is throwing that error, in this case when I try to hit the endpoints
-for clients and programs.
+This is not working correctly locally. The following flow is happening for me:
+- Log in as client user to the client app
+- get redirected to mobile app (so that's working as expected)
+- log out of mobile app
+- try to go to client app because I want to log in as the owner, but get redirected to mobile app as user
+  I just logged out of (not what should happen. When the user logs out, I should be able to go to the client app and see the login page).

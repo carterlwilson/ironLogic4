@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { notifications } from '@mantine/notifications';
 import type { AuthTokens } from '@ironlogic4/shared';
+import { importAuthFromHash, clearAuthHash } from '../utils/importAuthFromHash';
 
 interface LoginCredentials {
   email: string;
@@ -176,6 +177,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const initializeAuth = useCallback(() => {
     try {
+      // FIRST: Check for tokens in URL hash (from client app redirect)
+      const hashAuthData = importAuthFromHash();
+
+      if (hashAuthData) {
+        // Store tokens from hash
+        localStorage.setItem('authTokens', JSON.stringify(hashAuthData.tokens));
+        localStorage.setItem('user', JSON.stringify(hashAuthData.user));
+
+        // Clear hash from URL
+        clearAuthHash();
+
+        // Set auth state
+        setAuthState({
+          user: hashAuthData.user,
+          tokens: hashAuthData.tokens,
+          isLoading: false,
+          error: null,
+          isAuthenticated: true,
+        });
+
+        // Show success notification
+        notifications.show({
+          title: 'Welcome!',
+          message: 'You have been redirected from the web app.',
+          color: 'green',
+        });
+
+        return;
+      }
+
+      // FALLBACK: Check localStorage for existing session
       const storedTokens = localStorage.getItem('authTokens');
       const storedUser = localStorage.getItem('user');
 
@@ -195,6 +227,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Failed to initialize auth state:', error);
       localStorage.removeItem('authTokens');
       localStorage.removeItem('user');
+      clearAuthHash(); // Clear hash on error too
     }
   }, []);
 
