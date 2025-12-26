@@ -66,6 +66,11 @@
       "import": "./dist/types/coaches.js",
       "require": "./dist/types/coaches.js"
     },
+    "./types/announcements": {
+      "types": "./dist/types/announcements.d.ts",
+      "import": "./dist/types/announcements.js",
+      "require": "./dist/types/announcements.js"
+    },
     "./schemas/auth": {
       "types": "./dist/schemas/auth.d.ts",
       "import": "./dist/schemas/auth.js",
@@ -120,6 +125,11 @@
       "types": "./dist/schemas/coaches.d.ts",
       "import": "./dist/schemas/coaches.js",
       "require": "./dist/schemas/coaches.js"
+    },
+    "./schemas/announcements": {
+      "types": "./dist/schemas/announcements.d.ts",
+      "import": "./dist/schemas/announcements.js",
+      "require": "./dist/schemas/announcements.js"
     }
   },
   "scripts": {
