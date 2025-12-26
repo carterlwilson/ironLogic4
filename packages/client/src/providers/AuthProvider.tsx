@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useCallback, useEffect, ReactNode 
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import type { AuthTokens } from '@ironlogic4/shared';
+import { redirectToMobileApp, shouldRedirectToMobile } from '../utils/redirectToMobile';
 
 interface LoginCredentials {
   email: string;
@@ -81,6 +82,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
         error: null,
         isAuthenticated: true,
       });
+
+      // Check if user is client-type and redirect to mobile
+      if (shouldRedirectToMobile(user)) {
+        // Clear client app's localStorage before redirect
+        localStorage.removeItem('authTokens');
+        localStorage.removeItem('user');
+
+        redirectToMobileApp(tokens, user);
+        return { success: true, user, tokens }; // Redirect in progress
+      }
 
       notifications.show({
         title: 'Login Successful',
@@ -169,6 +180,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
           localStorage.removeItem('authTokens');
           localStorage.removeItem('user');
           return;
+        }
+
+        // Check if client user trying to access web app
+        if (shouldRedirectToMobile(user)) {
+          // Clear client app's localStorage before redirect
+          localStorage.removeItem('authTokens');
+          localStorage.removeItem('user');
+
+          redirectToMobileApp(tokens, user);
+          return; // Redirect in progress, don't set state
         }
 
         setAuthState({
