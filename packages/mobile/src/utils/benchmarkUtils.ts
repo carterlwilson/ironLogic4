@@ -75,16 +75,30 @@ export function formatDateForInput(date: Date | string): string {
 }
 
 /**
- * Parse date string from HTML date input to Date object at local midnight
- * Prevents timezone offset issues when converting "2024-11-24" string to Date
+ * Parse date string from HTML date input to Date object with current time
+ * Uses current time instead of midnight to avoid timezone conversion issues
+ *
+ * When dates are set to midnight (00:00:00) and serialized to UTC, they can
+ * shift by one day in negative UTC offset timezones (e.g., PST).
+ * Using current time prevents this issue.
  *
  * @param dateString - Date in YYYY-MM-DD format from HTML date input
- * @returns Date object at midnight in local timezone
+ * @returns Date object with current time in local timezone
  */
 export function parseDateStringToLocalDate(dateString: string): Date {
   const [year, month, day] = dateString.split('-').map(Number);
-  // Month is 0-indexed in JavaScript Date
-  return new Date(year, month - 1, day, 0, 0, 0, 0);
+
+  // Use current time to avoid timezone shifts when serializing to UTC
+  const now = new Date();
+  return new Date(
+    year,
+    month - 1, // Month is 0-indexed in JavaScript
+    day,
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+    now.getMilliseconds()
+  );
 }
 
 /**
