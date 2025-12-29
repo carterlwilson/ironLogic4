@@ -53,9 +53,26 @@ export function sortRepMaxesByReps(
 
 /**
  * Format a date for display
+ * Extracts date from ISO string to avoid timezone conversion issues
  */
 export function formatDate(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
+  let dateStr: string;
+
+  if (typeof date === 'string') {
+    // ISO string: extract YYYY-MM-DD portion (e.g., "2024-12-29T11:19:00.000Z" → "2024-12-29")
+    dateStr = date.split('T')[0];
+  } else {
+    // Date object: format to YYYY-MM-DD
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    dateStr = `${year}-${month}-${day}`;
+  }
+
+  // Parse YYYY-MM-DD and format (avoids timezone conversion)
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const dateObj = new Date(year, month - 1, day);
+
   return dateObj.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -64,27 +81,47 @@ export function formatDate(date: Date | string): string {
 }
 
 /**
- * Format a date for input field (YYYY-MM-DD)
+ * Format a date for HTML date input (YYYY-MM-DD)
+ * Extracts date from ISO string to avoid timezone conversion issues
  */
 export function formatDateForInput(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  const year = dateObj.getFullYear();
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const day = String(dateObj.getDate()).padStart(2, '0');
+  if (typeof date === 'string') {
+    // ISO string: extract YYYY-MM-DD portion (already in correct format)
+    return date.split('T')[0];
+  }
+
+  // Date object: format to YYYY-MM-DD
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 
 /**
- * Parse date string from HTML date input to Date object at local midnight
- * Prevents timezone offset issues when converting "2024-11-24" string to Date
+ * Parse date string from HTML date input to Date object with current time
+ * Uses current time instead of midnight to avoid timezone conversion issues
+ *
+ * When dates are set to midnight (00:00:00) and serialized to UTC, they can
+ * shift by one day in negative UTC offset timezones (e.g., PST).
+ * Using current time prevents this issue.
  *
  * @param dateString - Date in YYYY-MM-DD format from HTML date input
- * @returns Date object at midnight in local timezone
+ * @returns Date object with current time in local timezone
  */
 export function parseDateStringToLocalDate(dateString: string): Date {
   const [year, month, day] = dateString.split('-').map(Number);
-  // Month is 0-indexed in JavaScript Date
-  return new Date(year, month - 1, day, 0, 0, 0, 0);
+
+  // Use current time to avoid timezone shifts when serializing to UTC
+  const now = new Date();
+  return new Date(
+    year,
+    month - 1, // Month is 0-indexed in JavaScript
+    day,
+    now.getHours(),
+    now.getMinutes(),
+    now.getSeconds(),
+    now.getMilliseconds()
+  );
 }
 
 /**
