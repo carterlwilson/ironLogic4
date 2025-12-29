@@ -1,6 +1,6 @@
 import { Modal, Button, Select, Stack, Textarea, TextInput, NumberInput, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { BenchmarkTemplate, BenchmarkType, CreateMyBenchmarkInput } from '@ironlogic4/shared';
 import { IconWeight, IconCalendar } from '@tabler/icons-react';
 import { BenchmarkMeasurementInput } from './BenchmarkMeasurementInput';
@@ -66,6 +66,17 @@ export function CreateBenchmarkModal({
       },
     },
   });
+
+  // Reset form and date when modal opens
+  useEffect(() => {
+    if (opened) {
+      form.reset();
+      form.setFieldValue('recordedAt', formatDateForInput(new Date()));
+      setSelectedTemplate(null);
+      setFullTemplate(null);
+      setRepMaxValues({});
+    }
+  }, [opened]);
 
   const templateOptions = useMemo(
     () =>
