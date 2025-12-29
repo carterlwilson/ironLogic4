@@ -56,7 +56,7 @@ export function EditRepMaxModal({
     if (repMax && opened) {
       form.setValues({
         weightKg: repMax.weightKg,
-        recordedAt: formatDateForInput(repMax.recordedAt),
+        recordedAt: formatDateForInput(new Date()),
       });
     }
   }, [repMax, opened]);
