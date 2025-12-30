@@ -11,7 +11,10 @@ export const PLATE_CONFIGS: PlateConfig[] = [
   { weight: 10, color: '#16A34A', label: '10kg' },  // Green
   { weight: 5, color: '#FFFFFF', label: '5kg' },    // White
   { weight: 2.5, color: '#DC2626', label: '2.5kg' }, // Red (small)
-  { weight: 1.25, color: '#64748B', label: '1.25kg' }, // Gray (small)
+  { weight: 2, color: '#2563EB', label: '2kg' },    // Blue (small)
+  { weight: 1.5, color: '#EAB308', label: '1.5kg' }, // Yellow (small)
+  { weight: 1, color: '#16A34A', label: '1kg' },    // Green (small)
+  { weight: 0.5, color: '#FFFFFF', label: '0.5kg' }, // White (small)
 ];
 
 /**
@@ -22,7 +25,7 @@ export const PLATE_CONFIGS: PlateConfig[] = [
  * 2. Divides remaining weight by 2 (plates go on both sides)
  * 3. Iterates through plates from heaviest to lightest
  * 4. For each plate, adds as many as possible without exceeding target
- * 5. Rounds to nearest 2.5kg if exact match not possible
+ * 5. Rounds to nearest 0.5kg if exact match not possible
  *
  * @param targetWeight - The total desired weight in kg (including bar)
  * @param barWeight - The weight of the barbell in kg (typically 20kg or 15kg)
@@ -57,8 +60,8 @@ export function calculateBarbellPlates(
   // Weight needed per side
   let weightPerSide = totalPlateWeight / 2;
 
-  // Round to nearest 1.25kg (smallest increment possible)
-  const roundedWeightPerSide = Math.round(weightPerSide / 1.25) * 1.25;
+  // Round to nearest 0.5kg (smallest increment possible)
+  const roundedWeightPerSide = Math.round(weightPerSide / 0.5) * 0.5;
   const isExact = Math.abs(weightPerSide - roundedWeightPerSide) < 0.01;
   weightPerSide = roundedWeightPerSide;
 
