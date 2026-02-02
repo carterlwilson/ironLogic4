@@ -29,9 +29,11 @@ interface ActivityListProps {
   templates: ActivityTemplate[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function ActivityList({ dayId, activities, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions }: ActivityListProps) {
+export function ActivityList({ dayId, activities, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions }: ActivityListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -79,6 +81,8 @@ export function ActivityList({ dayId, activities, program, onProgramChange, temp
               templates={templates}
               benchmarkTemplates={benchmarkTemplates}
               weightBenchmarkOptions={weightBenchmarkOptions}
+              distanceBenchmarkOptions={distanceBenchmarkOptions}
+              timeBenchmarkOptions={timeBenchmarkOptions}
             />
           ))}
         </Stack>

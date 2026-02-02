@@ -2,10 +2,11 @@ import { Container, Title, Text, Stack, Group } from '@mantine/core';
 import { IconUsers } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { User } from '@ironlogic4/shared/types/users';
 import { useClientManagement } from '../hooks/useClientManagement';
 import { useClientSearch } from '../hooks/useClientSearch';
+import { useProgramList } from '../hooks/usePrograms';
 import { ClientToolbar } from '../components/clients/ClientToolbar';
 import { ClientTable } from '../components/clients/ClientTable';
 import { AddClientModal } from '../components/clients/AddClientModal';
@@ -47,6 +48,20 @@ export function ClientsPage() {
     setPageSize,
     resetSearch,
   } = useClientSearch();
+
+  // Fetch all programs for the gym to create a program name dictionary
+  const { data: programsData } = useProgramList(
+    user?.gymId ? { gymId: user.gymId } : {}
+  );
+
+  // Create program name dictionary for efficient lookup
+  const programNameMap = useMemo(() => {
+    if (!programsData?.data) return {};
+    return programsData.data.reduce((acc, program) => {
+      acc[program.id] = program.name;
+      return acc;
+    }, {} as Record<string, string>);
+  }, [programsData]);
 
   // Load clients when search params change
   React.useEffect(() => {
@@ -104,6 +119,7 @@ export function ClientsPage() {
           onPageSizeChange={handlePageSizeChange}
           onAddClient={openAddModal}
           onClearFilters={resetSearch}
+          programNameMap={programNameMap}
         />
 
         <AddClientModal

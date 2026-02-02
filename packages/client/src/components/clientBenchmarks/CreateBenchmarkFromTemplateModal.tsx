@@ -136,15 +136,13 @@ export function CreateBenchmarkFromTemplateModal({
       benchmarkData.notes = values.personalNotes;
     }
 
-    try {
-      await onSubmit(benchmarkData, isHistorical);
-      form.reset();
-      setSelectedTemplate(null);
-      setIsHistorical(false);
-      onClose();
-    } catch (error) {
-      // Error handling is done in the parent component
-    }
+    await onSubmit(benchmarkData, isHistorical);
+
+    // Only runs on success
+    form.reset();
+    setSelectedTemplate(null);
+    setIsHistorical(false);
+    onClose();
   };
 
   const handleClose = () => {

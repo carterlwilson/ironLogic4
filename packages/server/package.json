@@ -14,7 +14,8 @@
     "clean": "rm -rf dist",
     "seed": "tsx src/scripts/seedData.ts",
     "seed:clear": "tsx src/scripts/seedData.ts --clear",
-    "add-clients": "tsx src/scripts/addClients.ts"
+    "add-clients": "tsx src/scripts/addClients.ts",
+    "sync:prod": "tsx src/scripts/syncProdData.ts"
   },
   "dependencies": {
     "@ironlogic4/shared": "file:../shared",

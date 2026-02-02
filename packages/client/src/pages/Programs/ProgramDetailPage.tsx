@@ -26,6 +26,22 @@ export function ProgramDetailPage() {
   const [localProgram, setLocalProgram] = useState<IProgram | null>(null);
   const [isDirty, setIsDirty] = useState(false);
 
+  // Track which blocks, weeks, and days are expanded
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+
+  // Toggle function to add/remove IDs from the set
+  const toggleExpanded = (id: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
   // Convert activityGroups to groupOptions format for dropdown
   const groupOptions: ActivityGroupOption[] = useMemo(() => {
     const options: ActivityGroupOption[] = [{ value: '', label: 'No group' }];
@@ -46,6 +62,32 @@ export function ProgramDetailPage() {
         template.templateRepMaxes?.map((repMax) => ({
           value: repMax.id,
           label: `${template.name} - ${repMax.name}`,
+        })) || []
+      )
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [benchmarkTemplates]);
+
+  // Flatten time intervals from all distance-based benchmarks for cardio activities
+  const distanceBenchmarkOptions = useMemo(() => {
+    return benchmarkTemplates
+      .filter((template) => template.type === BenchmarkType.DISTANCE && template.templateTimeSubMaxes)
+      .flatMap((template) =>
+        template.templateTimeSubMaxes?.map((timeSubMax) => ({
+          value: timeSubMax.id,
+          label: `${template.name} - ${timeSubMax.name}`,
+        })) || []
+      )
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [benchmarkTemplates]);
+
+  // Flatten distance intervals from all TIME-based benchmarks for cardio activities
+  const timeBenchmarkOptions = useMemo(() => {
+    return benchmarkTemplates
+      .filter((template) => template.type === BenchmarkType.TIME && template.templateDistanceSubMaxes)
+      .flatMap((template) =>
+        template.templateDistanceSubMaxes?.map((distanceSubMax) => ({
+          value: distanceSubMax.id,
+          label: `${template.name} - ${distanceSubMax.name}`,
         })) || []
       )
       .sort((a, b) => a.label.localeCompare(b.label));
@@ -74,13 +116,14 @@ export function ProgramDetailPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isDirty, localProgram]);
 
-  const handleSave = async () => {
-    if (!localProgram || !programId) return;
+  const handleSave = async (programToSave?: IProgram) => {
+    const program = programToSave || localProgram;
+    if (!program || !programId) return;
 
     try {
       await updateProgramStructure.mutateAsync({
         id: programId,
-        program: { blocks: localProgram.blocks },
+        program: { blocks: program.blocks },
       });
       setIsDirty(false);
     } catch (error) {
@@ -91,6 +134,14 @@ export function ProgramDetailPage() {
   const handleProgramChange = (updatedProgram: IProgram) => {
     setLocalProgram(updatedProgram);
     setIsDirty(true);
+  };
+
+  const handleProgramChangeWithAutoSave = (updatedProgram: IProgram) => {
+    setLocalProgram(updatedProgram);
+    setIsDirty(true);
+
+    // Save immediately with the updated program
+    handleSave(updatedProgram);
   };
 
   if (isLoading) {
@@ -150,7 +201,7 @@ export function ProgramDetailPage() {
             )}
             <Button
               leftSection={<IconDeviceFloppy size={16} />}
-              onClick={handleSave}
+              onClick={() => handleSave()}
               disabled={!isDirty}
             >
               Save Changes
@@ -168,11 +219,16 @@ export function ProgramDetailPage() {
         <BlockList
           program={localProgram}
           onProgramChange={handleProgramChange}
+          onProgramChangeWithAutoSave={handleProgramChangeWithAutoSave}
+          expandedIds={expandedIds}
+          toggleExpanded={toggleExpanded}
           templateMap={templateMap}
           templates={templates}
           groupOptions={groupOptions}
           benchmarkTemplates={benchmarkTemplates}
           weightBenchmarkOptions={weightBenchmarkOptions}
+          distanceBenchmarkOptions={distanceBenchmarkOptions}
+          timeBenchmarkOptions={timeBenchmarkOptions}
         />
       </Stack>
     </Container>

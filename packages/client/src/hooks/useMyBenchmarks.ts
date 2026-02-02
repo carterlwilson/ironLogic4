@@ -114,7 +114,6 @@ export const useMyBenchmarks = (): UseMyBenchmarksReturn => {
         color: 'red',
         autoClose: 5000,
       });
-      throw error;
     }
   }, [loadBenchmarks]);
 
@@ -151,7 +150,6 @@ export const useMyBenchmarks = (): UseMyBenchmarksReturn => {
         color: 'red',
         autoClose: 5000,
       });
-      throw error;
     }
   }, [loadBenchmarks]);
 
@@ -192,7 +190,6 @@ export const useMyBenchmarks = (): UseMyBenchmarksReturn => {
         color: 'red',
         autoClose: 5000,
       });
-      throw error;
     }
   }, [loadBenchmarks]);
 
