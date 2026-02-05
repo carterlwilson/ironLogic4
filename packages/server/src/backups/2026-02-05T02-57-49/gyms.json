@@ -1,0 +1,12 @@
+[
+  {
+    "_id": "690175d098cb02160ea8fc39",
+    "name": "Cully Strength",
+    "address": "123 Test Blvd",
+    "phoneNumber": "1111111111",
+    "ownerId": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T02:02:56.138Z",
+    "updatedAt": "2025-10-29T02:02:56.138Z",
+    "__v": 0
+  }
+]

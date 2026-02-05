@@ -1,0 +1,257 @@
+[
+  {
+    "_id": "690176ea98cb02160ea8fc8e",
+    "gymId": "690175d098cb02160ea8fc39",
+    "name": "Julia Schedule",
+    "coachIds": [
+      "6901764c98cb02160ea8fc64"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T02:07:38.830Z",
+    "updatedAt": "2025-10-29T02:07:38.830Z",
+    "__v": 0
+  },
+  {
+    "_id": "690176f598cb02160ea8fc98",
+    "gymId": "690175d098cb02160ea8fc39",
+    "name": "Mike Schedule",
+    "coachIds": [
+      "6901766198cb02160ea8fc6b"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T02:07:49.355Z",
+    "updatedAt": "2025-10-29T02:07:49.355Z",
+    "__v": 0
+  },
+  {
+    "_id": "6901770598cb02160ea8fca2",
+    "gymId": "690175d098cb02160ea8fc39",
+    "name": "Alisa Schedule",
+    "coachIds": [
+      "6901769d98cb02160ea8fc72"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T02:08:05.630Z",
+    "updatedAt": "2025-10-29T02:08:05.630Z",
+    "__v": 0
+  },
+  {
+    "_id": "6901771098cb02160ea8fcac",
+    "gymId": "690175d098cb02160ea8fc39",
+    "name": "Taryn Schedule",
+    "coachIds": [
+      "690176b098cb02160ea8fc79"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": [
+          {
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe57"
+          },
+          {
+            "startTime": "11:00",
+            "endTime": "12:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe58"
+          },
+          {
+            "startTime": "13:00",
+            "endTime": "14:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe59"
+          },
+          {
+            "startTime": "16:00",
+            "endTime": "17:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5a"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": [
+          {
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5b"
+          },
+          {
+            "startTime": "11:00",
+            "endTime": "12:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5c"
+          },
+          {
+            "startTime": "13:00",
+            "endTime": "14:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5d"
+          },
+          {
+            "startTime": "16:00",
+            "endTime": "17:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5e"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": [
+          {
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5f"
+          },
+          {
+            "startTime": "11:00",
+            "endTime": "12:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe60"
+          },
+          {
+            "startTime": "13:00",
+            "endTime": "14:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe61"
+          },
+          {
+            "startTime": "16:00",
+            "endTime": "17:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe62"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T02:08:16.045Z",
+    "updatedAt": "2025-10-29T15:14:16.295Z",
+    "__v": 0
+  }
+]

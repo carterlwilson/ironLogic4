@@ -19,6 +19,7 @@ export const SetSchema = z.object({
 
 // Base activity schema (without refinements)
 const BaseActivitySchema = z.object({
+  _id: objectId.optional(),
   activityTemplateId: objectId,
   type: ActivityTypeSchema,
   order: z.number().int().min(0),
@@ -56,6 +57,7 @@ export const ActivitySchema = BaseActivitySchema.refine((data) => {
 
 // Day schema
 export const DaySchema = z.object({
+  _id: objectId.optional(),
   name: z.string().min(1).max(100).trim(),
   order: z.number().int().min(0),
   activities: z.array(ActivitySchema).default([])
@@ -69,6 +71,7 @@ export const ActivityGroupTargetSchema = z.object({
 
 // Week schema
 export const WeekSchema = z.object({
+  _id: objectId.optional(),
   name: z.string().min(1).max(100).trim(),
   order: z.number().int().min(0),
   activityGroupTargets: z.array(ActivityGroupTargetSchema).default([]),
@@ -77,6 +80,7 @@ export const WeekSchema = z.object({
 
 // Block schema
 export const BlockSchema = z.object({
+  _id: objectId.optional(),
   name: z.string().min(1).max(100).trim(),
   order: z.number().int().min(0),
   activityGroupTargets: z.array(ActivityGroupTargetSchema).default([]),

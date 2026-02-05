@@ -10,6 +10,7 @@ interface SortableActivityCardProps {
   dayId: string;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   benchmarkTemplates: BenchmarkTemplate[];

@@ -148,6 +148,7 @@ export function DayItem({ day, program, onProgramChange, onProgramChangeWithAuto
                   activities={day.activities}
                   program={program}
                   onProgramChange={onProgramChange}
+                  onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
                   templateMap={templateMap}
                   templates={templates}
                   benchmarkTemplates={benchmarkTemplates}

@@ -1,0 +1,1463 @@
+[
+  {
+    "_id": "6901764c98cb02160ea8fc64",
+    "email": "julia@cullystrength.com",
+    "firstName": "Julia",
+    "lastName": "Test",
+    "userType": "coach",
+    "password": "$2a$12$zt3fyBb4Z1bsKNqQm.eZZ.iJ0NKwdpac2gTZph0KVpAP51s1QBSc6",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-29T02:05:00.157Z",
+    "updatedAt": "2025-10-29T02:05:00.157Z",
+    "__v": 0
+  },
+  {
+    "_id": "6901766198cb02160ea8fc6b",
+    "email": "mike@cullystrength.com",
+    "firstName": "Mike",
+    "lastName": "Test",
+    "userType": "coach",
+    "password": "$2a$12$SwvQav8vOt9nReaqn1SMdOoMFiAGn8EH7veEnKeIe7I3gayZJIYMO",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-29T02:05:21.963Z",
+    "updatedAt": "2025-10-29T02:05:21.963Z",
+    "__v": 0
+  },
+  {
+    "_id": "6901769d98cb02160ea8fc72",
+    "email": "alisa@cullystrength.com",
+    "firstName": "Alisa",
+    "lastName": "Test",
+    "userType": "coach",
+    "password": "$2a$12$ZSX.6pqaFIWQIjClz.f4oegt8IPGteUNxGaNh9ek/jk.j4l4g/dhe",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-29T02:06:21.195Z",
+    "updatedAt": "2025-10-29T02:06:21.195Z",
+    "__v": 0
+  },
+  {
+    "_id": "690176b098cb02160ea8fc79",
+    "email": "taryn@cullystrength.com",
+    "firstName": "Taryn",
+    "lastName": "Test",
+    "userType": "coach",
+    "password": "$2a$12$B/5gJ7dqb8ZcXt3a7kaUKeVt.Fsjo90H7J9W/30.Guwa0gx.xKeli",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-29T02:06:40.391Z",
+    "updatedAt": "2025-10-29T02:06:40.391Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43c48c6cf198fb72ae4",
+    "email": "wei.smith@example.com",
+    "firstName": "Wei",
+    "lastName": "Smith",
+    "userType": "client",
+    "password": "$2a$12$BLfOBf2O.eTKo9l8ncWg5euzscY9zgyQYp/aY7nkRL4quiGBEW80O",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [
+      {
+        "templateId": "6980fdb595e450c2ffb82695",
+        "name": "Bike for distance",
+        "type": "distance",
+        "tags": [],
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "6980fdb595e450c2ffb82696",
+            "distanceMeters": 0,
+            "recordedAt": "2026-02-05T02:48:40.351Z",
+            "_id": "69840508ca53b959eb2234ea",
+            "createdAt": "2026-02-05T02:48:40.406Z",
+            "updatedAt": "2026-02-05T02:48:40.406Z"
+          },
+          {
+            "templateSubMaxId": "6980fdb595e450c2ffb82697",
+            "distanceMeters": 0,
+            "recordedAt": "2026-02-05T02:48:40.352Z",
+            "_id": "69840508ca53b959eb2234eb",
+            "createdAt": "2026-02-05T02:48:40.406Z",
+            "updatedAt": "2026-02-05T02:48:40.406Z"
+          },
+          {
+            "templateSubMaxId": "6980fdb595e450c2ffb82698",
+            "distanceMeters": 100000,
+            "recordedAt": "2026-02-05T02:48:40.352Z",
+            "_id": "69840508ca53b959eb2234ec",
+            "createdAt": "2026-02-05T02:48:40.406Z",
+            "updatedAt": "2026-02-05T02:48:40.406Z"
+          }
+        ],
+        "_id": "69840508ca53b959eb2234e8",
+        "createdAt": "2026-02-05T02:48:40.406Z",
+        "updatedAt": "2026-02-05T02:48:40.406Z",
+        "repMaxes": [],
+        "distanceSubMaxes": []
+      },
+      {
+        "templateId": "6980fd9695e450c2ffb8266a",
+        "name": "Row for time",
+        "type": "time",
+        "tags": [],
+        "distanceSubMaxes": [
+          {
+            "templateDistanceSubMaxId": "6980fd9695e450c2ffb8266b",
+            "timeSeconds": 0,
+            "recordedAt": "2026-02-05T02:48:53.616Z",
+            "_id": "69840515ca53b959eb223535",
+            "createdAt": "2026-02-05T02:48:53.665Z",
+            "updatedAt": "2026-02-05T02:48:53.665Z"
+          },
+          {
+            "templateDistanceSubMaxId": "6980fd9695e450c2ffb8266c",
+            "timeSeconds": 0,
+            "recordedAt": "2026-02-05T02:48:53.616Z",
+            "_id": "69840515ca53b959eb223536",
+            "createdAt": "2026-02-05T02:48:53.665Z",
+            "updatedAt": "2026-02-05T02:48:53.665Z"
+          },
+          {
+            "templateDistanceSubMaxId": "6980fd9695e450c2ffb8266d",
+            "timeSeconds": 100,
+            "recordedAt": "2026-02-05T02:48:53.616Z",
+            "_id": "69840515ca53b959eb223537",
+            "createdAt": "2026-02-05T02:48:53.665Z",
+            "updatedAt": "2026-02-05T02:48:53.665Z"
+          }
+        ],
+        "_id": "69840515ca53b959eb223533",
+        "createdAt": "2026-02-05T02:48:53.665Z",
+        "updatedAt": "2026-02-05T02:48:53.665Z",
+        "repMaxes": [],
+        "timeSubMaxes": []
+      }
+    ],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:32.407Z",
+    "updatedAt": "2026-02-05T02:48:53.665Z",
+    "__v": 29,
+    "refreshTokens": [
+      {
+        "token": "ad9e1052857149c54b7ce1df9dc4900bacacb5d7a0183c1ea081234bbcb70a63f0a0edb30b07bab81265f16784d4c7ca9197e956cce735e6f2c302a9f9f85378",
+        "createdAt": "2026-02-05T02:48:10.479Z",
+        "expiresAt": "2026-05-06T01:48:10.477Z",
+        "_id": "698404eaca53b959eb223498"
+      }
+    ],
+    "programId": "6914004e72438cf8af69380e"
+  },
+  {
+    "_id": "6902b43c48c6cf198fb72aeb",
+    "email": "james.shah@example.com",
+    "firstName": "James",
+    "lastName": "Shah",
+    "userType": "client",
+    "password": "$2a$12$0FtN/Ol.kzP.ETV6MJ98xOa87VD1LTdfWsIpl8g3qGDe0XEi2H6ly",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [
+      {
+        "templateId": "69249b6301052974a4906e97",
+        "name": "Deadlift",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69249b6301052974a4906e98",
+            "weightKg": 180,
+            "recordedAt": "2025-11-23T00:00:00.000Z",
+            "_id": "692503d8d2791f3e09575fb7",
+            "createdAt": "2025-11-25T01:18:16.635Z",
+            "updatedAt": "2025-11-25T01:18:16.635Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e99",
+            "weightKg": 175,
+            "recordedAt": "2025-11-23T00:00:00.000Z",
+            "_id": "692503d8d2791f3e09575fb8",
+            "createdAt": "2025-11-25T01:18:16.635Z",
+            "updatedAt": "2025-11-25T01:18:16.635Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e9a",
+            "weightKg": 145,
+            "recordedAt": "2025-11-24T00:00:00.000Z",
+            "_id": "692503d8d2791f3e09575fb9",
+            "createdAt": "2025-11-25T01:18:16.635Z",
+            "updatedAt": "2025-11-25T01:18:16.635Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e9b",
+            "weightKg": 130,
+            "recordedAt": "2025-11-23T00:00:00.000Z",
+            "_id": "692503d8d2791f3e09575fba",
+            "createdAt": "2025-11-25T01:18:16.635Z",
+            "updatedAt": "2025-11-25T01:18:16.635Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e9c",
+            "weightKg": 115,
+            "recordedAt": "2025-11-23T00:00:00.000Z",
+            "_id": "692503d8d2791f3e09575fbb",
+            "createdAt": "2025-11-25T01:18:16.635Z",
+            "updatedAt": "2025-11-25T01:18:16.635Z"
+          }
+        ],
+        "recordedAt": "1970-01-01T00:00:00.000Z",
+        "_id": "692503d8d2791f3e09575fb6",
+        "createdAt": "2025-11-25T01:18:16.635Z",
+        "updatedAt": "2025-11-25T01:18:16.635Z"
+      },
+      {
+        "templateId": "69249b6701052974a4906eb3",
+        "name": "Squat",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb4",
+            "weightKg": 120,
+            "recordedAt": "2025-11-24T06:00:00.000Z",
+            "_id": "692503e8d2791f3e095761b9",
+            "createdAt": "2025-11-25T01:18:32.349Z",
+            "updatedAt": "2025-11-25T01:18:32.349Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb5",
+            "weightKg": 0,
+            "recordedAt": "2025-11-24T06:00:00.000Z",
+            "_id": "692503e8d2791f3e095761ba",
+            "createdAt": "2025-11-25T01:18:32.349Z",
+            "updatedAt": "2025-11-25T01:18:32.349Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb6",
+            "weightKg": 0,
+            "recordedAt": "2025-11-24T06:00:00.000Z",
+            "_id": "692503e8d2791f3e095761bb",
+            "createdAt": "2025-11-25T01:18:32.349Z",
+            "updatedAt": "2025-11-25T01:18:32.349Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb7",
+            "weightKg": 0,
+            "recordedAt": "2025-11-24T06:00:00.000Z",
+            "_id": "692503e8d2791f3e095761bc",
+            "createdAt": "2025-11-25T01:18:32.349Z",
+            "updatedAt": "2025-11-25T01:18:32.349Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb8",
+            "weightKg": 0,
+            "recordedAt": "2025-11-24T06:00:00.000Z",
+            "_id": "692503e8d2791f3e095761bd",
+            "createdAt": "2025-11-25T01:18:32.349Z",
+            "updatedAt": "2025-11-25T01:18:32.349Z"
+          }
+        ],
+        "_id": "692503e8d2791f3e095761b7",
+        "createdAt": "2025-11-25T01:18:32.349Z",
+        "updatedAt": "2025-11-25T01:18:32.349Z"
+      },
+      {
+        "templateId": "6924779101052974a490667f",
+        "name": "Bench Press",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6924779101052974a4906680",
+            "weightKg": 145,
+            "recordedAt": "2025-11-30T06:00:00.000Z",
+            "_id": "692cd85059b96f9a2c13cfff",
+            "createdAt": "2025-11-30T23:50:40.082Z",
+            "updatedAt": "2025-11-30T23:50:40.082Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906681",
+            "weightKg": 120,
+            "recordedAt": "2025-11-18T00:00:00.000Z",
+            "_id": "692cd85059b96f9a2c13d000",
+            "createdAt": "2025-11-30T23:50:40.082Z",
+            "updatedAt": "2025-11-30T23:50:40.082Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906682",
+            "weightKg": 95,
+            "recordedAt": "2025-11-19T00:00:00.000Z",
+            "_id": "692cd85059b96f9a2c13d001",
+            "createdAt": "2025-11-30T23:50:40.082Z",
+            "updatedAt": "2025-11-30T23:50:40.082Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906683",
+            "weightKg": 82,
+            "recordedAt": "2025-11-30T00:00:00.000Z",
+            "_id": "692cd85059b96f9a2c13d002",
+            "createdAt": "2025-11-30T23:50:40.082Z",
+            "updatedAt": "2025-11-30T23:50:40.082Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906684",
+            "weightKg": 50,
+            "recordedAt": "2025-11-30T06:00:00.000Z",
+            "_id": "692cd85059b96f9a2c13d003",
+            "createdAt": "2025-11-30T23:50:40.082Z",
+            "updatedAt": "2025-11-30T23:50:40.082Z"
+          }
+        ],
+        "_id": "692cd14159b96f9a2c13cbaa",
+        "createdAt": "2025-11-30T23:20:33.720Z",
+        "updatedAt": "2025-11-30T23:50:40.082Z"
+      },
+      {
+        "templateId": "6974405b2e2fe261b4f779b5",
+        "name": "Row in KM",
+        "type": "distance",
+        "tags": [],
+        "timeSubMaxes": [
+          {
+            "templateTimeSubMaxId": "6974405b2e2fe261b4f779b6",
+            "distanceMeters": 1000,
+            "recordedAt": "2026-01-24T03:46:56.347Z",
+            "_id": "697440b02e2fe261b4f77ce4",
+            "createdAt": "2026-01-24T03:46:56.421Z",
+            "updatedAt": "2026-01-24T03:46:56.421Z"
+          },
+          {
+            "templateTimeSubMaxId": "6974405b2e2fe261b4f779b7",
+            "distanceMeters": 1300,
+            "recordedAt": "2026-01-24T03:46:56.347Z",
+            "_id": "697440b02e2fe261b4f77ce5",
+            "createdAt": "2026-01-24T03:46:56.421Z",
+            "updatedAt": "2026-01-24T03:46:56.421Z"
+          },
+          {
+            "templateTimeSubMaxId": "6974405b2e2fe261b4f779b8",
+            "distanceMeters": 1500,
+            "recordedAt": "2026-01-24T03:46:56.347Z",
+            "_id": "697440b02e2fe261b4f77ce6",
+            "createdAt": "2026-01-24T03:46:56.421Z",
+            "updatedAt": "2026-01-24T03:46:56.421Z"
+          }
+        ],
+        "_id": "697440b02e2fe261b4f77ce2",
+        "createdAt": "2026-01-24T03:46:56.421Z",
+        "updatedAt": "2026-01-24T03:46:56.421Z",
+        "repMaxes": []
+      },
+      {
+        "templateId": "69743e8b2e2fe261b4f7764e",
+        "name": "Row",
+        "type": "distance",
+        "tags": [],
+        "timeSubMaxes": [
+          {
+            "templateTimeSubMaxId": "69743e8b2e2fe261b4f7764f",
+            "distanceMeters": 0,
+            "recordedAt": "2026-01-25T23:30:55.978Z",
+            "_id": "6976a7b0a0a060ae18917f3a",
+            "createdAt": "2026-01-25T23:30:56.051Z",
+            "updatedAt": "2026-01-25T23:30:56.051Z"
+          },
+          {
+            "templateTimeSubMaxId": "69743e8b2e2fe261b4f77650",
+            "distanceMeters": 100,
+            "recordedAt": "2026-01-25T23:30:55.978Z",
+            "_id": "6976a7b0a0a060ae18917f3b",
+            "createdAt": "2026-01-25T23:30:56.051Z",
+            "updatedAt": "2026-01-25T23:30:56.051Z"
+          },
+          {
+            "templateTimeSubMaxId": "69743e8b2e2fe261b4f77651",
+            "distanceMeters": 0,
+            "recordedAt": "2026-01-25T23:30:55.978Z",
+            "_id": "6976a7b0a0a060ae18917f3c",
+            "createdAt": "2026-01-25T23:30:56.051Z",
+            "updatedAt": "2026-01-25T23:30:56.051Z"
+          }
+        ],
+        "_id": "6976a7b0a0a060ae18917f38",
+        "createdAt": "2026-01-25T23:30:56.051Z",
+        "updatedAt": "2026-01-25T23:30:56.051Z",
+        "repMaxes": []
+      }
+    ],
+    "historicalBenchmarks": [
+      {
+        "templateId": "6924779101052974a490667f",
+        "name": "Bench Press",
+        "notes": "",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6924779101052974a4906680",
+            "weightKg": 145,
+            "recordedAt": "2025-11-23T00:00:00.000Z",
+            "_id": "692ccb7a59b96f9a2c13bed7",
+            "createdAt": "2025-11-30T22:56:28.905Z",
+            "updatedAt": "2025-11-30T22:56:28.905Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906681",
+            "weightKg": 120,
+            "recordedAt": "2025-11-23T00:00:00.000Z",
+            "_id": "692ccb7a59b96f9a2c13bed8",
+            "createdAt": "2025-11-30T22:56:28.905Z",
+            "updatedAt": "2025-11-30T22:56:28.905Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906682",
+            "weightKg": 95,
+            "recordedAt": "2025-11-23T00:00:00.000Z",
+            "_id": "692ccb7a59b96f9a2c13bed9",
+            "createdAt": "2025-11-30T22:56:28.905Z",
+            "updatedAt": "2025-11-30T22:56:28.905Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906683",
+            "weightKg": 80,
+            "recordedAt": "2025-10-08T00:00:00.000Z",
+            "_id": "692ccb7a59b96f9a2c13beda",
+            "createdAt": "2025-11-30T22:56:28.905Z",
+            "updatedAt": "2025-11-30T22:56:28.905Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906684",
+            "weightKg": 45,
+            "recordedAt": "2025-09-03T00:00:00.000Z",
+            "_id": "692ccb7a59b96f9a2c13bedb",
+            "createdAt": "2025-11-30T22:56:28.905Z",
+            "updatedAt": "2025-11-30T22:56:28.905Z"
+          }
+        ],
+        "recordedAt": "1970-01-01T00:00:00.000Z",
+        "_id": "692503d8d2791f3e09575fb0",
+        "createdAt": "2025-11-30T22:56:28.905Z",
+        "updatedAt": "2025-11-30T22:56:28.905Z"
+      },
+      {
+        "templateId": "6924779101052974a490667f",
+        "name": "Bench Press",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6924779101052974a4906680",
+            "weightKg": 145,
+            "recordedAt": "2025-11-30T06:00:00.000Z",
+            "_id": "692cd12a59b96f9a2c13c7ec",
+            "createdAt": "2025-11-30T23:20:33.707Z",
+            "updatedAt": "2025-11-30T23:20:33.707Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906681",
+            "weightKg": 120,
+            "recordedAt": "2025-11-18T00:00:00.000Z",
+            "_id": "692cd12a59b96f9a2c13c7ed",
+            "createdAt": "2025-11-30T23:20:33.707Z",
+            "updatedAt": "2025-11-30T23:20:33.707Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906682",
+            "weightKg": 95,
+            "recordedAt": "2025-11-19T00:00:00.000Z",
+            "_id": "692cd12a59b96f9a2c13c7ee",
+            "createdAt": "2025-11-30T23:20:33.707Z",
+            "updatedAt": "2025-11-30T23:20:33.707Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906683",
+            "weightKg": 80,
+            "recordedAt": "2025-10-15T00:00:00.000Z",
+            "_id": "692cd12a59b96f9a2c13c7ef",
+            "createdAt": "2025-11-30T23:20:33.707Z",
+            "updatedAt": "2025-11-30T23:20:33.707Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906684",
+            "weightKg": 50,
+            "recordedAt": "2025-11-30T06:00:00.000Z",
+            "_id": "692cd12a59b96f9a2c13c7f0",
+            "createdAt": "2025-11-30T23:20:33.707Z",
+            "updatedAt": "2025-11-30T23:20:33.707Z"
+          }
+        ],
+        "_id": "692ccb9c59b96f9a2c13bfa5",
+        "createdAt": "2025-11-30T23:20:33.707Z",
+        "updatedAt": "2025-11-30T23:20:33.707Z"
+      }
+    ],
+    "createdAt": "2025-10-30T00:41:32.706Z",
+    "updatedAt": "2026-01-29T14:06:17.083Z",
+    "__v": 38,
+    "programId": "6914004e72438cf8af69380e",
+    "refreshTokens": [
+      {
+        "token": "fb8566a663fc91b3260eed626f5921fca947cdf410018351dc385829ad9ffc24e14194ae8d92f6021b8990d7b515f35d0d7d8bb80a8974566ea086a5bcb6be09",
+        "createdAt": "2025-12-16T03:24:24.685Z",
+        "expiresAt": "2026-03-16T02:24:24.683Z",
+        "_id": "6940d0e8705e6f5872b9f02e"
+      },
+      {
+        "token": "a2806c8d47a20be99b05ecfa4e988c67d80edf842296e82bd9e5f2c594ac78a4f749cada1b4984c1f5d791df606e4e0d3c819c287f21c69fb377999b4131970c",
+        "createdAt": "2026-01-29T14:06:17.078Z",
+        "expiresAt": "2026-04-29T13:06:17.077Z",
+        "_id": "697b69594b22ecf1dfb78b85"
+      }
+    ]
+  },
+  {
+    "_id": "6902b43c48c6cf198fb72aee",
+    "email": "aisha.lee@example.com",
+    "firstName": "Aisha",
+    "lastName": "Lee",
+    "userType": "client",
+    "password": "$2a$12$6TXWEDpGzjYzQYV33ODCueXoWEDxyrzEXX/kc22ghEBZweq.Z9rlC",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:32.994Z",
+    "updatedAt": "2025-10-30T00:41:32.994Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43d48c6cf198fb72af1",
+    "email": "daniel.hernandez@example.com",
+    "firstName": "Daniel",
+    "lastName": "Hernandez",
+    "userType": "client",
+    "password": "$2a$12$5oc72AzaDl6qONwYa7jZeuZEkbwVtdSLDiPheavnPF4MBnj7yoLU.",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:33.283Z",
+    "updatedAt": "2025-10-30T00:41:33.283Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43d48c6cf198fb72af4",
+    "email": "zhang.moore@example.com",
+    "firstName": "Zhang",
+    "lastName": "Moore",
+    "userType": "client",
+    "password": "$2a$12$HQFbjSiIcWwfk4/SjzBjyOZp/JhG7N0E5ldD5pBOujlt26xhPfFDi",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:33.567Z",
+    "updatedAt": "2025-10-30T00:41:33.567Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43d48c6cf198fb72af7",
+    "email": "aisha.malik@example.com",
+    "firstName": "Aisha",
+    "lastName": "Malik",
+    "userType": "client",
+    "password": "$2a$12$R.Myiz3u/SsX5/87nSSDhuxEg7oEMioy/ftkGyXzNahQl7uNPAjJ.",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:33.868Z",
+    "updatedAt": "2025-10-30T00:41:33.868Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43e48c6cf198fb72afa",
+    "email": "patricia.zhang@example.com",
+    "firstName": "Patricia",
+    "lastName": "Zhang",
+    "userType": "client",
+    "password": "$2a$12$Kj/ytjQimPs1kiNSvjMfBuA515Pg/8OppGuVJ9ehkPRJ98zdG6Pfm",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:34.150Z",
+    "updatedAt": "2025-10-30T00:41:34.150Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43e48c6cf198fb72afd",
+    "email": "joseph.wang@example.com",
+    "firstName": "Joseph",
+    "lastName": "Wang",
+    "userType": "client",
+    "password": "$2a$12$iQSYM9kqvKh.ZdoJiPbCCOZZ03FwYZIgfLfxyRV0Rcz3.btTqr97q",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:34.432Z",
+    "updatedAt": "2025-10-30T00:41:34.432Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43e48c6cf198fb72b00",
+    "email": "emma.patel@example.com",
+    "firstName": "Emma",
+    "lastName": "Patel",
+    "userType": "client",
+    "password": "$2a$12$ZzOJPmlEhgYUG6UW119.qusaVAA6nLn2EcxhIWtxiuGjoCJODOOI.",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:34.714Z",
+    "updatedAt": "2025-10-30T00:41:34.714Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43e48c6cf198fb72b03",
+    "email": "linda.kumar@example.com",
+    "firstName": "Linda",
+    "lastName": "Kumar",
+    "userType": "client",
+    "password": "$2a$12$lZF7XvWSNeIGWqS3YH9g6OhVNe2MGKUF1ZqiI2zd5tMevAEoRr9pe",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:34.996Z",
+    "updatedAt": "2025-10-30T00:41:34.996Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43f48c6cf198fb72b06",
+    "email": "anthony.cho@example.com",
+    "firstName": "Anthony",
+    "lastName": "Cho",
+    "userType": "client",
+    "password": "$2a$12$eRa8VyyAE7Gf36emh6XDB.b0p/bKHwf8sOaKkZJjM65H8W8N731i2",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:35.278Z",
+    "updatedAt": "2025-10-30T00:41:35.278Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43f48c6cf198fb72b09",
+    "email": "alexander.miller@example.com",
+    "firstName": "Alexander",
+    "lastName": "Miller",
+    "userType": "client",
+    "password": "$2a$12$rN.8lG5M4Ea4WF7/n7j2TuO2h6Js62uuqyfrG761mQtJfTGoyNRIe",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:35.573Z",
+    "updatedAt": "2025-10-30T00:41:35.573Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b43f48c6cf198fb72b0c",
+    "email": "oliver.choi@example.com",
+    "firstName": "Oliver",
+    "lastName": "Choi",
+    "userType": "client",
+    "password": "$2a$12$vryOPXFzgNcUl9Di00H3AedEzNwigoyiKAynEer7UMQ.9Vd0POKeK",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:35.856Z",
+    "updatedAt": "2025-10-30T00:41:35.856Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44048c6cf198fb72b0f",
+    "email": "mia.wilson@example.com",
+    "firstName": "Mia",
+    "lastName": "Wilson",
+    "userType": "client",
+    "password": "$2a$12$eldThvFPId.BqvFZOau7JOnRVzho3bkF8KD08a9nabiW4wbNjry0u",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:36.140Z",
+    "updatedAt": "2025-10-30T00:41:36.140Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44048c6cf198fb72b12",
+    "email": "chen.miller@example.com",
+    "firstName": "Chen",
+    "lastName": "Miller",
+    "userType": "client",
+    "password": "$2a$12$U2nPPsH65URLTms39xbteuBWfxb.otLhwv8NgRIcFCwgEM/UcgBva",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:36.422Z",
+    "updatedAt": "2025-10-30T00:41:36.422Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44048c6cf198fb72b15",
+    "email": "amit.moore@example.com",
+    "firstName": "Amit",
+    "lastName": "Moore",
+    "userType": "client",
+    "password": "$2a$12$R4yLP0duRM4JuH3m4FGvROZhhhPMkQUkjZYXHUrlhUwm.bVXzCafi",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:36.707Z",
+    "updatedAt": "2025-10-30T00:41:36.707Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44048c6cf198fb72b18",
+    "email": "yuki.sharma@example.com",
+    "firstName": "Yuki",
+    "lastName": "Sharma",
+    "userType": "client",
+    "password": "$2a$12$JOsK.5sk8Vr0K1zod6gsBu9b3Hp9aU1u6jVN4k8c32KDBwDxkoZ56",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:36.990Z",
+    "updatedAt": "2025-10-30T00:41:36.990Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44148c6cf198fb72b1b",
+    "email": "zhang.gupta@example.com",
+    "firstName": "Zhang",
+    "lastName": "Gupta",
+    "userType": "client",
+    "password": "$2a$12$lGUCFHnJS/37.M/m3O.mtOMsNHwxinE1ES1QCmaPzm0hWwgSohgtm",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:37.277Z",
+    "updatedAt": "2025-10-30T00:41:37.277Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44148c6cf198fb72b1e",
+    "email": "andrew.hussein@example.com",
+    "firstName": "Andrew",
+    "lastName": "Hussein",
+    "userType": "client",
+    "password": "$2a$12$/c9wrOu6Vu1k9i7ho8r6SemMnk.EaXCdLBY4C1C78CF.4UCzBs/Au",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:37.567Z",
+    "updatedAt": "2025-10-30T00:41:37.567Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44148c6cf198fb72b21",
+    "email": "kavya.zhang@example.com",
+    "firstName": "Kavya",
+    "lastName": "Zhang",
+    "userType": "client",
+    "password": "$2a$12$Ow44dJn06nCTDAGn1zNvruLOeT3LKEHxV2.lhTs2y/L2pEsLo8cZW",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [
+      {
+        "templateId": "69249b7701052974a4906ed4",
+        "name": "200 Rep KB Swing",
+        "type": "time",
+        "tags": [],
+        "timeSeconds": 600,
+        "recordedAt": "2025-12-26T06:00:00.000Z",
+        "_id": "694ef1420eb57c6c16a76949",
+        "createdAt": "2025-12-26T20:34:10.646Z",
+        "updatedAt": "2025-12-26T20:34:10.646Z",
+        "repMaxes": []
+      },
+      {
+        "templateId": "6924779101052974a490667f",
+        "name": "Bench Press",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6924779101052974a4906680",
+            "weightKg": 150,
+            "recordedAt": "2025-12-26T06:00:00.000Z",
+            "_id": "6952e26f05b2eee6995b2987",
+            "createdAt": "2025-12-29T20:19:59.784Z",
+            "updatedAt": "2025-12-29T20:19:59.784Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906681",
+            "weightKg": 0,
+            "recordedAt": "2025-12-26T06:00:00.000Z",
+            "_id": "6952e26f05b2eee6995b2988",
+            "createdAt": "2025-12-29T20:19:59.784Z",
+            "updatedAt": "2025-12-29T20:19:59.784Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906682",
+            "weightKg": 95,
+            "recordedAt": "2025-12-29T00:00:00.000Z",
+            "_id": "6952e26f05b2eee6995b2989",
+            "createdAt": "2025-12-29T20:19:59.784Z",
+            "updatedAt": "2025-12-29T20:19:59.784Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906683",
+            "weightKg": 25,
+            "recordedAt": "2025-12-29T00:00:00.000Z",
+            "_id": "6952e26f05b2eee6995b298a",
+            "createdAt": "2025-12-29T20:19:59.784Z",
+            "updatedAt": "2025-12-29T20:19:59.784Z"
+          },
+          {
+            "templateRepMaxId": "6924779101052974a4906684",
+            "weightKg": 15,
+            "recordedAt": "2025-12-29T00:00:00.000Z",
+            "_id": "6952e26f05b2eee6995b298b",
+            "createdAt": "2025-12-29T20:19:59.784Z",
+            "updatedAt": "2025-12-29T20:19:59.784Z"
+          }
+        ],
+        "_id": "694ef14c0eb57c6c16a76985",
+        "createdAt": "2025-12-26T20:34:20.809Z",
+        "updatedAt": "2025-12-29T20:19:59.784Z"
+      },
+      {
+        "templateId": "69249b6301052974a4906e97",
+        "name": "Deadlift",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69249b6301052974a4906e98",
+            "weightKg": 300,
+            "recordedAt": "2025-12-26T06:00:00.000Z",
+            "_id": "694ef1560eb57c6c16a76a0d",
+            "createdAt": "2025-12-26T20:34:30.823Z",
+            "updatedAt": "2025-12-26T20:34:30.823Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e99",
+            "weightKg": 0,
+            "recordedAt": "2025-12-26T06:00:00.000Z",
+            "_id": "694ef1560eb57c6c16a76a0e",
+            "createdAt": "2025-12-26T20:34:30.823Z",
+            "updatedAt": "2025-12-26T20:34:30.823Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e9a",
+            "weightKg": 0,
+            "recordedAt": "2025-12-26T06:00:00.000Z",
+            "_id": "694ef1560eb57c6c16a76a0f",
+            "createdAt": "2025-12-26T20:34:30.823Z",
+            "updatedAt": "2025-12-26T20:34:30.823Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e9b",
+            "weightKg": 0,
+            "recordedAt": "2025-12-26T06:00:00.000Z",
+            "_id": "694ef1560eb57c6c16a76a10",
+            "createdAt": "2025-12-26T20:34:30.823Z",
+            "updatedAt": "2025-12-26T20:34:30.823Z"
+          },
+          {
+            "templateRepMaxId": "69249b6301052974a4906e9c",
+            "weightKg": 0,
+            "recordedAt": "2025-12-26T06:00:00.000Z",
+            "_id": "694ef1560eb57c6c16a76a11",
+            "createdAt": "2025-12-26T20:34:30.823Z",
+            "updatedAt": "2025-12-26T20:34:30.823Z"
+          }
+        ],
+        "_id": "694ef1560eb57c6c16a76a0b",
+        "createdAt": "2025-12-26T20:34:30.823Z",
+        "updatedAt": "2025-12-26T20:34:30.823Z"
+      },
+      {
+        "templateId": "69249b6701052974a4906eb3",
+        "name": "Squat",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb4",
+            "weightKg": 200,
+            "recordedAt": "2025-12-29T06:00:00.000Z",
+            "_id": "6952ac3d05b2eee6995b13c5",
+            "createdAt": "2025-12-29T16:28:45.012Z",
+            "updatedAt": "2025-12-29T16:28:45.012Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb5",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T06:00:00.000Z",
+            "_id": "6952ac3d05b2eee6995b13c6",
+            "createdAt": "2025-12-29T16:28:45.012Z",
+            "updatedAt": "2025-12-29T16:28:45.012Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb6",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T06:00:00.000Z",
+            "_id": "6952ac3d05b2eee6995b13c7",
+            "createdAt": "2025-12-29T16:28:45.012Z",
+            "updatedAt": "2025-12-29T16:28:45.012Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb7",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T06:00:00.000Z",
+            "_id": "6952ac3d05b2eee6995b13c8",
+            "createdAt": "2025-12-29T16:28:45.012Z",
+            "updatedAt": "2025-12-29T16:28:45.012Z"
+          },
+          {
+            "templateRepMaxId": "69249b6701052974a4906eb8",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T06:00:00.000Z",
+            "_id": "6952ac3d05b2eee6995b13c9",
+            "createdAt": "2025-12-29T16:28:45.012Z",
+            "updatedAt": "2025-12-29T16:28:45.012Z"
+          }
+        ],
+        "_id": "6952ac3d05b2eee6995b13c3",
+        "createdAt": "2025-12-29T16:28:45.012Z",
+        "updatedAt": "2025-12-29T16:28:45.012Z"
+      },
+      {
+        "templateId": "6952e2dc05b2eee6995b2a1b",
+        "name": "Push Press",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6952e2dc05b2eee6995b2a1c",
+            "weightKg": 100,
+            "recordedAt": "2025-12-29T20:22:02.906Z",
+            "_id": "6952e2ea05b2eee6995b2d16",
+            "createdAt": "2025-12-29T20:22:02.931Z",
+            "updatedAt": "2025-12-29T20:22:02.931Z"
+          },
+          {
+            "templateRepMaxId": "6952e2dc05b2eee6995b2a1d",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T20:22:02.906Z",
+            "_id": "6952e2ea05b2eee6995b2d17",
+            "createdAt": "2025-12-29T20:22:02.931Z",
+            "updatedAt": "2025-12-29T20:22:02.931Z"
+          },
+          {
+            "templateRepMaxId": "6952e2dc05b2eee6995b2a1e",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T20:22:02.906Z",
+            "_id": "6952e2ea05b2eee6995b2d18",
+            "createdAt": "2025-12-29T20:22:02.931Z",
+            "updatedAt": "2025-12-29T20:22:02.931Z"
+          },
+          {
+            "templateRepMaxId": "6952e2dc05b2eee6995b2a1f",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T20:22:02.906Z",
+            "_id": "6952e2ea05b2eee6995b2d19",
+            "createdAt": "2025-12-29T20:22:02.931Z",
+            "updatedAt": "2025-12-29T20:22:02.931Z"
+          },
+          {
+            "templateRepMaxId": "6952e2dc05b2eee6995b2a20",
+            "weightKg": 0,
+            "recordedAt": "2025-12-29T20:22:02.906Z",
+            "_id": "6952e2ea05b2eee6995b2d1a",
+            "createdAt": "2025-12-29T20:22:02.931Z",
+            "updatedAt": "2025-12-29T20:22:02.931Z"
+          }
+        ],
+        "_id": "6952e2ea05b2eee6995b2d14",
+        "createdAt": "2025-12-29T20:22:02.931Z",
+        "updatedAt": "2025-12-29T20:22:02.931Z"
+      }
+    ],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:37.849Z",
+    "updatedAt": "2025-12-30T17:00:18.347Z",
+    "__v": 15,
+    "refreshTokens": [
+      {
+        "token": "8ddccd561668b6d34e725c2e29dff3e07affbcab313b5e6e13bb85a53d809818721ff4096e64531dc2e4c2c561467758fde7bd9a22c7539b6472451bc8ef24f8",
+        "createdAt": "2025-12-25T19:24:45.285Z",
+        "expiresAt": "2026-03-25T18:24:45.285Z",
+        "_id": "694d8f7db45056264e8a22f0"
+      },
+      {
+        "token": "c66480030c33c118f8f761cf65d97e2893f6b4f4ee553a35d23ed415a9276b237ce50a70bb8f5a345e03732a101a15c360ff670e0bc9915daf20d197a5a646b4",
+        "createdAt": "2025-12-26T03:29:51.758Z",
+        "expiresAt": "2026-03-26T02:29:51.758Z",
+        "_id": "694e012fa8f7d6c6b1d3d062"
+      },
+      {
+        "token": "ddaa060ef844087b4b511941319062a9db1e4c925f1b37fa215faa3740c41fb545ff39301c05ca4d00c241824bf9fabee3dac4c3be1ef83ead8f2b1488ed79f5",
+        "createdAt": "2025-12-26T03:32:05.936Z",
+        "expiresAt": "2026-03-26T02:32:05.936Z",
+        "_id": "694e01b5a8f7d6c6b1d3d163"
+      },
+      {
+        "token": "8478847e1a54a9d78351edfcdf8ca7c394f67f2089c10765e21476308b7dc7a5db901e187f486d86dd8e9b1b49f967f0206e67dbd7a5a0260ef303fbce0dbee5",
+        "createdAt": "2025-12-29T23:14:56.875Z",
+        "expiresAt": "2026-03-29T22:14:56.875Z",
+        "_id": "69530b7005b2eee6995b3501"
+      },
+      {
+        "token": "d8a267280913b8c32d9d00ce849430b78633d9504ef8dd573c463a8ca6b924e0a7382fc441a583c267c1046325f79ebd1a62900c80177dc218c4b2a80a280fd3",
+        "createdAt": "2025-12-30T17:00:18.338Z",
+        "expiresAt": "2026-03-30T16:00:18.338Z",
+        "_id": "6954052205b2eee6995b43d9"
+      }
+    ],
+    "programId": "6914004e72438cf8af69380e"
+  },
+  {
+    "_id": "6902b44248c6cf198fb72b24",
+    "email": "john.allen@example.com",
+    "firstName": "John",
+    "lastName": "Allen",
+    "userType": "client",
+    "password": "$2a$12$dcaLojN/tS.3gjsJf6HMt.yVSg0Ddfs0EAsYeIVvPyAR2uTvz8916",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:38.133Z",
+    "updatedAt": "2025-10-30T00:41:38.133Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44248c6cf198fb72b27",
+    "email": "mason.patel@example.com",
+    "firstName": "Mason",
+    "lastName": "Patel",
+    "userType": "client",
+    "password": "$2a$12$6eNANHSh/ASp.x7nYPhzDuQs/Ro2ucgkGoy6CDdHDO.7EK/lgeHaq",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:38.415Z",
+    "updatedAt": "2025-10-30T00:41:38.415Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44248c6cf198fb72b2a",
+    "email": "sophia.kumar@example.com",
+    "firstName": "Sophia",
+    "lastName": "Kumar",
+    "userType": "client",
+    "password": "$2a$12$1aaw09j8WBVq5PCVdBQOXeQiEjyiL51fDGe2G/mQj5DB34J9.m5T.",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:38.698Z",
+    "updatedAt": "2025-10-30T00:41:38.698Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44248c6cf198fb72b2d",
+    "email": "steven.thomas@example.com",
+    "firstName": "Steven",
+    "lastName": "Thomas",
+    "userType": "client",
+    "password": "$2a$12$E71wD3L.HFSXMaHqp13vDurSV5WsQMrbMgKV.pflwtk0QgrB5B1Jq",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:38.979Z",
+    "updatedAt": "2025-10-30T00:41:38.979Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44348c6cf198fb72b30",
+    "email": "daniel.rodriguez@example.com",
+    "firstName": "Daniel",
+    "lastName": "Rodriguez",
+    "userType": "client",
+    "password": "$2a$12$YStwPTXceq3X55aGidI3he6LrgsdGOBvCFi67qwar79NjDngH84HK",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:39.265Z",
+    "updatedAt": "2025-10-30T00:41:39.265Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44348c6cf198fb72b33",
+    "email": "hassan.singh@example.com",
+    "firstName": "Hassan",
+    "lastName": "Singh",
+    "userType": "client",
+    "password": "$2a$12$5QAlu07RiH7mq6A8kg5nLupFm24tInhhBpV9y/KrSrtivR0fBxwJ.",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:39.549Z",
+    "updatedAt": "2025-10-30T00:41:39.549Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44348c6cf198fb72b36",
+    "email": "isabella.wang@example.com",
+    "firstName": "Isabella",
+    "lastName": "Wang",
+    "userType": "client",
+    "password": "$2a$12$a0AktTj5jxxug2F.8br2z.WUazJJqRKaojC72bPHA2J0czExC.ACm",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [
+      {
+        "templateId": "69022fb898cb02160ea8ff1b",
+        "name": "1RM Deadlift",
+        "notes": "",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 165,
+        "recordedAt": "2025-11-12T03:39:22.097Z",
+        "_id": "691d32e6f016ac2532f7ba27",
+        "createdAt": "2025-11-19T03:00:54.267Z",
+        "updatedAt": "2025-11-19T03:00:54.267Z"
+      },
+      {
+        "templateId": "6902322f95596f4f382e620a",
+        "name": "2 minute Row",
+        "type": "reps",
+        "tags": [],
+        "reps": 134,
+        "recordedAt": "2025-11-11T00:00:00.000Z",
+        "_id": "691d32e6f016ac2532f7ba28",
+        "createdAt": "2025-11-19T03:00:54.267Z",
+        "updatedAt": "2025-11-19T03:00:54.267Z"
+      },
+      {
+        "templateId": "6902306698cb02160ea8ff37",
+        "name": "1RM Overhead Press",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 25,
+        "recordedAt": "2025-11-11T00:00:00.000Z",
+        "_id": "691d32e6f016ac2532f7ba29",
+        "createdAt": "2025-11-19T03:00:54.267Z",
+        "updatedAt": "2025-11-19T03:00:54.267Z"
+      },
+      {
+        "templateId": "69022f7f98cb02160ea8ff0d",
+        "name": "1RM Squat",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 85,
+        "recordedAt": "2025-11-17T00:00:00.000Z",
+        "_id": "691d32e6f016ac2532f7ba2a",
+        "createdAt": "2025-11-19T03:00:54.267Z",
+        "updatedAt": "2025-11-19T03:00:54.267Z"
+      }
+    ],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:39.832Z",
+    "updatedAt": "2025-11-19T03:00:54.267Z",
+    "__v": 0,
+    "programId": "6914004e72438cf8af69380e"
+  },
+  {
+    "_id": "6902b44448c6cf198fb72b39",
+    "email": "logan.hernandez@example.com",
+    "firstName": "Logan",
+    "lastName": "Hernandez",
+    "userType": "client",
+    "password": "$2a$12$4nN8zg.2Qoogk4Kwkz1KcOPtf8aF8kfkjRfVj5ibi4a6Q6Ec4kMqO",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [
+      {
+        "templateId": "69022f7f98cb02160ea8ff0d",
+        "name": "1RM Squat",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 185,
+        "recordedAt": "2025-10-29T00:00:00.000Z",
+        "_id": "6902b80668073bbd21f53cc9",
+        "createdAt": "2025-10-30T00:57:42.142Z",
+        "updatedAt": "2025-10-30T00:57:42.142Z"
+      },
+      {
+        "templateId": "69022fb898cb02160ea8ff1b",
+        "name": "1RM Deadlift",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 165,
+        "recordedAt": "2025-10-29T00:00:00.000Z",
+        "_id": "6902b80668073bbd21f53cca",
+        "createdAt": "2025-10-30T00:57:42.142Z",
+        "updatedAt": "2025-10-30T00:57:42.142Z"
+      },
+      {
+        "templateId": "6902306698cb02160ea8ff37",
+        "name": "1RM Overhead Press",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 50,
+        "recordedAt": "2025-10-29T00:00:00.000Z",
+        "_id": "6902b80668073bbd21f53ccb",
+        "createdAt": "2025-10-30T00:57:42.142Z",
+        "updatedAt": "2025-10-30T00:57:42.142Z"
+      },
+      {
+        "templateId": "69022fde98cb02160ea8ff29",
+        "name": "1RM Bench Press",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 85,
+        "recordedAt": "2025-10-29T00:00:00.000Z",
+        "_id": "6902b80668073bbd21f53ccc",
+        "createdAt": "2025-10-30T00:57:42.142Z",
+        "updatedAt": "2025-10-30T00:57:42.142Z"
+      },
+      {
+        "templateId": "6902321395596f4f382e61fd",
+        "name": "200 KB reps",
+        "type": "time",
+        "tags": [],
+        "timeSeconds": 300,
+        "recordedAt": "2025-10-29T00:00:00.000Z",
+        "_id": "6902b80668073bbd21f53ccd",
+        "createdAt": "2025-10-30T00:57:42.142Z",
+        "updatedAt": "2025-10-30T00:57:42.142Z"
+      },
+      {
+        "templateId": "6902322f95596f4f382e620a",
+        "name": "2 minute Row",
+        "type": "reps",
+        "tags": [],
+        "reps": 250,
+        "recordedAt": "2025-10-29T00:00:00.000Z",
+        "_id": "6902b80668073bbd21f53cce",
+        "createdAt": "2025-10-30T00:57:42.142Z",
+        "updatedAt": "2025-10-30T00:57:42.142Z"
+      },
+      {
+        "templateId": "6902307098cb02160ea8ff3e",
+        "name": "3RM Overhead Press",
+        "type": "weight",
+        "tags": [
+          "3rm"
+        ],
+        "weightKg": 15,
+        "recordedAt": "2025-11-05T00:00:00.000Z",
+        "_id": "690bbfad24b2930c6b309247",
+        "createdAt": "2025-11-05T21:20:45.283Z",
+        "updatedAt": "2025-11-05T21:20:45.283Z"
+      },
+      {
+        "templateId": "6902303898cb02160ea8ff30",
+        "name": "3RM Bench Press",
+        "type": "weight",
+        "tags": [
+          "3rm"
+        ],
+        "weightKg": 100,
+        "recordedAt": "2025-11-05T00:00:00.000Z",
+        "_id": "690bbfb924b2930c6b3092a8",
+        "createdAt": "2025-11-05T21:20:57.545Z",
+        "updatedAt": "2025-11-05T21:20:57.545Z"
+      }
+    ],
+    "historicalBenchmarks": [
+      {
+        "templateId": "69022f7f98cb02160ea8ff0d",
+        "name": "1RM Squat",
+        "notes": "",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 165,
+        "recordedAt": "2025-08-14T00:00:00.000Z",
+        "_id": "6903b6fb68073bbd21f540aa",
+        "createdAt": "2025-10-30T19:05:31.138Z",
+        "updatedAt": "2025-10-30T19:05:31.138Z"
+      },
+      {
+        "templateId": "69022f7f98cb02160ea8ff0d",
+        "name": "1RM Squat",
+        "notes": "",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 140,
+        "recordedAt": "2025-07-17T00:00:00.000Z",
+        "_id": "6903b6fb68073bbd21f540ab",
+        "createdAt": "2025-10-30T19:05:31.138Z",
+        "updatedAt": "2025-10-30T19:05:31.138Z"
+      },
+      {
+        "templateId": "69022f7f98cb02160ea8ff0d",
+        "name": "1RM Squat",
+        "notes": "",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 125,
+        "recordedAt": "2025-04-17T00:00:00.000Z",
+        "_id": "6903b6fb68073bbd21f540ac",
+        "createdAt": "2025-10-30T19:05:31.138Z",
+        "updatedAt": "2025-10-30T19:05:31.138Z"
+      },
+      {
+        "templateId": "69022f7f98cb02160ea8ff0d",
+        "name": "1RM Squat",
+        "notes": "",
+        "type": "weight",
+        "tags": [
+          "1rm"
+        ],
+        "weightKg": 100,
+        "recordedAt": "2025-01-09T00:00:00.000Z",
+        "_id": "6903b6fb68073bbd21f540ad",
+        "createdAt": "2025-10-30T19:05:31.138Z",
+        "updatedAt": "2025-10-30T19:05:31.138Z"
+      }
+    ],
+    "createdAt": "2025-10-30T00:41:40.115Z",
+    "updatedAt": "2025-11-06T23:35:18.243Z",
+    "__v": 0,
+    "programId": "690cc737c99d8d5f923e9a9b"
+  },
+  {
+    "_id": "6902b44448c6cf198fb72b3c",
+    "email": "matthew.kumar@example.com",
+    "firstName": "Matthew",
+    "lastName": "Kumar",
+    "userType": "client",
+    "password": "$2a$12$01QHhvRDhMDtnXJOw2xfgeigKxZ7XUjy8gaU4KoqWVwTWcV5H/3CS",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:40.396Z",
+    "updatedAt": "2025-10-30T00:41:40.396Z",
+    "__v": 0
+  },
+  {
+    "_id": "6902b44448c6cf198fb72b3f",
+    "email": "michael.gupta@example.com",
+    "firstName": "Michael",
+    "lastName": "Gupta",
+    "userType": "client",
+    "password": "$2a$12$jY13JT3IDRmPzsbuWvECz.4AXTBo0gGTiOXHe9MWNbV8a8Wj8muAS",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-10-30T00:41:40.683Z",
+    "updatedAt": "2025-10-30T00:41:40.683Z",
+    "__v": 0
+  },
+  {
+    "_id": "690d668ac0344f0dd2bf47a6",
+    "email": "carterlwilson@gmail.com",
+    "firstName": "Carter",
+    "lastName": "Wilson",
+    "userType": "owner",
+    "password": "$2a$12$unUx1T9pSQRVLWJqodj66.bfiuh.Q.gtAA46e6iMNgKoI3rePANdy",
+    "gymId": "690175d098cb02160ea8fc39",
+    "currentBenchmarks": [],
+    "historicalBenchmarks": [],
+    "createdAt": "2025-11-07T03:24:58.332Z",
+    "updatedAt": "2026-02-05T02:45:45.172Z",
+    "__v": 37,
+    "programId": "690cc737c99d8d5f923e9a9b",
+    "resetTokenUsed": true,
+    "refreshTokens": [
+      {
+        "token": "5b7b187ed9de46690e7a9fc17704c6637ad99181fab8ba2f94d33412133b40dd8d4381029209f69f241d05023786dd248040460ae47abd3aef8efeeff53cabae",
+        "createdAt": "2025-12-26T20:33:14.951Z",
+        "expiresAt": "2026-03-26T19:33:14.950Z",
+        "_id": "694ef10a0eb57c6c16a7668b"
+      },
+      {
+        "token": "63c5fa04e14e62b5834735b8b56fd32f25a4be1e9de55300eb8fa5728843d15a8bdbd470f3cabc2afa06e777b632047e18c4c7ccb8ceeed130ff6133625ad5f7",
+        "createdAt": "2025-12-30T02:15:11.314Z",
+        "expiresAt": "2026-03-30T01:15:11.313Z",
+        "_id": "695335af05b2eee6995b389a"
+      },
+      {
+        "token": "4f9964f1a0606e4d184f3905a25a1399b6cd614b5d2e090e058b0cc7173d74eb73aa68cfed964ff61ba1349b8f41afe1f859f58573f32a2d81017d38b42cc924",
+        "createdAt": "2025-12-30T02:16:02.421Z",
+        "expiresAt": "2026-03-30T01:16:02.421Z",
+        "_id": "695335e205b2eee6995b4086"
+      },
+      {
+        "token": "15e392870768c2c0830b518bdd6b7a96c4f5c50145cb0f7f069714f6e11285312f3e297bf916b96865ce94f08a7fedee261482b3f289bc6857c7b022e1a35552",
+        "createdAt": "2026-01-29T03:12:10.503Z",
+        "expiresAt": "2026-04-29T02:12:10.501Z",
+        "_id": "697ad00a4b22ecf1dfb78a83"
+      },
+      {
+        "token": "792dc206c697ff76ea59d7bcd8c4e49c1e388fe90581e89ee084fd7f06fca586f609383c6cf67caf073afe28180791e1a00bccee3aabd2db0f2d652a996bd589",
+        "createdAt": "2026-02-05T02:45:45.161Z",
+        "expiresAt": "2026-05-06T01:45:45.158Z",
+        "_id": "69840459ca53b959eb223038"
+      }
+    ]
+  },
+  {
+    "_id": "6946fe616785e84e9e2e8d0a",
+    "email": "test.client@test.com",
+    "firstName": "test",
+    "lastName": "client",
+    "userType": "client",
+    "password": "$2a$12$2MZsuDqWiik4jBfpuQES0O7qn79/zR8s8DZyti/fFGgL/0BKXigcq",
+    "gymId": "690175d098cb02160ea8fc39",
+    "programId": "6914004e72438cf8af69380e",
+    "resetTokenUsed": false,
+    "currentBenchmarks": [
+      {
+        "templateId": "69249b6301052974a4906e97",
+        "name": "Deadlift",
+        "type": "weight",
+        "tags": [],
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69249b6301052974a4906e98",
+            "weightKg": 300,
+            "recordedAt": "2025-12-20T06:00:00.000Z",
+            "_id": "6946feb36785e84e9e2e8d86",
+            "createdAt": "2025-12-20T19:53:23.210Z",
+            "updatedAt": "2025-12-20T19:53:23.210Z"
+          }
+        ],
+        "_id": "6946feb36785e84e9e2e8d84",
+        "createdAt": "2025-12-20T19:53:23.210Z",
+        "updatedAt": "2025-12-20T19:53:23.210Z"
+      }
+    ],
+    "historicalBenchmarks": [],
+    "refreshTokens": [
+      {
+        "token": "7b3fee810bedfd79d5aaf661e2cb6286fcd88de1703aa1a4d918fa1ad326929565542af7999da27d52dcdc3393e1e1040326f354d70268f6eee95d7b1aa3139d",
+        "createdAt": "2025-12-20T19:53:06.763Z",
+        "expiresAt": "2026-03-20T18:53:06.763Z",
+        "_id": "6946fea26785e84e9e2e8d46"
+      }
+    ],
+    "createdAt": "2025-12-20T19:52:01.473Z",
+    "updatedAt": "2025-12-20T19:53:23.210Z",
+    "__v": 1
+  }
+]

@@ -1,0 +1,229 @@
+[
+  {
+    "_id": "6924779101052974a490667f",
+    "name": "Bench Press",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "6924779101052974a4906680"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6924779101052974a4906681"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "6924779101052974a4906682"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6924779101052974a4906683"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "6924779101052974a4906684"
+      }
+    ],
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2025-11-24T15:19:45.283Z",
+    "updatedAt": "2025-11-24T15:19:45.283Z",
+    "__v": 0
+  },
+  {
+    "_id": "69249b6301052974a4906e97",
+    "name": "Deadlift",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69249b6301052974a4906e98"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69249b6301052974a4906e99"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69249b6301052974a4906e9a"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69249b6301052974a4906e9b"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69249b6301052974a4906e9c"
+      }
+    ],
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2025-11-24T17:52:35.139Z",
+    "updatedAt": "2025-11-24T17:52:35.139Z",
+    "__v": 0
+  },
+  {
+    "_id": "69249b6701052974a4906eb3",
+    "name": "Squat",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69249b6701052974a4906eb4"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69249b6701052974a4906eb5"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69249b6701052974a4906eb6"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69249b6701052974a4906eb7"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69249b6701052974a4906eb8"
+      }
+    ],
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2025-11-24T17:52:39.966Z",
+    "updatedAt": "2025-11-24T17:52:39.966Z",
+    "__v": 0
+  },
+  {
+    "_id": "69249b7701052974a4906ed4",
+    "name": "200 Rep KB Swing",
+    "notes": "",
+    "type": "time",
+    "tags": [],
+    "templateRepMaxes": [],
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2025-11-24T17:52:55.737Z",
+    "updatedAt": "2025-11-24T17:52:55.737Z",
+    "__v": 0
+  },
+  {
+    "_id": "6952e2dc05b2eee6995b2a1b",
+    "name": "Push Press",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "6952e2dc05b2eee6995b2a1c"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6952e2dc05b2eee6995b2a1d"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "6952e2dc05b2eee6995b2a1e"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6952e2dc05b2eee6995b2a1f"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "6952e2dc05b2eee6995b2a20"
+      }
+    ],
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2025-12-29T20:21:48.886Z",
+    "updatedAt": "2025-12-29T20:21:48.886Z",
+    "__v": 0
+  },
+  {
+    "_id": "6980fd9695e450c2ffb8266a",
+    "name": "Row for time",
+    "notes": "",
+    "type": "time",
+    "tags": [],
+    "templateRepMaxes": [],
+    "templateTimeSubMaxes": [],
+    "templateDistanceSubMaxes": [
+      {
+        "name": "100m",
+        "_id": "6980fd9695e450c2ffb8266b"
+      },
+      {
+        "name": "250m",
+        "_id": "6980fd9695e450c2ffb8266c"
+      },
+      {
+        "name": "500m",
+        "_id": "6980fd9695e450c2ffb8266d"
+      }
+    ],
+    "distanceUnit": "meters",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2026-02-02T19:40:06.248Z",
+    "updatedAt": "2026-02-02T19:40:06.248Z",
+    "__v": 0
+  },
+  {
+    "_id": "6980fdb595e450c2ffb82695",
+    "name": "Bike for distance",
+    "notes": "",
+    "type": "distance",
+    "tags": [],
+    "templateRepMaxes": [],
+    "templateTimeSubMaxes": [
+      {
+        "name": "1 min",
+        "_id": "6980fdb595e450c2ffb82696"
+      },
+      {
+        "name": "3 min",
+        "_id": "6980fdb595e450c2ffb82697"
+      },
+      {
+        "name": "5 min",
+        "_id": "6980fdb595e450c2ffb82698"
+      }
+    ],
+    "templateDistanceSubMaxes": [],
+    "distanceUnit": "kilometers",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2026-02-02T19:40:37.834Z",
+    "updatedAt": "2026-02-02T19:40:37.834Z",
+    "__v": 0
+  }
+]

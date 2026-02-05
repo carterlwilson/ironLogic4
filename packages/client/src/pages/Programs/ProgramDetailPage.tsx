@@ -9,6 +9,7 @@ import { useBenchmarkTemplates } from '../../hooks/useBenchmarkTemplates';
 import { useAuth } from '../../providers/AuthProvider';
 import { BlockList } from '../../components/Programs/Detail/BlockList';
 import { ProgramProgressControl } from '../../components/Programs/Detail/ProgramProgressControl';
+import { convertIdsToMongoose } from '../../utils/programHelpers';
 import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { IProgram } from '@ironlogic4/shared/types/programs';
 import type { ActivityGroupOption } from '../../hooks/useActivityGroupOptions';
@@ -121,9 +122,12 @@ export function ProgramDetailPage() {
     if (!program || !programId) return;
 
     try {
+      // Convert id → _id for Mongoose to preserve subdocument IDs
+      const programWithMongooseIds = convertIdsToMongoose(program);
+
       await updateProgramStructure.mutateAsync({
         id: programId,
-        program: { blocks: program.blocks },
+        program: { blocks: programWithMongooseIds.blocks },
       });
       setIsDirty(false);
     } catch (error) {

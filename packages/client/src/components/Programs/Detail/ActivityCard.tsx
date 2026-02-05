@@ -14,6 +14,7 @@ interface ActivityCardProps {
   dayId: string;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   benchmarkTemplates: BenchmarkTemplate[];
@@ -23,26 +24,44 @@ interface ActivityCardProps {
   dragHandleProps?: any;
 }
 
-export function ActivityCard({ activity, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, dragHandleProps }: ActivityCardProps) {
+export function ActivityCard({ activity, program, onProgramChange, onProgramChangeWithAutoSave, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, dragHandleProps }: ActivityCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleEdit = (updatedActivity: Omit<IActivity, 'id' | 'order'>) => {
     const updated = updateActivity(program, activity.id, (a) => {
       Object.assign(a, updatedActivity);
     });
-    onProgramChange(updated);
+
+    // Use auto-save callback if provided
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   const handleDelete = () => {
     if (confirm('Delete this activity?')) {
       const updated = deleteActivity(program, activity.id);
-      onProgramChange(updated);
+
+      // Use auto-save callback if provided
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
     }
   };
 
   const handleCopy = () => {
     const updated = copyActivity(program, activity.id);
-    onProgramChange(updated);
+
+    // Use auto-save callback if provided
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   // Get activity type color
