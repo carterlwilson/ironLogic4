@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import {useState} from 'react';
 import { Paper, Group, Text, Badge, Stack, Menu, ActionIcon } from '@mantine/core';
 import { IconEdit, IconTrash, IconCopy, IconDots, IconGripVertical } from '@tabler/icons-react';
 import { ActivityType } from '@ironlogic4/shared/types/activityTemplates';
+import { CardioType } from '@ironlogic4/shared/types/programs';
 import { ActivityFormModal } from './ActivityFormModal';
 import { deleteActivity, updateActivity, copyActivity } from '../../../utils/programHelpers';
 import type { IActivity, IProgram } from '@ironlogic4/shared/types/programs';
@@ -13,33 +14,54 @@ interface ActivityCardProps {
   dayId: string;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
   dragHandleProps?: any;
 }
 
-export function ActivityCard({ activity, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, dragHandleProps }: ActivityCardProps) {
+export function ActivityCard({ activity, program, onProgramChange, onProgramChangeWithAutoSave, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, dragHandleProps }: ActivityCardProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const handleEdit = (updatedActivity: Omit<IActivity, 'id' | 'order'>) => {
     const updated = updateActivity(program, activity.id, (a) => {
       Object.assign(a, updatedActivity);
     });
-    onProgramChange(updated);
+
+    // Use auto-save callback if provided
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   const handleDelete = () => {
     if (confirm('Delete this activity?')) {
       const updated = deleteActivity(program, activity.id);
-      onProgramChange(updated);
+
+      // Use auto-save callback if provided
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
     }
   };
 
   const handleCopy = () => {
     const updated = copyActivity(program, activity.id);
-    onProgramChange(updated);
+
+    // Use auto-save callback if provided
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   // Get activity type color
@@ -56,6 +78,23 @@ export function ActivityCard({ activity, program, onProgramChange, templateMap, 
       default:
         return 'gray';
     }
+  };
+
+  // Get benchmark label from templateSubMaxId
+  const getBenchmarkLabel = (templateSubMaxId: string): string => {
+    for (const template of benchmarkTemplates) {
+      // Check DISTANCE benchmarks (which have templateTimeSubMaxes)
+      if (template.templateTimeSubMaxes) {
+        const tsm = template.templateTimeSubMaxes.find(t => t.id === templateSubMaxId);
+        if (tsm) return `${template.name} - ${tsm.name}`;
+      }
+      // Check TIME benchmarks (which have templateDistanceSubMaxes)
+      if (template.templateDistanceSubMaxes) {
+        const dsm = template.templateDistanceSubMaxes.find(d => d.id === templateSubMaxId);
+        if (dsm) return `${template.name} - ${dsm.name}`;
+      }
+    }
+    return 'Unknown';
   };
 
   // Format activity details
@@ -109,18 +148,35 @@ export function ActivityCard({ activity, program, onProgramChange, templateMap, 
       }
     }
 
-    if (activity.time) {
-      details.push(`${activity.time} min`);
-    }
-
-    if (activity.distance) {
-      details.push(`${activity.distance} ${activity.distanceUnit || 'units'}`);
+    // Handle cardio with benchmark reference
+    if (activity.templateSubMaxId && activity.percentageOfMax) {
+      details.push(`${activity.percentageOfMax}% of ${getBenchmarkLabel(activity.templateSubMaxId)}`);
+    } else {
+      // Static cardio prescription
+      if (activity.cardioType === CardioType.TIME && activity.time) {
+        details.push(`${activity.time} min`);
+      } else if (activity.cardioType === CardioType.DISTANCE && activity.distance) {
+        details.push(`${activity.distance} ${activity.distanceUnit || 'units'}`);
+      } else if (activity.cardioType === CardioType.REPETITIONS && activity.repetitions) {
+        details.push(`${activity.repetitions} reps`);
+      } else {
+        // Backward compatibility: infer type from fields
+        if (activity.time) {
+          details.push(`${activity.time} min`);
+        }
+        if (activity.distance) {
+          details.push(`${activity.distance} ${activity.distanceUnit || 'units'}`);
+        }
+      }
     }
 
     return details.join(' • ');
   };
 
-  return (
+  console.log("time benchmark options:", timeBenchmarkOptions)
+    console.log("activity:", activity)
+
+    return (
     <>
       <Paper
         withBorder
@@ -186,6 +242,8 @@ export function ActivityCard({ activity, program, onProgramChange, templateMap, 
         templates={templates}
         benchmarkTemplates={benchmarkTemplates}
         weightBenchmarkOptions={weightBenchmarkOptions}
+        distanceBenchmarkOptions={distanceBenchmarkOptions}
+        timeBenchmarkOptions={timeBenchmarkOptions}
       />
     </>
   );

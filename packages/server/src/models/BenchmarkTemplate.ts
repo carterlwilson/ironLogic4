@@ -20,6 +20,26 @@ const templateRepMaxSchema = new Schema({
   // DO NOT ADD order field
 });
 
+const templateTimeSubMaxSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 30  // e.g., "1 min", "3 min", "5 min"
+  }
+  // DO NOT ADD timestamps: true
+});
+
+const templateDistanceSubMaxSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 30  // e.g., "100m", "500m", "1 mile"
+  }
+  // DO NOT ADD timestamps: true
+});
+
 const benchmarkTemplateSchema = new Schema<BenchmarkTemplateDocument>(
   {
     name: {
@@ -45,6 +65,21 @@ const benchmarkTemplateSchema = new Schema<BenchmarkTemplateDocument>(
     templateRepMaxes: {
       type: [templateRepMaxSchema],
       default: [],
+      required: false
+    },
+    templateTimeSubMaxes: {
+      type: [templateTimeSubMaxSchema],
+      default: [],
+      required: false
+    },
+    templateDistanceSubMaxes: {
+      type: [templateDistanceSubMaxSchema],
+      default: [],
+      required: false
+    },
+    distanceUnit: {
+      type: String,
+      enum: ['meters', 'kilometers'],
       required: false
     },
     gymId: {
@@ -85,8 +120,56 @@ benchmarkTemplateSchema.set('toJSON', {
       }));
     }
 
+    // Transform templateTimeSubMaxes subdocuments
+    if (ret.templateTimeSubMaxes && Array.isArray(ret.templateTimeSubMaxes)) {
+      ret.templateTimeSubMaxes = ret.templateTimeSubMaxes.map((tsm: any) => ({
+        id: tsm._id.toString(),
+        name: tsm.name
+      }));
+    }
+
+    // Transform templateDistanceSubMaxes subdocuments
+    if (ret.templateDistanceSubMaxes && Array.isArray(ret.templateDistanceSubMaxes)) {
+      ret.templateDistanceSubMaxes = ret.templateDistanceSubMaxes.map((dsm: any) => ({
+        id: dsm._id.toString(),
+        name: dsm.name
+      }));
+    }
+
     return ret;
   },
+});
+
+// Pre-save validation
+benchmarkTemplateSchema.pre('save', function (next) {
+  // Validate WEIGHT type has templateRepMaxes
+  if (this.type === BenchmarkType.WEIGHT) {
+    if (!this.templateRepMaxes || this.templateRepMaxes.length === 0) {
+      return next(new Error('WEIGHT type requires at least one templateRepMax'));
+    }
+  }
+
+  // Validate DISTANCE type has templateTimeSubMaxes and distanceUnit
+  if (this.type === BenchmarkType.DISTANCE) {
+    if (!this.templateTimeSubMaxes || this.templateTimeSubMaxes.length === 0) {
+      return next(new Error('DISTANCE type requires at least one templateTimeSubMax'));
+    }
+    if (!this.distanceUnit) {
+      return next(new Error('DISTANCE type requires distanceUnit (meters or kilometers)'));
+    }
+  }
+
+  // Validate TIME type has templateDistanceSubMaxes and distanceUnit
+  if (this.type === BenchmarkType.TIME) {
+    if (!this.templateDistanceSubMaxes || this.templateDistanceSubMaxes.length === 0) {
+      return next(new Error('TIME type requires at least one templateDistanceSubMax'));
+    }
+    if (!this.distanceUnit) {
+      return next(new Error('TIME type requires distanceUnit (meters or kilometers)'));
+    }
+  }
+
+  next();
 });
 
 export const BenchmarkTemplate = mongoose.model<BenchmarkTemplateDocument>('BenchmarkTemplate', benchmarkTemplateSchema);

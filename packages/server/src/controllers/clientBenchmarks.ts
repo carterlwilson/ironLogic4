@@ -140,6 +140,8 @@ export const createMyBenchmark = async (
       updatedAt: new Date(),
       // Spread measurement field
       ...(input.repMaxes !== undefined && { repMaxes: input.repMaxes }),
+      ...(input.timeSubMaxes !== undefined && { timeSubMaxes: input.timeSubMaxes }),
+      ...(input.distanceSubMaxes !== undefined && { distanceSubMaxes: input.distanceSubMaxes }),
       ...(input.timeSeconds !== undefined && { timeSeconds: input.timeSeconds }),
       ...(input.reps !== undefined && { reps: input.reps }),
       ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
@@ -254,6 +256,12 @@ export const updateMyBenchmark = async (
     if (input.repMaxes !== undefined) {
       updateFields.repMaxes = input.repMaxes;
     }
+    if (input.timeSubMaxes !== undefined) {
+      updateFields.timeSubMaxes = input.timeSubMaxes;
+    }
+    if (input.distanceSubMaxes !== undefined) {
+      updateFields.distanceSubMaxes = input.distanceSubMaxes;
+    }
     if (input.timeSeconds !== undefined) {
       updateFields.timeSeconds = input.timeSeconds;
     }
@@ -322,6 +330,8 @@ export const updateMyBenchmark = async (
  */
 function getMeasurementTypeFromInput(input: CreateMyBenchmarkInput): string {
   if (input.repMaxes !== undefined && input.repMaxes.length > 0) return 'weight';
+  if (input.timeSubMaxes !== undefined && input.timeSubMaxes.length > 0) return 'distance';
+  if (input.distanceSubMaxes !== undefined && input.distanceSubMaxes.length > 0) return 'time';
   if (input.timeSeconds !== undefined) return 'time';
   if (input.reps !== undefined) return 'reps';
   if (input.otherNotes !== undefined) return 'other';

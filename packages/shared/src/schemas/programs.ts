@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { DistanceUnit } from '../types/programs.js';
+import { DistanceUnit, CardioType } from '../types/programs.js';
 import { ActivityType } from '../types/activityTemplates.js';
 
 // MongoDB ObjectId validation
@@ -8,6 +8,7 @@ const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format'
 // Enums
 const ActivityTypeSchema = z.nativeEnum(ActivityType);
 export const DistanceUnitSchema = z.nativeEnum(DistanceUnit);
+export const CardioTypeSchema = z.nativeEnum(CardioType);
 
 // Set schema - single set with reps and percentage
 export const SetSchema = z.object({
@@ -18,20 +19,45 @@ export const SetSchema = z.object({
 
 // Base activity schema (without refinements)
 const BaseActivitySchema = z.object({
+  _id: objectId.optional(),
   activityTemplateId: objectId,
   type: ActivityTypeSchema,
   order: z.number().int().min(0),
   sets: z.array(SetSchema).min(0).max(20, 'Cannot exceed 20 sets').optional(),
+  cardioType: CardioTypeSchema.optional(),
   time: z.number().int().min(0).optional(), // in minutes
   distance: z.number().min(0).optional(),
-  distanceUnit: DistanceUnitSchema.optional()
+  distanceUnit: DistanceUnitSchema.optional(),
+  repetitions: z.number().int().min(1).max(10000).optional(),
+  templateSubMaxId: objectId.optional(), // Reference to benchmark sub-max for cardio
+  percentageOfMax: z.number().min(0, 'Percentage must be at least 0').max(200, 'Percentage cannot exceed 200').optional()
 });
 
 // Activity schema with refinements
-export const ActivitySchema = BaseActivitySchema;
+export const ActivitySchema = BaseActivitySchema.refine((data) => {
+  // Only validate cardio activities
+  if (data.type !== ActivityType.CARDIO) return true;
+
+  // Benchmark mode validation
+  const isBenchmarkMode = data.templateSubMaxId && data.percentageOfMax;
+  if (isBenchmarkMode) return true;
+
+  // Static mode requires cardioType
+  if (!data.cardioType) return false;
+
+  // Validate required fields per type
+  if (data.cardioType === CardioType.TIME) return !!data.time;
+  if (data.cardioType === CardioType.DISTANCE) return !!(data.distance && data.distanceUnit);
+  if (data.cardioType === CardioType.REPETITIONS) return !!data.repetitions;
+
+  return true;
+}, {
+  message: 'Cardio activities must have valid fields for their cardioType'
+});
 
 // Day schema
 export const DaySchema = z.object({
+  _id: objectId.optional(),
   name: z.string().min(1).max(100).trim(),
   order: z.number().int().min(0),
   activities: z.array(ActivitySchema).default([])
@@ -45,6 +71,7 @@ export const ActivityGroupTargetSchema = z.object({
 
 // Week schema
 export const WeekSchema = z.object({
+  _id: objectId.optional(),
   name: z.string().min(1).max(100).trim(),
   order: z.number().int().min(0),
   activityGroupTargets: z.array(ActivityGroupTargetSchema).default([]),
@@ -53,6 +80,7 @@ export const WeekSchema = z.object({
 
 // Block schema
 export const BlockSchema = z.object({
+  _id: objectId.optional(),
   name: z.string().min(1).max(100).trim(),
   order: z.number().int().min(0),
   activityGroupTargets: z.array(ActivityGroupTargetSchema).default([]),

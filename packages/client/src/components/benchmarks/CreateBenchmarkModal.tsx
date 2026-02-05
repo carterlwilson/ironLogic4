@@ -95,63 +95,61 @@ export function CreateBenchmarkModal({
     if (!template) return;
 
     setLoading(true);
-    try {
-      // Build the request based on the benchmark type
-      const data: CreateMyBenchmarkInput = {
-        templateId: template.id,
-        notes: values.notes || undefined,
-      };
 
-      // Add measurement based on type
-      if (template.type === BenchmarkType.WEIGHT) {
-        // Build repMaxes array from repMaxValues
-        const repMaxes = Object.entries(repMaxValues)
-          .filter(([_, value]) => value !== '' && value !== undefined)
-          .map(([templateRepMaxId, weightKg]) => ({
-            templateRepMaxId,
-            weightKg: typeof weightKg === 'string' ? parseFloat(weightKg) : weightKg,
-            recordedAt: parseDateStringToLocalDate(values.recordedAt),
-          }));
+    // Build the request based on the benchmark type
+    const data: CreateMyBenchmarkInput = {
+      templateId: template.id,
+      notes: values.notes || undefined,
+    };
 
-        // Validate at least one rep max
-        if (repMaxes.length === 0) {
-          form.setFieldError('measurementValue', 'Please enter at least one rep max');
-          setLoading(false);
-          return;
-        }
+    // Add measurement based on type
+    if (template.type === BenchmarkType.WEIGHT) {
+      // Build repMaxes array from repMaxValues
+      const repMaxes = Object.entries(repMaxValues)
+        .filter(([_, value]) => value !== '' && value !== undefined)
+        .map(([templateRepMaxId, weightKg]) => ({
+          templateRepMaxId,
+          weightKg: typeof weightKg === 'string' ? parseFloat(weightKg) : weightKg,
+          recordedAt: parseDateStringToLocalDate(values.recordedAt),
+        }));
 
-        data.repMaxes = repMaxes;
-      } else {
-        // For non-WEIGHT types, use recordedAt from form
-        data.recordedAt = parseDateStringToLocalDate(values.recordedAt);
-
-        switch (template.type) {
-          case BenchmarkType.TIME:
-            // Convert time string to seconds if needed
-            if (typeof values.measurementValue === 'string') {
-              data.timeSeconds = parseTimeString(values.measurementValue);
-            } else {
-              data.timeSeconds = values.measurementValue as number;
-            }
-            break;
-          case BenchmarkType.REPS:
-            data.reps = values.measurementValue as number;
-            break;
-          case BenchmarkType.OTHER:
-            data.otherNotes = values.measurementValue as string;
-            break;
-        }
+      // Validate at least one rep max
+      if (repMaxes.length === 0) {
+        form.setFieldError('measurementValue', 'Please enter at least one rep max');
+        setLoading(false);
+        return;
       }
 
-      await onCreate(data);
-      form.reset();
-      setRepMaxValues({});
-      onClose();
-    } catch (error) {
-      // Error is handled by the parent hook
-    } finally {
-      setLoading(false);
+      data.repMaxes = repMaxes;
+    } else {
+      // For non-WEIGHT types, use recordedAt from form
+      data.recordedAt = parseDateStringToLocalDate(values.recordedAt);
+
+      switch (template.type) {
+        case BenchmarkType.TIME:
+          // Convert time string to seconds if needed
+          if (typeof values.measurementValue === 'string') {
+            data.timeSeconds = parseTimeString(values.measurementValue);
+          } else {
+            data.timeSeconds = values.measurementValue as number;
+          }
+          break;
+        case BenchmarkType.REPS:
+          data.reps = values.measurementValue as number;
+          break;
+        case BenchmarkType.OTHER:
+          data.otherNotes = values.measurementValue as string;
+          break;
+      }
     }
+
+    await onCreate(data);
+
+    // Only runs on success
+    form.reset();
+    setRepMaxValues({});
+    onClose();
+    setLoading(false);
   };
 
   const handleClose = () => {

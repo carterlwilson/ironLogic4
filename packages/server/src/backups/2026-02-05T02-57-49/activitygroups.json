@@ -1,0 +1,52 @@
+[
+  {
+    "_id": "690231eb95596f4f382e61ce",
+    "name": "Squat",
+    "notes": "",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T15:25:31.326Z",
+    "updatedAt": "2025-10-29T15:25:31.326Z",
+    "__v": 0
+  },
+  {
+    "_id": "690231f195596f4f382e61d8",
+    "name": "Bench Press",
+    "notes": "",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T15:25:37.469Z",
+    "updatedAt": "2025-10-29T15:25:37.469Z",
+    "__v": 0
+  },
+  {
+    "_id": "690231f595596f4f382e61e2",
+    "name": "Deadlift",
+    "notes": "",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T15:25:41.760Z",
+    "updatedAt": "2025-10-29T15:25:41.760Z",
+    "__v": 0
+  },
+  {
+    "_id": "690231fb95596f4f382e61ec",
+    "name": "Overhead Press",
+    "notes": "",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690175b198cb02160ea8fc23",
+    "createdAt": "2025-10-29T15:25:47.892Z",
+    "updatedAt": "2025-10-29T15:25:47.892Z",
+    "__v": 0
+  },
+  {
+    "_id": "697441672e2fe261b4f77ebe",
+    "name": "Cardio",
+    "notes": "",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "createdAt": "2026-01-24T03:49:59.263Z",
+    "updatedAt": "2026-01-24T03:49:59.263Z",
+    "__v": 0
+  }
+]

@@ -19,6 +19,24 @@ const repMaxSchema = z.object({
 });
 
 /**
+ * Schema for TimeSubMax subdocument
+ */
+const timeSubMaxSchema = z.object({
+  templateSubMaxId: z.string().min(1),
+  distanceMeters: z.number().min(0),
+  recordedAt: z.string().datetime().or(z.date())
+});
+
+/**
+ * Schema for DistanceSubMax subdocument
+ */
+const distanceSubMaxSchema = z.object({
+  templateDistanceSubMaxId: z.string().min(1),
+  timeSeconds: z.number().min(0),
+  recordedAt: z.string().datetime().or(z.date())
+});
+
+/**
  * Schema for ClientBenchmark subdocuments
  */
 export const ClientBenchmarkSchema = z.object({
@@ -28,6 +46,8 @@ export const ClientBenchmarkSchema = z.object({
   type: z.nativeEnum(BenchmarkType),
   tags: z.array(z.string()).default([]),
   repMaxes: z.array(repMaxSchema).optional(),
+  timeSubMaxes: z.array(timeSubMaxSchema).optional(),
+  distanceSubMaxes: z.array(distanceSubMaxSchema).optional(),
   timeSeconds: z.number().min(0, 'Time must be non-negative').optional(),
   reps: z.number().min(0, 'Reps must be non-negative').optional(),
   otherNotes: z.string().max(1000, 'Other notes must be 1000 characters or less').optional(),
@@ -86,6 +106,12 @@ export const CreateMyBenchmarkSchema = z.object({
   // For WEIGHT type
   repMaxes: z.array(repMaxSchema).optional(),
 
+  // For DISTANCE type
+  timeSubMaxes: z.array(timeSubMaxSchema).optional(),
+
+  // For TIME type
+  distanceSubMaxes: z.array(distanceSubMaxSchema).optional(),
+
   // For other types
   timeSeconds: z.number().positive().max(86400).optional(),
   reps: z.number().int().positive().max(10000).optional(),
@@ -96,7 +122,7 @@ export const CreateMyBenchmarkSchema = z.object({
 }).refine(
   (data) => {
     // Exactly one measurement field should be provided
-    const fields = [data.repMaxes, data.timeSeconds, data.reps, data.otherNotes];
+    const fields = [data.repMaxes, data.timeSubMaxes, data.distanceSubMaxes, data.timeSeconds, data.reps, data.otherNotes];
     const nonNullFields = fields.filter(f => f !== undefined && f !== null && (!Array.isArray(f) || f.length > 0));
     return nonNullFields.length === 1;
   },
@@ -109,6 +135,8 @@ export const CreateMyBenchmarkSchema = z.object({
 export const UpdateMyBenchmarkSchema = z.object({
   notes: z.string().max(1000).optional(),
   repMaxes: z.array(repMaxSchema).optional(),
+  timeSubMaxes: z.array(timeSubMaxSchema).optional(),
+  distanceSubMaxes: z.array(distanceSubMaxSchema).optional(),
   timeSeconds: z.number().positive().max(86400).optional(),
   reps: z.number().int().positive().max(10000).optional(),
   otherNotes: z.string().min(1).max(500).optional(),
@@ -118,6 +146,8 @@ export const UpdateMyBenchmarkSchema = z.object({
     // At least one field must be provided
     return data.notes !== undefined ||
            data.repMaxes !== undefined ||
+           data.timeSubMaxes !== undefined ||
+           data.distanceSubMaxes !== undefined ||
            data.timeSeconds !== undefined ||
            data.reps !== undefined ||
            data.otherNotes !== undefined ||

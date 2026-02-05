@@ -24,6 +24,42 @@ const repMaxSchema = new Schema({
   timestamps: true  // RepMax HAS timestamps
 });
 
+const timeSubMaxSchema = new Schema({
+  templateSubMaxId: {
+    type: String,
+    required: true
+  },
+  distanceMeters: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  recordedAt: {
+    type: Date,
+    required: true
+  }
+}, {
+  timestamps: true  // TimeSubMax HAS timestamps
+});
+
+const distanceSubMaxSchema = new Schema({
+  templateDistanceSubMaxId: {
+    type: String,
+    required: true
+  },
+  timeSeconds: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  recordedAt: {
+    type: Date,
+    required: true
+  }
+}, {
+  timestamps: true  // DistanceSubMax HAS timestamps
+});
+
 export const clientBenchmarkSchema = new Schema<ClientBenchmarkDocument>(
   {
     templateId: {
@@ -54,6 +90,16 @@ export const clientBenchmarkSchema = new Schema<ClientBenchmarkDocument>(
     // Measurement fields - only one should be populated based on type
     repMaxes: {
       type: [repMaxSchema],
+      default: [],
+      required: false
+    },
+    timeSubMaxes: {
+      type: [timeSubMaxSchema],
+      default: [],
+      required: false
+    },
+    distanceSubMaxes: {
+      type: [distanceSubMaxSchema],
       default: [],
       required: false
     },
@@ -90,9 +136,17 @@ clientBenchmarkSchema.pre('save', function (next) {
         return next(new Error('At least one repMax is required for WEIGHT type benchmarks'));
       }
       break;
+    case BenchmarkType.DISTANCE:
+      if (!benchmark.timeSubMaxes || benchmark.timeSubMaxes.length === 0) {
+        return next(new Error('At least one timeSubMax is required for DISTANCE type benchmarks'));
+      }
+      break;
     case BenchmarkType.TIME:
-      if (benchmark.timeSeconds === undefined || benchmark.timeSeconds === null) {
-        return next(new Error('timeSeconds is required for TIME type benchmarks'));
+      // TIME benchmarks can have either timeSeconds (legacy) OR distanceSubMaxes (new multi-distance)
+      const hasTimeSeconds = benchmark.timeSeconds !== undefined && benchmark.timeSeconds !== null;
+      const hasDistanceSubMaxes = benchmark.distanceSubMaxes && benchmark.distanceSubMaxes.length > 0;
+      if (!hasTimeSeconds && !hasDistanceSubMaxes) {
+        return next(new Error('TIME type benchmarks require either timeSeconds or at least one distanceSubMax'));
       }
       break;
     case BenchmarkType.REPS:
@@ -125,6 +179,30 @@ clientBenchmarkSchema.set('toJSON', {
         recordedAt: rm.recordedAt,
         createdAt: rm.createdAt,
         updatedAt: rm.updatedAt
+      }));
+    }
+
+    // Transform timeSubMaxes subdocuments
+    if (ret.timeSubMaxes && Array.isArray(ret.timeSubMaxes)) {
+      ret.timeSubMaxes = ret.timeSubMaxes.map((tsm: any) => ({
+        id: tsm._id.toString(),
+        templateSubMaxId: tsm.templateSubMaxId,
+        distanceMeters: tsm.distanceMeters,
+        recordedAt: tsm.recordedAt,
+        createdAt: tsm.createdAt,
+        updatedAt: tsm.updatedAt
+      }));
+    }
+
+    // Transform distanceSubMaxes subdocuments
+    if (ret.distanceSubMaxes && Array.isArray(ret.distanceSubMaxes)) {
+      ret.distanceSubMaxes = ret.distanceSubMaxes.map((dsm: any) => ({
+        id: dsm._id.toString(),
+        templateDistanceSubMaxId: dsm.templateDistanceSubMaxId,
+        timeSeconds: dsm.timeSeconds,
+        recordedAt: dsm.recordedAt,
+        createdAt: dsm.createdAt,
+        updatedAt: dsm.updatedAt
       }));
     }
 

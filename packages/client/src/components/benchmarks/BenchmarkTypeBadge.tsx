@@ -7,6 +7,7 @@ interface BenchmarkTypeBadgeProps {
 
 const typeConfig: Record<BenchmarkType, { label: string; color: string }> = {
   [BenchmarkType.WEIGHT]: { label: 'Weight', color: 'blue' },
+  [BenchmarkType.DISTANCE]: { label: 'Distance', color: 'cyan' },
   [BenchmarkType.TIME]: { label: 'Time', color: 'green' },
   [BenchmarkType.REPS]: { label: 'Reps', color: 'orange' },
   [BenchmarkType.OTHER]: { label: 'Other', color: 'gray' },

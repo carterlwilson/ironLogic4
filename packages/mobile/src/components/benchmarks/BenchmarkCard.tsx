@@ -9,6 +9,12 @@ import {
   getBenchmarkAgeInDays,
   sortRepMaxesByReps,
   isRepMaxEditable,
+  formatTimeSubMaxes,
+  getLongestDistance,
+  formatDistance,
+  formatDistanceSubMaxes,
+  getFastestTime,
+  formatTimeSeconds,
 } from '../../utils/benchmarkUtils';
 import { useState } from 'react';
 import { RepMaxCard } from './RepMaxCard';
@@ -42,7 +48,8 @@ export function BenchmarkCard({
     benchmark.timeSeconds,
     benchmark.reps,
     benchmark.otherNotes,
-    benchmark.repMaxes
+    benchmark.repMaxes,
+    benchmark.timeSubMaxes
   );
 
   // Helper functions for rep max template data
@@ -62,6 +69,26 @@ export function BenchmarkCard({
   const sortedRepMaxes = benchmark.repMaxes
     ? sortRepMaxesByReps(benchmark.repMaxes, getTemplateReps)
     : [];
+
+  // Format time sub-maxes for DISTANCE benchmarks
+  const formattedTimeSubMaxes = benchmark.type === BenchmarkType.DISTANCE && benchmark.timeSubMaxes && template
+    ? formatTimeSubMaxes(benchmark.timeSubMaxes, template)
+    : [];
+
+  // Get longest distance for DISTANCE benchmarks
+  const longestDistance = benchmark.type === BenchmarkType.DISTANCE && benchmark.timeSubMaxes && template
+    ? formatDistance(getLongestDistance(benchmark.timeSubMaxes) || 0, template.distanceUnit!)
+    : null;
+
+  // Format distance sub-maxes for TIME benchmarks
+  const formattedDistanceSubMaxes = benchmark.type === BenchmarkType.TIME && benchmark.distanceSubMaxes && template
+    ? formatDistanceSubMaxes(benchmark.distanceSubMaxes, template)
+    : [];
+
+  // Get fastest time for TIME benchmarks
+  const fastestTime = benchmark.type === BenchmarkType.TIME && benchmark.distanceSubMaxes && template
+    ? formatTimeSeconds(getFastestTime(benchmark.distanceSubMaxes) || 0)
+    : null;
 
   const handleEditRepMax = (repMax: RepMax) => {
     if (onEditRepMax && benchmark.repMaxes) {
@@ -85,9 +112,26 @@ export function BenchmarkCard({
   };
 
   const getActionButton = () => {
-    // WEIGHT benchmarks use individual rep max editing - no benchmark-level button
-    if (benchmark.type === BenchmarkType.WEIGHT) {
-      return null;
+    // WEIGHT and DISTANCE benchmarks use "Create New" pattern - no benchmark-level editing
+    if (benchmark.type === BenchmarkType.WEIGHT || benchmark.type === BenchmarkType.DISTANCE) {
+      // Historical benchmarks are view-only
+      if (isHistorical) {
+        return null;
+      }
+
+      // Show "Create New" button for current benchmarks
+      return (
+        <Button
+          variant="light"
+          color="orange"
+          size="md"
+          leftSection={<IconRefresh size={18} />}
+          onClick={() => onCreateNew(benchmark)}
+          fullWidth
+        >
+          Create New
+        </Button>
+      );
     }
 
     // Historical benchmarks are view-only
@@ -95,7 +139,7 @@ export function BenchmarkCard({
       return null;
     }
 
-    // Current benchmarks: editable or create new
+    // Current benchmarks for other types: editable or create new
     if (isEditable) {
       return (
         <Button
@@ -210,6 +254,68 @@ export function BenchmarkCard({
                   </Text>
                 </Paper>
               )
+            ) : benchmark.type === BenchmarkType.DISTANCE ? (
+              !template ? (
+                // Loading skeleton while template is being fetched
+                <Stack gap="sm">
+                  <Text size="sm" fw={500} c="dimmed">Distances</Text>
+                  <Skeleton height={80} radius="md" />
+                </Stack>
+              ) : formattedTimeSubMaxes.length > 0 ? (
+                <Stack gap="sm">
+                  <Text size="sm" fw={500} c="dimmed">Distances</Text>
+                  {formattedTimeSubMaxes.map((tsm, index) => (
+                    <Paper key={index} p="md" radius="md" bg="gray.0">
+                      <Group justify="space-between">
+                        <Text size="sm" c="dimmed">{tsm.name}</Text>
+                        <Text size="lg" fw={700} c="forestGreen">
+                          {tsm.distance} {tsm.unit}
+                        </Text>
+                      </Group>
+                    </Paper>
+                  ))}
+                  {longestDistance && (
+                    <Paper p="md" radius="md" bg="forestGreen.0">
+                      <Group justify="space-between">
+                        <Text size="sm" fw={500}>Best Distance</Text>
+                        <Text size="xl" fw={700} c="forestGreen">
+                          {longestDistance.value} {longestDistance.unit}
+                        </Text>
+                      </Group>
+                    </Paper>
+                  )}
+                </Stack>
+              ) : (
+                <Paper p="md" radius="md" bg="gray.0">
+                  <Text size="sm" ta="center" c="dimmed">
+                    No distances recorded
+                  </Text>
+                </Paper>
+              )
+            ) : benchmark.type === BenchmarkType.TIME && formattedDistanceSubMaxes.length > 0 ? (
+              <Stack gap="sm">
+                <Text size="sm" fw={500} c="dimmed">Times</Text>
+                {formattedDistanceSubMaxes.map((dsm, index) => (
+                  <Paper key={index} p="md" radius="md" bg="gray.0">
+                    <Group justify="space-between">
+                      <Text size="sm" c="dimmed">{dsm.name}</Text>
+                      <Text size="lg" fw={700} c="forestGreen">
+                        {dsm.time}
+                      </Text>
+                    </Group>
+                  </Paper>
+                ))}
+                {fastestTime && (
+                  <Paper p="md" radius="md" bg="forestGreen.0">
+                    <Group justify="space-between">
+                      <Text size="sm" fw={500}>Best Time</Text>
+                      <Text size="xl" fw={700} c="forestGreen">
+                        {fastestTime}
+                      </Text>
+                    </Group>
+                  </Paper>
+                )}
+              </Stack>
             ) : (
               <>
                 {/* Measurement value for non-WEIGHT benchmarks */}
