@@ -87,40 +87,38 @@ export function EditBenchmarkModal({
     if (!benchmark) return;
 
     setLoading(true);
-    try {
-      // Build the update request
-      const data: UpdateMyBenchmarkInput = {
-        recordedAt: parseDateStringToLocalDate(values.recordedAt),
-        notes: values.notes || undefined,
-      };
 
-      // Add the appropriate measurement field
-      // Note: WEIGHT benchmarks now use EditRepMaxModal for editing individual rep maxes
-      switch (benchmark.type) {
-        case BenchmarkType.TIME:
-          // Convert time string to seconds if needed
-          if (typeof values.measurementValue === 'string') {
-            data.timeSeconds = parseTimeString(values.measurementValue);
-          } else {
-            data.timeSeconds = values.measurementValue as number;
-          }
-          break;
-        case BenchmarkType.REPS:
-          data.reps = values.measurementValue as number;
-          break;
-        case BenchmarkType.OTHER:
-          data.otherNotes = values.measurementValue as string;
-          break;
-      }
+    // Build the update request
+    const data: UpdateMyBenchmarkInput = {
+      recordedAt: parseDateStringToLocalDate(values.recordedAt),
+      notes: values.notes || undefined,
+    };
 
-      await onUpdate(benchmark.id, data);
-      form.reset();
-      onClose();
-    } catch (error) {
-      // Error is handled by the parent hook
-    } finally {
-      setLoading(false);
+    // Add the appropriate measurement field
+    // Note: WEIGHT benchmarks now use EditRepMaxModal for editing individual rep maxes
+    switch (benchmark.type) {
+      case BenchmarkType.TIME:
+        // Convert time string to seconds if needed
+        if (typeof values.measurementValue === 'string') {
+          data.timeSeconds = parseTimeString(values.measurementValue);
+        } else {
+          data.timeSeconds = values.measurementValue as number;
+        }
+        break;
+      case BenchmarkType.REPS:
+        data.reps = values.measurementValue as number;
+        break;
+      case BenchmarkType.OTHER:
+        data.otherNotes = values.measurementValue as string;
+        break;
     }
+
+    await onUpdate(benchmark.id, data);
+
+    // Only runs on success
+    form.reset();
+    onClose();
+    setLoading(false);
   };
 
   const handleClose = () => {

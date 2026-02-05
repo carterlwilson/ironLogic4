@@ -13,14 +13,18 @@ interface DayItemProps {
   weekId: string;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
+  isExpanded: boolean;
+  onToggleExpanded: () => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function DayItem({ day, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions }: DayItemProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function DayItem({ day, program, onProgramChange, onProgramChangeWithAutoSave, isExpanded, onToggleExpanded, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions }: DayItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(day.name);
   const [isActivityModalOpen, setIsActivityModalOpen] = useState(false);
@@ -42,7 +46,13 @@ export function DayItem({ day, program, onProgramChange, templateMap, templates,
 
   const handleAddActivity = (activity: Omit<IActivity, 'id' | 'order'>) => {
     const updated = addActivity(program, day.id, activity);
-    onProgramChange(updated);
+
+    // Use auto-save callback if provided, otherwise use regular callback
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   const handleDelete = () => {
@@ -73,7 +83,7 @@ export function DayItem({ day, program, onProgramChange, templateMap, templates,
               <ActionIcon
                 variant="subtle"
                 size="sm"
-                onClick={() => setIsExpanded(!isExpanded)}
+                onClick={onToggleExpanded}
               >
                 {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
               </ActionIcon>
@@ -138,10 +148,13 @@ export function DayItem({ day, program, onProgramChange, templateMap, templates,
                   activities={day.activities}
                   program={program}
                   onProgramChange={onProgramChange}
+                  onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
                   templateMap={templateMap}
                   templates={templates}
                   benchmarkTemplates={benchmarkTemplates}
                   weightBenchmarkOptions={weightBenchmarkOptions}
+                  distanceBenchmarkOptions={distanceBenchmarkOptions}
+                  timeBenchmarkOptions={timeBenchmarkOptions}
                 />
               </div>
 
@@ -167,6 +180,8 @@ export function DayItem({ day, program, onProgramChange, templateMap, templates,
         templates={templates}
         benchmarkTemplates={benchmarkTemplates}
         weightBenchmarkOptions={weightBenchmarkOptions}
+        distanceBenchmarkOptions={distanceBenchmarkOptions}
+        timeBenchmarkOptions={timeBenchmarkOptions}
       />
     </>
   );

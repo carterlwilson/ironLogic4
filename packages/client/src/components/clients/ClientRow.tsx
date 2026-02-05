@@ -2,17 +2,19 @@ import { Table, Group, ActionIcon, Tooltip, Text, Badge } from '@mantine/core';
 import { IconEdit, IconTrash, IconBarbell } from '@tabler/icons-react';
 import type { User } from '@ironlogic4/shared/types/users';
 import { useNavigate } from 'react-router-dom';
-import { useProgram } from '../../hooks/usePrograms';
 
 interface ClientRowProps {
   client: User;
   onEdit: (client: User) => void;
   onDelete: (client: User) => void;
+  programNameMap: Record<string, string>;
 }
 
-export function ClientRow({ client, onEdit, onDelete }: ClientRowProps) {
+export function ClientRow({ client, onEdit, onDelete, programNameMap }: ClientRowProps) {
   const navigate = useNavigate();
-  const { data: programData } = useProgram(client.programId);
+
+  // Get program name from dictionary
+  const programName = client.programId ? programNameMap[client.programId] : null;
 
   const handleManageBenchmarks = () => {
     navigate(`/clients/${client.id}/benchmarks`);
@@ -27,9 +29,9 @@ export function ClientRow({ client, onEdit, onDelete }: ClientRowProps) {
       </Table.Td>
       <Table.Td>{client.email}</Table.Td>
       <Table.Td>
-        {client.programId && programData?.data ? (
+        {programName ? (
           <Badge variant="light" color="forestGreen">
-            {programData.data.name}
+            {programName}
           </Badge>
         ) : (
           <Text size="sm" c="dimmed">

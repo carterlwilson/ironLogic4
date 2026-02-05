@@ -11,6 +11,12 @@ function extractValue(benchmark: any): number | null {
   switch (benchmark.type) {
     case BenchmarkType.WEIGHT:
       return benchmark.weightKg ?? null;
+    case BenchmarkType.DISTANCE:
+      // Use longest distance from timeSubMaxes (in meters)
+      if (benchmark.timeSubMaxes && benchmark.timeSubMaxes.length > 0) {
+        return Math.max(...benchmark.timeSubMaxes.map((tsm: any) => tsm.distanceMeters));
+      }
+      return null;
     case BenchmarkType.TIME:
       return benchmark.timeSeconds ?? null;
     case BenchmarkType.REPS:
@@ -45,10 +51,12 @@ function formatDate(date: Date, includeYear: boolean): string {
 /**
  * Helper: Get unit label for benchmark type
  */
-function getUnitLabel(benchmarkType: BenchmarkType): string {
-  switch (benchmarkType) {
+function getUnitLabel(template: any): string {
+  switch (template.type) {
     case BenchmarkType.WEIGHT:
       return 'kg';
+    case BenchmarkType.DISTANCE:
+      return template.distanceUnit === 'kilometers' ? 'km' : 'm';
     case BenchmarkType.TIME:
       return 'seconds';
     case BenchmarkType.REPS:
@@ -143,7 +151,7 @@ export const getBenchmarkProgress = async (req: AuthenticatedRequest, res: Respo
         data: {
           benchmarkName: template.name,
           benchmarkType: template.type,
-          unit: getUnitLabel(template.type),
+          unit: getUnitLabel(template),
           chartData: []
         }
       });
@@ -160,8 +168,14 @@ export const getBenchmarkProgress = async (req: AuthenticatedRequest, res: Respo
     // Build chart data
     const chartData = benchmarksForTemplate
       .map(benchmark => {
-        const value = extractValue(benchmark);
+        let value = extractValue(benchmark);
         if (value === null || !benchmark.recordedAt) return null;
+
+        // Convert meters to kilometers if template uses kilometers
+        if (template.type === BenchmarkType.DISTANCE &&
+            template.distanceUnit === 'kilometers') {
+          value = value / 1000;
+        }
 
         return {
           date: formatDate(new Date(benchmark.recordedAt), includeYear),
@@ -175,7 +189,7 @@ export const getBenchmarkProgress = async (req: AuthenticatedRequest, res: Respo
       data: {
         benchmarkName: template.name,
         benchmarkType: template.type,
-        unit: getUnitLabel(template.type),
+        unit: getUnitLabel(template),
         chartData
       }
     });

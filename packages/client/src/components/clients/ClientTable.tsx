@@ -19,6 +19,7 @@ interface ClientTableProps {
   onPageSizeChange: (size: number) => void;
   onAddClient?: () => void;
   onClearFilters?: () => void;
+  programNameMap: Record<string, string>;
 }
 
 const pageSizeOptions = [
@@ -39,6 +40,7 @@ export function ClientTable({
   onPageSizeChange,
   onAddClient,
   onClearFilters,
+  programNameMap,
 }: ClientTableProps) {
   if (loading) {
     return (
@@ -118,6 +120,7 @@ export function ClientTable({
                 client={client}
                 onEdit={onEdit}
                 onDelete={onDelete}
+                programNameMap={programNameMap}
               />
             ))}
           </Table.Tbody>

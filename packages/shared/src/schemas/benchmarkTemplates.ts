@@ -12,6 +12,20 @@ const templateRepMaxSchema = z.object({
 });
 
 /**
+ * Schema for TemplateTimeSubMax subdocument
+ */
+const templateTimeSubMaxSchema = z.object({
+  name: z.string().min(1).max(30)  // e.g., "1 min", "3 min", "5 min"
+});
+
+/**
+ * Schema for TemplateDistanceSubMax subdocument
+ */
+const templateDistanceSubMaxSchema = z.object({
+  name: z.string().min(1).max(30)  // e.g., "100m", "500m", "1 mile"
+});
+
+/**
  * Schema for listing benchmark templates with pagination and filtering
  */
 export const BenchmarkTemplateListParamsSchema = z.object({
@@ -41,8 +55,32 @@ export const CreateBenchmarkTemplateSchema = z.object({
   notes: z.string().max(500, 'Notes must be 500 characters or less').trim().optional(),
   type: z.nativeEnum(BenchmarkType, { errorMap: () => ({ message: 'Invalid benchmark type' }) }),
   tags: z.array(z.string()).default([]),
-  templateRepMaxes: z.array(templateRepMaxSchema).optional()
-});
+  templateRepMaxes: z.array(templateRepMaxSchema).optional(),
+  templateTimeSubMaxes: z.array(templateTimeSubMaxSchema).optional(),
+  templateDistanceSubMaxes: z.array(templateDistanceSubMaxSchema).optional(),
+  distanceUnit: z.enum(['meters', 'kilometers']).optional()
+}).refine(
+  (data) => {
+    // WEIGHT type requires templateRepMaxes
+    if (data.type === BenchmarkType.WEIGHT) {
+      return data.templateRepMaxes && data.templateRepMaxes.length > 0;
+    }
+    // DISTANCE type requires templateTimeSubMaxes and distanceUnit
+    if (data.type === BenchmarkType.DISTANCE) {
+      return data.templateTimeSubMaxes && data.templateTimeSubMaxes.length > 0 &&
+             data.distanceUnit !== undefined;
+    }
+    // TIME type requires templateDistanceSubMaxes and distanceUnit
+    if (data.type === BenchmarkType.TIME) {
+      return data.templateDistanceSubMaxes && data.templateDistanceSubMaxes.length > 0 &&
+             data.distanceUnit !== undefined;
+    }
+    return true;
+  },
+  {
+    message: 'WEIGHT requires templateRepMaxes, DISTANCE requires templateTimeSubMaxes and distanceUnit, TIME requires templateDistanceSubMaxes and distanceUnit'
+  }
+);
 
 /**
  * Schema for updating a benchmark template
@@ -52,7 +90,10 @@ export const UpdateBenchmarkTemplateSchema = z.object({
   notes: z.string().max(500, 'Notes must be 500 characters or less').trim().optional(),
   type: z.nativeEnum(BenchmarkType, { errorMap: () => ({ message: 'Invalid benchmark type' }) }).optional(),
   tags: z.array(z.string()).optional(),
-  templateRepMaxes: z.array(templateRepMaxSchema).optional()
+  templateRepMaxes: z.array(templateRepMaxSchema).optional(),
+  templateTimeSubMaxes: z.array(templateTimeSubMaxSchema).optional(),
+  templateDistanceSubMaxes: z.array(templateDistanceSubMaxSchema).optional(),
+  distanceUnit: z.enum(['meters', 'kilometers']).optional()
 });
 
 /**

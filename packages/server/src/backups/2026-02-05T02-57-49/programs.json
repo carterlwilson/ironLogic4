@@ -1,0 +1,205 @@
+[
+  {
+    "_id": "6914004e72438cf8af69380e",
+    "name": "Texas Method",
+    "description": "",
+    "gymId": "690175d098cb02160ea8fc39",
+    "createdBy": "690d668ac0344f0dd2bf47a6",
+    "isActive": true,
+    "blocks": [
+      {
+        "name": "Block 1",
+        "order": 0,
+        "activityGroupTargets": [],
+        "weeks": [
+          {
+            "name": "Week 1",
+            "order": 0,
+            "activityGroupTargets": [],
+            "days": [
+              {
+                "name": "Day 1",
+                "order": 0,
+                "activities": [
+                  {
+                    "activityTemplateId": "690232c995596f4f382e626c",
+                    "type": "lift",
+                    "order": 0,
+                    "sets": [
+                      {
+                        "reps": 5,
+                        "percentageOfMax": 80,
+                        "templateRepMaxId": "69249b6301052974a4906e98"
+                      },
+                      {
+                        "reps": 8,
+                        "percentageOfMax": 80,
+                        "templateRepMaxId": "69249b6301052974a4906e9a"
+                      },
+                      {
+                        "reps": 10,
+                        "percentageOfMax": 80,
+                        "templateRepMaxId": "69249b6301052974a4906e9c"
+                      }
+                    ],
+                    "_id": "6982b13f95e450c2ffb8338b"
+                  },
+                  {
+                    "activityTemplateId": "6902325395596f4f382e6226",
+                    "type": "lift",
+                    "order": 1,
+                    "sets": [
+                      {
+                        "reps": 5,
+                        "percentageOfMax": 80,
+                        "templateRepMaxId": "6924779101052974a4906680"
+                      },
+                      {
+                        "reps": 8,
+                        "percentageOfMax": 75,
+                        "templateRepMaxId": "6924779101052974a4906681"
+                      },
+                      {
+                        "reps": 10,
+                        "percentageOfMax": 70,
+                        "templateRepMaxId": "6924779101052974a4906682"
+                      }
+                    ],
+                    "_id": "6982b13f95e450c2ffb8338c"
+                  },
+                  {
+                    "activityTemplateId": "6980fdc895e450c2ffb826fe",
+                    "type": "cardio",
+                    "order": 2,
+                    "templateSubMaxId": "6980fd9695e450c2ffb8266d",
+                    "percentageOfMax": 60,
+                    "_id": "69840480ca53b959eb2231a5",
+                    "sets": []
+                  },
+                  {
+                    "activityTemplateId": "6980fdc295e450c2ffb826ea",
+                    "type": "cardio",
+                    "order": 3,
+                    "templateSubMaxId": "6980fdb595e450c2ffb82698",
+                    "percentageOfMax": 60,
+                    "_id": "6984048dca53b959eb2231fd",
+                    "sets": []
+                  }
+                ],
+                "_id": "6982b13f95e450c2ffb8338a"
+              },
+              {
+                "name": "Day 2",
+                "order": 1,
+                "activities": [
+                  {
+                    "activityTemplateId": "690232ba95596f4f382e6262",
+                    "type": "lift",
+                    "order": 0,
+                    "sets": [
+                      {
+                        "reps": 10,
+                        "percentageOfMax": 50,
+                        "templateRepMaxId": "69249b6301052974a4906e98"
+                      },
+                      {
+                        "reps": 12,
+                        "percentageOfMax": 50,
+                        "templateRepMaxId": "69249b6301052974a4906e9a"
+                      },
+                      {
+                        "reps": 15,
+                        "percentageOfMax": 50,
+                        "templateRepMaxId": "69249b6301052974a4906e9c"
+                      }
+                    ],
+                    "_id": "6982b13f95e450c2ffb83390"
+                  }
+                ],
+                "_id": "6982b13f95e450c2ffb8338f"
+              }
+            ],
+            "_id": "6982b13f95e450c2ffb83389"
+          },
+          {
+            "name": "Week 2",
+            "order": 1,
+            "activityGroupTargets": [],
+            "days": [],
+            "_id": "6982b13f95e450c2ffb83391"
+          },
+          {
+            "name": "Week 3",
+            "order": 2,
+            "activityGroupTargets": [],
+            "days": [],
+            "_id": "6982b13f95e450c2ffb83392"
+          }
+        ],
+        "_id": "6982b13f95e450c2ffb83388"
+      },
+      {
+        "name": "Block 2",
+        "order": 1,
+        "activityGroupTargets": [],
+        "weeks": [
+          {
+            "name": "Week 1",
+            "order": 0,
+            "activityGroupTargets": [],
+            "days": [],
+            "_id": "6982b13f95e450c2ffb83394"
+          },
+          {
+            "name": "Week 2",
+            "order": 1,
+            "activityGroupTargets": [],
+            "days": [],
+            "_id": "6982b13f95e450c2ffb83395"
+          }
+        ],
+        "_id": "6982b13f95e450c2ffb83393"
+      },
+      {
+        "name": "Block 3",
+        "order": 2,
+        "activityGroupTargets": [],
+        "weeks": [
+          {
+            "name": "Week 1",
+            "order": 0,
+            "activityGroupTargets": [],
+            "days": [],
+            "_id": "6982b13f95e450c2ffb83397"
+          },
+          {
+            "name": "Week 2",
+            "order": 1,
+            "activityGroupTargets": [],
+            "days": [],
+            "_id": "6982b13f95e450c2ffb83398"
+          },
+          {
+            "name": "Week 3",
+            "order": 2,
+            "activityGroupTargets": [],
+            "days": [],
+            "_id": "6982b13f95e450c2ffb83399"
+          }
+        ],
+        "_id": "6982b13f95e450c2ffb83396"
+      }
+    ],
+    "currentProgress": {
+      "blockIndex": 0,
+      "weekIndex": 0,
+      "startedAt": "2025-11-12T03:39:18.799Z",
+      "completedAt": null,
+      "lastAdvancedAt": "2025-11-18T03:36:54.854Z",
+      "totalWeeksCompleted": 0
+    },
+    "createdAt": "2025-11-12T03:34:38.688Z",
+    "updatedAt": "2026-02-05T02:46:37.013Z",
+    "__v": 0
+  }
+]

@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { ActivityType, DistanceUnit } from '@ironlogic4/shared';
+import { ActivityType, DistanceUnit, CardioType } from '@ironlogic4/shared';
 
 /**
  * PROGRAM MODEL SPECIFICATION
@@ -46,15 +46,19 @@ export interface ISet {
  * -------------------
  * Represents a single planned activity within a day.
  *
- * FIELDS (8 total):
+ * FIELDS (12 total):
  * - _id: Auto-generated unique identifier
  * - activityTemplateId: Reference to ActivityTemplate
  * - type: Type of activity (lift, cardio, other, benchmark)
  * - order: Position within the day
  * - sets: Array of sets (required for lift activities)
+ * - cardioType: Type of cardio (time, distance, reps) - optional
  * - time: Duration in minutes (optional)
  * - distance: Distance value (optional)
  * - distanceUnit: Unit for distance (optional)
+ * - repetitions: Number of reps for repetition-based cardio (optional)
+ * - templateSubMaxId: Reference to benchmark sub-max for cardio benchmark activities
+ * - percentageOfMax: Percentage of benchmark distance for cardio (0-200)
  */
 export interface IActivity {
   _id: mongoose.Types.ObjectId;
@@ -62,9 +66,13 @@ export interface IActivity {
   type: ActivityType;
   order: number;
   sets?: ISet[];
+  cardioType?: CardioType;
   time?: number;
   distance?: number;
   distanceUnit?: DistanceUnit;
+  repetitions?: number;
+  templateSubMaxId?: string;
+  percentageOfMax?: number;
 }
 
 /**
@@ -251,6 +259,11 @@ const activitySchema = new Schema<IActivity>(
         message: 'Cannot exceed 20 sets'
       }
     },
+    cardioType: {
+      type: String,
+      enum: Object.values(CardioType),
+      required: false,
+    },
     time: {
       type: Number,
       min: 0,
@@ -262,6 +275,22 @@ const activitySchema = new Schema<IActivity>(
     distanceUnit: {
       type: String,
       enum: Object.values(DistanceUnit),
+    },
+    repetitions: {
+      type: Number,
+      required: false,
+      min: 1,
+      max: 10000,
+    },
+    templateSubMaxId: {
+      type: String,
+      required: false,
+    },
+    percentageOfMax: {
+      type: Number,
+      min: 0,
+      max: 200,
+      required: false,
     },
   },
   { _id: true }
@@ -284,6 +313,34 @@ activitySchema.pre('validate', function(next) {
   if (activity.type !== ActivityType.LIFT) {
     if (activity.sets && activity.sets.length > 0) {
       return next(new Error('Only lift activities can have sets'));
+    }
+  }
+
+  // Cardio validation
+  if (activity.type === ActivityType.CARDIO) {
+    // If benchmark mode, cardioType is optional (inferred from benchmark type)
+    if (activity.templateSubMaxId && activity.percentageOfMax) {
+      return next();
+    }
+
+    // For static mode, require cardioType
+    if (!activity.cardioType) {
+      return next(new Error('Cardio activities require cardioType (time, distance, or reps) when not using benchmark mode'));
+    }
+
+    // Validate fields based on cardioType
+    if (activity.cardioType === CardioType.TIME) {
+      if (!activity.time) {
+        return next(new Error('TIME cardio requires time field'));
+      }
+    } else if (activity.cardioType === CardioType.DISTANCE) {
+      if (!activity.distance || !activity.distanceUnit) {
+        return next(new Error('DISTANCE cardio requires distance and distanceUnit fields'));
+      }
+    } else if (activity.cardioType === CardioType.REPETITIONS) {
+      if (!activity.repetitions) {
+        return next(new Error('REPETITIONS cardio requires repetitions field'));
+      }
     }
   }
 

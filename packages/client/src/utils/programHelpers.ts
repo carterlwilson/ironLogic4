@@ -487,3 +487,56 @@ export function copyActivity(program: IProgram, activityId: string): IProgram {
     }
   });
 }
+/**
+ * Convert id fields to _id for MongoDB
+ * Mongoose requires _id on subdocuments to preserve their IDs
+ * Without this, Mongoose treats them as new documents and regenerates IDs
+ */
+export function convertIdsToMongoose(program: IProgram): any {
+  return {
+    ...program,
+    _id: program.id,
+    blocks: program.blocks.map(block => ({
+      ...(!block.id.startsWith('temp_') && { _id: block.id }),
+      name: block.name,
+      order: block.order,
+      activityGroupTargets: block.activityGroupTargets.map(target => ({
+        activityGroupId: target.activityGroupId,
+        targetPercentage: target.targetPercentage,
+      })),
+      weeks: block.weeks.map(week => ({
+        ...(!week.id.startsWith('temp_') && { _id: week.id }),
+        name: week.name,
+        order: week.order,
+        activityGroupTargets: week.activityGroupTargets.map(target => ({
+          activityGroupId: target.activityGroupId,
+          targetPercentage: target.targetPercentage,
+        })),
+        days: week.days.map(day => ({
+          ...(!day.id.startsWith('temp_') && { _id: day.id }),
+          name: day.name,
+          order: day.order,
+          activities: day.activities.map(activity => ({
+            ...(!activity.id.startsWith('temp_') && { _id: activity.id }),
+            type: activity.type,
+            order: activity.order,
+            activityTemplateId: activity.activityTemplateId,
+            // Include type-specific fields
+            ...(activity.type === 'lift' && {
+              sets: activity.sets,
+            }),
+            ...(activity.type === 'cardio' && {
+              cardioType: activity.cardioType,
+              time: activity.time,
+              distance: activity.distance,
+              distanceUnit: activity.distanceUnit,
+              repetitions: activity.repetitions,
+              templateSubMaxId: activity.templateSubMaxId,
+              percentageOfMax: activity.percentageOfMax,
+            }),
+          })),
+        })),
+      })),
+    })),
+  };
+}

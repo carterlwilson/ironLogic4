@@ -20,12 +20,9 @@ export function DeleteBenchmarkTemplateModal({
   const handleConfirm = async () => {
     if (!template) return;
 
-    try {
-      await onConfirm(template);
-      onClose();
-    } catch (error) {
-      // Error handling is done in the parent component
-    }
+    await onConfirm(template);
+    // Only runs on success
+    onClose();
   };
 
   if (!template) return null;

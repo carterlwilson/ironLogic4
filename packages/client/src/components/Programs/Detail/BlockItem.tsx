@@ -13,16 +13,22 @@ interface BlockItemProps {
   block: IBlock;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
+  isExpanded: boolean;
+  onToggleExpanded: () => void;
+  expandedIds: Set<string>;
+  toggleExpanded: (id: string) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
   isCurrentBlock?: boolean;
 }
 
-export function BlockItem({ block, program, onProgramChange, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, isCurrentBlock }: BlockItemProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function BlockItem({ block, program, onProgramChange, onProgramChangeWithAutoSave, isExpanded, onToggleExpanded, expandedIds, toggleExpanded, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, isCurrentBlock }: BlockItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(block.name);
 
@@ -78,7 +84,7 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
             <ActionIcon
               variant="subtle"
               size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={onToggleExpanded}
             >
               {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
             </ActionIcon>
@@ -158,11 +164,16 @@ export function BlockItem({ block, program, onProgramChange, templateMap, templa
                 weeks={block.weeks}
                 program={program}
                 onProgramChange={onProgramChange}
+                onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
+                expandedIds={expandedIds}
+                toggleExpanded={toggleExpanded}
                 templateMap={templateMap}
                 templates={templates}
                 groupOptions={groupOptions}
                 benchmarkTemplates={benchmarkTemplates}
                 weightBenchmarkOptions={weightBenchmarkOptions}
+                distanceBenchmarkOptions={distanceBenchmarkOptions}
+                timeBenchmarkOptions={timeBenchmarkOptions}
                 isCurrentBlock={isCurrentBlock}
               />
             </div>

@@ -14,16 +14,22 @@ interface WeekItemProps {
   blockId: string;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
+  isExpanded: boolean;
+  onToggleExpanded: () => void;
+  expandedIds: Set<string>;
+  toggleExpanded: (id: string) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
   isCurrentWeek?: boolean;
 }
 
-export function WeekItem({ week, program, onProgramChange, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, isCurrentWeek }: WeekItemProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function WeekItem({ week, program, onProgramChange, onProgramChangeWithAutoSave, isExpanded, onToggleExpanded, expandedIds, toggleExpanded, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, isCurrentWeek }: WeekItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(week.name);
 
@@ -77,7 +83,7 @@ export function WeekItem({ week, program, onProgramChange, templateMap, template
             <ActionIcon
               variant="subtle"
               size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={onToggleExpanded}
             >
               {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
             </ActionIcon>
@@ -157,10 +163,15 @@ export function WeekItem({ week, program, onProgramChange, templateMap, template
                 days={week.days}
                 program={program}
                 onProgramChange={onProgramChange}
+                onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
+                expandedIds={expandedIds}
+                toggleExpanded={toggleExpanded}
                 templateMap={templateMap}
                 templates={templates}
                 benchmarkTemplates={benchmarkTemplates}
                 weightBenchmarkOptions={weightBenchmarkOptions}
+                distanceBenchmarkOptions={distanceBenchmarkOptions}
+                timeBenchmarkOptions={timeBenchmarkOptions}
               />
             </div>
 

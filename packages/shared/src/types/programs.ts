@@ -7,6 +7,12 @@ export enum DistanceUnit {
   YARDS = 'yards'
 }
 
+export enum CardioType {
+  TIME = 'time',           // Fixed duration in minutes
+  DISTANCE = 'distance',   // Fixed distance
+  REPETITIONS = 'reps'     // Fixed number of reps (burpees, box jumps, etc.)
+}
+
 /**
  * Set - represents a single set within a lift activity
  * Total fields: 3
@@ -19,17 +25,27 @@ export interface ISet {
 
 /**
  * Activity - represents a single planned activity within a day
- * Total fields: 8
+ * Total fields: 12
  */
 export interface IActivity {
   id: string;
   activityTemplateId: string;
   type: ActivityType;
   order: number;
+
+  // Lift-specific
   sets?: ISet[];  // Array of sets (required for lift activities)
-  time?: number;
-  distance?: number;
-  distanceUnit?: DistanceUnit;
+
+  // Cardio-specific
+  cardioType?: CardioType;           // Time, Distance, or Reps
+  time?: number;                      // Duration in minutes
+  distance?: number;                  // Distance value
+  distanceUnit?: DistanceUnit;        // miles, km, meters, yards
+  repetitions?: number;               // Number of reps (burpees, etc.)
+
+  // Benchmark mode (any cardio type)
+  templateSubMaxId?: string;          // Reference to benchmark sub-max for cardio activities
+  percentageOfMax?: number;           // Percentage of benchmark (0-200)
 }
 
 /**
@@ -150,7 +166,7 @@ export interface ISetCalculation {
 }
 
 /**
- * Workout Activity - extends IActivity with template info and calculated weights
+ * Workout Activity - extends IActivity with template info and calculated weights/distances
  */
 export interface WorkoutActivity extends IActivity {
   templateName: string;
@@ -161,6 +177,15 @@ export interface WorkoutActivity extends IActivity {
   durationMinutes?: number;
   description?: string;
   setCalculations?: ISetCalculation[];  // Per-set weight calculations for lifts
+  // Cardio fields (inherited from IActivity: cardioType, repetitions)
+  // Cardio benchmark fields
+  calculatedDistanceMeters?: number | null;  // Calculated distance for DISTANCE benchmark-based cardio
+  calculatedTimeSeconds?: number | null;     // Calculated time for TIME benchmark-based cardio
+  benchmarkName?: string | null;             // Full name: "Row - 3 min" or "500m Row - 500m"
+  intervalName?: string | null;              // Time interval name: "3 min"
+  distanceInterval?: string;                 // Distance interval name for TIME benchmarks: "500m"
+  cardioDistanceUnit?: string;               // Distance unit from benchmark template (kilometers, miles, meters, yards)
+  error?: string;                            // Error message if benchmark not found
 }
 
 /**

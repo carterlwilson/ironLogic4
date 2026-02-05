@@ -1,0 +1,137 @@
+[
+  {
+    "_id": "6902b5e768073bbd21f53a1b",
+    "gymId": "690175d098cb02160ea8fc39",
+    "templateId": "6901771098cb02160ea8fcac",
+    "coachIds": [
+      "690176b098cb02160ea8fc79"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": [
+          {
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "capacity": 10,
+            "assignedClients": [
+              "6902b44448c6cf198fb72b39"
+            ],
+            "_id": "69022f4898cb02160ea8fe57"
+          },
+          {
+            "startTime": "11:00",
+            "endTime": "12:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe58"
+          },
+          {
+            "startTime": "13:00",
+            "endTime": "14:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe59"
+          },
+          {
+            "startTime": "16:00",
+            "endTime": "17:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5a"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": [
+          {
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5b"
+          },
+          {
+            "startTime": "11:00",
+            "endTime": "12:00",
+            "capacity": 10,
+            "assignedClients": [
+              "6902b44448c6cf198fb72b39"
+            ],
+            "_id": "69022f4898cb02160ea8fe5c"
+          },
+          {
+            "startTime": "13:00",
+            "endTime": "14:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5d"
+          },
+          {
+            "startTime": "16:00",
+            "endTime": "17:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe5e"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": [
+          {
+            "startTime": "09:00",
+            "endTime": "10:00",
+            "capacity": 10,
+            "assignedClients": [
+              "6902b44448c6cf198fb72b39"
+            ],
+            "_id": "69022f4898cb02160ea8fe5f"
+          },
+          {
+            "startTime": "11:00",
+            "endTime": "12:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe60"
+          },
+          {
+            "startTime": "13:00",
+            "endTime": "14:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe61"
+          },
+          {
+            "startTime": "16:00",
+            "endTime": "17:00",
+            "capacity": 10,
+            "assignedClients": [],
+            "_id": "69022f4898cb02160ea8fe62"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "lastResetAt": "2025-10-30T00:48:39.148Z",
+    "createdAt": "2025-10-30T00:48:39.159Z",
+    "updatedAt": "2025-11-05T22:59:41.969Z",
+    "__v": 6
+  }
+]

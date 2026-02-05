@@ -9,13 +9,18 @@ interface DayListProps {
   days: IDay[];
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
+  expandedIds: Set<string>;
+  toggleExpanded: (id: string) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function DayList({ weekId, days, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions }: DayListProps) {
+export function DayList({ weekId, days, program, onProgramChange, onProgramChangeWithAutoSave, expandedIds, toggleExpanded, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions }: DayListProps) {
   if (days.length === 0) {
     return (
       <Text size="sm" c="dimmed" ta="center" py="md">
@@ -35,10 +40,15 @@ export function DayList({ weekId, days, program, onProgramChange, templateMap, t
             weekId={weekId}
             program={program}
             onProgramChange={onProgramChange}
+            onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
+            isExpanded={expandedIds.has(day.id)}
+            onToggleExpanded={() => toggleExpanded(day.id)}
             templateMap={templateMap}
             templates={templates}
             benchmarkTemplates={benchmarkTemplates}
             weightBenchmarkOptions={weightBenchmarkOptions}
+            distanceBenchmarkOptions={distanceBenchmarkOptions}
+            timeBenchmarkOptions={timeBenchmarkOptions}
           />
         ))}
     </Stack>

@@ -1,5 +1,5 @@
-import { ClientBenchmark, RepMax } from '@ironlogic4/shared/types/clientBenchmarks';
-import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
+import { ClientBenchmark, RepMax, TimeSubMax, DistanceSubMax } from '@ironlogic4/shared/types/clientBenchmarks';
+import { BenchmarkType, BenchmarkTemplate, DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 /**
  * Check if a benchmark is editable (less than 1 week old)
@@ -147,7 +147,9 @@ export function formatMeasurement(
   timeSeconds?: number,
   reps?: number,
   otherNotes?: string,
-  repMaxes?: RepMax[]
+  repMaxes?: RepMax[],
+  timeSubMaxes?: TimeSubMax[],
+  distanceSubMaxes?: DistanceSubMax[]
 ): string {
   switch (type) {
     case BenchmarkType.WEIGHT:
@@ -155,7 +157,15 @@ export function formatMeasurement(
         return `${repMaxes.length} rep max${repMaxes.length > 1 ? 'es' : ''}`;
       }
       return weightKg !== undefined ? `${weightKg} kg` : 'No data';
+    case BenchmarkType.DISTANCE:
+      if (timeSubMaxes && timeSubMaxes.length > 0) {
+        return `${timeSubMaxes.length} time interval${timeSubMaxes.length > 1 ? 's' : ''}`;
+      }
+      return 'No data';
     case BenchmarkType.TIME:
+      if (distanceSubMaxes && distanceSubMaxes.length > 0) {
+        return `${distanceSubMaxes.length} distance interval${distanceSubMaxes.length > 1 ? 's' : ''}`;
+      }
       return timeSeconds !== undefined ? formatTimeSeconds(timeSeconds) : 'N/A';
     case BenchmarkType.REPS:
       return reps !== undefined ? `${reps} reps` : 'N/A';
@@ -217,11 +227,116 @@ export function getMeasurementValue(benchmark: ClientBenchmark): number | null {
         return Math.max(...benchmark.repMaxes.map(rm => rm.weightKg));
       }
       return null;
+    case BenchmarkType.DISTANCE:
+      // For DISTANCE benchmarks with timeSubMaxes, return the longest distance
+      if (benchmark.timeSubMaxes && benchmark.timeSubMaxes.length > 0) {
+        return Math.max(...benchmark.timeSubMaxes.map(tsm => tsm.distanceMeters));
+      }
+      return null;
     case BenchmarkType.TIME:
+      // For TIME benchmarks with distanceSubMaxes, return the fastest time
+      if (benchmark.distanceSubMaxes && benchmark.distanceSubMaxes.length > 0) {
+        return Math.min(...benchmark.distanceSubMaxes.map(dsm => dsm.timeSeconds));
+      }
       return benchmark.timeSeconds ?? null;
     case BenchmarkType.REPS:
       return benchmark.reps ?? null;
     default:
       return null;
   }
+}
+
+/**
+ * Convert distance for display based on unit preference
+ */
+export function formatDistance(
+  distanceMeters: number,
+  displayUnit: DistanceUnit
+): { value: string; unit: string } {
+  if (displayUnit === DistanceUnit.KILOMETERS) {
+    return {
+      value: (distanceMeters / 1000).toFixed(2),
+      unit: 'km'
+    };
+  }
+  return {
+    value: distanceMeters.toFixed(0),
+    unit: 'm'
+  };
+}
+
+/**
+ * Convert distance input to meters for storage
+ */
+export function convertDistanceToMeters(
+  value: number,
+  inputUnit: DistanceUnit
+): number {
+  return inputUnit === DistanceUnit.KILOMETERS ? value * 1000 : value;
+}
+
+/**
+ * Get longest distance from timeSubMaxes array
+ */
+export function getLongestDistance(
+  timeSubMaxes: TimeSubMax[]
+): number | null {
+  if (!timeSubMaxes || timeSubMaxes.length === 0) return null;
+  return Math.max(...timeSubMaxes.map(tsm => tsm.distanceMeters));
+}
+
+/**
+ * Get fastest time from distanceSubMaxes array
+ */
+export function getFastestTime(
+  distanceSubMaxes: DistanceSubMax[]
+): number | null {
+  if (!distanceSubMaxes || distanceSubMaxes.length === 0) return null;
+  return Math.min(...distanceSubMaxes.map(dsm => dsm.timeSeconds));
+}
+
+/**
+ * Format time sub-maxes for display with proper units
+ */
+export function formatTimeSubMaxes(
+  timeSubMaxes: TimeSubMax[],
+  template: BenchmarkTemplate
+): Array<{ name: string; distance: string; unit: string; distanceMeters: number }> {
+  if (!template.templateTimeSubMaxes) return [];
+
+  return timeSubMaxes.map(tsm => {
+    const templateTsm = template.templateTimeSubMaxes?.find(
+      t => t.id === tsm.templateSubMaxId
+    );
+    const { value, unit } = formatDistance(
+      tsm.distanceMeters,
+      template.distanceUnit!
+    );
+    return {
+      name: templateTsm?.name || 'Unknown',
+      distance: value,
+      unit,
+      distanceMeters: tsm.distanceMeters
+    };
+  });
+}
+
+/**
+ * Format distance sub-maxes for TIME benchmarks
+ */
+export function formatDistanceSubMaxes(
+  distanceSubMaxes: DistanceSubMax[],
+  template: BenchmarkTemplate
+): Array<{ name: string; time: string }> {
+  if (!template.templateDistanceSubMaxes) return [];
+
+  return distanceSubMaxes.map(dsm => {
+    const templateDsm = template.templateDistanceSubMaxes?.find(
+      t => t.id === dsm.templateDistanceSubMaxId
+    );
+    return {
+      name: templateDsm?.name || 'Unknown',
+      time: formatTimeSeconds(dsm.timeSeconds)
+    };
+  });
 }

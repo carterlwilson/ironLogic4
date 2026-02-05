@@ -10,14 +10,19 @@ import type { ActivityGroupOption } from '../../../hooks/useActivityGroupOptions
 interface BlockListProps {
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
+  expandedIds: Set<string>;
+  toggleExpanded: (id: string) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function BlockList({ program, onProgramChange, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions }: BlockListProps) {
+export function BlockList({ program, onProgramChange, onProgramChangeWithAutoSave, expandedIds, toggleExpanded, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions }: BlockListProps) {
   const handleAddBlock = () => {
     const updated = addBlock(program, {
       name: `Block ${program.blocks.length + 1}`,
@@ -54,11 +59,18 @@ export function BlockList({ program, onProgramChange, templateMap, templates, gr
               block={block}
               program={program}
               onProgramChange={onProgramChange}
+              onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
+              isExpanded={expandedIds.has(block.id)}
+              onToggleExpanded={() => toggleExpanded(block.id)}
+              expandedIds={expandedIds}
+              toggleExpanded={toggleExpanded}
               templateMap={templateMap}
               templates={templates}
               groupOptions={groupOptions}
               benchmarkTemplates={benchmarkTemplates}
               weightBenchmarkOptions={weightBenchmarkOptions}
+              distanceBenchmarkOptions={distanceBenchmarkOptions}
+              timeBenchmarkOptions={timeBenchmarkOptions}
               isCurrentBlock={isCurrentBlock}
             />
           );

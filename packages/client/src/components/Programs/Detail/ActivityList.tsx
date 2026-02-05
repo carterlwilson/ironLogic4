@@ -25,13 +25,16 @@ interface ActivityListProps {
   activities: IActivity[];
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
   templateMap: Record<string, ActivityTemplate>;
   templates: ActivityTemplate[];
   benchmarkTemplates: BenchmarkTemplate[];
   weightBenchmarkOptions: Array<{ value: string; label: string }>;
+  distanceBenchmarkOptions: Array<{ value: string; label: string }>;
+  timeBenchmarkOptions: Array<{ value: string; label: string }>;
 }
 
-export function ActivityList({ dayId, activities, program, onProgramChange, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions }: ActivityListProps) {
+export function ActivityList({ dayId, activities, program, onProgramChange, onProgramChangeWithAutoSave, templateMap, templates, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions }: ActivityListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -48,7 +51,13 @@ export function ActivityList({ dayId, activities, program, onProgramChange, temp
 
       const reorderedActivities = arrayMove(activities, oldIndex, newIndex);
       const updated = reorderActivities(program, dayId, reorderedActivities);
-      onProgramChange(updated);
+
+      // Use auto-save callback if provided
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
     }
   };
 
@@ -75,10 +84,13 @@ export function ActivityList({ dayId, activities, program, onProgramChange, temp
               dayId={dayId}
               program={program}
               onProgramChange={onProgramChange}
+              onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
               templateMap={templateMap}
               templates={templates}
               benchmarkTemplates={benchmarkTemplates}
               weightBenchmarkOptions={weightBenchmarkOptions}
+              distanceBenchmarkOptions={distanceBenchmarkOptions}
+              timeBenchmarkOptions={timeBenchmarkOptions}
             />
           ))}
         </Stack>
