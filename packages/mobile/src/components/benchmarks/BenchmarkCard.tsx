@@ -25,7 +25,7 @@ interface BenchmarkCardProps {
   onEdit: (benchmark: ClientBenchmark) => void;
   onCreateNew: (benchmark: ClientBenchmark) => void;
   template?: BenchmarkTemplate;  // Template data to get rep max names
-  onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string) => void;
+  onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => void;
   onCreateNewRepMax?: (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => void;
 }
 
@@ -93,7 +93,7 @@ export function BenchmarkCard({
   const handleEditRepMax = (repMax: RepMax) => {
     if (onEditRepMax && benchmark.repMaxes) {
       const templateRepMaxName = getTemplateName(repMax.templateRepMaxId);
-      onEditRepMax(repMax, benchmark.id, benchmark.repMaxes, templateRepMaxName);
+      onEditRepMax(repMax, benchmark.id, benchmark.repMaxes, templateRepMaxName, benchmark.name);
     }
   };
 
@@ -112,14 +112,30 @@ export function BenchmarkCard({
   };
 
   const getActionButton = () => {
-    // WEIGHT and DISTANCE benchmarks use "Create New" pattern - no benchmark-level editing
-    if (benchmark.type === BenchmarkType.WEIGHT || benchmark.type === BenchmarkType.DISTANCE) {
+    // WEIGHT, DISTANCE, and TIME benchmarks check editability
+    if (benchmark.type === BenchmarkType.WEIGHT || benchmark.type === BenchmarkType.DISTANCE || benchmark.type === BenchmarkType.TIME) {
       // Historical benchmarks are view-only
       if (isHistorical) {
         return null;
       }
 
-      // Show "Create New" button for current benchmarks
+      // If editable (< 14 days), show Edit button
+      if (isEditable) {
+        return (
+          <Button
+            variant="light"
+            color="forestGreen"
+            size="md"
+            leftSection={<IconPencil size={18} />}
+            onClick={() => onEdit(benchmark)}
+            fullWidth
+          >
+            Edit
+          </Button>
+        );
+      }
+
+      // Show "Create New" button for old benchmarks (>= 14 days)
       return (
         <Button
           variant="light"

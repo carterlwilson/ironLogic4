@@ -26,6 +26,11 @@ export function RepMaxCard({
   const ageInDays = getRepMaxAgeInDays(repMax);
   const isOldAndCreatable = !isHistorical && !isEditable && onCreateNew;
 
+  const handleClick = () => {
+    const handler = !isHistorical && isEditable ? onEdit : isOldAndCreatable ? onCreateNew : undefined;
+    if (handler) handler();
+  };
+
   return (
     <Card
       shadow="xs"
@@ -37,7 +42,7 @@ export function RepMaxCard({
         minHeight: '120px',
         cursor: !isHistorical && (isEditable || isOldAndCreatable) ? 'pointer' : 'default',
       }}
-      onClick={!isHistorical && isEditable ? onEdit : isOldAndCreatable ? onCreateNew : undefined}
+      onClick={handleClick}
     >
       <Stack gap="xs" h="100%" justify="space-between">
         {/* Header with badge and icon */}

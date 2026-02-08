@@ -1,10 +1,10 @@
 import { Modal, Button, Stack, Textarea, TextInput, Text, Badge, Group, Paper, Divider, NumberInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
-import { ClientBenchmark, BenchmarkType, CreateMyBenchmarkInput, BenchmarkTemplate } from '@ironlogic4/shared';
-import { IconWeight, IconCalendar } from '@tabler/icons-react';
+import { ClientBenchmark, BenchmarkType, CreateMyBenchmarkInput, BenchmarkTemplate, DistanceUnit } from '@ironlogic4/shared';
+import { IconWeight, IconCalendar, IconRun, IconClock } from '@tabler/icons-react';
 import { BenchmarkMeasurementInput } from './BenchmarkMeasurementInput';
-import { formatDateForInput, formatMeasurement, formatDate, getBenchmarkAgeInDays, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
+import { formatDateForInput, formatMeasurement, formatDate, getBenchmarkAgeInDays, parseDateStringToLocalDate, convertDistanceToMeters } from '../../utils/benchmarkUtils';
 import { getBenchmarkTemplate } from '../../services/benchmarkApi';
 
 interface CreateNewFromOldModalProps {
@@ -24,6 +24,8 @@ export function CreateNewFromOldModal({
 }: CreateNewFromOldModalProps) {
   const [fullTemplate, setFullTemplate] = useState<BenchmarkTemplate | null>(null);
   const [repMaxValues, setRepMaxValues] = useState<Record<string, number | string>>({});
+  const [timeSubMaxValues, setTimeSubMaxValues] = useState<Record<string, number | string>>({});
+  const [distanceSubMaxValues, setDistanceSubMaxValues] = useState<Record<string, number | string>>({});
   const [loadingTemplate, setLoadingTemplate] = useState(false);
 
   const form = useForm<{
@@ -41,8 +43,10 @@ export function CreateNewFromOldModal({
       measurementValue: (value) => {
         if (!oldBenchmark) return null;
 
-        // Skip validation for WEIGHT type as we'll validate repMaxes separately
-        if (oldBenchmark.type === BenchmarkType.WEIGHT) {
+        // Skip validation for WEIGHT, DISTANCE, and multi-distance TIME
+        if (oldBenchmark.type === BenchmarkType.WEIGHT ||
+            oldBenchmark.type === BenchmarkType.DISTANCE ||
+            (oldBenchmark.type === BenchmarkType.TIME && fullTemplate?.templateDistanceSubMaxes && fullTemplate.templateDistanceSubMaxes.length > 0)) {
           return null;
         }
 
@@ -69,19 +73,40 @@ export function CreateNewFromOldModal({
       form.reset();
       form.setFieldValue('recordedAt', formatDateForInput(new Date()));
 
-      // For WEIGHT type, fetch template and pre-fill with old rep maxes
-      if (oldBenchmark.type === BenchmarkType.WEIGHT && oldBenchmark.repMaxes) {
+      // For WEIGHT, DISTANCE, or TIME with sub-maxes, fetch template and pre-fill
+      if (oldBenchmark.type === BenchmarkType.WEIGHT ||
+          oldBenchmark.type === BenchmarkType.DISTANCE ||
+          oldBenchmark.type === BenchmarkType.TIME) {
+
         setLoadingTemplate(true);
         getBenchmarkTemplate(oldBenchmark.templateId)
           .then((response) => {
             setFullTemplate(response.data);
 
-            // Pre-fill with old rep maxes
-            const prefilled: Record<string, number> = {};
-            oldBenchmark.repMaxes?.forEach((repMax) => {
-              prefilled[repMax.templateRepMaxId] = repMax.weightKg;
-            });
-            setRepMaxValues(prefilled);
+            // Pre-fill based on type
+            if (oldBenchmark.type === BenchmarkType.WEIGHT && oldBenchmark.repMaxes) {
+              const prefilled: Record<string, number> = {};
+              oldBenchmark.repMaxes.forEach((repMax) => {
+                prefilled[repMax.templateRepMaxId] = repMax.weightKg;
+              });
+              setRepMaxValues(prefilled);
+            } else if (oldBenchmark.type === BenchmarkType.DISTANCE && oldBenchmark.timeSubMaxes) {
+              const prefilled: Record<string, number> = {};
+              oldBenchmark.timeSubMaxes.forEach((tsm) => {
+                // Convert from meters to display unit
+                const distanceValue = response.data.distanceUnit === DistanceUnit.KILOMETERS
+                  ? tsm.distanceMeters / 1000
+                  : tsm.distanceMeters;
+                prefilled[tsm.templateSubMaxId] = distanceValue;
+              });
+              setTimeSubMaxValues(prefilled);
+            } else if (oldBenchmark.type === BenchmarkType.TIME && oldBenchmark.distanceSubMaxes) {
+              const prefilled: Record<string, number> = {};
+              oldBenchmark.distanceSubMaxes.forEach((dsm) => {
+                prefilled[dsm.templateDistanceSubMaxId] = dsm.timeSeconds;
+              });
+              setDistanceSubMaxValues(prefilled);
+            }
           })
           .catch((error) => {
             console.error('Failed to load template details:', error);
@@ -92,6 +117,8 @@ export function CreateNewFromOldModal({
       } else {
         setFullTemplate(null);
         setRepMaxValues({});
+        setTimeSubMaxValues({});
+        setDistanceSubMaxValues({});
       }
     }
   }, [opened, oldBenchmark]);
@@ -100,6 +127,20 @@ export function CreateNewFromOldModal({
     setRepMaxValues((prev) => ({
       ...prev,
       [templateRepMaxId]: value,
+    }));
+  };
+
+  const updateTimeSubMaxValue = (templateSubMaxId: string, value: string | number) => {
+    setTimeSubMaxValues((prev) => ({
+      ...prev,
+      [templateSubMaxId]: value,
+    }));
+  };
+
+  const updateDistanceSubMaxValue = (templateDistanceSubMaxId: string, value: string | number) => {
+    setDistanceSubMaxValues((prev) => ({
+      ...prev,
+      [templateDistanceSubMaxId]: value,
     }));
   };
 
@@ -127,8 +168,40 @@ export function CreateNewFromOldModal({
       }) || [];
 
       data.repMaxes = repMaxes;
+    } else if (oldBenchmark.type === BenchmarkType.DISTANCE) {
+      const timeSubMaxes = fullTemplate?.templateTimeSubMaxes?.map(tsm => {
+        const value = timeSubMaxValues[tsm.id];
+        const distanceValue = value && value !== ''
+          ? (typeof value === 'string' ? parseFloat(value) : value)
+          : 0;
+
+        const distanceMeters = fullTemplate.distanceUnit === DistanceUnit.KILOMETERS
+          ? convertDistanceToMeters(distanceValue, DistanceUnit.KILOMETERS)
+          : distanceValue;
+
+        return {
+          templateSubMaxId: tsm.id,
+          distanceMeters,
+          recordedAt: parseDateStringToLocalDate(values.recordedAt),
+        };
+      }) || [];
+      data.timeSubMaxes = timeSubMaxes;
+    } else if (oldBenchmark.type === BenchmarkType.TIME && fullTemplate?.templateDistanceSubMaxes && fullTemplate.templateDistanceSubMaxes.length > 0) {
+      const distanceSubMaxes = fullTemplate.templateDistanceSubMaxes.map(dsm => {
+        const value = distanceSubMaxValues[dsm.id];
+        const timeValue = value && value !== ''
+          ? (typeof value === 'string' ? parseFloat(value) : value)
+          : 0;
+
+        return {
+          templateDistanceSubMaxId: dsm.id,
+          timeSeconds: timeValue,
+          recordedAt: parseDateStringToLocalDate(values.recordedAt),
+        };
+      });
+      data.distanceSubMaxes = distanceSubMaxes;
     } else {
-      // For non-WEIGHT types, use recordedAt from form
+      // For non-sub-max types, use recordedAt from form
       data.recordedAt = parseDateStringToLocalDate(values.recordedAt);
 
       switch (oldBenchmark.type) {
@@ -274,8 +347,118 @@ export function CreateNewFromOldModal({
             </>
           )}
 
-          {/* New Benchmark Form for non-WEIGHT types */}
-          {oldBenchmark.type !== BenchmarkType.WEIGHT && (
+          {/* New Benchmark Form for DISTANCE type */}
+          {oldBenchmark.type === BenchmarkType.DISTANCE && (
+            <>
+              {loadingTemplate ? (
+                <Text size="sm" c="dimmed">Loading distance intervals...</Text>
+              ) : fullTemplate?.templateTimeSubMaxes && fullTemplate.templateTimeSubMaxes.length > 0 ? (
+                <>
+                  <Stack gap="md">
+                    <Text size="sm" fw={500}>
+                      Update distances covered for each time interval in {fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 'kilometers' : 'meters'}
+                    </Text>
+                    {fullTemplate.templateTimeSubMaxes.map((tsm) => (
+                      <NumberInput
+                        key={tsm.id}
+                        label={tsm.name}
+                        placeholder={`Distance in ${fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 'km' : 'm'}`}
+                        value={timeSubMaxValues[tsm.id] || ''}
+                        onChange={(val) => updateTimeSubMaxValue(tsm.id, val)}
+                        min={0}
+                        step={fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 0.1 : 10}
+                        decimalScale={fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 2 : 0}
+                        leftSection={<IconRun size={16} />}
+                        size="lg"
+                        description={`Distance covered in ${tsm.name}`}
+                      />
+                    ))}
+                  </Stack>
+
+                  <TextInput
+                    label="Date Recorded"
+                    type="date"
+                    {...form.getInputProps('recordedAt')}
+                    required
+                    max={formatDateForInput(new Date())}
+                    size="lg"
+                    leftSection={<IconCalendar size={16} />}
+                    description="When did you achieve these distances?"
+                  />
+                </>
+              ) : (
+                <Text size="sm" c="red">No time intervals available for this template</Text>
+              )}
+
+              <Textarea
+                label="Notes (Optional)"
+                placeholder="Add any additional notes..."
+                {...form.getInputProps('notes')}
+                minRows={3}
+                maxRows={5}
+                size="lg"
+                description="Any context or details about this measurement"
+              />
+            </>
+          )}
+
+          {/* New Benchmark Form for TIME type with multiple distances */}
+          {oldBenchmark.type === BenchmarkType.TIME && fullTemplate?.templateDistanceSubMaxes && fullTemplate.templateDistanceSubMaxes.length > 0 && (
+            <>
+              {loadingTemplate ? (
+                <Text size="sm" c="dimmed">Loading distance intervals...</Text>
+              ) : (
+                <>
+                  <Stack gap="md">
+                    <Text size="sm" fw={500}>
+                      Update time taken for each distance interval (in seconds)
+                    </Text>
+                    {fullTemplate.templateDistanceSubMaxes.map((dsm) => (
+                      <NumberInput
+                        key={dsm.id}
+                        label={dsm.name}
+                        placeholder="Time in seconds"
+                        value={distanceSubMaxValues[dsm.id] || ''}
+                        onChange={(val) => updateDistanceSubMaxValue(dsm.id, val)}
+                        min={0}
+                        step={1}
+                        decimalScale={1}
+                        leftSection={<IconClock size={16} />}
+                        size="lg"
+                        description={`Time to complete ${dsm.name}`}
+                      />
+                    ))}
+                  </Stack>
+
+                  <TextInput
+                    label="Date Recorded"
+                    type="date"
+                    {...form.getInputProps('recordedAt')}
+                    required
+                    max={formatDateForInput(new Date())}
+                    size="lg"
+                    leftSection={<IconCalendar size={16} />}
+                    description="When did you achieve these times?"
+                  />
+                </>
+              )}
+
+              <Textarea
+                label="Notes (Optional)"
+                placeholder="Add any additional notes..."
+                {...form.getInputProps('notes')}
+                minRows={3}
+                maxRows={5}
+                size="lg"
+                description="Any context or details about this measurement"
+              />
+            </>
+          )}
+
+          {/* New Benchmark Form for non-sub-max types (REPS, OTHER, simple TIME) */}
+          {oldBenchmark.type !== BenchmarkType.WEIGHT &&
+           oldBenchmark.type !== BenchmarkType.DISTANCE &&
+           !(oldBenchmark.type === BenchmarkType.TIME && fullTemplate?.templateDistanceSubMaxes && fullTemplate.templateDistanceSubMaxes.length > 0) && (
             <>
               <BenchmarkMeasurementInput
                 type={oldBenchmark.type}

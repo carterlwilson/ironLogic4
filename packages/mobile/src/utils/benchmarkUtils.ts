@@ -2,19 +2,19 @@ import { ClientBenchmark, RepMax, TimeSubMax, DistanceSubMax } from '@ironlogic4
 import { BenchmarkType, BenchmarkTemplate, DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 /**
- * Check if a benchmark is editable (less than 1 week old)
+ * Check if a benchmark is editable (less than or equal to 14 days old)
  */
 export function isBenchmarkEditable(benchmark: ClientBenchmark): boolean {
   if (!benchmark.recordedAt && !benchmark.repMaxes?.[0]?.recordedAt) return false;
 
-  const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+  const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
   const now = new Date();
   const recordedDate = benchmark.recordedAt
     ? new Date(benchmark.recordedAt)
     : new Date(benchmark.repMaxes![0].recordedAt);
   const ageMs = now.getTime() - recordedDate.getTime();
 
-  return ageMs < ONE_WEEK_MS;
+  return ageMs <= TWO_WEEKS_MS;
 }
 
 /**
@@ -32,7 +32,7 @@ export function getRepMaxAgeInDays(repMax: RepMax): number {
   const recordedDate = new Date(repMax.recordedAt);
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - recordedDate.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
 }
 

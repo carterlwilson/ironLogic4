@@ -112,14 +112,6 @@ export function CreateNewRepMaxModal({
     >
       <form onSubmit={handleSubmit}>
         <Stack gap="md">
-          {/* Info Text */}
-          <Paper p="md" radius="md" bg="orange.0" withBorder>
-            <Text size="sm" c="orange.9">
-              This rep max is {ageInDays} days old and can no longer be edited directly.
-              Create a new benchmark to update your progress. The old benchmark will be moved to your history.
-            </Text>
-          </Paper>
-
           {/* Old Rep Max Reference */}
           <div>
             <Text size="xs" c="dimmed" mb="xs">
