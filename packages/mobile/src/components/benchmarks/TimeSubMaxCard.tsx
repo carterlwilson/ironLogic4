@@ -1,35 +1,43 @@
 import { Card, Text, Group, Badge, ActionIcon, Stack } from '@mantine/core';
 import { IconPencil, IconClock, IconRefresh } from '@tabler/icons-react';
-import { RepMax } from '@ironlogic4/shared/types/clientBenchmarks';
-import { formatDate, getRepMaxAgeInDays } from '../../utils/benchmarkUtils';
+import { TimeSubMax } from '@ironlogic4/shared/types/clientBenchmarks';
+import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
+import { formatDate, getTimeSubMaxAgeInDays } from '../../utils/benchmarkUtils';
 
-interface RepMaxCardProps {
-  repMax: RepMax;
+interface TimeSubMaxCardProps {
+  timeSubMax: TimeSubMax;
   benchmarkId: string;
   benchmarkName: string;
-  templateRepMaxName: string;  // e.g., "1RM", "3RM"
-  templateRepMaxReps: number;  // e.g., 1, 3
+  templateSubMaxName: string;  // e.g., "1 min", "3 min"
+  distanceUnit: DistanceUnit;  // For display (meters/kilometers)
   isHistorical: boolean;
   isEditable: boolean;  // Based on age (< 14 days)
   onEdit: () => void;
-  onCreateNew?: () => void;  // Optional handler for creating new from old
+  onCreateNew?: () => void;
 }
 
-export function RepMaxCard({
-  repMax,
-  templateRepMaxName,
+export function TimeSubMaxCard({
+  timeSubMax,
+  templateSubMaxName,
+  distanceUnit,
   isHistorical,
   isEditable,
   onEdit,
   onCreateNew,
-}: RepMaxCardProps) {
-  const ageInDays = getRepMaxAgeInDays(repMax);
+}: TimeSubMaxCardProps) {
+  const ageInDays = getTimeSubMaxAgeInDays(timeSubMax);
   const isOldAndCreatable = !isHistorical && !isEditable && onCreateNew;
 
   const handleClick = () => {
     const handler = !isHistorical && isEditable ? onEdit : isOldAndCreatable ? onCreateNew : undefined;
     if (handler) handler();
   };
+
+  // Convert distance for display
+  const distanceValue = distanceUnit === DistanceUnit.KILOMETERS
+    ? (timeSubMax.distanceMeters / 1000).toFixed(2)
+    : timeSubMax.distanceMeters.toString();
+  const unitLabel = distanceUnit === DistanceUnit.KILOMETERS ? 'km' : 'm';
 
   return (
     <Card
@@ -48,7 +56,7 @@ export function RepMaxCard({
         {/* Header with badge and icon */}
         <Group justify="space-between" align="flex-start">
           <Badge color="forestGreen" variant="light" size="md">
-            {templateRepMaxName}
+            {templateSubMaxName}
           </Badge>
           {!isHistorical && isEditable && (
             <ActionIcon
@@ -59,7 +67,7 @@ export function RepMaxCard({
                 e.stopPropagation(); // Prevent double triggering
                 onEdit();
               }}
-              aria-label={`Edit ${templateRepMaxName}`}
+              aria-label={`Edit ${templateSubMaxName}`}
             >
               <IconPencil size={14} />
             </ActionIcon>
@@ -73,16 +81,16 @@ export function RepMaxCard({
                 e.stopPropagation(); // Prevent double triggering
                 onCreateNew();
               }}
-              aria-label={`Create new ${templateRepMaxName}`}
+              aria-label={`Create new ${templateSubMaxName}`}
             >
               <IconRefresh size={14} />
             </ActionIcon>
           )}
         </Group>
 
-        {/* Weight display */}
+        {/* Distance display */}
         <Text size="xl" fw={700} ta="center" c="forestGreen">
-          {repMax.weightKg} kg
+          {distanceValue} {unitLabel}
         </Text>
 
         {/* Date and age */}
@@ -90,7 +98,7 @@ export function RepMaxCard({
           <Group gap="xs" align="center" justify="center">
             <IconClock size={12} style={{ opacity: 0.6 }} />
             <Text size="xs" c="dimmed">
-              {formatDate(repMax.recordedAt)}
+              {formatDate(timeSubMax.recordedAt)}
             </Text>
           </Group>
           {!isHistorical && (

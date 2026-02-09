@@ -1,5 +1,5 @@
 import { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
-import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
+import { BenchmarkType, DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 /**
  * Check if a benchmark is editable (less than 1 week old)
@@ -187,4 +187,14 @@ export function getAllUniqueTags(benchmarks: ClientBenchmark[]): string[] {
     benchmark.tags.forEach(tag => tagsSet.add(tag));
   });
   return Array.from(tagsSet).sort();
+}
+
+/**
+ * Convert distance to meters based on input unit
+ */
+export function convertDistanceToMeters(
+  value: number,
+  inputUnit: DistanceUnit
+): number {
+  return inputUnit === DistanceUnit.KILOMETERS ? value * 1000 : value;
 }
