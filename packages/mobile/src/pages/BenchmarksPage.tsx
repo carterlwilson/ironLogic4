@@ -7,10 +7,15 @@ import { BenchmarkProgressList } from '../components/benchmarks/BenchmarkProgres
 import { CreateBenchmarkModal } from '../components/benchmarks/CreateBenchmarkModal';
 import { EditBenchmarkModal } from '../components/benchmarks/EditBenchmarkModal';
 import { EditRepMaxModal } from '../components/benchmarks/EditRepMaxModal';
+import { EditTimeSubMaxModal } from '../components/benchmarks/EditTimeSubMaxModal';
+import { EditDistanceSubMaxModal } from '../components/benchmarks/EditDistanceSubMaxModal';
 import { CreateNewFromOldModal } from '../components/benchmarks/CreateNewFromOldModal';
 import { CreateNewRepMaxModal } from '../components/benchmarks/CreateNewRepMaxModal';
+import { CreateNewTimeSubMaxModal } from '../components/benchmarks/CreateNewTimeSubMaxModal';
+import { CreateNewDistanceSubMaxModal } from '../components/benchmarks/CreateNewDistanceSubMaxModal';
 import { TagFilter } from '../components/benchmarks/TagFilter';
 import { getAllUniqueTags, filterBenchmarksByTag } from '../utils/tagUtils';
+import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 export const BenchmarksPage = () => {
   const {
@@ -24,18 +29,30 @@ export const BenchmarksPage = () => {
     isCreateNewFromOldOpen,
     isCreateNewRepMaxOpen,
     isEditRepMaxOpen,
+    isEditTimeSubMaxOpen,
+    isEditDistanceSubMaxOpen,
     selectedBenchmark,
     selectedRepMax,
     selectedRepMaxForNew,
+    selectedTimeSubMax,
+    selectedTimeSubMaxForNew,
+    selectedDistanceSubMax,
+    selectedDistanceSubMaxForNew,
     loadBenchmarks,
     handleCreateBenchmark,
     handleUpdateBenchmark,
     handleUpdateRepMax,
+    handleUpdateTimeSubMax,
+    handleUpdateDistanceSubMax,
     openCreate,
     openEdit,
     openCreateNewFromOld,
     openEditRepMax,
     openCreateNewRepMax,
+    openEditTimeSubMax,
+    openCreateNewTimeSubMax,
+    openEditDistanceSubMax,
+    openCreateNewDistanceSubMax,
     closeModals,
   } = useBenchmarks();
 
@@ -128,6 +145,10 @@ export const BenchmarksPage = () => {
               benchmarkTemplates={benchmarkTemplates}
               onEditRepMax={openEditRepMax}
               onCreateNewRepMax={openCreateNewRepMax}
+              onEditTimeSubMax={openEditTimeSubMax}
+              onCreateNewTimeSubMax={openCreateNewTimeSubMax}
+              onEditDistanceSubMax={openEditDistanceSubMax}
+              onCreateNewDistanceSubMax={openCreateNewDistanceSubMax}
             />
           </Tabs.Panel>
 
@@ -181,6 +202,51 @@ export const BenchmarksPage = () => {
         oldBenchmark={selectedRepMaxForNew?.benchmark || null}
         targetRepMax={selectedRepMaxForNew?.repMax || null}
         template={selectedRepMaxForNew?.template || null}
+        loading={loading}
+      />
+
+      <EditTimeSubMaxModal
+        opened={isEditTimeSubMaxOpen}
+        onClose={closeModals}
+        timeSubMax={selectedTimeSubMax?.timeSubMax || null}
+        benchmarkId={selectedTimeSubMax?.benchmarkId || ''}
+        benchmarkName={selectedTimeSubMax?.benchmarkName || ''}
+        templateSubMaxName={selectedTimeSubMax?.templateSubMaxName || ''}
+        distanceUnit={selectedTimeSubMax?.distanceUnit || DistanceUnit.METERS}
+        allTimeSubMaxes={selectedTimeSubMax?.allTimeSubMaxes || []}
+        onUpdate={handleUpdateTimeSubMax}
+        loading={loading}
+      />
+
+      <EditDistanceSubMaxModal
+        opened={isEditDistanceSubMaxOpen}
+        onClose={closeModals}
+        distanceSubMax={selectedDistanceSubMax?.distanceSubMax || null}
+        benchmarkId={selectedDistanceSubMax?.benchmarkId || ''}
+        benchmarkName={selectedDistanceSubMax?.benchmarkName || ''}
+        templateDistanceSubMaxName={selectedDistanceSubMax?.templateDistanceSubMaxName || ''}
+        allDistanceSubMaxes={selectedDistanceSubMax?.allDistanceSubMaxes || []}
+        onUpdate={handleUpdateDistanceSubMax}
+        loading={loading}
+      />
+
+      <CreateNewTimeSubMaxModal
+        opened={Boolean(selectedTimeSubMaxForNew)}
+        onClose={closeModals}
+        onCreate={handleCreateBenchmark}
+        oldBenchmark={selectedTimeSubMaxForNew?.benchmark || null}
+        targetTimeSubMax={selectedTimeSubMaxForNew?.timeSubMax || null}
+        template={selectedTimeSubMaxForNew?.template || null}
+        loading={loading}
+      />
+
+      <CreateNewDistanceSubMaxModal
+        opened={Boolean(selectedDistanceSubMaxForNew)}
+        onClose={closeModals}
+        onCreate={handleCreateBenchmark}
+        oldBenchmark={selectedDistanceSubMaxForNew?.benchmark || null}
+        targetDistanceSubMax={selectedDistanceSubMaxForNew?.distanceSubMax || null}
+        template={selectedDistanceSubMaxForNew?.template || null}
         loading={loading}
       />
     </Container>

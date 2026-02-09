@@ -1,6 +1,7 @@
 import { Stack, Text, Loader, Center, Paper } from '@mantine/core';
 import { IconMoodEmpty } from '@tabler/icons-react';
-import { ClientBenchmark, BenchmarkTemplate, RepMax } from '@ironlogic4/shared';
+import { ClientBenchmark, BenchmarkTemplate, RepMax, TimeSubMax, DistanceSubMax } from '@ironlogic4/shared';
+import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 import { BenchmarkCard } from './BenchmarkCard';
 
 interface BenchmarkListProps {
@@ -12,6 +13,10 @@ interface BenchmarkListProps {
   benchmarkTemplates?: Map<string, BenchmarkTemplate>;
   onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => void;
   onCreateNewRepMax?: (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => void;
+  onEditTimeSubMax?: (timeSubMax: TimeSubMax, benchmarkId: string, allTimeSubMaxes: TimeSubMax[], templateSubMaxName: string, benchmarkName: string, distanceUnit: DistanceUnit) => void;
+  onCreateNewTimeSubMax?: (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => void;
+  onEditDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmarkId: string, allDistanceSubMaxes: DistanceSubMax[], templateDistanceSubMaxName: string, benchmarkName: string) => void;
+  onCreateNewDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => void;
 }
 
 export function BenchmarkList({
@@ -23,6 +28,10 @@ export function BenchmarkList({
   benchmarkTemplates,
   onEditRepMax,
   onCreateNewRepMax,
+  onEditTimeSubMax,
+  onCreateNewTimeSubMax,
+  onEditDistanceSubMax,
+  onCreateNewDistanceSubMax,
 }: BenchmarkListProps) {
   if (loading) {
     return (
@@ -66,6 +75,10 @@ export function BenchmarkList({
             onEditRepMax(repMax, benchmarkId, allRepMaxes, templateRepMaxName, benchmark.name);
           } : undefined}
           onCreateNewRepMax={onCreateNewRepMax}
+          onEditTimeSubMax={onEditTimeSubMax}
+          onCreateNewTimeSubMax={onCreateNewTimeSubMax}
+          onEditDistanceSubMax={onEditDistanceSubMax}
+          onCreateNewDistanceSubMax={onCreateNewDistanceSubMax}
         />
       ))}
     </Stack>

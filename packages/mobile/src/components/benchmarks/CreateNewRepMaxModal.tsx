@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
 import { ClientBenchmark, BenchmarkTemplate, CreateMyBenchmarkInput, RepMax } from '@ironlogic4/shared';
 import { IconWeight, IconCalendar } from '@tabler/icons-react';
-import { formatDateForInput, formatDate, getRepMaxAgeInDays, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
+import { formatDateForInput, formatDate, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
 
 interface CreateNewRepMaxModalProps {
   opened: boolean;
@@ -97,7 +97,6 @@ export function CreateNewRepMaxModal({
 
   if (!oldBenchmark || !targetRepMax || !template) return null;
 
-  const ageInDays = getRepMaxAgeInDays(targetRepMax);
   const targetTemplateRepMax = template.templateRepMaxes?.find(
     trm => trm.id === targetRepMax.templateRepMaxId
   );

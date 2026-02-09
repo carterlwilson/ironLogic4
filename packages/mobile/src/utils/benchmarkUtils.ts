@@ -5,13 +5,23 @@ import { BenchmarkType, BenchmarkTemplate, DistanceUnit } from '@ironlogic4/shar
  * Check if a benchmark is editable (less than or equal to 14 days old)
  */
 export function isBenchmarkEditable(benchmark: ClientBenchmark): boolean {
-  if (!benchmark.recordedAt && !benchmark.repMaxes?.[0]?.recordedAt) return false;
+  // Get the most recent recordedAt date from the benchmark
+  let recordedDate: Date | null = null;
+
+  if (benchmark.recordedAt) {
+    recordedDate = new Date(benchmark.recordedAt);
+  } else if (benchmark.repMaxes?.[0]?.recordedAt) {
+    recordedDate = new Date(benchmark.repMaxes[0].recordedAt);
+  } else if (benchmark.timeSubMaxes?.[0]?.recordedAt) {
+    recordedDate = new Date(benchmark.timeSubMaxes[0].recordedAt);
+  } else if (benchmark.distanceSubMaxes?.[0]?.recordedAt) {
+    recordedDate = new Date(benchmark.distanceSubMaxes[0].recordedAt);
+  }
+
+  if (!recordedDate) return false;
 
   const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
   const now = new Date();
-  const recordedDate = benchmark.recordedAt
-    ? new Date(benchmark.recordedAt)
-    : new Date(benchmark.repMaxes![0].recordedAt);
   const ageMs = now.getTime() - recordedDate.getTime();
 
   return ageMs <= TWO_WEEKS_MS;
@@ -129,11 +139,22 @@ export function parseDateStringToLocalDate(dateString: string): Date {
  */
 export function getBenchmarkAgeInDays(benchmark: ClientBenchmark): number {
   const now = new Date();
-  const recordedDate = benchmark.recordedAt
-    ? new Date(benchmark.recordedAt)
-    : benchmark.repMaxes?.[0]
-    ? new Date(benchmark.repMaxes[0].recordedAt)
-    : now;
+
+  // Get the most recent recordedAt date from the benchmark
+  let recordedDate: Date;
+
+  if (benchmark.recordedAt) {
+    recordedDate = new Date(benchmark.recordedAt);
+  } else if (benchmark.repMaxes?.[0]?.recordedAt) {
+    recordedDate = new Date(benchmark.repMaxes[0].recordedAt);
+  } else if (benchmark.timeSubMaxes?.[0]?.recordedAt) {
+    recordedDate = new Date(benchmark.timeSubMaxes[0].recordedAt);
+  } else if (benchmark.distanceSubMaxes?.[0]?.recordedAt) {
+    recordedDate = new Date(benchmark.distanceSubMaxes[0].recordedAt);
+  } else {
+    recordedDate = now;  // Fallback for benchmarks with no dates
+  }
+
   const ageMs = now.getTime() - recordedDate.getTime();
   return Math.floor(ageMs / (24 * 60 * 60 * 1000));
 }
@@ -339,4 +360,48 @@ export function formatDistanceSubMaxes(
       time: formatTimeSeconds(dsm.timeSeconds)
     };
   });
+}
+
+/**
+ * Check if a timeSubMax is editable (less than or equal to 14 days old)
+ */
+export function isTimeSubMaxEditable(timeSubMax: TimeSubMax): boolean {
+  const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+  const now = new Date();
+  const recordedDate = new Date(timeSubMax.recordedAt);
+  const ageMs = now.getTime() - recordedDate.getTime();
+  return ageMs <= TWO_WEEKS_MS;
+}
+
+/**
+ * Check if a distanceSubMax is editable (less than or equal to 14 days old)
+ */
+export function isDistanceSubMaxEditable(distanceSubMax: DistanceSubMax): boolean {
+  const TWO_WEEKS_MS = 14 * 24 * 60 * 60 * 1000;
+  const now = new Date();
+  const recordedDate = new Date(distanceSubMax.recordedAt);
+  const ageMs = now.getTime() - recordedDate.getTime();
+  return ageMs <= TWO_WEEKS_MS;
+}
+
+/**
+ * Get age of a timeSubMax in days
+ */
+export function getTimeSubMaxAgeInDays(timeSubMax: TimeSubMax): number {
+  const recordedDate = new Date(timeSubMax.recordedAt);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - recordedDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
+}
+
+/**
+ * Get age of a distanceSubMax in days
+ */
+export function getDistanceSubMaxAgeInDays(distanceSubMax: DistanceSubMax): number {
+  const recordedDate = new Date(distanceSubMax.recordedAt);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - recordedDate.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays;
 }

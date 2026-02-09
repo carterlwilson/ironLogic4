@@ -18,6 +18,8 @@ function getBenchmarkTypeColor(type: BenchmarkType): string {
       return 'blue';
     case BenchmarkType.TIME:
       return 'green';
+    case BenchmarkType.DISTANCE:
+      return 'teal';
     case BenchmarkType.REPS:
       return 'orange';
     case BenchmarkType.OTHER:
@@ -113,26 +115,58 @@ export function MyBenchmarkRow({
             </Tooltip>
           ) : (
             <>
-              {isEditable ? (
-                <Tooltip label="Edit benchmark (less than 1 week old)">
-                  <ActionIcon
-                    variant="light"
-                    color="forestGreen"
-                    onClick={() => onEdit?.(benchmark)}
-                  >
-                    <IconEdit size={16} />
-                  </ActionIcon>
-                </Tooltip>
+              {/* WEIGHT, DISTANCE, and TIME benchmarks check editability */}
+              {(benchmark.type === BenchmarkType.WEIGHT ||
+                benchmark.type === BenchmarkType.DISTANCE ||
+                benchmark.type === BenchmarkType.TIME) ? (
+                <>
+                  {isEditable ? (
+                    <Tooltip label="Edit benchmark (less than 2 weeks old)">
+                      <ActionIcon
+                        variant="light"
+                        color="forestGreen"
+                        onClick={() => onEdit?.(benchmark)}
+                      >
+                        <IconEdit size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip label="Create new benchmark (this one is older than 2 weeks)">
+                      <ActionIcon
+                        variant="light"
+                        color="orange"
+                        onClick={() => onCreateNew?.(benchmark)}
+                      >
+                        <IconRefresh size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                </>
               ) : (
-                <Tooltip label="Cannot edit - benchmark is more than 1 week old. Create a new one instead.">
-                  <ActionIcon
-                    variant="light"
-                    color="forestGreen"
-                    onClick={() => onCreateNew?.(benchmark)}
-                  >
-                    <IconRefresh size={16} />
-                  </ActionIcon>
-                </Tooltip>
+                <>
+                  {/* REPS and OTHER types - existing logic */}
+                  {isEditable ? (
+                    <Tooltip label="Edit benchmark (less than 2 weeks old)">
+                      <ActionIcon
+                        variant="light"
+                        color="forestGreen"
+                        onClick={() => onEdit?.(benchmark)}
+                      >
+                        <IconEdit size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                  ) : (
+                    <Tooltip label="Cannot edit - benchmark is more than 2 weeks old. Create a new one instead.">
+                      <ActionIcon
+                        variant="light"
+                        color="forestGreen"
+                        onClick={() => onCreateNew?.(benchmark)}
+                      >
+                        <IconRefresh size={16} />
+                      </ActionIcon>
+                    </Tooltip>
+                  )}
+                </>
               )}
             </>
           )}
