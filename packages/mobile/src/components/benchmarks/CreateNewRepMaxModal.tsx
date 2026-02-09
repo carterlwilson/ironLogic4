@@ -3,7 +3,7 @@ import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
 import { ClientBenchmark, BenchmarkTemplate, CreateMyBenchmarkInput, RepMax } from '@ironlogic4/shared';
 import { IconWeight, IconCalendar } from '@tabler/icons-react';
-import { formatDateForInput, formatDate, getRepMaxAgeInDays, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
+import { formatDateForInput, formatDate, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
 
 interface CreateNewRepMaxModalProps {
   opened: boolean;
@@ -97,7 +97,6 @@ export function CreateNewRepMaxModal({
 
   if (!oldBenchmark || !targetRepMax || !template) return null;
 
-  const ageInDays = getRepMaxAgeInDays(targetRepMax);
   const targetTemplateRepMax = template.templateRepMaxes?.find(
     trm => trm.id === targetRepMax.templateRepMaxId
   );
@@ -112,14 +111,6 @@ export function CreateNewRepMaxModal({
     >
       <form onSubmit={handleSubmit}>
         <Stack gap="md">
-          {/* Info Text */}
-          <Paper p="md" radius="md" bg="orange.0" withBorder>
-            <Text size="sm" c="orange.9">
-              This rep max is {ageInDays} days old and can no longer be edited directly.
-              Create a new benchmark to update your progress. The old benchmark will be moved to your history.
-            </Text>
-          </Paper>
-
           {/* Old Rep Max Reference */}
           <div>
             <Text size="xs" c="dimmed" mb="xs">

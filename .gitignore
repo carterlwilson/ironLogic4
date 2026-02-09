@@ -26,9 +26,16 @@ logs/
 *.log
 npm-debug.log*
 
+# Backups (created by syncProdData script)
+packages/server/backups/*
+!packages/server/backups/.gitkeep
+
 # Testing
 coverage/
 
 # Temporary files
 *.tmp
 .cache/
+
+# Claude
+claude_features.md

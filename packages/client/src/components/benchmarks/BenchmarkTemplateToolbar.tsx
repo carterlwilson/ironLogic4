@@ -16,6 +16,7 @@ const typeFilterOptions = [
   { value: '', label: 'All Types' },
   { value: BenchmarkType.WEIGHT, label: 'Weight' },
   { value: BenchmarkType.TIME, label: 'Time' },
+  { value: BenchmarkType.DISTANCE, label: 'Distance' },
   { value: BenchmarkType.REPS, label: 'Reps' },
   { value: BenchmarkType.OTHER, label: 'Other' },
 ];

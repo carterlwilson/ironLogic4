@@ -6,7 +6,10 @@ import {
   CreateMyBenchmarkInput,
   UpdateMyBenchmarkInput,
   RepMax,
+  TimeSubMax,
+  DistanceSubMax,
 } from '@ironlogic4/shared';
+import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 import {
   getBenchmarks,
   createBenchmark,
@@ -64,6 +67,37 @@ export function useBenchmarks() {
     template: BenchmarkTemplate;
     templateRepMaxName: string;
     templateRepMaxReps: number;
+  } | null>(null);
+
+  const [selectedTimeSubMax, setSelectedTimeSubMax] = useState<{
+    timeSubMax: TimeSubMax;
+    benchmarkId: string;
+    allTimeSubMaxes: TimeSubMax[];
+    templateSubMaxName: string;
+    benchmarkName: string;
+    distanceUnit: DistanceUnit;
+  } | null>(null);
+  const [isEditTimeSubMaxOpen, setIsEditTimeSubMaxOpen] = useState(false);
+  const [selectedTimeSubMaxForNew, setSelectedTimeSubMaxForNew] = useState<{
+    timeSubMax: TimeSubMax;
+    benchmark: ClientBenchmark;
+    template: BenchmarkTemplate;
+    templateSubMaxName: string;
+  } | null>(null);
+
+  const [selectedDistanceSubMax, setSelectedDistanceSubMax] = useState<{
+    distanceSubMax: DistanceSubMax;
+    benchmarkId: string;
+    allDistanceSubMaxes: DistanceSubMax[];
+    templateDistanceSubMaxName: string;
+    benchmarkName: string;
+  } | null>(null);
+  const [isEditDistanceSubMaxOpen, setIsEditDistanceSubMaxOpen] = useState(false);
+  const [selectedDistanceSubMaxForNew, setSelectedDistanceSubMaxForNew] = useState<{
+    distanceSubMax: DistanceSubMax;
+    benchmark: ClientBenchmark;
+    template: BenchmarkTemplate;
+    templateDistanceSubMaxName: string;
   } | null>(null);
 
   /**
@@ -241,6 +275,12 @@ export function useBenchmarks() {
     setIsEditRepMaxOpen(false);
     setSelectedRepMax(null);
     setSelectedRepMaxForNew(null);
+    setIsEditTimeSubMaxOpen(false);
+    setSelectedTimeSubMax(null);
+    setSelectedTimeSubMaxForNew(null);
+    setIsEditDistanceSubMaxOpen(false);
+    setSelectedDistanceSubMax(null);
+    setSelectedDistanceSubMaxForNew(null);
   }, []);
 
   /**
@@ -266,6 +306,50 @@ export function useBenchmarks() {
   );
 
   /**
+   * Open edit time sub max modal
+   */
+  const openEditTimeSubMax = useCallback(
+    (timeSubMax: TimeSubMax, benchmarkId: string, allTimeSubMaxes: TimeSubMax[], templateSubMaxName: string, benchmarkName: string, distanceUnit: DistanceUnit) => {
+      setSelectedTimeSubMax({ timeSubMax, benchmarkId, allTimeSubMaxes, templateSubMaxName, benchmarkName, distanceUnit });
+      setIsEditTimeSubMaxOpen(true);
+    },
+    []
+  );
+
+  /**
+   * Open create new from old time sub max modal
+   */
+  const openCreateNewTimeSubMax = useCallback(
+    (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => {
+      setSelectedTimeSubMaxForNew({ timeSubMax, benchmark, template, templateSubMaxName });
+      setModalState((prev) => ({ ...prev, isCreateNewRepMaxOpen: true }));
+    },
+    []
+  );
+
+  /**
+   * Open edit distance sub max modal
+   */
+  const openEditDistanceSubMax = useCallback(
+    (distanceSubMax: DistanceSubMax, benchmarkId: string, allDistanceSubMaxes: DistanceSubMax[], templateDistanceSubMaxName: string, benchmarkName: string) => {
+      setSelectedDistanceSubMax({ distanceSubMax, benchmarkId, allDistanceSubMaxes, templateDistanceSubMaxName, benchmarkName });
+      setIsEditDistanceSubMaxOpen(true);
+    },
+    []
+  );
+
+  /**
+   * Open create new from old distance sub max modal
+   */
+  const openCreateNewDistanceSubMax = useCallback(
+    (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => {
+      setSelectedDistanceSubMaxForNew({ distanceSubMax, benchmark, template, templateDistanceSubMaxName });
+      setModalState((prev) => ({ ...prev, isCreateNewRepMaxOpen: true }));
+    },
+    []
+  );
+
+  /**
    * Update a specific rep max
    */
   const handleUpdateRepMax = useCallback(
@@ -273,6 +357,30 @@ export function useBenchmarks() {
       await handleUpdateBenchmark(benchmarkId, { repMaxes: updatedRepMaxes });
       setIsEditRepMaxOpen(false);
       setSelectedRepMax(null);
+    },
+    [handleUpdateBenchmark]
+  );
+
+  /**
+   * Update a specific time sub max
+   */
+  const handleUpdateTimeSubMax = useCallback(
+    async (benchmarkId: string, updatedTimeSubMaxes: TimeSubMax[]) => {
+      await handleUpdateBenchmark(benchmarkId, { timeSubMaxes: updatedTimeSubMaxes });
+      setIsEditTimeSubMaxOpen(false);
+      setSelectedTimeSubMax(null);
+    },
+    [handleUpdateBenchmark]
+  );
+
+  /**
+   * Update a specific distance sub max
+   */
+  const handleUpdateDistanceSubMax = useCallback(
+    async (benchmarkId: string, updatedDistanceSubMaxes: DistanceSubMax[]) => {
+      await handleUpdateBenchmark(benchmarkId, { distanceSubMaxes: updatedDistanceSubMaxes });
+      setIsEditDistanceSubMaxOpen(false);
+      setSelectedDistanceSubMax(null);
     },
     [handleUpdateBenchmark]
   );
@@ -304,6 +412,12 @@ export function useBenchmarks() {
     selectedTemplate: modalState.selectedTemplate,
     selectedRepMax,
     selectedRepMaxForNew,
+    isEditTimeSubMaxOpen,
+    selectedTimeSubMax,
+    selectedTimeSubMaxForNew,
+    isEditDistanceSubMaxOpen,
+    selectedDistanceSubMax,
+    selectedDistanceSubMaxForNew,
 
     // Actions
     loadBenchmarks,
@@ -311,11 +425,17 @@ export function useBenchmarks() {
     handleCreateBenchmark,
     handleUpdateBenchmark,
     handleUpdateRepMax,
+    handleUpdateTimeSubMax,
+    handleUpdateDistanceSubMax,
     openCreate,
     openEdit,
     openCreateNewFromOld,
     openEditRepMax,
     openCreateNewRepMax,
+    openEditTimeSubMax,
+    openCreateNewTimeSubMax,
+    openEditDistanceSubMax,
+    openCreateNewDistanceSubMax,
     closeModals,
   };
 }
