@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Paper, Stack, Group, Text, ActionIcon, Collapse, Badge, TextInput, Button, Menu } from '@mantine/core';
-import { IconChevronDown, IconChevronRight, IconEdit, IconTrash, IconPlus, IconCopy, IconDots } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronRight, IconEdit, IconTrash, IconPlus, IconCopy, IconDots, IconGripVertical } from '@tabler/icons-react';
 import { WeekList } from './WeekList';
 import { BlockActivityGroupTargets } from './BlockActivityGroupTargets';
 import { addWeek, deleteBlock, updateBlock, copyBlock } from '../../../utils/programHelpers';
@@ -26,9 +26,10 @@ interface BlockItemProps {
   distanceBenchmarkOptions: Array<{ value: string; label: string }>;
   timeBenchmarkOptions: Array<{ value: string; label: string }>;
   isCurrentBlock?: boolean;
+  dragHandleProps?: any;
 }
 
-export function BlockItem({ block, program, onProgramChange, onProgramChangeWithAutoSave, isExpanded, onToggleExpanded, expandedIds, toggleExpanded, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, isCurrentBlock }: BlockItemProps) {
+export function BlockItem({ block, program, onProgramChange, onProgramChangeWithAutoSave, isExpanded, onToggleExpanded, expandedIds, toggleExpanded, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, isCurrentBlock, dragHandleProps }: BlockItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(block.name);
 
@@ -81,6 +82,17 @@ export function BlockItem({ block, program, onProgramChange, onProgramChangeWith
         {/* Block Header */}
         <Group justify="space-between" wrap="nowrap">
           <Group gap="xs" style={{ flex: 1 }}>
+            {dragHandleProps && (
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="sm"
+                style={{ cursor: 'grab' }}
+                {...dragHandleProps}
+              >
+                <IconGripVertical size={18} />
+              </ActionIcon>
+            )}
             <ActionIcon
               variant="subtle"
               size="sm"
