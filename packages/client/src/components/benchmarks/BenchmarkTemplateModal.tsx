@@ -145,8 +145,37 @@ export function BenchmarkTemplateModal({
 
     if (isEditMode) {
       // For update, we don't send gymId
-      const { gymId: _, ...updateData } = values;
-      await onSubmit(updateData);
+      const { gymId: _, templateRepMaxes: _r, templateTimeSubMaxes: _t, templateDistanceSubMaxes: _ds, distanceUnit: _d, ...cleanValues } = values as any;
+
+      // Build payload based on type (same logic as create mode)
+      let payload: any = { ...cleanValues };
+
+      // For WEIGHT type benchmarks, include templateRepMaxes
+      if (cleanValues.type === BenchmarkType.WEIGHT) {
+        payload.templateRepMaxes = [
+          { reps: 1, name: '1RM' },
+          { reps: 2, name: '2RM' },
+          { reps: 3, name: '3RM' },
+          { reps: 5, name: '5RM' },
+          { reps: 8, name: '8RM' },
+        ];
+      }
+
+      // For DISTANCE type benchmarks, include templateTimeSubMaxes and distanceUnit
+      if (cleanValues.type === BenchmarkType.DISTANCE) {
+        const validTimeSubMaxes = timeSubMaxes.filter(tsm => tsm.name.trim());
+        payload.templateTimeSubMaxes = validTimeSubMaxes;
+        payload.distanceUnit = distanceUnit;
+      }
+
+      // For TIME type benchmarks, include templateDistanceSubMaxes and distanceUnit
+      if (cleanValues.type === BenchmarkType.TIME) {
+        const validDistanceSubMaxes = distanceSubMaxes.filter(dsm => dsm.name.trim());
+        payload.templateDistanceSubMaxes = validDistanceSubMaxes;
+        payload.distanceUnit = distanceUnit;
+      }
+
+      await onSubmit(payload);
     } else {
       // Remove any existing templateRepMaxes/templateTimeSubMaxes/templateDistanceSubMaxes from values to avoid contamination
       const { templateRepMaxes: _r, templateTimeSubMaxes: _t, templateDistanceSubMaxes: _ds, distanceUnit: _d, ...cleanValues } = values as any;
