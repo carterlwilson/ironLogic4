@@ -298,6 +298,63 @@ export function reorderActivities(program: IProgram, dayId: string, reorderedAct
 }
 
 /**
+ * Reorder blocks in a program
+ */
+export function reorderBlocks(program: IProgram, reorderedBlocks: IBlock[]): IProgram {
+  return produce(program, draft => {
+    const idOrder = reorderedBlocks.map(b => b.id);
+    draft.blocks.sort((a, b) => {
+      return idOrder.indexOf(a.id) - idOrder.indexOf(b.id);
+    });
+    // Update order property
+    draft.blocks.forEach((block, index) => {
+      block.order = index;
+    });
+  });
+}
+
+/**
+ * Reorder weeks in a block
+ */
+export function reorderWeeks(program: IProgram, blockId: string, reorderedWeeks: IWeek[]): IProgram {
+  return produce(program, draft => {
+    const block = draft.blocks.find(b => b.id === blockId);
+    if (block) {
+      const idOrder = reorderedWeeks.map(w => w.id);
+      block.weeks.sort((a, b) => {
+        return idOrder.indexOf(a.id) - idOrder.indexOf(b.id);
+      });
+      // Update order property
+      block.weeks.forEach((week, index) => {
+        week.order = index;
+      });
+    }
+  });
+}
+
+/**
+ * Reorder days in a week
+ */
+export function reorderDays(program: IProgram, weekId: string, reorderedDays: IDay[]): IProgram {
+  return produce(program, draft => {
+    for (const block of draft.blocks) {
+      const week = block.weeks.find(w => w.id === weekId);
+      if (week) {
+        const idOrder = reorderedDays.map(d => d.id);
+        week.days.sort((a, b) => {
+          return idOrder.indexOf(a.id) - idOrder.indexOf(b.id);
+        });
+        // Update order property
+        week.days.forEach((day, index) => {
+          day.order = index;
+        });
+        return;
+      }
+    }
+  });
+}
+
+/**
  * Recursively generate new IDs for an activity and return a new object
  */
 function regenerateActivityIds(activity: IActivity): IActivity {

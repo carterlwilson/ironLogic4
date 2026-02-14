@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Paper, Stack, Group, Text, ActionIcon, Collapse, Badge, TextInput, Button, Menu } from '@mantine/core';
-import { IconChevronDown, IconChevronRight, IconEdit, IconTrash, IconPlus, IconCopy, IconDots } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronRight, IconEdit, IconTrash, IconPlus, IconCopy, IconDots, IconGripVertical } from '@tabler/icons-react';
 import { DayList } from './DayList';
 import { WeekActivityGroupTargets } from './WeekActivityGroupTargets';
 import { addDay, deleteWeek, updateWeek, copyWeek } from '../../../utils/programHelpers';
@@ -27,9 +27,10 @@ interface WeekItemProps {
   distanceBenchmarkOptions: Array<{ value: string; label: string }>;
   timeBenchmarkOptions: Array<{ value: string; label: string }>;
   isCurrentWeek?: boolean;
+  dragHandleProps?: any;
 }
 
-export function WeekItem({ week, program, onProgramChange, onProgramChangeWithAutoSave, isExpanded, onToggleExpanded, expandedIds, toggleExpanded, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, isCurrentWeek }: WeekItemProps) {
+export function WeekItem({ week, program, onProgramChange, onProgramChangeWithAutoSave, isExpanded, onToggleExpanded, expandedIds, toggleExpanded, templateMap, templates, groupOptions, benchmarkTemplates, weightBenchmarkOptions, distanceBenchmarkOptions, timeBenchmarkOptions, isCurrentWeek, dragHandleProps }: WeekItemProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(week.name);
 
@@ -80,6 +81,17 @@ export function WeekItem({ week, program, onProgramChange, onProgramChangeWithAu
         {/* Week Header */}
         <Group justify="space-between" wrap="nowrap">
           <Group gap="xs" style={{ flex: 1 }}>
+            {dragHandleProps && (
+              <ActionIcon
+                variant="subtle"
+                color="gray"
+                size="sm"
+                style={{ cursor: 'grab' }}
+                {...dragHandleProps}
+              >
+                <IconGripVertical size={18} />
+              </ActionIcon>
+            )}
             <ActionIcon
               variant="subtle"
               size="sm"
