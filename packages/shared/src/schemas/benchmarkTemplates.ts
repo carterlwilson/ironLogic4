@@ -7,6 +7,7 @@ const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format'
  * Schema for TemplateRepMax subdocument
  */
 const templateRepMaxSchema = z.object({
+  id: z.string().optional(),  // Optional ID for preserving existing submaxes during updates
   reps: z.number().int().min(1).max(50),
   name: z.string().min(1).max(20)
 });
@@ -15,6 +16,7 @@ const templateRepMaxSchema = z.object({
  * Schema for TemplateTimeSubMax subdocument
  */
 const templateTimeSubMaxSchema = z.object({
+  id: z.string().optional(),  // Optional ID for preserving existing submaxes during updates
   name: z.string().min(1).max(30)  // e.g., "1 min", "3 min", "5 min"
 });
 
@@ -22,6 +24,7 @@ const templateTimeSubMaxSchema = z.object({
  * Schema for TemplateDistanceSubMax subdocument
  */
 const templateDistanceSubMaxSchema = z.object({
+  id: z.string().optional(),  // Optional ID for preserving existing submaxes during updates
   name: z.string().min(1).max(30)  // e.g., "100m", "500m", "1 mile"
 });
 

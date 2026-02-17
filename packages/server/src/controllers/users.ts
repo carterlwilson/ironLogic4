@@ -223,20 +223,14 @@ export const updateUser = async (
       }
     }
 
-    // Update user
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    ).select('-password');
+    // Update user fields
+    Object.assign(existingUser, updateData);
 
-    if (!updatedUser) {
-      res.status(404).json({
-        success: false,
-        error: 'User not found',
-      } as ApiResponse);
-      return;
-    }
+    // Save user (triggers pre-save hook for password hashing)
+    await existingUser.save();
+
+    // Return user without password (toJSON automatically excludes password)
+    const updatedUser = existingUser.toJSON();
 
     res.json({
       success: true,

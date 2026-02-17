@@ -75,8 +75,9 @@ export function CreateNewTimeSubMaxModal({
         )
       : (typeof values.distanceValue === 'string' ? parseFloat(values.distanceValue) : values.distanceValue);
 
-    // Build timeSubMaxes array: updated target + copied others
-    const timeSubMaxes = (oldBenchmark.timeSubMaxes || []).map(tsm => {
+    // Build timeSubMaxes array: updated target + copied others + new template submaxes
+    // Step 1: Update or copy existing time submaxes
+    const existingTimeSubMaxes = (oldBenchmark.timeSubMaxes || []).map(tsm => {
       if (tsm.id === targetTimeSubMax.id) {
         // This is the target time sub-max - use new values
         return {
@@ -93,6 +94,18 @@ export function CreateNewTimeSubMaxModal({
         };
       }
     });
+
+    // Step 2: Add NEW template submaxes that don't exist in old benchmark
+    const newTemplateTimeSubMaxes = (template?.templateTimeSubMaxes || [])
+      .filter(ttsm => !oldBenchmark.timeSubMaxes?.some(tsm => tsm.templateSubMaxId === ttsm.id))
+      .map(ttsm => ({
+        templateSubMaxId: ttsm.id,
+        distanceMeters: 0,  // Default value for new submaxes
+        recordedAt: recordedDate,
+      }));
+
+    // Step 3: Combine both
+    const timeSubMaxes = [...existingTimeSubMaxes, ...newTemplateTimeSubMaxes];
 
     const data: CreateMyBenchmarkInput = {
       templateId: oldBenchmark.templateId,

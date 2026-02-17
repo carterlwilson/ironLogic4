@@ -53,14 +53,14 @@ export function BenchmarkTemplateModal({
   const [distanceUnit, setDistanceUnit] = React.useState<DistanceUnit>(
     template?.distanceUnit || DistanceUnit.METERS
   );
-  const [timeSubMaxes, setTimeSubMaxes] = React.useState<Array<{ name: string }>>(
+  const [timeSubMaxes, setTimeSubMaxes] = React.useState<Array<{ id?: string; name: string }>>(
     template?.templateTimeSubMaxes || [
       { name: '1 min' },
       { name: '3 min' },
       { name: '5 min' },
     ]
   );
-  const [distanceSubMaxes, setDistanceSubMaxes] = React.useState<Array<{ name: string }>>(
+  const [distanceSubMaxes, setDistanceSubMaxes] = React.useState<Array<{ id?: string; name: string }>>(
     template?.templateDistanceSubMaxes || [
       { name: '100m' },
       { name: '250m' },

@@ -24,9 +24,9 @@ export interface UpdateBenchmarkTemplateRequest {
   notes?: string;
   type?: BenchmarkType;
   tags?: string[];
-  templateRepMaxes?: Omit<TemplateRepMax, 'id'>[];
-  templateTimeSubMaxes?: Array<{ name: string }>;
-  templateDistanceSubMaxes?: Array<{ name: string }>;
+  templateRepMaxes?: Array<{ id?: string; reps: number; name: string }>;
+  templateTimeSubMaxes?: Array<{ id?: string; name: string }>;
+  templateDistanceSubMaxes?: Array<{ id?: string; name: string }>;
   distanceUnit?: string;
 }
 

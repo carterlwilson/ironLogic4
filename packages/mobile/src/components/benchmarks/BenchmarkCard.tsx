@@ -7,7 +7,6 @@ import {
   formatDate,
   formatMeasurement,
   getBenchmarkAgeInDays,
-  sortRepMaxesByReps,
   isRepMaxEditable,
   isTimeSubMaxEditable,
   isDistanceSubMaxEditable,
@@ -70,11 +69,6 @@ export function BenchmarkCard({
   const getTemplateReps = (templateRepMaxId: string) => {
     return getTemplateRepMax(templateRepMaxId)?.reps;
   };
-
-  // Sort rep maxes for display
-  const sortedRepMaxes = benchmark.repMaxes
-    ? sortRepMaxesByReps(benchmark.repMaxes, getTemplateReps)
-    : [];
 
   const handleEditRepMax = (repMax: RepMax) => {
     if (onEditRepMax && benchmark.repMaxes) {
@@ -253,38 +247,58 @@ export function BenchmarkCard({
                     <Skeleton height={100} radius="md" />
                   </SimpleGrid>
                 </Stack>
-              ) : sortedRepMaxes.length > 0 ? (
+              ) : template.templateRepMaxes && template.templateRepMaxes.length > 0 ? (
                 <Stack gap="sm">
                   <Text size="sm" fw={500} c="dimmed">Rep Maxes</Text>
                   <SimpleGrid cols={2} spacing="sm">
-                    {sortedRepMaxes.map((repMax) => {
-                      const templateRepMax = getTemplateRepMax(repMax.templateRepMaxId);
-                      if (!templateRepMax) {
-                        // Only warn if template exists but templateRepMax doesn't (genuine error)
-                        console.warn(`Template rep max not found for ID: ${repMax.templateRepMaxId} in template ${template.id}`);
-                        return null;
-                      }
-                      return (
-                        <RepMaxCard
-                          key={repMax.id}
-                          repMax={repMax}
-                          benchmarkId={benchmark.id}
-                          benchmarkName={benchmark.name}
-                          templateRepMaxName={templateRepMax.name}
-                          templateRepMaxReps={templateRepMax.reps}
-                          isHistorical={isHistorical}
-                          isEditable={isRepMaxEditable(repMax)}
-                          onEdit={() => handleEditRepMax(repMax)}
-                          onCreateNew={() => handleCreateNewRepMax(repMax)}
-                        />
-                      );
-                    })}
+                    {[...template.templateRepMaxes]
+                      .sort((a, b) => a.reps - b.reps)
+                      .map((templateRepMax) => {
+                        // Find existing rep max value for this template submax
+                        const existingRepMax = benchmark.repMaxes?.find(
+                          rm => rm.templateRepMaxId === templateRepMax.id
+                        );
+
+                        if (existingRepMax) {
+                          // Show actual value card
+                          return (
+                            <RepMaxCard
+                              key={existingRepMax.id}
+                              repMax={existingRepMax}
+                              benchmarkId={benchmark.id}
+                              benchmarkName={benchmark.name}
+                              templateRepMaxName={templateRepMax.name}
+                              templateRepMaxReps={templateRepMax.reps}
+                              isHistorical={isHistorical}
+                              isEditable={isRepMaxEditable(existingRepMax)}
+                              onEdit={() => handleEditRepMax(existingRepMax)}
+                              onCreateNew={() => handleCreateNewRepMax(existingRepMax)}
+                            />
+                          );
+                        } else {
+                          // Show placeholder card for unrecorded submax
+                          return (
+                            <Paper
+                              key={templateRepMax.id}
+                              withBorder
+                              p="sm"
+                              radius="md"
+                              style={{ opacity: 0.6 }}
+                            >
+                              <Stack gap="xs">
+                                <Text size="sm" fw={500}>{templateRepMax.name}</Text>
+                                <Text size="xs" c="dimmed">Not recorded yet</Text>
+                              </Stack>
+                            </Paper>
+                          );
+                        }
+                      })}
                   </SimpleGrid>
                 </Stack>
               ) : (
                 <Paper p="md" radius="md" bg="gray.0">
                   <Text size="sm" ta="center" c="dimmed">
-                    No rep maxes recorded
+                    No rep max options in template
                   </Text>
                 </Paper>
               )
@@ -298,35 +312,56 @@ export function BenchmarkCard({
                     <Skeleton height={120} radius="md" />
                   </SimpleGrid>
                 </Stack>
-              ) : benchmark.timeSubMaxes && benchmark.timeSubMaxes.length > 0 ? (
+              ) : template.templateTimeSubMaxes && template.templateTimeSubMaxes.length > 0 ? (
                 <Stack gap="sm">
                   <Text size="sm" fw={500} c="dimmed">Distances</Text>
                   <SimpleGrid cols={2} spacing="sm">
-                    {benchmark.timeSubMaxes.map((tsm) => {
-                      const templateSubMax = template?.templateTimeSubMaxes?.find(t => t.id === tsm.templateSubMaxId);
-                      if (!templateSubMax) return null;
-
-                      return (
-                        <TimeSubMaxCard
-                          key={tsm.id}
-                          timeSubMax={tsm}
-                          benchmarkId={benchmark.id}
-                          benchmarkName={benchmark.name}
-                          templateSubMaxName={templateSubMax.name}
-                          distanceUnit={template.distanceUnit!}
-                          isHistorical={isHistorical}
-                          isEditable={isTimeSubMaxEditable(tsm)}
-                          onEdit={() => handleEditTimeSubMax(tsm)}
-                          onCreateNew={() => handleCreateNewTimeSubMax(tsm)}
-                        />
+                    {template.templateTimeSubMaxes.map((templateSubMax) => {
+                      // Find existing time submax value for this template submax
+                      const existingTimeSubMax = benchmark.timeSubMaxes?.find(
+                        tsm => tsm.templateSubMaxId === templateSubMax.id
                       );
+
+                      if (existingTimeSubMax) {
+                        // Show actual value card
+                        return (
+                          <TimeSubMaxCard
+                            key={existingTimeSubMax.id}
+                            timeSubMax={existingTimeSubMax}
+                            benchmarkId={benchmark.id}
+                            benchmarkName={benchmark.name}
+                            templateSubMaxName={templateSubMax.name}
+                            distanceUnit={template.distanceUnit!}
+                            isHistorical={isHistorical}
+                            isEditable={isTimeSubMaxEditable(existingTimeSubMax)}
+                            onEdit={() => handleEditTimeSubMax(existingTimeSubMax)}
+                            onCreateNew={() => handleCreateNewTimeSubMax(existingTimeSubMax)}
+                          />
+                        );
+                      } else {
+                        // Show placeholder card for unrecorded submax
+                        return (
+                          <Paper
+                            key={templateSubMax.id}
+                            withBorder
+                            p="sm"
+                            radius="md"
+                            style={{ opacity: 0.6 }}
+                          >
+                            <Stack gap="xs">
+                              <Text size="sm" fw={500}>{templateSubMax.name}</Text>
+                              <Text size="xs" c="dimmed">Not recorded yet</Text>
+                            </Stack>
+                          </Paper>
+                        );
+                      }
                     })}
                   </SimpleGrid>
                 </Stack>
               ) : (
                 <Paper p="md" radius="md" bg="gray.0">
                   <Text size="sm" ta="center" c="dimmed">
-                    No distances recorded
+                    No distance options in template
                   </Text>
                 </Paper>
               )
@@ -340,34 +375,55 @@ export function BenchmarkCard({
                     <Skeleton height={120} radius="md" />
                   </SimpleGrid>
                 </Stack>
-              ) : benchmark.distanceSubMaxes && benchmark.distanceSubMaxes.length > 0 ? (
+              ) : template.templateDistanceSubMaxes && template.templateDistanceSubMaxes.length > 0 ? (
                 <Stack gap="sm">
                   <Text size="sm" fw={500} c="dimmed">Times</Text>
                   <SimpleGrid cols={2} spacing="sm">
-                    {benchmark.distanceSubMaxes.map((dsm) => {
-                      const templateDistanceSubMax = template?.templateDistanceSubMaxes?.find(t => t.id === dsm.templateDistanceSubMaxId);
-                      if (!templateDistanceSubMax) return null;
-
-                      return (
-                        <DistanceSubMaxCard
-                          key={dsm.id}
-                          distanceSubMax={dsm}
-                          benchmarkId={benchmark.id}
-                          benchmarkName={benchmark.name}
-                          templateDistanceSubMaxName={templateDistanceSubMax.name}
-                          isHistorical={isHistorical}
-                          isEditable={isDistanceSubMaxEditable(dsm)}
-                          onEdit={() => handleEditDistanceSubMax(dsm)}
-                          onCreateNew={() => handleCreateNewDistanceSubMax(dsm)}
-                        />
+                    {template.templateDistanceSubMaxes.map((templateDistanceSubMax) => {
+                      // Find existing distance submax value for this template submax
+                      const existingDistanceSubMax = benchmark.distanceSubMaxes?.find(
+                        dsm => dsm.templateDistanceSubMaxId === templateDistanceSubMax.id
                       );
+
+                      if (existingDistanceSubMax) {
+                        // Show actual value card
+                        return (
+                          <DistanceSubMaxCard
+                            key={existingDistanceSubMax.id}
+                            distanceSubMax={existingDistanceSubMax}
+                            benchmarkId={benchmark.id}
+                            benchmarkName={benchmark.name}
+                            templateDistanceSubMaxName={templateDistanceSubMax.name}
+                            isHistorical={isHistorical}
+                            isEditable={isDistanceSubMaxEditable(existingDistanceSubMax)}
+                            onEdit={() => handleEditDistanceSubMax(existingDistanceSubMax)}
+                            onCreateNew={() => handleCreateNewDistanceSubMax(existingDistanceSubMax)}
+                          />
+                        );
+                      } else {
+                        // Show placeholder card for unrecorded submax
+                        return (
+                          <Paper
+                            key={templateDistanceSubMax.id}
+                            withBorder
+                            p="sm"
+                            radius="md"
+                            style={{ opacity: 0.6 }}
+                          >
+                            <Stack gap="xs">
+                              <Text size="sm" fw={500}>{templateDistanceSubMax.name}</Text>
+                              <Text size="xs" c="dimmed">Not recorded yet</Text>
+                            </Stack>
+                          </Paper>
+                        );
+                      }
                     })}
                   </SimpleGrid>
                 </Stack>
               ) : (
                 <Paper p="md" radius="md" bg="gray.0">
                   <Text size="sm" ta="center" c="dimmed">
-                    No times recorded
+                    No time options in template
                   </Text>
                 </Paper>
               )
