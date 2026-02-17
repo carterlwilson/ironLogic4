@@ -326,6 +326,43 @@ export const updateBenchmarkTemplate = async (
       createdBy: undefined, // Never allow changing creator
     };
 
+    // Preserve IDs for existing submaxes to maintain client benchmark references
+    if (sanitizedUpdateData.templateTimeSubMaxes) {
+      sanitizedUpdateData.templateTimeSubMaxes = sanitizedUpdateData.templateTimeSubMaxes.map((item: any) => {
+        if (item.id) {
+          // Has ID from client - preserve it (editing existing)
+          return { _id: item.id, name: item.name };
+        } else {
+          // No ID - let Mongoose generate new one (new item)
+          return { name: item.name };
+        }
+      });
+    }
+
+    if (sanitizedUpdateData.templateDistanceSubMaxes) {
+      sanitizedUpdateData.templateDistanceSubMaxes = sanitizedUpdateData.templateDistanceSubMaxes.map((item: any) => {
+        if (item.id) {
+          // Has ID from client - preserve it (editing existing)
+          return { _id: item.id, name: item.name };
+        } else {
+          // No ID - let Mongoose generate new one (new item)
+          return { name: item.name };
+        }
+      });
+    }
+
+    if (sanitizedUpdateData.templateRepMaxes) {
+      sanitizedUpdateData.templateRepMaxes = sanitizedUpdateData.templateRepMaxes.map((item: any) => {
+        if (item.id) {
+          // Has ID from client - preserve it (editing existing)
+          return { _id: item.id, reps: item.reps, name: item.name };
+        } else {
+          // No ID - let Mongoose generate new one (new item)
+          return { reps: item.reps, name: item.name };
+        }
+      });
+    }
+
     const updatedTemplate = await BenchmarkTemplate.findByIdAndUpdate(
       id,
       sanitizedUpdateData,
