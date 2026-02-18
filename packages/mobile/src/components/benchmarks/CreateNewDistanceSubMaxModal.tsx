@@ -61,8 +61,9 @@ export function CreateNewDistanceSubMaxModal({
     const recordedDate = parseDateStringToLocalDate(values.recordedAt);
     const newTimeSeconds = typeof values.timeSeconds === 'string' ? parseFloat(values.timeSeconds) : values.timeSeconds;
 
-    // Build distanceSubMaxes array: updated target + copied others
-    const distanceSubMaxes = (oldBenchmark.distanceSubMaxes || []).map(dsm => {
+    // Build distanceSubMaxes array: updated target + copied others + new template submaxes
+    // Step 1: Update or copy existing distance submaxes
+    const existingDistanceSubMaxes = (oldBenchmark.distanceSubMaxes || []).map(dsm => {
       if (dsm.id === targetDistanceSubMax.id) {
         // This is the target distance sub-max - use new values
         return {
@@ -79,6 +80,18 @@ export function CreateNewDistanceSubMaxModal({
         };
       }
     });
+
+    // Step 2: Add NEW template submaxes that don't exist in old benchmark
+    const newTemplateDistanceSubMaxes = (template?.templateDistanceSubMaxes || [])
+      .filter(tdsm => !oldBenchmark.distanceSubMaxes?.some(dsm => dsm.templateDistanceSubMaxId === tdsm.id))
+      .map(tdsm => ({
+        templateDistanceSubMaxId: tdsm.id,
+        timeSeconds: 0,  // Default value for new submaxes
+        recordedAt: recordedDate,
+      }));
+
+    // Step 3: Combine both
+    const distanceSubMaxes = [...existingDistanceSubMaxes, ...newTemplateDistanceSubMaxes];
 
     const data: CreateMyBenchmarkInput = {
       templateId: oldBenchmark.templateId,
