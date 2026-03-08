@@ -45,7 +45,8 @@ interface GetBenchmarkProgressResponse {
     benchmarkName: string;
     benchmarkType: BenchmarkType;
     unit: string;
-    chartData: Array<{ date: string; value: number }>;
+    chartData: Array<Record<string, any>>;
+    series: Array<{ name: string; label: string }>;
   };
 }
 
@@ -105,7 +106,8 @@ export async function getBenchmarkProgress(
   benchmarkName: string;
   benchmarkType: BenchmarkType;
   unit: string;
-  chartData: Array<{ date: string; value: number }>;
+  chartData: Array<Record<string, any>>;
+  series: Array<{ name: string; label: string }>;
 }> {
   // Build query params
   const queryParams = new URLSearchParams();
