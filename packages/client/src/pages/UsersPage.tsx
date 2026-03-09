@@ -47,8 +47,6 @@ export function UsersPage() {
     setSearchQuery,
     setRoleFilter,
     clearFilters,
-    page,
-    pageSize,
     setPage,
     setPageSize,
     queryParams,
