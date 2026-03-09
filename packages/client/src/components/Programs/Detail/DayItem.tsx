@@ -35,7 +35,11 @@ export function DayItem({ day, program, onProgramChange, onProgramChangeWithAuto
       const updated = updateDay(program, day.id, (d) => {
         d.name = editValue.trim();
       });
-      onProgramChange(updated);
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
       setIsEditing(false);
     }
   };
@@ -59,13 +63,21 @@ export function DayItem({ day, program, onProgramChange, onProgramChangeWithAuto
   const handleDelete = () => {
     if (confirm(`Delete day "${day.name}"? This will delete all activities.`)) {
       const updated = deleteDay(program, day.id);
-      onProgramChange(updated);
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
     }
   };
 
   const handleCopy = () => {
     const updated = copyDay(program, day.id);
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   return (

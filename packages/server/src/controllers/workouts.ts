@@ -334,7 +334,7 @@ export const getCurrentWeekWorkouts = async (
                 calculatedDistanceMeters = (timeSubMax.distanceMeters * activity.percentageOfMax) / 100;
               } else {
                 calculatedDistanceMeters = null;
-                errorMessage = 'Client has not recorded this specific interval';
+                errorMessage = `We don't have a recorded benchmark for you for ${benchmarkName} - ${interval}`;
               }
 
               benchmarkNameForCardio = `${benchmarkName} - ${interval}`;
@@ -345,7 +345,7 @@ export const getCurrentWeekWorkouts = async (
               benchmarkNameForCardio = `${benchmarkName} - ${interval}`;
               intervalName = interval;
               cardioDistanceUnit = distanceUnit;
-              errorMessage = 'Client has not recorded this benchmark yet';
+              errorMessage = `We don't have a recorded benchmark for you for ${benchmarkName} - ${interval}`;
             }
           } else if (timeInfo) {
             // TIME benchmark logic (NEW)
@@ -364,7 +364,7 @@ export const getCurrentWeekWorkouts = async (
                 calculatedTimeSeconds = (distanceSubMax.timeSeconds * activity.percentageOfMax) / 100;
               } else {
                 calculatedTimeSeconds = null;
-                errorMessage = 'Client has not recorded this specific distance';
+                errorMessage = `We don't have a recorded benchmark for you for ${benchmarkName} - ${interval}`;
               }
 
               benchmarkNameForCardio = `${benchmarkName} - ${interval}`;
@@ -375,7 +375,7 @@ export const getCurrentWeekWorkouts = async (
               benchmarkNameForCardio = `${benchmarkName} - ${interval}`;
               intervalName = interval;
               distanceInterval = interval;
-              errorMessage = 'Client has not recorded this benchmark yet';
+              errorMessage = `We don't have a recorded benchmark for you for ${benchmarkName} - ${interval}`;
             }
           } else {
             calculatedDistanceMeters = null;
