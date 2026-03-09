@@ -38,7 +38,11 @@ export function BlockItem({ block, program, onProgramChange, onProgramChangeWith
       const updated = updateBlock(program, block.id, (b) => {
         b.name = editValue.trim();
       });
-      onProgramChange(updated);
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
       setIsEditing(false);
     }
   };
@@ -54,19 +58,31 @@ export function BlockItem({ block, program, onProgramChange, onProgramChangeWith
       activityGroupTargets: [],
       days: [],
     });
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   const handleDelete = () => {
     if (confirm(`Delete block "${block.name}"? This will delete all weeks, days, and activities.`)) {
       const updated = deleteBlock(program, block.id);
-      onProgramChange(updated);
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
     }
   };
 
   const handleCopy = () => {
     const updated = copyBlock(program, block.id);
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   return (
@@ -165,6 +181,7 @@ export function BlockItem({ block, program, onProgramChange, onProgramChangeWith
               block={block}
               program={program}
               onProgramChange={onProgramChange}
+              onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
               activityTemplates={templates}
               groupOptions={groupOptions}
             />

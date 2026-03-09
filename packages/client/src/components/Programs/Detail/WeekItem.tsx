@@ -39,7 +39,11 @@ export function WeekItem({ week, program, onProgramChange, onProgramChangeWithAu
       const updated = updateWeek(program, week.id, (w) => {
         w.name = editValue.trim();
       });
-      onProgramChange(updated);
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
       setIsEditing(false);
     }
   };
@@ -54,19 +58,31 @@ export function WeekItem({ week, program, onProgramChange, onProgramChangeWithAu
       name: `Day ${week.days.length + 1}`,
       activities: [],
     });
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   const handleDelete = () => {
     if (confirm(`Delete week "${week.name}"? This will delete all days and activities.`)) {
       const updated = deleteWeek(program, week.id);
-      onProgramChange(updated);
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
     }
   };
 
   const handleCopy = () => {
     const updated = copyWeek(program, week.id);
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   return (
@@ -164,6 +180,7 @@ export function WeekItem({ week, program, onProgramChange, onProgramChangeWithAu
               week={week}
               program={program}
               onProgramChange={onProgramChange}
+              onProgramChangeWithAutoSave={onProgramChangeWithAutoSave}
               activityTemplates={templates}
               groupOptions={groupOptions}
             />

@@ -1,5 +1,5 @@
 import { Modal, Stack, Group, Button, Select, NumberInput, TextInput, Textarea, Text, Paper, Badge, Checkbox } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
+import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
@@ -233,10 +233,14 @@ export function CreateBenchmarkFromTemplateModal({
             />
           )}
 
-          <DatePickerInput
+          <DateInput
             label="Recorded Date"
             placeholder="Select date"
             required
+            clearable
+            maxDate={new Date()}
+            valueFormat="MMM DD, YYYY"
+            description="When was this benchmark achieved?"
             {...form.getInputProps('recordedAt')}
           />
 
