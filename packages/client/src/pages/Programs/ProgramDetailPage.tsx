@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Title, Stack, Group, Button, Breadcrumbs, Anchor, Text, Loader, Center, Alert } from '@mantine/core';
-import { IconArrowLeft, IconDeviceFloppy, IconAlertCircle } from '@tabler/icons-react';
+import { IconArrowLeft, IconAlertCircle } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 import { useProgram, useUpdateProgramStructure } from '../../hooks/usePrograms';
 import { useActivityTemplateMap } from '../../hooks/useActivityTemplateMap';
 import { useActivityGroups } from '../../hooks/useActivityGroups';
@@ -25,7 +26,7 @@ export function ProgramDetailPage() {
   const { templates: benchmarkTemplates } = useBenchmarkTemplates(user?.gymId);
 
   const [localProgram, setLocalProgram] = useState<IProgram | null>(null);
-  const [isDirty, setIsDirty] = useState(false);
+  const lastSavedProgramRef = useRef<IProgram | null>(null);
 
   // Track which blocks, weeks, and days are expanded
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
@@ -98,54 +99,43 @@ export function ProgramDetailPage() {
   useEffect(() => {
     if (data?.data) {
       setLocalProgram(data.data);
-      setIsDirty(false);
+      lastSavedProgramRef.current = data.data;
     }
   }, [data]);
 
-  // Keyboard shortcut for saving (Ctrl+S / Cmd+S)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault();
-        if (isDirty && localProgram) {
-          handleSave();
-        }
-      }
-    };
+  const handleProgramChange = (updatedProgram: IProgram) => {
+    setLocalProgram(updatedProgram);
+  };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isDirty, localProgram]);
+  const handleProgramChangeWithAutoSave = async (updatedProgram: IProgram) => {
+    if (!programId) return;
 
-  const handleSave = async (programToSave?: IProgram) => {
-    const program = programToSave || localProgram;
-    if (!program || !programId) return;
+    // Optimistically update local state
+    setLocalProgram(updatedProgram);
 
     try {
       // Convert id → _id for Mongoose to preserve subdocument IDs
-      const programWithMongooseIds = convertIdsToMongoose(program);
+      const programWithMongooseIds = convertIdsToMongoose(updatedProgram);
 
       await updateProgramStructure.mutateAsync({
         id: programId,
         program: { blocks: programWithMongooseIds.blocks },
       });
-      setIsDirty(false);
+
+      // Update the last saved version on success
+      lastSavedProgramRef.current = updatedProgram;
     } catch (error) {
-      // Error handled by mutation
+      // Rollback to last saved state on error
+      if (lastSavedProgramRef.current) {
+        setLocalProgram(lastSavedProgramRef.current);
+        notifications.show({
+          title: 'Save Failed',
+          message: 'Changes were not saved. Please try again.',
+          color: 'red',
+          autoClose: 5000,
+        });
+      }
     }
-  };
-
-  const handleProgramChange = (updatedProgram: IProgram) => {
-    setLocalProgram(updatedProgram);
-    setIsDirty(true);
-  };
-
-  const handleProgramChangeWithAutoSave = (updatedProgram: IProgram) => {
-    setLocalProgram(updatedProgram);
-    setIsDirty(true);
-
-    // Save immediately with the updated program
-    handleSave(updatedProgram);
   };
 
   if (isLoading) {
@@ -196,21 +186,6 @@ export function ProgramDetailPage() {
               </Text>
             )}
           </div>
-
-          <Group>
-            {isDirty && (
-              <Text size="sm" c="dimmed">
-                Unsaved changes
-              </Text>
-            )}
-            <Button
-              leftSection={<IconDeviceFloppy size={16} />}
-              onClick={() => handleSave()}
-              disabled={!isDirty}
-            >
-              Save Changes
-            </Button>
-          </Group>
         </Group>
 
         {/* Program Progress Control */}

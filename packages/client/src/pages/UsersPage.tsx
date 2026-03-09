@@ -60,7 +60,7 @@ export function UsersPage() {
   // Use the search parameters to fetch users
   React.useEffect(() => {
     loadUsers(queryParams);
-  }, [searchQuery, roleFilter, page, pageSize]);
+  }, [queryParams]);
 
   const handleCreateUser = async (data: any) => {
     try {

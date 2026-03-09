@@ -13,6 +13,7 @@ interface BlockActivityGroupTargetsProps {
   block: IBlock;
   program: IProgram;
   onProgramChange: (program: IProgram) => void;
+  onProgramChangeWithAutoSave?: (program: IProgram) => void;
   activityTemplates: ActivityTemplate[];
   groupOptions: ActivityGroupOption[];
 }
@@ -21,6 +22,7 @@ export function BlockActivityGroupTargets({
   block,
   program,
   onProgramChange,
+  onProgramChangeWithAutoSave,
   activityTemplates,
   groupOptions,
 }: BlockActivityGroupTargetsProps) {
@@ -34,7 +36,11 @@ export function BlockActivityGroupTargets({
     const updated = updateBlock(program, block.id, (b) => {
       b.activityGroupTargets.push(target as IActivityGroupTarget);
     });
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   const handleEditTarget = (target: Omit<IActivityGroupTarget, 'id'>) => {
@@ -46,7 +52,11 @@ export function BlockActivityGroupTargets({
         targetPercentage: target.targetPercentage,
       };
     });
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   const handleDeleteTarget = (index: number) => {
@@ -54,7 +64,11 @@ export function BlockActivityGroupTargets({
       const updated = updateBlock(program, block.id, (b) => {
         b.activityGroupTargets.splice(index, 1);
       });
-      onProgramChange(updated);
+      if (onProgramChangeWithAutoSave) {
+        onProgramChangeWithAutoSave(updated);
+      } else {
+        onProgramChange(updated);
+      }
     }
   };
 

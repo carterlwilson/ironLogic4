@@ -95,12 +95,7 @@ export function useUpdateProgramStructure() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: programKeys.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: programKeys.lists() });
-      notifications.show({
-        title: 'Success',
-        message: 'Program saved successfully',
-        color: 'green',
-        autoClose: 3000,
-      });
+      // Success notification suppressed for auto-save
     },
     onError: (error: Error) => {
       notifications.show({

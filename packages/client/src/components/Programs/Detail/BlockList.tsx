@@ -70,7 +70,11 @@ export function BlockList({ program, onProgramChange, onProgramChangeWithAutoSav
       activityGroupTargets: [],
       weeks: [],
     });
-    onProgramChange(updated);
+    if (onProgramChangeWithAutoSave) {
+      onProgramChangeWithAutoSave(updated);
+    } else {
+      onProgramChange(updated);
+    }
   };
 
   if (program.blocks.length === 0) {
