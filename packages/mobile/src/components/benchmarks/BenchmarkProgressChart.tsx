@@ -11,8 +11,8 @@ interface BenchmarkProgressChartProps {
 export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chartData, setChartData] = useState<Array<{ date: string; value: number }>>([]);
-  const [unit, setUnit] = useState('');
+  const [chartData, setChartData] = useState<Array<Record<string, any>>>([]);
+  const [series, setSeries] = useState<Array<{ name: string; label: string }>>([]);
 
   useEffect(() => {
     const fetchProgress = async () => {
@@ -21,7 +21,7 @@ export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartPro
         setError(null);
         const data = await getBenchmarkProgress(templateId);
         setChartData(data.chartData);
-        setUnit(data.unit);
+        setSeries(data.series);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load progress data');
       } finally {
@@ -66,9 +66,10 @@ export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartPro
         h={250}
         data={chartData}
         dataKey="date"
-        series={[{ name: 'value', label: unit }]}
+        series={series}
         withLegend
         curveType="linear"
+        connectNulls={false}
       />
     </Stack>
   );

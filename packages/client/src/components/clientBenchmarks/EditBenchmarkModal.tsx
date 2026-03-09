@@ -339,12 +339,13 @@ export function EditBenchmarkModal({
                     <NumberInput
                       key={tsm.id}
                       label={tsm.name}
-                      placeholder={`Distance in ${fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 'km' : 'm'}`}
+                      placeholder="Enter distance"
                       value={timeSubMaxValues[tsm.id] || ''}
                       onChange={(val) => updateTimeSubMaxValue(tsm.id, val)}
                       min={0}
                       decimalScale={fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 2 : 0}
                       step={fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 0.1 : 10}
+                      suffix={` ${fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 'km' : 'm'}`}
                     />
                   ))}
                 </SimpleGrid>
@@ -365,13 +366,14 @@ export function EditBenchmarkModal({
                   {fullTemplate.templateDistanceSubMaxes.map((dsm) => (
                     <NumberInput
                       key={dsm.id}
-                      label={`${dsm.name} (seconds)`}
-                      placeholder="Time in seconds"
+                      label={dsm.name}
+                      placeholder="Enter time"
                       value={distanceSubMaxValues[dsm.id] || ''}
                       onChange={(val) => updateDistanceSubMaxValue(dsm.id, val)}
                       min={0}
                       decimalScale={1}
                       step={0.1}
+                      suffix=" s"
                     />
                   ))}
                 </SimpleGrid>
