@@ -1,6 +1,24 @@
+import { useState, useEffect } from 'react';
 import { Stack, Table, NumberInput, ActionIcon, Button, Group, Text, Select } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconTrash, IconCopy, IconGripVertical } from '@tabler/icons-react';
 import { ISet } from '@ironlogic4/shared/types/programs';
+import {
+  DndContext,
+  closestCenter,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  KeyboardSensor,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  sortableKeyboardCoordinates,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 interface BenchmarkOption {
   value: string;
@@ -15,15 +33,135 @@ interface SetsArrayInputProps {
   benchmarksLoading?: boolean;
 }
 
+interface SortableSetRowProps {
+  setId: string;
+  set: ISet;
+  index: number;
+  totalSets: number;
+  benchmarkOptions: BenchmarkOption[];
+  benchmarksLoading: boolean;
+  onUpdate: (index: number, field: keyof ISet, value: number | string | undefined) => void;
+  onRemove: (index: number) => void;
+  onCopy: (index: number) => void;
+}
+
+function SortableSetRow({
+  setId,
+  set,
+  index,
+  totalSets,
+  benchmarkOptions,
+  benchmarksLoading,
+  onUpdate,
+  onRemove,
+  onCopy,
+}: SortableSetRowProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: setId });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <Table.Tr ref={setNodeRef} style={style}>
+      <Table.Td style={{ width: '24px', cursor: 'grab', color: 'var(--mantine-color-dimmed)' }} {...listeners} {...attributes}>
+        <IconGripVertical size={16} />
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm" fw={500}>
+          {index + 1}
+        </Text>
+      </Table.Td>
+      <Table.Td>
+        <NumberInput
+          size="xs"
+          min={1}
+          max={100}
+          value={set.reps}
+          onChange={(val) => onUpdate(index, 'reps', val as number)}
+          hideControls
+          allowLeadingZeros={false}
+          styles={{ input: { textAlign: 'center' } }}
+        />
+      </Table.Td>
+      <Table.Td>
+        <NumberInput
+          size="xs"
+          min={0}
+          max={200}
+          value={set.percentageOfMax}
+          onChange={(val) => onUpdate(index, 'percentageOfMax', val as number)}
+          hideControls
+          allowLeadingZeros={false}
+          styles={{ input: { textAlign: 'center' } }}
+        />
+      </Table.Td>
+      {benchmarkOptions.length > 0 && (
+        <Table.Td>
+          <Select
+            size="xs"
+            placeholder="Select rep max"
+            data={benchmarkOptions}
+            value={set.templateRepMaxId || null}
+            onChange={(val) => onUpdate(index, 'templateRepMaxId', val || undefined)}
+            disabled={benchmarksLoading}
+            clearable
+            searchable
+            styles={{ input: { minWidth: '150px' } }}
+          />
+        </Table.Td>
+      )}
+      <Table.Td>
+        <Group gap={4}>
+          <ActionIcon
+            variant="subtle"
+            size="sm"
+            onClick={() => onCopy(index)}
+            disabled={totalSets >= 20}
+          >
+            <IconCopy size={16} />
+          </ActionIcon>
+          <ActionIcon
+            color="red"
+            variant="subtle"
+            size="sm"
+            onClick={() => onRemove(index)}
+            disabled={totalSets <= 1}
+          >
+            <IconTrash size={16} />
+          </ActionIcon>
+        </Group>
+      </Table.Td>
+    </Table.Tr>
+  );
+}
+
 export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], benchmarksLoading = false }: SetsArrayInputProps) {
+  const [setIds, setSetIds] = useState<string[]>(() => value.map(() => crypto.randomUUID()));
+
+  useEffect(() => {
+    if (value.length > setIds.length) {
+      setSetIds((prev) => [...prev, ...value.slice(prev.length).map(() => crypto.randomUUID())]);
+    } else if (value.length < setIds.length) {
+      setSetIds((prev) => prev.slice(0, value.length));
+    }
+  }, [value.length]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
   const handleAddSet = () => {
-    // Add a new set with default values
     const newSet: ISet = { reps: 5, percentageOfMax: 0 };
     onChange([...value, newSet]);
   };
 
   const handleRemoveSet = (index: number) => {
     const newSets = value.filter((_, i) => i !== index);
+    setSetIds((prev) => prev.filter((_, i) => i !== index));
     onChange(newSets);
   };
 
@@ -32,12 +170,25 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
     if (field === 'templateRepMaxId') {
       newSets[index] = { ...newSets[index], [field]: newValue as string | undefined };
     } else {
-      // Allow empty state - don't default to 0 immediately
-      // Use empty string for truly empty fields, or keep the number value
       const valueToStore = newValue === undefined || newValue === null ? '' : newValue;
       newSets[index] = { ...newSets[index], [field]: valueToStore } as any;
     }
     onChange(newSets);
+  };
+
+  const handleCopySet = (index: number) => {
+    const copied = { ...value[index] };
+    onChange([...value, copied]);
+  };
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = setIds.indexOf(active.id as string);
+      const newIndex = setIds.indexOf(over.id as string);
+      setSetIds(arrayMove(setIds, oldIndex, newIndex));
+      onChange(arrayMove(value, oldIndex, newIndex));
+    }
   };
 
   return (
@@ -62,78 +213,38 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
           Click "Add Set" to add your first set
         </Text>
       ) : (
-        <Table>
-          <Table.Thead>
-            <Table.Tr>
-              <Table.Th>Set</Table.Th>
-              <Table.Th>Reps</Table.Th>
-              <Table.Th>% of Max</Table.Th>
-              {benchmarkOptions.length > 0 && <Table.Th>Rep Max</Table.Th>}
-              <Table.Th style={{ width: '50px' }}></Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>
-            {value.map((set, index) => (
-              <Table.Tr key={index}>
-                <Table.Td>
-                  <Text size="sm" fw={500}>
-                    {index + 1}
-                  </Text>
-                </Table.Td>
-                <Table.Td>
-                  <NumberInput
-                    size="xs"
-                    min={1}
-                    max={100}
-                    value={set.reps}
-                    onChange={(val) => handleUpdateSet(index, 'reps', val as number)}
-                    hideControls
-                    allowLeadingZeros={false}
-                    styles={{ input: { textAlign: 'center' } }}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={setIds} strategy={verticalListSortingStrategy}>
+            <Table>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th style={{ width: '24px' }}></Table.Th>
+                  <Table.Th>Set</Table.Th>
+                  <Table.Th>Reps</Table.Th>
+                  <Table.Th>% of Max</Table.Th>
+                  {benchmarkOptions.length > 0 && <Table.Th>Rep Max</Table.Th>}
+                  <Table.Th style={{ width: '70px' }}></Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {value.map((set, index) => (
+                  <SortableSetRow
+                    key={setIds[index]}
+                    setId={setIds[index]}
+                    set={set}
+                    index={index}
+                    totalSets={value.length}
+                    benchmarkOptions={benchmarkOptions}
+                    benchmarksLoading={benchmarksLoading}
+                    onUpdate={handleUpdateSet}
+                    onRemove={handleRemoveSet}
+                    onCopy={handleCopySet}
                   />
-                </Table.Td>
-                <Table.Td>
-                  <NumberInput
-                    size="xs"
-                    min={0}
-                    max={200}
-                    value={set.percentageOfMax}
-                    onChange={(val) => handleUpdateSet(index, 'percentageOfMax', val as number)}
-                    hideControls
-                    allowLeadingZeros={false}
-                    styles={{ input: { textAlign: 'center' } }}
-                  />
-                </Table.Td>
-                {benchmarkOptions.length > 0 && (
-                  <Table.Td>
-                    <Select
-                      size="xs"
-                      placeholder="Select rep max"
-                      data={benchmarkOptions}
-                      value={set.templateRepMaxId || null}
-                      onChange={(val) => handleUpdateSet(index, 'templateRepMaxId', val || undefined)}
-                      disabled={benchmarksLoading}
-                      clearable
-                      searchable
-                      styles={{ input: { minWidth: '150px' } }}
-                    />
-                  </Table.Td>
-                )}
-                <Table.Td>
-                  <ActionIcon
-                    color="red"
-                    variant="subtle"
-                    size="sm"
-                    onClick={() => handleRemoveSet(index)}
-                    disabled={value.length <= 1}
-                  >
-                    <IconTrash size={16} />
-                  </ActionIcon>
-                </Table.Td>
-              </Table.Tr>
-            ))}
-          </Table.Tbody>
-        </Table>
+                ))}
+              </Table.Tbody>
+            </Table>
+          </SortableContext>
+        </DndContext>
       )}
     </Stack>
   );
