@@ -32,7 +32,10 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
     if (field === 'templateRepMaxId') {
       newSets[index] = { ...newSets[index], [field]: newValue as string | undefined };
     } else {
-      newSets[index] = { ...newSets[index], [field]: (newValue as number) || 0 };
+      // Allow empty state - don't default to 0 immediately
+      // Use empty string for truly empty fields, or keep the number value
+      const valueToStore = newValue === undefined || newValue === null ? '' : newValue;
+      newSets[index] = { ...newSets[index], [field]: valueToStore } as any;
     }
     onChange(newSets);
   };
@@ -85,6 +88,7 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
                     value={set.reps}
                     onChange={(val) => handleUpdateSet(index, 'reps', val as number)}
                     hideControls
+                    allowLeadingZeros={false}
                     styles={{ input: { textAlign: 'center' } }}
                   />
                 </Table.Td>
@@ -96,6 +100,7 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
                     value={set.percentageOfMax}
                     onChange={(val) => handleUpdateSet(index, 'percentageOfMax', val as number)}
                     hideControls
+                    allowLeadingZeros={false}
                     styles={{ input: { textAlign: 'center' } }}
                   />
                 </Table.Td>
