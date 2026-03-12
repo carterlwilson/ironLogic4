@@ -74,7 +74,7 @@ function SortableSetRow({
           {index + 1}
         </Text>
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ minWidth: '60px' }}>
         <NumberInput
           size="xs"
           min={1}
@@ -86,7 +86,7 @@ function SortableSetRow({
           styles={{ input: { textAlign: 'center' } }}
         />
       </Table.Td>
-      <Table.Td>
+      <Table.Td style={{ minWidth: '60px' }}>
         <NumberInput
           size="xs"
           min={0}
@@ -220,8 +220,8 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
                 <Table.Tr>
                   <Table.Th style={{ width: '24px' }}></Table.Th>
                   <Table.Th>Set</Table.Th>
-                  <Table.Th>Reps</Table.Th>
-                  <Table.Th>% of Max</Table.Th>
+                  <Table.Th style={{ minWidth: '60px' }}>Reps</Table.Th>
+                  <Table.Th style={{ minWidth: '60px' }}>% of Max</Table.Th>
                   {benchmarkOptions.length > 0 && <Table.Th>Rep Max</Table.Th>}
                   <Table.Th style={{ width: '70px' }}></Table.Th>
                 </Table.Tr>
