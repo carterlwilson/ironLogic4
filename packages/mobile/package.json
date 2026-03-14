@@ -14,17 +14,17 @@
   },
   "dependencies": {
     "@ironlogic4/shared": "file:../shared",
-    "@mantine/charts": "^8.3.6",
     "@mantine/core": "^7.0.0",
     "@mantine/dates": "^8.3.8",
     "@mantine/hooks": "^7.0.0",
     "@mantine/notifications": "^7.0.0",
     "@tabler/icons-react": "^2.40.0",
+    "chart.js": "^4.5.1",
     "dayjs": "^1.11.19",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
-    "recharts": "^3.3.0",
     "workbox-window": "^7.0.0"
   },
   "devDependencies": {
