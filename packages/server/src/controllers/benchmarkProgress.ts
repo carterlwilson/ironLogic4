@@ -73,7 +73,7 @@ function extractAllDataPoints(
     if (benchmark.type === BenchmarkType.WEIGHT && benchmark.repMaxes) {
       // Extract all rep maxes
       for (const repMax of benchmark.repMaxes) {
-        if (!repMax.recordedAt || repMax.weightKg === null || repMax.weightKg === undefined) continue;
+        if (!repMax.recordedAt || repMax.weightKg == null || repMax.weightKg <= 0) continue;
 
         // Find template rep max for label
         const templateRepMax = template.templateRepMaxes?.find(
@@ -92,7 +92,7 @@ function extractAllDataPoints(
     } else if (benchmark.type === BenchmarkType.DISTANCE && benchmark.timeSubMaxes) {
       // Extract all distance sub-maxes
       for (const tsm of benchmark.timeSubMaxes) {
-        if (!tsm.recordedAt || tsm.distanceMeters === null || tsm.distanceMeters === undefined) continue;
+        if (!tsm.recordedAt || tsm.distanceMeters == null || tsm.distanceMeters <= 0) continue;
 
         // Find template time sub-max for label
         const templateSubMax = template.templateTimeSubMaxes?.find(
@@ -117,7 +117,7 @@ function extractAllDataPoints(
     } else if (benchmark.type === BenchmarkType.TIME && benchmark.distanceSubMaxes) {
       // Extract all time sub-maxes (for TIME type with distanceSubMaxes structure)
       for (const dsm of benchmark.distanceSubMaxes) {
-        if (!dsm.recordedAt || dsm.timeSeconds === null || dsm.timeSeconds === undefined) continue;
+        if (!dsm.recordedAt || dsm.timeSeconds == null || dsm.timeSeconds <= 0) continue;
 
         // Find template distance sub-max for label
         const templateSubMax = template.templateDistanceSubMaxes?.find(
@@ -186,10 +186,15 @@ function buildChartData(dataPoints: DataPoint[], includeYear: boolean) {
     });
   }
 
-  // Get all unique dates
-  const allDates = Array.from(new Set(dataPoints.map((p) => p.date.getTime())))
-    .map((time) => new Date(time))
-    .sort((a, b) => a.getTime() - b.getTime());
+  // Get all unique dates — deduplicate by calendar day, keep earliest timestamp per day
+  const dayMap = new Map<string, Date>();
+  for (const point of dataPoints) {
+    const dayKey = `${point.date.getFullYear()}-${point.date.getMonth()}-${point.date.getDate()}`;
+    if (!dayMap.has(dayKey)) {
+      dayMap.set(dayKey, point.date);
+    }
+  }
+  const allDates = Array.from(dayMap.values()).sort((a, b) => a.getTime() - b.getTime());
 
   // Build chart data with one row per date
   const chartData = allDates.map((date) => {
