@@ -104,3 +104,98 @@ export const sendPasswordResetEmail = async (
     throw new Error('Failed to send password reset email');
   }
 };
+
+/**
+ * Send a gym invitation email to a new client via SendGrid
+ */
+export const sendInviteEmail = async (
+  email: string,
+  firstName: string | undefined,
+  gymName: string,
+  inviteToken: string
+): Promise<void> => {
+  initializeSendGrid();
+
+  const sendGridApiKey = process.env.SENDGRID_API_KEY;
+  const verifiedSender = process.env.SENDGRID_VERIFIED_SENDER;
+  const mobileAppUrl = process.env.MOBILE_APP_URL || 'http://localhost:3002';
+
+  if (!sendGridApiKey) {
+    throw new Error('SENDGRID_API_KEY environment variable is not set');
+  }
+
+  if (!verifiedSender) {
+    throw new Error('SENDGRID_VERIFIED_SENDER environment variable is not set');
+  }
+
+  const inviteLink = `${mobileAppUrl}/accept-invite?token=${inviteToken}`;
+  const greeting = firstName ? `Hi ${firstName},` : 'Hi,';
+
+  const msg = {
+    to: email,
+    from: verifiedSender,
+    subject: `You've been invited to join ${gymName} on IronLogic`,
+    text: `${greeting}\n\n${gymName} has invited you to join their gym on IronLogic.\n\nClick the link below to create your account:\n${inviteLink}\n\nThis link will expire in 7 days.\n\nIf you were not expecting this invitation, you can safely ignore this email.\n\nBest regards,\nThe IronLogic Team`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>You've been invited to IronLogic</title>
+        </head>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background-color: #f8f9fa; border-radius: 8px; padding: 30px; margin-bottom: 20px;">
+            <h1 style="color: #2f9e44; margin-top: 0;">You're Invited!</h1>
+            <p style="font-size: 16px; margin-bottom: 20px;">${greeting}</p>
+            <p style="font-size: 16px; margin-bottom: 20px;">
+              <strong>${gymName}</strong> has invited you to join their gym on IronLogic.
+            </p>
+            <p style="font-size: 16px; margin-bottom: 30px;">
+              Click the button below to create your account and get started:
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${inviteLink}" style="background-color: #2f9e44; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: bold; font-size: 16px;">
+                Create My Account
+              </a>
+            </div>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
+              Or copy and paste this link into your browser:
+            </p>
+            <p style="font-size: 14px; color: #2f9e44; word-break: break-all; margin-bottom: 20px;">
+              ${inviteLink}
+            </p>
+            <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-top: 30px; border-radius: 4px;">
+              <p style="margin: 0; font-size: 14px; color: #856404;">
+                <strong>Note:</strong> This invitation link will expire in 7 days.
+              </p>
+            </div>
+          </div>
+          <div style="font-size: 13px; color: #666; padding: 20px 0; border-top: 1px solid #e9ecef;">
+            <p style="margin: 0 0 10px 0;">
+              If you were not expecting this invitation, you can safely ignore this email.
+            </p>
+            <p style="margin: 0;">
+              Best regards,<br>
+              The IronLogic Team
+            </p>
+          </div>
+        </body>
+      </html>
+    `,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log(`[EMAIL] Invite email sent successfully to ${email}`);
+  } catch (error) {
+    console.error('[EMAIL ERROR] Failed to send invite email:', error);
+
+    if (error && typeof error === 'object' && 'response' in error) {
+      const sgError = error as { response?: { body?: unknown } };
+      console.error('[EMAIL ERROR] SendGrid response:', sgError.response?.body);
+    }
+
+    throw new Error('Failed to send invite email');
+  }
+};

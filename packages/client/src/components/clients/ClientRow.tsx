@@ -23,9 +23,16 @@ export function ClientRow({ client, onEdit, onDelete, programNameMap }: ClientRo
   return (
     <Table.Tr>
       <Table.Td>
-        <Text fw={500}>
-          {client.firstName} {client.lastName}
-        </Text>
+        <Group gap="xs" align="center">
+          <Text fw={500}>
+            {client.firstName} {client.lastName}
+          </Text>
+          {client.status === 'invited' && (
+            <Badge variant="light" color="yellow" size="sm">
+              Invited
+            </Badge>
+          )}
+        </Group>
       </Table.Td>
       <Table.Td>{client.email}</Table.Td>
       <Table.Td>

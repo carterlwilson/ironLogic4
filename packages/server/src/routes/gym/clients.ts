@@ -11,6 +11,7 @@ import {
   deleteClient,
   assignProgram,
   unassignProgram,
+  sendClientInvite,
 } from '../../controllers/clients.js';
 
 const router = express.Router();
@@ -23,6 +24,9 @@ router.get('/:id', verifyToken, getClientById);
 
 // Create a new client (requires gym staff permissions)
 router.post('/', verifyToken, requireGymStaffAccess, createClient);
+
+// Send an email invite to a new client
+router.post('/invite', verifyToken, requireGymStaffAccess, sendClientInvite);
 
 // Update a client
 router.put('/:id', verifyToken, updateClient);

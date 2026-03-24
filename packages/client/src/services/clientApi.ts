@@ -26,6 +26,12 @@ export interface CreateClientResponse extends ApiResponse {
   };
 }
 
+export interface InviteClientRequest {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
 export interface UpdateClientRequest {
   email?: string;
   firstName?: string;
@@ -111,6 +117,13 @@ class ClientApiService {
 
   async createClient(data: CreateClientRequest): Promise<CreateClientResponse> {
     return authenticatedRequest<CreateClientResponse>('/api/gym/clients', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async sendInvite(data: InviteClientRequest): Promise<{ success: boolean; message: string }> {
+    return authenticatedRequest('/api/gym/clients/invite', {
       method: 'POST',
       body: JSON.stringify(data),
     });
