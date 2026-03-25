@@ -76,12 +76,13 @@ export function BarbellVisual({ calculation }: BarbellVisualProps) {
 
     return calculation.plates.flatMap((plate, plateIndex) => {
       const plateWidth = getPlateWidth(plate.weight);
-      const plateHeight = plateBaseHeight;
+      const plateHeight = plate.weight <= 5 ? plateBaseHeight / 2 : plateBaseHeight;
       const plateY = height / 2 - plateHeight / 2;
 
       return Array.from({ length: plate.quantity }, (_, quantityIndex) => {
         const x = currentX;
-        const labelY = height / 2 + labelOffsets[renderIndex % labelOffsets.length];
+        const rawLabelY = height / 2 + labelOffsets[renderIndex % labelOffsets.length];
+        const labelY = Math.max(plateY + 8, Math.min(plateY + plateHeight - 8, rawLabelY));
         const plateElement = (
           <g key={`${plateIndex}-${quantityIndex}`}>
             <rect
