@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { User } from '../models/User.js';
 import { Program } from '../models/Program.js';
+import { Gym } from '../models/Gym.js';
 import {
   UserType,
   ApiResponse,
@@ -10,8 +11,11 @@ import {
   UpdateClientSchema,
   ClientListParamsSchema,
   ClientIdSchema,
+  InviteClientSchema,
 } from '@ironlogic4/shared';
 import { generateRandomPassword } from '../utils/auth.js';
+import { generateResetToken, hashResetToken } from '../utils/tokenGenerator.js';
+import { sendInviteEmail } from '../utils/emailService.js';
 
 /**
  * Get all clients with pagination, search, and gym scoping
@@ -591,6 +595,133 @@ export const assignProgram = async (
     res.status(500).json({
       success: false,
       error: 'Failed to assign program',
+    });
+  }
+};
+
+/**
+ * Send an email invite to a new client
+ */
+export const sendClientInvite = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const validation = InviteClientSchema.safeParse(req.body);
+
+    if (!validation.success) {
+      res.status(400).json({
+        success: false,
+        error: 'Invalid invite data',
+        details: validation.error.errors,
+      });
+      return;
+    }
+
+    const { email, programId } = validation.data;
+    const gymId = req.user?.gymId;
+
+    if (!gymId) {
+      res.status(403).json({
+        success: false,
+        error: 'You must be associated with a gym to send invites',
+      });
+      return;
+    }
+
+    // Look up gym name for the email
+    const gym = await Gym.findById(gymId);
+    if (!gym) {
+      res.status(404).json({
+        success: false,
+        error: 'Gym not found',
+      });
+      return;
+    }
+
+    // If programId is provided, validate it exists and belongs to this gym
+    if (programId) {
+      const program = await Program.findById(programId);
+      if (!program) {
+        res.status(404).json({ success: false, error: 'Program not found' });
+        return;
+      }
+      if (program.gymId?.toString() !== gymId.toString()) {
+        res.status(403).json({ success: false, error: 'Program does not belong to your gym' });
+        return;
+      }
+    }
+
+    // Check if a user with this email already exists
+    const existingUser = await User.findOne({ email }).select('+inviteToken +inviteTokenExpiry +inviteTokenUsed');
+
+    if (existingUser && existingUser.status !== 'invited') {
+      res.status(409).json({
+        success: false,
+        error: 'A user with this email already has an active account',
+      });
+      return;
+    }
+
+    // Generate a one-time invite token
+    const rawToken = generateResetToken();
+    const hashedToken = await hashResetToken(rawToken);
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 7); // 7-day expiry
+
+    let user = existingUser;
+
+    if (user && user.status === 'invited') {
+      // Re-invite: regenerate token and update expiry
+      user.inviteToken = hashedToken;
+      user.inviteTokenExpiry = expiry;
+      user.inviteTokenUsed = false;
+      if (programId) user.programId = programId;
+      await user.save();
+    } else {
+      // Create a new pending user record
+      user = new User({
+        email,
+        firstName: 'Pending',
+        lastName: 'User',
+        userType: UserType.CLIENT,
+        gymId,
+        status: 'invited',
+        password: generateRandomPassword(16),
+        inviteToken: hashedToken,
+        inviteTokenExpiry: expiry,
+        inviteTokenUsed: false,
+        ...(programId && { programId }),
+      });
+      await user.save();
+    }
+
+    // Send the invite email
+    try {
+      await sendInviteEmail(email, undefined, gym.name, rawToken);
+      console.log(`[INVITE] Invite email sent to: ${email}`);
+    } catch (emailError) {
+      // Clean up pending user if email fails and it was just created
+      if (!existingUser) {
+        await User.findByIdAndDelete(user!._id);
+      }
+      console.error('[INVITE] Failed to send invite email:', emailError);
+      res.status(500).json({
+        success: false,
+        error: 'Failed to send invite email. Please try again later.',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Invite sent to ${email}`,
+    });
+  } catch (error) {
+    console.error('Error sending client invite:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to send invite',
     });
   }
 };

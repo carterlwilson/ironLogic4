@@ -17,6 +17,7 @@ export interface User {
   gymId?: string;
   gymName?: string;
   programId?: string;
+  status?: 'invited' | 'active';
   currentBenchmarks?: ClientBenchmark[];
   historicalBenchmarks?: ClientBenchmark[];
   createdAt: Date;

@@ -156,9 +156,29 @@ export const UpdateMyBenchmarkSchema = z.object({
   { message: 'At least one field must be updated' }
 );
 
+/**
+ * Schema for inviting a new client via email
+ */
+export const InviteClientSchema = z.object({
+  email: z.string().email('Invalid email address').toLowerCase().trim(),
+  programId: z.string().optional(),
+});
+
+/**
+ * Schema for accepting a client invite and creating an account
+ */
+export const AcceptInviteSchema = z.object({
+  token: z.string().min(1, 'Token is required'),
+  firstName: z.string().min(1, 'First name is required').max(50).trim(),
+  lastName: z.string().min(1, 'Last name is required').max(50).trim(),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
 export type ClientListParamsInput = z.infer<typeof ClientListParamsSchema>;
 export type CreateClientInput = z.infer<typeof CreateClientSchema>;
 export type UpdateClientInput = z.infer<typeof UpdateClientSchema>;
 export type ClientIdInput = z.infer<typeof ClientIdSchema>;
 export type CreateMyBenchmarkInput = z.infer<typeof CreateMyBenchmarkSchema>;
 export type UpdateMyBenchmarkInput = z.infer<typeof UpdateMyBenchmarkSchema>;
+export type InviteClientInput = z.infer<typeof InviteClientSchema>;
+export type AcceptInviteInput = z.infer<typeof AcceptInviteSchema>;
