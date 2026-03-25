@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Card, Stack, Text, Group, Button, ActionIcon, Badge, Paper, SegmentedControl } from '@mantine/core';
-import { IconCheck, IconWeight, /* IconAlertCircle, */ IconBarbell /* , IconPlus */ } from '@tabler/icons-react';
+import { IconCheck, IconWeight, IconAlertCircle, IconBarbell, IconPlus } from '@tabler/icons-react';
 import { ActivityProgress } from '../../pages/WorkoutPage';
 import { useBarbellCalculator } from './barbell-calculator/useBarbellCalculator';
 import { BarbellCalculatorDrawer } from './barbell-calculator/BarbellCalculatorDrawer';
-// import { AddBenchmarkModal } from './AddBenchmarkModal';
+import { AddBenchmarkModal } from './AddBenchmarkModal';
 import type { WorkoutActivity, ISetCalculation } from '@ironlogic4/shared/types/programs';
 
 interface LiftActivityCardProps {
@@ -12,23 +12,27 @@ interface LiftActivityCardProps {
   progress: ActivityProgress;
   onSetComplete: (activityId: string, setIndex: number) => void;
   onActivityComplete: (activityId: string) => void;
-  // onDataRefresh?: () => void; // Commented out - not used since AddBenchmarkModal is disabled
+  onDataRefresh?: () => void;
 }
 
 export function LiftActivityCard({
   activity,
   progress,
   onSetComplete,
-  // onDataRefresh, // Commented out - not used since AddBenchmarkModal is disabled
+  onDataRefresh,
 }: LiftActivityCardProps) {
   const [selectedSetIndex, setSelectedSetIndex] = useState(0);
-  // const [addBenchmarkModalOpened, setAddBenchmarkModalOpened] = useState(false); // Commented out - not used since AddBenchmarkModal is disabled
+  const [weightAdjustment, setWeightAdjustment] = useState(0);
+  const [addBenchmarkModalOpened, setAddBenchmarkModalOpened] = useState(false);
 
   const anySetsComplete = progress.sets.some(s => s.completed);
 
   // Get the current set data
   const currentSet: ISetCalculation | undefined = activity.setCalculations?.[selectedSetIndex];
   const totalSets = activity.setCalculations?.length || 0;
+
+  const getAdjustedWeight = (base: number) =>
+    Math.round(base * (1 + weightAdjustment * 0.03) * 10) / 10;
 
   // Initialize barbell calculator hook with current set's weight
   const {
@@ -38,7 +42,7 @@ export function LiftActivityCard({
     isOpen,
     open,
     close,
-  } = useBarbellCalculator(currentSet?.calculatedWeightKg || 0);
+  } = useBarbellCalculator(getAdjustedWeight(currentSet?.calculatedWeightKg || 0));
 
   const getCardColor = () => {
     if (progress.completed) return 'green.0';
@@ -72,12 +76,49 @@ export function LiftActivityCard({
               {activity.templateName}
             </Text>
           </div>
-          {progress.completed && (
-            <Badge color="green" variant="filled" size="lg">
-              Complete
-            </Badge>
-          )}
+          <Group gap="xs">
+            {weightAdjustment !== 0 && (
+              <Badge
+                color={weightAdjustment > 0 ? 'green' : 'red'}
+                variant="filled"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setWeightAdjustment(0)}
+              >
+                {weightAdjustment > 0 ? '+' : ''}{weightAdjustment * 3}%
+              </Badge>
+            )}
+            {progress.completed && (
+              <Badge color="green" variant="filled" size="lg">
+                Complete
+              </Badge>
+            )}
+          </Group>
         </Group>
+
+        {/* Weight Adjustment Row */}
+        {currentSet?.calculatedWeightKg !== undefined && (
+          <Group justify="space-between" align="center">
+            <Text size="sm" c="dimmed">Adjust weight:</Text>
+            <Group gap="xs">
+              <Button
+                variant="light"
+                color="red"
+                size="xs"
+                onClick={() => setWeightAdjustment(w => w - 1)}
+              >
+                −3%
+              </Button>
+              <Button
+                variant="light"
+                color="forestGreen"
+                size="xs"
+                onClick={() => setWeightAdjustment(w => w + 1)}
+              >
+                +3%
+              </Button>
+            </Group>
+          </Group>
+        )}
 
         {/* Set Selector - only show if multiple sets */}
         {totalSets > 1 && (
@@ -109,7 +150,7 @@ export function LiftActivityCard({
                     {totalSets > 1 && `Set ${selectedSetIndex + 1}`}
                   </Text>
                   <Text size="xl" fw={700} c="forestGreen">
-                    {currentSet.reps ? `${currentSet.reps} reps @ ` : ''}{currentSet.calculatedWeightKg} kg
+                    {currentSet.reps ? `${currentSet.reps} reps @ ` : ''}{getAdjustedWeight(currentSet.calculatedWeightKg)} kg
                   </Text>
                   {currentSet.percentageOfMax && currentSet.benchmarkName && (
                     <Text size="xs" c="dimmed">
@@ -134,8 +175,7 @@ export function LiftActivityCard({
           </Paper>
         )}
 
-        {/* TODO: Re-enable when AddBenchmarkModal is updated for multi-rep max support */}
-        {/* {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && (
+        {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && (
           <Paper p="md" radius="md" withBorder bg="orange.0">
             <Stack gap="sm">
               <Group gap="xs">
@@ -152,11 +192,11 @@ export function LiftActivityCard({
                 onClick={() => setAddBenchmarkModalOpened(true)}
                 fullWidth
               >
-                Add Benchmark
+                Add Benchmark{currentSet.repMaxName ? ` — ${currentSet.repMaxName} needed` : ''}
               </Button>
             </Stack>
           </Paper>
-        )} */}
+        )}
 
         {/* Complete Set Button */}
         <Button
@@ -215,8 +255,7 @@ export function LiftActivityCard({
       />
 
       {/* Add Benchmark Modal */}
-      {/* TODO: benchmarkTemplateId removed from ISetCalculation - need to get it differently */}
-      {/* {currentSet?.benchmarkTemplateId && currentSet?.benchmarkName && (
+      {currentSet?.benchmarkTemplateId && currentSet?.benchmarkName && (
         <AddBenchmarkModal
           opened={addBenchmarkModalOpened}
           onClose={() => setAddBenchmarkModalOpened(false)}
@@ -227,7 +266,7 @@ export function LiftActivityCard({
             onDataRefresh?.();
           }}
         />
-      )} */}
+      )}
     </Card>
   );
 }

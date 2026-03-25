@@ -161,8 +161,10 @@ export interface ISetCalculation {
   percentageOfMax: number;
   calculatedWeightKg?: number;  // Based on benchmark
   templateRepMaxId?: string;     // TemplateRepMax being used
+  benchmarkTemplateId?: string;  // Needed to open AddBenchmarkModal
   benchmarkName?: string;        // Full name: "Back Squat - 3RM"
   repMaxReps?: number;           // The rep count (e.g., 3 for 3RM)
+  repMaxName?: string;           // Display name e.g. "3RM", used in button label
 }
 
 /**

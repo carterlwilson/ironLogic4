@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { Modal, Stack, NumberInput, Textarea, Button, Group } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
+import { useState, useEffect } from 'react';
+import { Modal, Stack, NumberInput, Textarea, TextInput, Button, Group, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconWeight } from '@tabler/icons-react';
-import { createBenchmark } from '../../services/benchmarkApi';
+import { IconWeight, IconCalendar } from '@tabler/icons-react';
+import { BenchmarkTemplate } from '@ironlogic4/shared';
+import { createBenchmark, getBenchmarkTemplate } from '../../services/benchmarkApi';
+import { formatDateForInput, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
 
 interface AddBenchmarkModalProps {
   opened: boolean;
@@ -20,44 +21,64 @@ export function AddBenchmarkModal({
   benchmarkName,
   onSuccess,
 }: AddBenchmarkModalProps) {
-  const [weight, setWeight] = useState<number | string>('');
-  const [date, setDate] = useState<string | null>(new Date().toISOString().split('T')[0]);
+  const [fullTemplate, setFullTemplate] = useState<BenchmarkTemplate | null>(null);
+  const [loadingTemplate, setLoadingTemplate] = useState(false);
+  const [repMaxValues, setRepMaxValues] = useState<Record<string, number | string>>({});
+  const [recordedAt, setRecordedAt] = useState(formatDateForInput(new Date()));
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleReset = () => {
-    setWeight('');
-    setDate(new Date().toISOString().split('T')[0]);
+  useEffect(() => {
+    if (!opened) return;
+
+    setRepMaxValues({});
+    setRecordedAt(formatDateForInput(new Date()));
     setNotes('');
-  };
+    setFullTemplate(null);
+
+    setLoadingTemplate(true);
+    getBenchmarkTemplate(benchmarkTemplateId)
+      .then((res) => setFullTemplate(res.data))
+      .catch(() => {
+        notifications.show({
+          title: 'Error',
+          message: 'Failed to load benchmark template',
+          color: 'red',
+        });
+      })
+      .finally(() => setLoadingTemplate(false));
+  }, [opened, benchmarkTemplateId]);
 
   const handleClose = () => {
-    handleReset();
+    setRepMaxValues({});
+    setRecordedAt(formatDateForInput(new Date()));
+    setNotes('');
     onClose();
   };
 
   const handleSubmit = async () => {
-    // Validate weight
-    const weightValue = typeof weight === 'number' ? weight : parseFloat(weight);
-    if (!weightValue || weightValue <= 0) {
+    if (!fullTemplate?.templateRepMaxes?.length) return;
+
+    const repMaxes = fullTemplate.templateRepMaxes.map((trm) => {
+      const val = repMaxValues[trm.id];
+      return {
+        templateRepMaxId: trm.id,
+        weightKg: val && val !== '' ? (typeof val === 'string' ? parseFloat(val) : val) : 0,
+        recordedAt: parseDateStringToLocalDate(recordedAt),
+      };
+    });
+
+    const hasAnyValue = repMaxes.some((rm) => rm.weightKg > 0);
+    if (!hasAnyValue) {
       notifications.show({
-        title: 'Invalid Weight',
-        message: 'Please enter a valid weight greater than 0 kg',
+        title: 'Missing Data',
+        message: 'Please enter at least one rep max weight',
         color: 'red',
       });
       return;
     }
 
-    if (weightValue > 1000) {
-      notifications.show({
-        title: 'Invalid Weight',
-        message: 'Weight must be less than 1000 kg',
-        color: 'red',
-      });
-      return;
-    }
-
-    if (!date) {
+    if (!recordedAt) {
       notifications.show({
         title: 'Invalid Date',
         message: 'Please select a date',
@@ -66,23 +87,11 @@ export function AddBenchmarkModal({
       return;
     }
 
-    if (notes.length > 1000) {
-      notifications.show({
-        title: 'Notes Too Long',
-        message: 'Notes must be less than 1000 characters',
-        color: 'red',
-      });
-      return;
-    }
-
     setLoading(true);
-
     try {
-      // TODO: Update this to support repMaxes for WEIGHT type benchmarks
       await createBenchmark({
         templateId: benchmarkTemplateId,
-        recordedAt: new Date(date),
-        // weightKg has been removed - need to implement repMaxes support
+        repMaxes,
         notes: notes.trim() || undefined,
       });
 
@@ -92,10 +101,9 @@ export function AddBenchmarkModal({
         color: 'green',
       });
 
-      handleReset();
+      handleClose();
       onSuccess();
     } catch (error) {
-      console.error('Error creating benchmark:', error);
       notifications.show({
         title: 'Error',
         message: error instanceof Error ? error.message : 'Failed to add benchmark. Please try again.',
@@ -114,54 +122,59 @@ export function AddBenchmarkModal({
       centered
     >
       <Stack gap="md">
-        <NumberInput
-          label="Weight"
-          placeholder="Enter weight"
-          value={weight}
-          onChange={setWeight}
-          min={0}
-          max={1000}
-          step={2.5}
-          decimalScale={2}
-          suffix=" kg"
-          leftSection={<IconWeight size={18} />}
-          required
-          disabled={loading}
-        />
+        {loadingTemplate ? (
+          <Text size="sm" c="dimmed">Loading rep max options...</Text>
+        ) : fullTemplate?.templateRepMaxes && fullTemplate.templateRepMaxes.length > 0 ? (
+          <>
+            <Text size="sm" fw={500}>Enter your rep maxes (at least one required)</Text>
+            {fullTemplate.templateRepMaxes
+              .sort((a, b) => a.reps - b.reps)
+              .map((trm) => (
+                <NumberInput
+                  key={trm.id}
+                  label={`${trm.name} (${trm.reps} rep${trm.reps > 1 ? 's' : ''})`}
+                  placeholder="Weight in kg"
+                  value={repMaxValues[trm.id] || ''}
+                  onChange={(val) => setRepMaxValues((prev) => ({ ...prev, [trm.id]: val }))}
+                  min={0}
+                  step={0.5}
+                  decimalScale={1}
+                  leftSection={<IconWeight size={16} />}
+                  disabled={loading}
+                />
+              ))}
+          </>
+        ) : !loadingTemplate ? (
+          <Text size="sm" c="red">No rep max options available for this template</Text>
+        ) : null}
 
-        <DatePickerInput
-          label="Date"
-          placeholder="Select date"
-          value={date}
-          onChange={setDate}
-          maxDate={new Date()}
+        <TextInput
+          label="Date Recorded"
+          type="date"
+          value={recordedAt}
+          onChange={(e) => setRecordedAt(e.currentTarget.value)}
+          max={formatDateForInput(new Date())}
           required
+          leftSection={<IconCalendar size={16} />}
           disabled={loading}
         />
 
         <Textarea
-          label="Notes"
-          placeholder="Optional notes about this benchmark"
+          label="Notes (Optional)"
+          placeholder="Add any additional notes..."
           value={notes}
           onChange={(e) => setNotes(e.currentTarget.value)}
           minRows={3}
-          maxRows={6}
+          maxRows={5}
           maxLength={1000}
           disabled={loading}
         />
 
         <Group justify="flex-end" gap="sm">
-          <Button
-            variant="subtle"
-            onClick={handleClose}
-            disabled={loading}
-          >
+          <Button variant="subtle" onClick={handleClose} disabled={loading}>
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            loading={loading}
-          >
+          <Button onClick={handleSubmit} loading={loading} disabled={loadingTemplate}>
             Save Benchmark
           </Button>
         </Group>
