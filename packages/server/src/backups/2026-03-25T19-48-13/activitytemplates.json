@@ -1,0 +1,48 @@
+[
+  {
+    "_id": "69ae251b73262928601f8646",
+    "name": "Bench Press",
+    "notes": "",
+    "type": "lift",
+    "gymId": "68d5f706568c347ce43099c2",
+    "createdBy": "69adf5b473262928601f8435",
+    "createdAt": "2026-03-09T01:40:43.623Z",
+    "updatedAt": "2026-03-09T01:40:58.927Z",
+    "__v": 0,
+    "groupId": "69ae250f73262928601f863a"
+  },
+  {
+    "_id": "69ae253573262928601f86aa",
+    "name": "Deadlift",
+    "notes": "",
+    "groupId": "69ae250a73262928601f862e",
+    "type": "lift",
+    "gymId": "68d5f706568c347ce43099c2",
+    "createdBy": "69adf5b473262928601f8435",
+    "createdAt": "2026-03-09T01:41:09.896Z",
+    "updatedAt": "2026-03-09T01:41:09.896Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ae254e73262928601f86c2",
+    "name": "Row",
+    "notes": "",
+    "type": "cardio",
+    "gymId": "68d5f706568c347ce43099c2",
+    "createdBy": "69adf5b473262928601f8435",
+    "createdAt": "2026-03-09T01:41:34.877Z",
+    "updatedAt": "2026-03-09T01:41:55.716Z",
+    "__v": 0
+  },
+  {
+    "_id": "69ae255d73262928601f86ce",
+    "name": "Bike",
+    "notes": "",
+    "type": "cardio",
+    "gymId": "68d5f706568c347ce43099c2",
+    "createdBy": "69adf5b473262928601f8435",
+    "createdAt": "2026-03-09T01:41:49.207Z",
+    "updatedAt": "2026-03-09T01:41:49.207Z",
+    "__v": 0
+  }
+]

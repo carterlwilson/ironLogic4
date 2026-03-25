@@ -5,16 +5,16 @@ import { PlateConfig, PlateOnBar, BarbellCalculation } from '../types/barbell';
  * Ordered from heaviest to lightest for greedy algorithm
  */
 export const PLATE_CONFIGS: PlateConfig[] = [
-  { weight: 25, color: '#DC2626', label: '25kg' },  // Red
-  { weight: 20, color: '#2563EB', label: '20kg' },  // Blue
-  { weight: 15, color: '#EAB308', label: '15kg' },  // Yellow
-  { weight: 10, color: '#16A34A', label: '10kg' },  // Green
-  { weight: 5, color: '#FFFFFF', label: '5kg' },    // White
-  { weight: 2.5, color: '#DC2626', label: '2.5kg' }, // Red (small)
-  { weight: 2, color: '#2563EB', label: '2kg' },    // Blue (small)
-  { weight: 1.5, color: '#EAB308', label: '1.5kg' }, // Yellow (small)
-  { weight: 1, color: '#16A34A', label: '1kg' },    // Green (small)
-  { weight: 0.5, color: '#FFFFFF', label: '0.5kg' }, // White (small)
+  { weight: 25, color: '#DC2626', label: '25' },  // Red
+  { weight: 20, color: '#2563EB', label: '20' },  // Blue
+  { weight: 15, color: '#EAB308', label: '15' },  // Yellow
+  { weight: 10, color: '#16A34A', label: '10' },  // Green
+  { weight: 5, color: '#FFFFFF', label: '5' },    // White
+  { weight: 2.5, color: '#DC2626', label: '2.5' }, // Red (small)
+  { weight: 2, color: '#2563EB', label: '2' },    // Blue (small)
+  { weight: 1.5, color: '#EAB308', label: '1.5' }, // Yellow (small)
+  { weight: 1, color: '#16A34A', label: '1' },    // Green (small)
+  { weight: 0.5, color: '#FFFFFF', label: '0.5' }, // White (small)
 ];
 
 /**
