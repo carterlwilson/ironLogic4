@@ -618,7 +618,7 @@ export const sendClientInvite = async (
       return;
     }
 
-    const { email, firstName, lastName } = validation.data;
+    const { email, programId } = validation.data;
     const gymId = req.user?.gymId;
 
     if (!gymId) {
@@ -637,6 +637,19 @@ export const sendClientInvite = async (
         error: 'Gym not found',
       });
       return;
+    }
+
+    // If programId is provided, validate it exists and belongs to this gym
+    if (programId) {
+      const program = await Program.findById(programId);
+      if (!program) {
+        res.status(404).json({ success: false, error: 'Program not found' });
+        return;
+      }
+      if (program.gymId?.toString() !== gymId.toString()) {
+        res.status(403).json({ success: false, error: 'Program does not belong to your gym' });
+        return;
+      }
     }
 
     // Check if a user with this email already exists
@@ -663,15 +676,14 @@ export const sendClientInvite = async (
       user.inviteToken = hashedToken;
       user.inviteTokenExpiry = expiry;
       user.inviteTokenUsed = false;
-      if (firstName) user.firstName = firstName;
-      if (lastName) user.lastName = lastName;
+      if (programId) user.programId = programId;
       await user.save();
     } else {
       // Create a new pending user record
       user = new User({
         email,
-        firstName: firstName || 'Pending',
-        lastName: lastName || 'User',
+        firstName: 'Pending',
+        lastName: 'User',
         userType: UserType.CLIENT,
         gymId,
         status: 'invited',
@@ -679,13 +691,14 @@ export const sendClientInvite = async (
         inviteToken: hashedToken,
         inviteTokenExpiry: expiry,
         inviteTokenUsed: false,
+        ...(programId && { programId }),
       });
       await user.save();
     }
 
     // Send the invite email
     try {
-      await sendInviteEmail(email, firstName, gym.name, rawToken);
+      await sendInviteEmail(email, undefined, gym.name, rawToken);
       console.log(`[INVITE] Invite email sent to: ${email}`);
     } catch (emailError) {
       // Clean up pending user if email fails and it was just created

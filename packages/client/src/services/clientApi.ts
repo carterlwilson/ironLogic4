@@ -28,8 +28,7 @@ export interface CreateClientResponse extends ApiResponse {
 
 export interface InviteClientRequest {
   email: string;
-  firstName?: string;
-  lastName?: string;
+  programId?: string;
 }
 
 export interface UpdateClientRequest {

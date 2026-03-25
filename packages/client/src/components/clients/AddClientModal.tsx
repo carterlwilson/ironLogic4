@@ -25,7 +25,7 @@ export function AddClientModal({ opened, onClose, onSubmit, loading = false, gym
   const { options: programOptions, isLoading: programsLoading } = useProgramOptions(gymId);
 
   const inviteForm = useForm<InviteClientRequest>({
-    initialValues: { email: '', firstName: '', lastName: '' },
+    initialValues: { email: '', programId: '' },
     validate: {
       email: (value) => {
         if (!value) return 'Email is required';
@@ -332,24 +332,14 @@ export function AddClientModal({ opened, onClose, onSubmit, loading = false, gym
                   {...inviteForm.getInputProps('email')}
                 />
 
-                <Grid>
-                  <Grid.Col span={6}>
-                    <TextInput
-                      label="First Name"
-                      placeholder="Optional"
-                      leftSection={<IconUser size={16} />}
-                      {...inviteForm.getInputProps('firstName')}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <TextInput
-                      label="Last Name"
-                      placeholder="Optional"
-                      leftSection={<IconUser size={16} />}
-                      {...inviteForm.getInputProps('lastName')}
-                    />
-                  </Grid.Col>
-                </Grid>
+                <Select
+                  label="Default Program"
+                  placeholder="No program"
+                  data={programOptions}
+                  disabled={programsLoading}
+                  clearable
+                  {...inviteForm.getInputProps('programId')}
+                />
 
                 {inviteError && (
                   <Alert icon={<IconAlertCircle size={16} />} color="red">

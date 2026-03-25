@@ -161,8 +161,7 @@ export const UpdateMyBenchmarkSchema = z.object({
  */
 export const InviteClientSchema = z.object({
   email: z.string().email('Invalid email address').toLowerCase().trim(),
-  firstName: z.string().max(50).trim().optional(),
-  lastName: z.string().max(50).trim().optional(),
+  programId: z.string().optional(),
 });
 
 /**
