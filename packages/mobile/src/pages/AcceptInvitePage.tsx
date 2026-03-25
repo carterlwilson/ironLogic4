@@ -29,7 +29,6 @@ export function AcceptInvitePage() {
   const token = searchParams.get('token') || '';
 
   const [validating, setValidating] = useState(true);
-  const [tokenValid, setTokenValid] = useState(false);
   const [email, setEmail] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -62,7 +61,6 @@ export function AcceptInvitePage() {
     validateInviteToken(token)
       .then((result) => {
         if (result.valid && result.data) {
-          setTokenValid(true);
           setEmail(result.data.email);
           if (result.data.firstName) form.setFieldValue('firstName', result.data.firstName);
           if (result.data.lastName) form.setFieldValue('lastName', result.data.lastName);
