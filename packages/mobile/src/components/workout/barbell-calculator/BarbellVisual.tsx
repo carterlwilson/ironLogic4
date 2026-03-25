@@ -26,28 +26,31 @@ function darkenColor(color: string, percent: number = 20): string {
 }
 
 /**
- * SVG visualization of a loaded barbell
+ * SVG visualization of one side of a loaded barbell.
  *
- * Renders:
- * - Bar in the center
- * - Plates on both sides
+ * Renders (left to right):
+ * - Bar stub on the left (inside/center of bar)
  * - Plates ordered from heaviest (inside) to lightest (outside)
- * - Plate widths proportional to weight
- * - Labels on each plate
+ * - Plate collar/clamp at the far right (outside end)
  */
 export function BarbellVisual({ calculation }: BarbellVisualProps) {
   // SVG dimensions
-  const width = 800;
   const height = 200;
   const barHeight = 20;
   const barY = height / 2 - barHeight / 2;
-  const barLength = 500;
-  const barX = (width - barLength) / 2;
+  const barX = 20;
+  const barLength = 180;
 
-  // Plate dimensions - base size with proportional scaling
+  // Plate dimensions
   const plateBaseHeight = 100;
   const plateMinWidth = 8;
   const plateMaxWidth = 20;
+  const plateGap = 2;
+  const collarWidth = 8;
+  const collarHeight = Math.round(plateBaseHeight / 8); // ~12px
+
+  // Stagger offsets for plate labels to avoid overlap on narrow plates
+  const labelOffsets = [-30, -15, 0, 15, 30];
 
   // Calculate plate widths proportional to weight (25kg = max width, 1.25kg = min width)
   const getPlateWidth = (weight: number): number => {
@@ -57,10 +60,19 @@ export function BarbellVisual({ calculation }: BarbellVisualProps) {
     return plateMinWidth + ratio * (plateMaxWidth - plateMinWidth);
   };
 
-  // Generate plates for one side (will be mirrored for the other side)
-  const renderPlatesOneSide = (startX: number, direction: 'left' | 'right') => {
+  // Compute total width of all plates on one side
+  const totalPlateWidth = calculation.plates.reduce(
+    (sum, p) => sum + p.quantity * (getPlateWidth(p.weight) + plateGap),
+    0
+  );
+
+  // Dynamic viewBox width: bar stub + plates + collar + right padding
+  const totalWidth = barX + barLength + totalPlateWidth + collarWidth + 20;
+
+  // Render plates stacking rightward from startX
+  const renderPlates = (startX: number) => {
     let currentX = startX;
-    const plateGap = 2;
+    let renderIndex = 0;
 
     return calculation.plates.flatMap((plate, plateIndex) => {
       const plateWidth = getPlateWidth(plate.weight);
@@ -68,10 +80,10 @@ export function BarbellVisual({ calculation }: BarbellVisualProps) {
       const plateY = height / 2 - plateHeight / 2;
 
       return Array.from({ length: plate.quantity }, (_, quantityIndex) => {
-        const x = direction === 'right' ? currentX : currentX - plateWidth;
+        const x = currentX;
+        const labelY = height / 2 + labelOffsets[renderIndex % labelOffsets.length];
         const plateElement = (
           <g key={`${plateIndex}-${quantityIndex}`}>
-            {/* Plate rectangle */}
             <rect
               x={x}
               y={plateY}
@@ -82,10 +94,9 @@ export function BarbellVisual({ calculation }: BarbellVisualProps) {
               strokeWidth={2}
               rx={2}
             />
-            {/* Plate label */}
             <text
               x={x + plateWidth / 2}
-              y={height / 2}
+              y={labelY}
               textAnchor="middle"
               dominantBaseline="middle"
               fill={plate.color === '#FFFFFF' ? '#000000' : '#FFFFFF'}
@@ -98,25 +109,45 @@ export function BarbellVisual({ calculation }: BarbellVisualProps) {
           </g>
         );
 
-        currentX = direction === 'right' ? currentX + plateWidth + plateGap : currentX - plateWidth - plateGap;
-
+        currentX = currentX + plateWidth + plateGap;
+        renderIndex++;
         return plateElement;
       });
     });
   };
+
+  // Render the plate collar/clamp at the outside end
+  const renderCollar = (x: number) => {
+    const collarY = height / 2 - collarHeight / 2;
+    return (
+      <g key="collar">
+        {/* Collar body */}
+        <rect
+          x={x}
+          y={collarY}
+          width={collarWidth}
+          height={collarHeight}
+          fill="#1F2937"
+          stroke="#111827"
+          strokeWidth={1}
+          rx={1}
+        />
+      </g>
+    );
+  };
+
+  const platesStartX = barX + barLength;
+  const collarX = platesStartX + totalPlateWidth;
 
   return (
     <Paper p="md" radius="md" withBorder bg="gray.0">
       <svg
         width="100%"
         height={height}
-        viewBox={`0 0 ${width} ${height}`}
+        viewBox={`0 0 ${totalWidth} ${height}`}
         style={{ maxWidth: '100%', height: 'auto' }}
       >
-        {/* Left plates (render in reverse order so heaviest is closest to bar) */}
-        {calculation.plates.length > 0 && renderPlatesOneSide(barX, 'left')}
-
-        {/* Bar */}
+        {/* Bar stub (inside/center portion) */}
         <rect
           x={barX}
           y={barY}
@@ -128,9 +159,9 @@ export function BarbellVisual({ calculation }: BarbellVisualProps) {
           rx={4}
         />
 
-        {/* Bar label */}
+        {/* Bar weight label */}
         <text
-          x={width / 2}
+          x={barX + barLength / 2}
           y={height / 2}
           textAnchor="middle"
           dominantBaseline="middle"
@@ -142,8 +173,11 @@ export function BarbellVisual({ calculation }: BarbellVisualProps) {
           {calculation.barWeight}kg
         </text>
 
-        {/* Right plates */}
-        {calculation.plates.length > 0 && renderPlatesOneSide(barX + barLength, 'right')}
+        {/* Plates stacking outward */}
+        {calculation.plates.length > 0 && renderPlates(platesStartX)}
+
+        {/* Collar/clamp at outside end */}
+        {renderCollar(collarX)}
       </svg>
     </Paper>
   );
