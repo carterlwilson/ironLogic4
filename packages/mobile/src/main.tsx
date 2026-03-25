@@ -7,6 +7,7 @@ import { AuthProvider } from './providers/AuthProvider';
 import { AuthGuard } from './components/AuthGuard';
 import { LoginPage } from './pages/LoginPage';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage';
+import { AcceptInvitePage } from './pages/AcceptInvitePage';
 import { theme } from './theme/theme';
 import App from './App';
 import '@mantine/core/styles.css';
@@ -33,6 +34,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/accept-invite" element={<AcceptInvitePage />} />
             <Route path="/*" element={
               <AuthGuard>
                 <App />

@@ -9,6 +9,10 @@ export interface UserDocument extends Omit<IUser, 'id' | 'currentBenchmarks' | '
   resetToken?: string;
   resetTokenExpiry?: Date;
   resetTokenUsed?: boolean;
+  inviteToken?: string;
+  inviteTokenExpiry?: Date;
+  inviteTokenUsed?: boolean;
+  status?: 'invited' | 'active';
   refreshTokens: Array<{
     token: string;
     createdAt: Date;
@@ -66,6 +70,12 @@ const userSchema = new Schema<UserDocument>(
       default: [],
       required: false,
     },
+    status: {
+      type: String,
+      enum: ['invited', 'active'],
+      default: 'active',
+      required: false,
+    },
     resetToken: {
       type: String,
       select: false, // Don't include reset token in queries by default
@@ -79,6 +89,22 @@ const userSchema = new Schema<UserDocument>(
     resetTokenUsed: {
       type: Boolean,
       select: false, // Don't include used flag in queries by default
+      default: false,
+      required: false,
+    },
+    inviteToken: {
+      type: String,
+      select: false,
+      required: false,
+    },
+    inviteTokenExpiry: {
+      type: Date,
+      select: false,
+      required: false,
+    },
+    inviteTokenUsed: {
+      type: Boolean,
+      select: false,
       default: false,
       required: false,
     },

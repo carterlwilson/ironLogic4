@@ -1,8 +1,9 @@
-import { Modal, Stack, Group, TextInput, Button, Grid, Paper, Text, ActionIcon, Checkbox, PasswordInput, Alert, CopyButton, Tooltip, Select } from '@mantine/core';
+import { Modal, Stack, Group, TextInput, Button, Grid, Paper, Text, ActionIcon, Checkbox, PasswordInput, Alert, CopyButton, Tooltip, Select, Tabs } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconMail, IconUser, IconRefresh, IconCopy, IconCheck, IconAlertCircle } from '@tabler/icons-react';
+import { IconMail, IconUser, IconRefresh, IconCopy, IconCheck, IconAlertCircle, IconSend } from '@tabler/icons-react';
 import { useState } from 'react';
-import type { CreateClientRequest } from '../../services/clientApi';
+import type { CreateClientRequest, InviteClientRequest } from '../../services/clientApi';
+import { clientApi } from '../../services/clientApi';
 import { generatePassword } from '../../utils/passwordGenerator';
 import { useProgramOptions } from '../../hooks/useProgramOptions';
 
@@ -17,7 +18,35 @@ interface AddClientModalProps {
 export function AddClientModal({ opened, onClose, onSubmit, loading = false, gymId }: AddClientModalProps) {
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
   const [autoGenerate, setAutoGenerate] = useState(true);
+  const [activeTab, setActiveTab] = useState<string | null>('create');
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [inviteSent, setInviteSent] = useState<string | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
   const { options: programOptions, isLoading: programsLoading } = useProgramOptions(gymId);
+
+  const inviteForm = useForm<InviteClientRequest>({
+    initialValues: { email: '', programId: '' },
+    validate: {
+      email: (value) => {
+        if (!value) return 'Email is required';
+        if (!/^\S+@\S+\.\S+$/.test(value)) return 'Please enter a valid email address';
+        return null;
+      },
+    },
+  });
+
+  const handleInviteSubmit = async (values: InviteClientRequest) => {
+    setInviteLoading(true);
+    setInviteError(null);
+    try {
+      await clientApi.sendInvite(values);
+      setInviteSent(values.email);
+    } catch (error: any) {
+      setInviteError(error.message || 'Failed to send invite. Please try again.');
+    } finally {
+      setInviteLoading(false);
+    }
+  };
 
   const form = useForm<CreateClientRequest>({
     initialValues: {
@@ -86,8 +115,12 @@ export function AddClientModal({ opened, onClose, onSubmit, loading = false, gym
 
   const handleClose = () => {
     form.reset();
+    inviteForm.reset();
     setGeneratedPassword(null);
     setAutoGenerate(true);
+    setActiveTab('create');
+    setInviteSent(null);
+    setInviteError(null);
     onClose();
   };
 
@@ -165,109 +198,173 @@ export function AddClientModal({ opened, onClose, onSubmit, loading = false, gym
       size="md"
       centered
     >
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <Stack gap="md">
-          <Grid>
-            <Grid.Col span={6}>
+      <Tabs value={activeTab} onChange={setActiveTab}>
+        <Tabs.List mb="md">
+          <Tabs.Tab value="create" leftSection={<IconUser size={14} />}>
+            Create Account
+          </Tabs.Tab>
+          <Tabs.Tab value="invite" leftSection={<IconSend size={14} />}>
+            Send Invite
+          </Tabs.Tab>
+        </Tabs.List>
+
+        <Tabs.Panel value="create">
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Stack gap="md">
+              <Grid>
+                <Grid.Col span={6}>
+                  <TextInput
+                    label="First Name"
+                    placeholder="Enter first name"
+                    leftSection={<IconUser size={16} />}
+                    required
+                    {...form.getInputProps('firstName')}
+                  />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <TextInput
+                    label="Last Name"
+                    placeholder="Enter last name"
+                    leftSection={<IconUser size={16} />}
+                    required
+                    {...form.getInputProps('lastName')}
+                  />
+                </Grid.Col>
+              </Grid>
+
               <TextInput
-                label="First Name"
-                placeholder="Enter first name"
-                leftSection={<IconUser size={16} />}
+                label="Email"
+                placeholder="client@example.com"
+                leftSection={<IconMail size={16} />}
+                type="email"
                 required
-                {...form.getInputProps('firstName')}
+                {...form.getInputProps('email')}
               />
-            </Grid.Col>
-            <Grid.Col span={6}>
-              <TextInput
-                label="Last Name"
-                placeholder="Enter last name"
-                leftSection={<IconUser size={16} />}
-                required
-                {...form.getInputProps('lastName')}
+
+              <Select
+                label="Program"
+                placeholder="Select a program (optional)"
+                data={programOptions}
+                searchable
+                clearable
+                disabled={programsLoading}
+                {...form.getInputProps('programId')}
               />
-            </Grid.Col>
-          </Grid>
 
-          <TextInput
-            label="Email"
-            placeholder="client@example.com"
-            leftSection={<IconMail size={16} />}
-            type="email"
-            required
-            {...form.getInputProps('email')}
-          />
-
-          <Select
-            label="Program"
-            placeholder="Select a program (optional)"
-            data={programOptions}
-            searchable
-            clearable
-            disabled={programsLoading}
-            {...form.getInputProps('programId')}
-          />
-
-          <Stack gap="xs">
-            <Checkbox
-              label="Auto-generate password"
-              checked={autoGenerate}
-              onChange={(e) => handleAutoGenerateChange(e.currentTarget.checked)}
-            />
-
-            {autoGenerate ? (
-              <Group gap="xs">
-                <TextInput
-                  label="Password"
-                  value={form.values.password}
-                  readOnly
-                  style={{ flex: 1 }}
-                  styles={{
-                    input: {
-                      fontFamily: 'monospace',
-                      fontSize: '14px',
-                    },
-                  }}
+              <Stack gap="xs">
+                <Checkbox
+                  label="Auto-generate password"
+                  checked={autoGenerate}
+                  onChange={(e) => handleAutoGenerateChange(e.currentTarget.checked)}
                 />
-                <Tooltip label="Generate new password">
-                  <ActionIcon
-                    onClick={handleGeneratePassword}
-                    variant="light"
-                    color="forestGreen"
-                    size="lg"
-                    style={{ marginTop: 25 }}
-                  >
-                    <IconRefresh size={18} />
-                  </ActionIcon>
-                </Tooltip>
-              </Group>
-            ) : (
-              <PasswordInput
-                label="Password"
-                placeholder="Enter password (min 8 characters)"
-                required
-                {...form.getInputProps('password')}
-              />
-            )}
-          </Stack>
 
-          <Group justify="flex-end" gap="md" mt="md">
-            <Button
-              variant="subtle"
-              onClick={handleClose}
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              color="green"
-              loading={loading}
-            >
-              Create Client
-            </Button>
-          </Group>
-        </Stack>
-      </form>
+                {autoGenerate ? (
+                  <Group gap="xs">
+                    <TextInput
+                      label="Password"
+                      value={form.values.password}
+                      readOnly
+                      style={{ flex: 1 }}
+                      styles={{
+                        input: {
+                          fontFamily: 'monospace',
+                          fontSize: '14px',
+                        },
+                      }}
+                    />
+                    <Tooltip label="Generate new password">
+                      <ActionIcon
+                        onClick={handleGeneratePassword}
+                        variant="light"
+                        color="forestGreen"
+                        size="lg"
+                        style={{ marginTop: 25 }}
+                      >
+                        <IconRefresh size={18} />
+                      </ActionIcon>
+                    </Tooltip>
+                  </Group>
+                ) : (
+                  <PasswordInput
+                    label="Password"
+                    placeholder="Enter password (min 8 characters)"
+                    required
+                    {...form.getInputProps('password')}
+                  />
+                )}
+              </Stack>
+
+              <Group justify="flex-end" gap="md" mt="md">
+                <Button variant="subtle" onClick={handleClose} disabled={loading}>
+                  Cancel
+                </Button>
+                <Button type="submit" color="green" loading={loading}>
+                  Create Client
+                </Button>
+              </Group>
+            </Stack>
+          </form>
+        </Tabs.Panel>
+
+        <Tabs.Panel value="invite">
+          {inviteSent ? (
+            <Stack gap="md">
+              <Alert icon={<IconCheck size={16} />} color="green">
+                Invite sent to <strong>{inviteSent}</strong>. They'll receive an email with a link to create their account.
+              </Alert>
+              <Button onClick={handleClose} color="green" fullWidth>
+                Done
+              </Button>
+            </Stack>
+          ) : (
+            <form onSubmit={inviteForm.onSubmit(handleInviteSubmit)}>
+              <Stack gap="md">
+                <Text size="sm" c="dimmed">
+                  The client will receive an email with a one-time link to create their own account. The link expires in 7 days.
+                </Text>
+
+                <TextInput
+                  label="Email"
+                  placeholder="client@example.com"
+                  leftSection={<IconMail size={16} />}
+                  type="email"
+                  required
+                  {...inviteForm.getInputProps('email')}
+                />
+
+                <Select
+                  label="Default Program"
+                  placeholder="No program"
+                  data={programOptions}
+                  disabled={programsLoading}
+                  clearable
+                  {...inviteForm.getInputProps('programId')}
+                />
+
+                {inviteError && (
+                  <Alert icon={<IconAlertCircle size={16} />} color="red">
+                    {inviteError}
+                  </Alert>
+                )}
+
+                <Group justify="flex-end" gap="md" mt="md">
+                  <Button variant="subtle" onClick={handleClose} disabled={inviteLoading}>
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    color="green"
+                    loading={inviteLoading}
+                    leftSection={<IconSend size={16} />}
+                  >
+                    Send Invite
+                  </Button>
+                </Group>
+              </Stack>
+            </form>
+          )}
+        </Tabs.Panel>
+      </Tabs>
     </Modal>
   );
 }
