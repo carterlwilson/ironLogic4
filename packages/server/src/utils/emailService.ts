@@ -134,22 +134,22 @@ export const sendInviteEmail = async (
   const msg = {
     to: email,
     from: verifiedSender,
-    subject: `You've been invited to join ${gymName} on IronLogic`,
-    text: `${greeting}\n\n${gymName} has invited you to join their gym on IronLogic.\n\nClick the link below to create your account:\n${inviteLink}\n\nThis link will expire in 7 days.\n\nIf you were not expecting this invitation, you can safely ignore this email.\n\nBest regards,\nThe IronLogic Team`,
+    subject: `You've been invited to join ${gymName}`,
+    text: `${greeting}\n\n${gymName} has invited you to join their gym.\n\nClick the link below to create your account:\n${inviteLink}\n\nThis link will expire in 7 days.\n\nIf you were not expecting this invitation, you can safely ignore this email.\n\nBest regards,\nThe IronLogic Team`,
     html: `
       <!DOCTYPE html>
       <html>
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>You've been invited to IronLogic</title>
+          <title>You've been invited to join ${gymName}</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background-color: #f8f9fa; border-radius: 8px; padding: 30px; margin-bottom: 20px;">
             <h1 style="color: #2f9e44; margin-top: 0;">You're Invited!</h1>
             <p style="font-size: 16px; margin-bottom: 20px;">${greeting}</p>
             <p style="font-size: 16px; margin-bottom: 20px;">
-              <strong>${gymName}</strong> has invited you to join their gym on IronLogic.
+              <strong>${gymName}</strong> has invited you to join their gym.
             </p>
             <p style="font-size: 16px; margin-bottom: 30px;">
               Click the button below to create your account and get started:
