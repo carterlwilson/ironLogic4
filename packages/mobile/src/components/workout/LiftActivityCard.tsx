@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Card, Stack, Text, Group, Button, ActionIcon, Badge, Paper, SegmentedControl } from '@mantine/core';
-import { IconCheck, IconWeight, /* IconAlertCircle, */ IconBarbell /* , IconPlus */ } from '@tabler/icons-react';
+import { IconCheck, IconWeight, IconAlertCircle, IconBarbell, IconPlus } from '@tabler/icons-react';
 import { ActivityProgress } from '../../pages/WorkoutPage';
 import { useBarbellCalculator } from './barbell-calculator/useBarbellCalculator';
 import { BarbellCalculatorDrawer } from './barbell-calculator/BarbellCalculatorDrawer';
-// import { AddBenchmarkModal } from './AddBenchmarkModal';
+import { AddBenchmarkModal } from './AddBenchmarkModal';
 import type { WorkoutActivity, ISetCalculation } from '@ironlogic4/shared/types/programs';
 
 interface LiftActivityCardProps {
@@ -12,18 +12,18 @@ interface LiftActivityCardProps {
   progress: ActivityProgress;
   onSetComplete: (activityId: string, setIndex: number) => void;
   onActivityComplete: (activityId: string) => void;
-  // onDataRefresh?: () => void; // Commented out - not used since AddBenchmarkModal is disabled
+  onDataRefresh?: () => void;
 }
 
 export function LiftActivityCard({
   activity,
   progress,
   onSetComplete,
-  // onDataRefresh, // Commented out - not used since AddBenchmarkModal is disabled
+  onDataRefresh,
 }: LiftActivityCardProps) {
   const [selectedSetIndex, setSelectedSetIndex] = useState(0);
   const [weightAdjustment, setWeightAdjustment] = useState(0);
-  // const [addBenchmarkModalOpened, setAddBenchmarkModalOpened] = useState(false); // Commented out - not used since AddBenchmarkModal is disabled
+  const [addBenchmarkModalOpened, setAddBenchmarkModalOpened] = useState(false);
 
   const anySetsComplete = progress.sets.some(s => s.completed);
 
@@ -175,8 +175,7 @@ export function LiftActivityCard({
           </Paper>
         )}
 
-        {/* TODO: Re-enable when AddBenchmarkModal is updated for multi-rep max support */}
-        {/* {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && (
+        {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && (
           <Paper p="md" radius="md" withBorder bg="orange.0">
             <Stack gap="sm">
               <Group gap="xs">
@@ -193,11 +192,11 @@ export function LiftActivityCard({
                 onClick={() => setAddBenchmarkModalOpened(true)}
                 fullWidth
               >
-                Add Benchmark
+                Add Benchmark{currentSet.repMaxName ? ` — ${currentSet.repMaxName} needed` : ''}
               </Button>
             </Stack>
           </Paper>
-        )} */}
+        )}
 
         {/* Complete Set Button */}
         <Button
@@ -256,8 +255,7 @@ export function LiftActivityCard({
       />
 
       {/* Add Benchmark Modal */}
-      {/* TODO: benchmarkTemplateId removed from ISetCalculation - need to get it differently */}
-      {/* {currentSet?.benchmarkTemplateId && currentSet?.benchmarkName && (
+      {currentSet?.benchmarkTemplateId && currentSet?.benchmarkName && (
         <AddBenchmarkModal
           opened={addBenchmarkModalOpened}
           onClose={() => setAddBenchmarkModalOpened(false)}
@@ -268,7 +266,7 @@ export function LiftActivityCard({
             onDataRefresh?.();
           }}
         />
-      )} */}
+      )}
     </Card>
   );
 }
