@@ -20,7 +20,7 @@ export function ActivityList({
   getProgress,
   onSetComplete,
   onActivityComplete,
-  // onDataRefresh, // Commented out - not used since AddBenchmarkModal is disabled
+  onDataRefresh,
 }: ActivityListProps) {
   return (
     <Stack gap="md">
@@ -35,7 +35,7 @@ export function ActivityList({
               progress={progress}
               onSetComplete={onSetComplete}
               onActivityComplete={onActivityComplete}
-              // onDataRefresh={onDataRefresh} // Commented out - not used since AddBenchmarkModal is disabled
+              onDataRefresh={onDataRefresh}
             />
           );
         }

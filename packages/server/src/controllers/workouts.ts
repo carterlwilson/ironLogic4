@@ -254,8 +254,10 @@ export const getCurrentWeekWorkouts = async (
           percentageOfMax: number;
           calculatedWeightKg?: number;
           templateRepMaxId?: string;
+          benchmarkTemplateId?: string;
           benchmarkName?: string;
           repMaxReps?: number;
+          repMaxName?: string;
         }> | undefined;
 
         if (activity.sets && activity.sets.length > 0) {
@@ -264,16 +266,24 @@ export const getCurrentWeekWorkouts = async (
             let calculatedWeightKg: number | undefined;
             let benchmarkName: string | undefined;
             let repMaxReps: number | undefined;
+            let benchmarkTemplateId: string | undefined;
+            let repMaxName: string | undefined;
 
             if (set.templateRepMaxId) {
               // Get template info for this templateRepMaxId
               const templateInfo = templateRepMaxToBenchmarkMap.get(set.templateRepMaxId);
 
               if (templateInfo) {
-                const { benchmarkTemplateId, benchmarkName: baseName, repMaxReps: reps, repMaxName } = templateInfo;
+                const { benchmarkTemplateId: tid, benchmarkName: baseName, repMaxReps: reps, repMaxName: rmName } = templateInfo;
+
+                benchmarkTemplateId = tid;
+                repMaxName = rmName;
+                // Build full benchmark name: "Back Squat - 3RM"
+                benchmarkName = `${baseName} - ${rmName}`;
+                repMaxReps = reps;
 
                 // Get client's benchmark for this template
-                const clientBenchmark = benchmarkMap.get(benchmarkTemplateId);
+                const clientBenchmark = benchmarkMap.get(tid);
 
                 if (clientBenchmark?.type === BenchmarkType.WEIGHT && clientBenchmark.repMaxes) {
                   // Find the specific RepMax that matches this templateRepMaxId
@@ -283,10 +293,6 @@ export const getCurrentWeekWorkouts = async (
                     const rawWeight = (repMax.weightKg * set.percentageOfMax) / 100;
                     calculatedWeightKg = Math.round(rawWeight);
                   }
-
-                  // Build full benchmark name: "Back Squat - 3RM"
-                  benchmarkName = `${baseName} - ${repMaxName}`;
-                  repMaxReps = reps;
                 }
               }
             }
@@ -297,8 +303,10 @@ export const getCurrentWeekWorkouts = async (
               percentageOfMax: set.percentageOfMax,
               calculatedWeightKg,
               templateRepMaxId: set.templateRepMaxId,
+              benchmarkTemplateId,
               benchmarkName,
               repMaxReps,
+              repMaxName,
             };
           });
         }
