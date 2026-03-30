@@ -97,6 +97,15 @@ export async function getBenchmarkTemplate(templateId: string): Promise<{ succes
 }
 
 /**
+ * Delete a benchmark and all its data
+ */
+export async function deleteBenchmark(benchmarkId: string): Promise<void> {
+  await apiRequest<{ success: true; message: string }>(`/api/me/benchmarks/${benchmarkId}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
  * Get benchmark progress data for charts
  */
 export async function getBenchmarkProgress(

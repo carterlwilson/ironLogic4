@@ -5,6 +5,7 @@ import {
   getMyBenchmarks,
   createMyBenchmark,
   updateMyBenchmark,
+  deleteMyBenchmark,
 } from '../../controllers/clientBenchmarks.js';
 import { getBenchmarkProgress } from '../../controllers/benchmarkProgress.js';
 
@@ -37,5 +38,11 @@ router.get('/:templateId/progress', getBenchmarkProgress);
  * Update existing benchmark
  */
 router.put('/:benchmarkId', updateMyBenchmark);
+
+/**
+ * DELETE /api/me/benchmarks/:benchmarkId
+ * Delete a benchmark and all its data
+ */
+router.delete('/:benchmarkId', deleteMyBenchmark);
 
 export default router;

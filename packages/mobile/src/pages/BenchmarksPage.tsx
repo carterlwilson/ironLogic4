@@ -13,6 +13,7 @@ import { CreateNewFromOldModal } from '../components/benchmarks/CreateNewFromOld
 import { CreateNewRepMaxModal } from '../components/benchmarks/CreateNewRepMaxModal';
 import { CreateNewTimeSubMaxModal } from '../components/benchmarks/CreateNewTimeSubMaxModal';
 import { CreateNewDistanceSubMaxModal } from '../components/benchmarks/CreateNewDistanceSubMaxModal';
+import { ConfirmDeleteBenchmarkModal } from '../components/benchmarks/ConfirmDeleteBenchmarkModal';
 import { TagFilter } from '../components/benchmarks/TagFilter';
 import { getAllUniqueTags, filterBenchmarksByTag } from '../utils/tagUtils';
 import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
@@ -44,6 +45,12 @@ export const BenchmarksPage = () => {
     handleUpdateRepMax,
     handleUpdateTimeSubMax,
     handleUpdateDistanceSubMax,
+    isDeleteOpen,
+    isDeleting,
+    benchmarkToDelete,
+    openDelete,
+    cancelDelete,
+    confirmDelete,
     openCreate,
     openEdit,
     openCreateNewFromOld,
@@ -142,6 +149,7 @@ export const BenchmarksPage = () => {
               loading={loading}
               onEdit={openEdit}
               onCreateNew={openCreateNewFromOld}
+              onDelete={openDelete}
               benchmarkTemplates={benchmarkTemplates}
               onEditRepMax={openEditRepMax}
               onCreateNewRepMax={openCreateNewRepMax}
@@ -248,6 +256,14 @@ export const BenchmarksPage = () => {
         targetDistanceSubMax={selectedDistanceSubMaxForNew?.distanceSubMax || null}
         template={selectedDistanceSubMaxForNew?.template || null}
         loading={loading}
+      />
+
+      <ConfirmDeleteBenchmarkModal
+        opened={isDeleteOpen}
+        onClose={cancelDelete}
+        onConfirm={confirmDelete}
+        benchmarkName={benchmarkToDelete?.name ?? ''}
+        loading={isDeleting}
       />
     </Container>
   );

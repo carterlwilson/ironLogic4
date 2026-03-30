@@ -14,6 +14,7 @@ import {
   getBenchmarks,
   createBenchmark,
   updateBenchmark,
+  deleteBenchmark,
   getBenchmarkTemplates,
 } from '../services/benchmarkApi';
 
@@ -51,6 +52,10 @@ export function useBenchmarks() {
     selectedBenchmark: null,
     selectedTemplate: null,
   });
+
+  const [benchmarkToDelete, setBenchmarkToDelete] = useState<ClientBenchmark | null>(null);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [benchmarkTemplates, setBenchmarkTemplates] = useState<Map<string, BenchmarkTemplate>>(new Map());
   const [selectedRepMax, setSelectedRepMax] = useState<{
@@ -225,6 +230,56 @@ export function useBenchmarks() {
     },
     [loadBenchmarks]
   );
+
+  /**
+   * Open delete confirmation modal
+   */
+  const openDelete = useCallback((benchmark: ClientBenchmark) => {
+    setBenchmarkToDelete(benchmark);
+    setIsDeleteOpen(true);
+  }, []);
+
+  /**
+   * Cancel benchmark deletion
+   */
+  const cancelDelete = useCallback(() => {
+    setIsDeleteOpen(false);
+    setBenchmarkToDelete(null);
+  }, []);
+
+  /**
+   * Confirm and execute benchmark deletion
+   */
+  const confirmDelete = useCallback(async () => {
+    if (!benchmarkToDelete) return;
+    setIsDeleting(true);
+    try {
+      await deleteBenchmark(benchmarkToDelete.id);
+      setState((prev) => ({
+        ...prev,
+        currentBenchmarks: prev.currentBenchmarks.filter((b) => b.id !== benchmarkToDelete.id),
+        historicalBenchmarks: prev.historicalBenchmarks.filter((b) => b.id !== benchmarkToDelete.id),
+      }));
+      setIsDeleteOpen(false);
+      setBenchmarkToDelete(null);
+      notifications.show({
+        title: 'Benchmark deleted',
+        message: `"${benchmarkToDelete.name}" and all its data have been permanently deleted.`,
+        color: 'green',
+        autoClose: 4000,
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete benchmark';
+      notifications.show({
+        title: 'Error',
+        message: errorMessage,
+        color: 'red',
+        autoClose: 5000,
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [benchmarkToDelete]);
 
   /**
    * Open create modal
@@ -402,6 +457,11 @@ export function useBenchmarks() {
     loading: state.loading,
     error: state.error,
 
+    // Delete state
+    isDeleteOpen,
+    isDeleting,
+    benchmarkToDelete,
+
     // Modal state
     isCreateOpen: modalState.isCreateOpen,
     isEditOpen: modalState.isEditOpen,
@@ -420,6 +480,9 @@ export function useBenchmarks() {
     selectedDistanceSubMaxForNew,
 
     // Actions
+    openDelete,
+    cancelDelete,
+    confirmDelete,
     loadBenchmarks,
     loadTemplates,
     handleCreateBenchmark,

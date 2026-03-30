@@ -326,6 +326,49 @@ export const updateMyBenchmark = async (
 };
 
 /**
+ * DELETE /api/me/benchmarks/:benchmarkId
+ * Delete a benchmark (current or historical) and all its submaxes
+ */
+export const deleteMyBenchmark = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user!.id;
+    const { benchmarkId } = req.params;
+
+    const result = await User.updateOne(
+      { _id: userId },
+      {
+        $pull: {
+          currentBenchmarks: { _id: benchmarkId },
+          historicalBenchmarks: { _id: benchmarkId },
+        },
+      }
+    );
+
+    if (result.modifiedCount === 0) {
+      res.status(404).json({
+        success: false,
+        error: 'Benchmark not found',
+      });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Benchmark deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting benchmark:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to delete benchmark',
+    });
+  }
+};
+
+/**
  * Helper: Determine measurement type from input
  */
 function getMeasurementTypeFromInput(input: CreateMyBenchmarkInput): string {
