@@ -17,6 +17,7 @@ interface BenchmarkListProps {
   onCreateNewTimeSubMax?: (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => void;
   onEditDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmarkId: string, allDistanceSubMaxes: DistanceSubMax[], templateDistanceSubMaxName: string, benchmarkName: string) => void;
   onCreateNewDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => void;
+  onDelete?: (benchmark: ClientBenchmark) => void;
 }
 
 export function BenchmarkList({
@@ -32,6 +33,7 @@ export function BenchmarkList({
   onCreateNewTimeSubMax,
   onEditDistanceSubMax,
   onCreateNewDistanceSubMax,
+  onDelete,
 }: BenchmarkListProps) {
   if (loading) {
     return (
@@ -79,6 +81,7 @@ export function BenchmarkList({
           onCreateNewTimeSubMax={onCreateNewTimeSubMax}
           onEditDistanceSubMax={onEditDistanceSubMax}
           onCreateNewDistanceSubMax={onCreateNewDistanceSubMax}
+          onDelete={onDelete}
         />
       ))}
     </Stack>

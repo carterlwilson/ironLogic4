@@ -1,5 +1,5 @@
-import { Card, Text, Group, Badge, Button, Stack, Paper, Collapse, ActionIcon, SimpleGrid, Skeleton } from '@mantine/core';
-import { IconPencil, IconRefresh, IconClock, IconChevronDown } from '@tabler/icons-react';
+import { Card, Text, Group, Badge, Button, Stack, Paper, Collapse, ActionIcon, SimpleGrid, Skeleton, Menu } from '@mantine/core';
+import { IconPencil, IconRefresh, IconClock, IconChevronDown, IconDotsVertical, IconTrash } from '@tabler/icons-react';
 import { ClientBenchmark, BenchmarkTemplate, RepMax, TimeSubMax, DistanceSubMax } from '@ironlogic4/shared';
 import { BenchmarkType, DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 import {
@@ -28,6 +28,7 @@ interface BenchmarkCardProps {
   onCreateNewTimeSubMax?: (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => void;
   onEditDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmarkId: string, allDistanceSubMaxes: DistanceSubMax[], templateDistanceSubMaxName: string, benchmarkName: string) => void;
   onCreateNewDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => void;
+  onDelete?: (benchmark: ClientBenchmark) => void;
 }
 
 export function BenchmarkCard({
@@ -42,6 +43,7 @@ export function BenchmarkCard({
   onCreateNewTimeSubMax,
   onEditDistanceSubMax,
   onCreateNewDistanceSubMax,
+  onDelete,
 }: BenchmarkCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const isEditable = !isHistorical && isBenchmarkEditable(benchmark);
@@ -200,7 +202,7 @@ export function BenchmarkCard({
   return (
     <Card shadow="sm" padding={isExpanded ? "lg" : "sm"} radius="md" withBorder>
       <Stack gap="xs">
-        {/* Always visible clickable header - only name and chevron */}
+        {/* Always visible clickable header - name, menu, and chevron */}
         <Group
           justify="space-between"
           align="center"
@@ -210,20 +212,49 @@ export function BenchmarkCard({
           <Text fw={600} size="md" lineClamp={2} style={{ flex: 1 }}>
             {benchmark.name}
           </Text>
-          <ActionIcon
-            variant="subtle"
-            color="gray"
-            size="lg"
-            aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
-          >
-            <IconChevronDown
-              size={20}
-              style={{
-                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 200ms ease',
-              }}
-            />
-          </ActionIcon>
+          <Group gap={4} onClick={(e) => e.stopPropagation()}>
+            <Menu withinPortal position="bottom-end" shadow="md">
+              <Menu.Target>
+                <ActionIcon variant="subtle" color="gray" size="lg" aria-label="Benchmark options">
+                  <IconDotsVertical size={18} />
+                </ActionIcon>
+              </Menu.Target>
+              <Menu.Dropdown>
+                {!isHistorical && (
+                  <Menu.Item
+                    leftSection={<IconPencil size={16} />}
+                    onClick={() => onEdit(benchmark)}
+                  >
+                    Edit
+                  </Menu.Item>
+                )}
+                {onDelete && (
+                  <Menu.Item
+                    leftSection={<IconTrash size={16} />}
+                    color="red"
+                    onClick={() => onDelete(benchmark)}
+                  >
+                    Delete
+                  </Menu.Item>
+                )}
+              </Menu.Dropdown>
+            </Menu>
+            <ActionIcon
+              variant="subtle"
+              color="gray"
+              size="lg"
+              aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              <IconChevronDown
+                size={20}
+                style={{
+                  transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 200ms ease',
+                }}
+              />
+            </ActionIcon>
+          </Group>
         </Group>
 
         {/* Collapsible section with all details */}
