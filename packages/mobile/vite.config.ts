@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'IronLogic4 Mobile',
-        short_name: 'IronLogic4',
-        description: 'IronLogic4 mobile experience',
+        name: 'Cully Strength',
+        short_name: 'Cully Strength',
+        description: 'Cully Strength mobile experience',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
