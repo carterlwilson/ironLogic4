@@ -4,54 +4,69 @@ import { DayOfWeek } from '../types/schedules.js';
 // Time format validation (HH:mm)
 const timeFormatRegex = /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/;
 
-export const TimeSlotSchema = z.object({
-  id: z.string().min(1),
-  startTime: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format (e.g., 09:00, 14:30)'),
-  endTime: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format (e.g., 09:00, 14:30)'),
-  capacity: z.number().int().min(1, 'Capacity must be at least 1'),
-  assignedClients: z.array(z.string()).default([]),
+// ===== Schedule Template Schemas (flat model) =====
+
+export const CreateScheduleTemplateSchema = z.object({
+  coachId: z.string().min(1),
+  dayOfWeek: z.nativeEnum(DayOfWeek),
+  period: z.enum(['AM', 'PM']),
+  time: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format'),
+  endTime: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format'),
+  maxCapacity: z.number().int().min(1, 'Capacity must be at least 1'),
 }).refine((data) => {
-  // Validate that endTime is after startTime
-  const [startHour, startMin] = data.startTime.split(':').map(Number);
-  const [endHour, endMin] = data.endTime.split(':').map(Number);
-  const startMinutes = startHour * 60 + startMin;
-  const endMinutes = endHour * 60 + endMin;
-  return endMinutes > startMinutes;
+  const [sh, sm] = data.time.split(':').map(Number);
+  const [eh, em] = data.endTime.split(':').map(Number);
+  return eh * 60 + em > sh * 60 + sm;
 }, {
   message: 'End time must be after start time',
   path: ['endTime'],
 });
 
-export const ScheduleDaySchema = z.object({
-  dayOfWeek: z.nativeEnum(DayOfWeek),
-  timeSlots: z.array(TimeSlotSchema),
-});
-
-export const CreateScheduleTemplateSchema = z.object({
-  name: z.string().min(1).max(100).trim(),
-  description: z.string().max(500).trim().optional(),
-  coachIds: z.array(z.string().min(1)).min(1, 'At least one coach is required'),
-  days: z.array(ScheduleDaySchema).optional().default([]),
-});
-
 export const UpdateScheduleTemplateSchema = z.object({
-  name: z.string().min(1).max(100).trim().optional(),
-  description: z.string().max(500).trim().optional(),
-  coachIds: z.array(z.string().min(1)).min(1, 'At least one coach is required').optional(),
-  days: z.array(ScheduleDaySchema).min(1, 'At least one day is required').optional(),
+  coachId: z.string().min(1).optional(),
+  dayOfWeek: z.nativeEnum(DayOfWeek).optional(),
+  period: z.enum(['AM', 'PM']).optional(),
+  time: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format').optional(),
+  endTime: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format').optional(),
+  maxCapacity: z.number().int().min(1, 'Capacity must be at least 1').optional(),
+  isActive: z.boolean().optional(),
 });
 
-export const CreateActiveScheduleSchema = z.object({
+// ===== Class Session Query Schemas =====
+
+export const ClassSessionQuerySchema = z.object({
+  date: z.string().optional(),
+  coachId: z.string().optional(),
+  period: z.enum(['AM', 'PM']).optional(),
+  startTime: z.string().regex(timeFormatRegex).optional(),
+});
+
+export const WeekViewQuerySchema = z.object({
+  startDate: z.string().min(1),
+});
+
+// ===== Client Default Schedule Schema =====
+
+export const ClientDefaultScheduleSchema = z.object({
   templateId: z.string().min(1),
 });
 
-export const AssignStaffSchema = z.object({
-  coachId: z.string().min(1),
+// ===== Attendance Schema =====
+
+export const SubmitAttendanceSchema = z.object({
+  attendance: z.array(z.object({
+    clientId: z.string().min(1),
+    status: z.enum(['present', 'absent', 'late']),
+  })).min(1),
 });
 
-export const JoinTimeslotSchema = z.object({
-  // Empty - user ID comes from auth
+// ===== Session Generation Schema =====
+
+export const GenerateWeekSchema = z.object({
+  startDate: z.string().optional(),
 });
+
+// ===== Available Schedules Query (kept for mobile client) =====
 
 export const AvailableSchedulesQuerySchema = z.object({
   gymId: z.string().min(1).optional(),

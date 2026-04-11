@@ -2,7 +2,6 @@ import express from 'express';
 import {
   verifyToken,
   requireRole,
-  AuthenticatedRequest,
 } from '../../middleware/auth.js';
 import {
   getScheduleTemplates,
@@ -12,28 +11,35 @@ import {
   deleteScheduleTemplate,
 } from '../../controllers/scheduleTemplates.js';
 import {
-  getActiveSchedules,
-  getActiveScheduleById,
-  createActiveSchedule,
-  deleteActiveSchedule,
-  resetActiveSchedule,
-  assignStaff,
-  unassignStaff,
-} from '../../controllers/activeSchedules.js';
+  getSessionsForDate,
+  getSessionsByCoachDay,
+  getSessionsByCoachWeek,
+  getSessionById,
+  deleteSession,
+  deleteSessionsForWeek,
+} from '../../controllers/classSessions.js';
 import {
-  getAvailableSchedules,
-  getMySchedule,
-  joinTimeslot,
-  leaveTimeslot,
-} from '../../controllers/clientSchedules.js';
-import { UserType } from '@ironlogic4/shared';
+  enrollInSession,
+  unenrollFromSession,
+  adminEnrollClient,
+  adminUnenrollClient,
+} from '../../controllers/enrollments.js';
+import {
+  submitAttendance,
+  getAttendance,
+} from '../../controllers/attendance.js';
+import {
+  getMyDefaults,
+  addDefault,
+  removeDefault,
+} from '../../controllers/clientDefaults.js';
+import { ScheduleResetService } from '../../services/ScheduleResetService.js';
+import { GenerateWeekSchema, UserType } from '@ironlogic4/shared';
 
 const router = express.Router();
 
 // ===== Schedule Template Routes =====
 
-// GET /api/gym/schedules/templates - List all schedule templates
-// Admin/Owner/Coach access (coaches see only schedules they're assigned to)
 router.get(
   '/templates',
   verifyToken,
@@ -41,8 +47,6 @@ router.get(
   getScheduleTemplates
 );
 
-// GET /api/gym/schedules/templates/:id - Get schedule template by ID
-// Admin/Owner/Coach access (coaches can only view schedules they're assigned to)
 router.get(
   '/templates/:id',
   verifyToken,
@@ -50,116 +54,137 @@ router.get(
   getScheduleTemplateById
 );
 
-// POST /api/gym/schedules/templates - Create new schedule template
-// Admin/Owner/Coach only
 router.post(
   '/templates',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER]),
   createScheduleTemplate
 );
 
-// PUT /api/gym/schedules/templates/:id - Update schedule template
-// Admin/Owner/Coach only
 router.put(
   '/templates/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER]),
   updateScheduleTemplate
 );
 
-// DELETE /api/gym/schedules/templates/:id - Delete schedule template
-// Admin/Owner/Coach only
 router.delete(
   '/templates/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER]),
   deleteScheduleTemplate
 );
 
-// ===== Active Schedule Routes =====
+// ===== Class Sessions =====
 
-// GET /api/gym/schedules/active - List all active schedules
-// Admin/Owner/Coach/Client access (clients see schedules for their gym only)
+// Week view (must come before /:id to avoid 'coach' matching as an id)
 router.get(
-  '/active',
+  '/sessions/coach/week',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.CLIENT]),
-  getActiveSchedules
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  getSessionsByCoachWeek
 );
 
-// GET /api/gym/schedules/active/:id - Get active schedule by ID
-// Admin/Owner/Coach/Client access (clients can only view schedules from their gym)
+// Day view with full roster
 router.get(
-  '/active/:id',
-  verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.CLIENT]),
-  getActiveScheduleById
-);
-
-// POST /api/gym/schedules/active - Create active schedule from template
-// Admin/Owner/Coach only
-router.post(
-  '/active',
+  '/sessions/coach/:date',
   verifyToken,
   requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  createActiveSchedule
+  getSessionsByCoachDay
 );
 
-// DELETE /api/gym/schedules/active/:id - Delete active schedule
-// Admin/Owner/Coach only
+// Browse sessions for a date (client-facing)
+router.get('/sessions', verifyToken, getSessionsForDate);
+
+// Single session with roster (must come after /sessions/coach/* fixed routes)
+router.get(
+  '/sessions/:id',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  getSessionById
+);
+
+// Delete all sessions for a week (must come before /:id)
 router.delete(
-  '/active/:id',
+  '/sessions',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  deleteActiveSchedule
+  requireRole([UserType.ADMIN, UserType.OWNER]),
+  deleteSessionsForWeek
 );
 
-// POST /api/gym/schedules/active/:id/reset - Reset active schedule from template
-// Admin/Owner/Coach only
-router.post(
-  '/active/:id/reset',
-  verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  resetActiveSchedule
-);
-
-// ===== Staff Assignment Routes =====
-
-// POST /api/gym/schedules/active/:id/assign - Assign coach to active schedule
-// Admin/Owner/Coach only
-router.post(
-  '/active/:id/assign',
-  verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  assignStaff
-);
-
-// DELETE /api/gym/schedules/active/:id/unassign/:coachId - Unassign coach from active schedule
-// Admin/Owner/Coach only
+// Delete a session
 router.delete(
-  '/active/:id/unassign/:coachId',
+  '/sessions/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  unassignStaff
+  requireRole([UserType.ADMIN, UserType.OWNER]),
+  deleteSession
 );
 
-// ===== Client Self-Service Routes =====
+// ===== Enrollments =====
 
-// GET /api/gym/schedules/available - Get available schedules for client self-scheduling
-// All authenticated users (clients see schedules for their gym only)
-router.get('/available', verifyToken, getAvailableSchedules);
+router.post('/sessions/:sessionId/enroll', verifyToken, enrollInSession);
 
-// GET /api/gym/schedules/my-schedule - Get authenticated client's schedule
-// All authenticated users
-router.get('/my-schedule', verifyToken, getMySchedule);
+router.delete('/sessions/:sessionId/enroll', verifyToken, unenrollFromSession);
 
-// POST /api/gym/schedules/active/:id/timeslots/:timeslotId/join - Join a timeslot
-// All authenticated users (with gym validation)
-router.post('/active/:id/timeslots/:timeslotId/join', verifyToken, joinTimeslot);
+// Admin override enroll (bypasses capacity)
+router.post(
+  '/sessions/:sessionId/enroll/admin',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER]),
+  adminEnrollClient
+);
 
-// DELETE /api/gym/schedules/active/:id/timeslots/:timeslotId/leave - Leave a timeslot
-// All authenticated users (with gym validation)
-router.delete('/active/:id/timeslots/:timeslotId/leave', verifyToken, leaveTimeslot);
+// Admin override unenroll (remove specific client)
+router.delete(
+  '/sessions/:sessionId/enroll/admin',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER]),
+  adminUnenrollClient
+);
+
+// ===== Attendance =====
+
+router.post(
+  '/sessions/:sessionId/attendance',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  submitAttendance
+);
+
+router.get(
+  '/sessions/:sessionId/attendance',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  getAttendance
+);
+
+// ===== Client Default Schedules =====
+
+router.get('/defaults', verifyToken, getMyDefaults);
+router.post('/defaults', verifyToken, addDefault);
+router.delete('/defaults/:id', verifyToken, removeDefault);
+
+// ===== Session Generation =====
+
+router.post(
+  '/generate-week',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER]),
+  async (req, res) => {
+    try {
+      const validation = GenerateWeekSchema.safeParse(req.body);
+      if (!validation.success) {
+        res.status(400).json({ success: false, error: 'Invalid request data' });
+        return;
+      }
+      const startDate = validation.data.startDate ? new Date(validation.data.startDate) : undefined;
+      const result = await ScheduleResetService.generateWeeklySessions(startDate);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      console.error('Error generating weekly sessions:', error);
+      res.status(500).json({ success: false, error: 'Failed to generate sessions' });
+    }
+  }
+);
 
 export default router;

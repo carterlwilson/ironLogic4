@@ -1,242 +1,101 @@
-import { ActiveSchedule } from '../models/ActiveSchedule.js';
 import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
-
-export interface ResetSummary {
-  success: boolean;
-  resetCount: number;
-  failedCount: number;
-  errors: string[];
-  message: string;
-}
+import { ClassSession } from '../models/ClassSession.js';
+import { ClientDefaultSchedule } from '../models/ClientDefaultSchedule.js';
+import { Enrollment } from '../models/Enrollment.js';
+import { GenerateWeekResponse } from '@ironlogic4/shared';
 
 /**
- * Service for resetting active schedules from their templates
- * Useful for scheduled jobs (e.g., weekly reset every Sunday)
+ * Service for generating weekly class sessions from schedule templates.
  */
 export class ScheduleResetService {
   /**
-   * Reset all active schedules by fetching their templates and copying the days array
-   * Preserves coachIds and other metadata from the active schedule
+   * Generate ClassSession documents for a given week and auto-enroll clients from their defaults.
    *
-   * @returns Summary of reset operations
+   * @param startDate - The Monday of the week to generate sessions for.
+   *                    Defaults to the upcoming Monday if not provided.
    */
-  static async resetAllActiveSchedules(): Promise<ResetSummary> {
-    const errors: string[] = [];
-    let resetCount = 0;
-    let failedCount = 0;
+  static async generateWeeklySessions(startDate?: Date): Promise<GenerateWeekResponse> {
+    const monday = startDate ? new Date(startDate) : ScheduleResetService.nextMonday();
+    monday.setUTCHours(0, 0, 0, 0);
 
-    try {
-      // Find all active schedules
-      const activeSchedules = await ActiveSchedule.find();
+    // Build array of the 7 dates (Mon–Sun)
+    const weekDates: Date[] = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(monday);
+      d.setUTCDate(monday.getUTCDate() + i);
+      return d;
+    });
 
-      if (activeSchedules.length === 0) {
-        return {
-          success: true,
-          resetCount: 0,
-          failedCount: 0,
-          errors: [],
-          message: 'No active schedules found to reset',
-        };
-      }
-
-      // Reset each active schedule
-      for (const schedule of activeSchedules) {
-        try {
-          // Fetch the template
-          const template = await ScheduleTemplate.findById(schedule.templateId);
-
-          if (!template) {
-            failedCount++;
-            errors.push(
-              `Template not found for active schedule ${schedule.id} (template ID: ${schedule.templateId})`
-            );
-            continue;
-          }
-
-          // Update the schedule with template data
-          schedule.days = template.days; // Replace days array
-          schedule.lastResetAt = new Date(); // Update reset timestamp
-          // Preserve coachIds from active schedule (don't reset them)
-
-          await schedule.save();
-          resetCount++;
-
-          console.log(`Reset active schedule ${schedule.id} from template ${template.id}`);
-        } catch (error) {
-          failedCount++;
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          errors.push(`Failed to reset schedule ${schedule.id}: ${errorMessage}`);
-          console.error(`Error resetting schedule ${schedule.id}:`, error);
-        }
-      }
-
-      const success = failedCount === 0;
-      const message = success
-        ? `Successfully reset ${resetCount} active schedule(s)`
-        : `Reset ${resetCount} schedule(s), ${failedCount} failed`;
-
-      return {
-        success,
-        resetCount,
-        failedCount,
-        errors,
-        message,
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error in resetAllActiveSchedules:', error);
-
-      return {
-        success: false,
-        resetCount,
-        failedCount: failedCount + 1,
-        errors: [...errors, `Service error: ${errorMessage}`],
-        message: 'Failed to reset active schedules',
-      };
+    // Map JS getUTCDay() → date for this week (Mon=1…Sat=6, Sun=0)
+    const dateByDayOfWeek = new Map<number, Date>();
+    for (const d of weekDates) {
+      dateByDayOfWeek.set(d.getUTCDay(), d);
     }
+
+    const templates = await ScheduleTemplate.find({ isActive: true });
+    let sessionsCreated = 0;
+    let enrollmentsCreated = 0;
+
+    for (const template of templates) {
+      const sessionDate = dateByDayOfWeek.get(template.dayOfWeek);
+      if (!sessionDate) continue;
+
+      // Deduplication — skip if session already exists for this template + date
+      const existing = await ClassSession.findOne({
+        templateId: template.id,
+        date: sessionDate,
+      });
+      if (existing) continue;
+
+      const session = await ClassSession.create({
+        templateId: template.id,
+        coachId: template.coachId,
+        gymId: template.gymId,
+        date: sessionDate,
+        period: template.period,
+        startTime: template.time,
+        endTime: template.endTime,
+        maxCapacity: template.maxCapacity,
+      });
+      sessionsCreated++;
+
+      // Auto-enroll clients with a matching default for this template
+      const defaults = await ClientDefaultSchedule.find({
+        templateId: template.id,
+        isActive: true,
+      });
+
+      for (const def of defaults) {
+        const alreadyEnrolled = await Enrollment.findOne({
+          sessionId: session.id,
+          clientId: def.clientId,
+        });
+        if (alreadyEnrolled) continue;
+
+        await Enrollment.create({
+          sessionId: session.id,
+          clientId: def.clientId,
+          source: 'default',
+          status: 'enrolled',
+          enrolledAt: new Date(),
+        });
+        enrollmentsCreated++;
+      }
+    }
+
+    return {
+      sessionsCreated,
+      enrollmentsCreated,
+      weekStart: monday.toISOString().split('T')[0],
+    };
   }
 
-  /**
-   * Reset a specific active schedule by ID
-   *
-   * @param scheduleId - The ID of the active schedule to reset
-   * @returns Summary of reset operation
-   */
-  static async resetScheduleById(scheduleId: string): Promise<ResetSummary> {
-    try {
-      const schedule = await ActiveSchedule.findById(scheduleId);
-
-      if (!schedule) {
-        return {
-          success: false,
-          resetCount: 0,
-          failedCount: 1,
-          errors: ['Active schedule not found'],
-          message: 'Active schedule not found',
-        };
-      }
-
-      // Fetch the template
-      const template = await ScheduleTemplate.findById(schedule.templateId);
-
-      if (!template) {
-        return {
-          success: false,
-          resetCount: 0,
-          failedCount: 1,
-          errors: [`Template not found (ID: ${schedule.templateId})`],
-          message: 'Template not found',
-        };
-      }
-
-      // Update the schedule with template data
-      schedule.days = template.days;
-      schedule.lastResetAt = new Date();
-      // Preserve coachIds from active schedule
-
-      await schedule.save();
-
-      console.log(`Reset active schedule ${schedule.id} from template ${template.id}`);
-
-      return {
-        success: true,
-        resetCount: 1,
-        failedCount: 0,
-        errors: [],
-        message: 'Successfully reset active schedule',
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error in resetScheduleById:', error);
-
-      return {
-        success: false,
-        resetCount: 0,
-        failedCount: 1,
-        errors: [`Failed to reset schedule: ${errorMessage}`],
-        message: 'Failed to reset active schedule',
-      };
-    }
-  }
-
-  /**
-   * Reset all active schedules for a specific gym
-   *
-   * @param gymId - The ID of the gym
-   * @returns Summary of reset operations
-   */
-  static async resetSchedulesByGym(gymId: string): Promise<ResetSummary> {
-    const errors: string[] = [];
-    let resetCount = 0;
-    let failedCount = 0;
-
-    try {
-      // Find all active schedules for this gym
-      const activeSchedules = await ActiveSchedule.find({ gymId });
-
-      if (activeSchedules.length === 0) {
-        return {
-          success: true,
-          resetCount: 0,
-          failedCount: 0,
-          errors: [],
-          message: 'No active schedules found for this gym',
-        };
-      }
-
-      // Reset each active schedule
-      for (const schedule of activeSchedules) {
-        try {
-          // Fetch the template
-          const template = await ScheduleTemplate.findById(schedule.templateId);
-
-          if (!template) {
-            failedCount++;
-            errors.push(
-              `Template not found for active schedule ${schedule.id} (template ID: ${schedule.templateId})`
-            );
-            continue;
-          }
-
-          // Update the schedule with template data
-          schedule.days = template.days;
-          schedule.lastResetAt = new Date();
-
-          await schedule.save();
-          resetCount++;
-
-          console.log(`Reset active schedule ${schedule.id} for gym ${gymId}`);
-        } catch (error) {
-          failedCount++;
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          errors.push(`Failed to reset schedule ${schedule.id}: ${errorMessage}`);
-          console.error(`Error resetting schedule ${schedule.id}:`, error);
-        }
-      }
-
-      const success = failedCount === 0;
-      const message = success
-        ? `Successfully reset ${resetCount} active schedule(s) for gym ${gymId}`
-        : `Reset ${resetCount} schedule(s) for gym ${gymId}, ${failedCount} failed`;
-
-      return {
-        success,
-        resetCount,
-        failedCount,
-        errors,
-        message,
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error in resetSchedulesByGym:', error);
-
-      return {
-        success: false,
-        resetCount,
-        failedCount: failedCount + 1,
-        errors: [...errors, `Service error: ${errorMessage}`],
-        message: 'Failed to reset active schedules for gym',
-      };
-    }
+  /** Returns the date of the upcoming Monday (or today if today is Monday). */
+  private static nextMonday(): Date {
+    const now = new Date();
+    const day = now.getUTCDay();
+    const daysUntilMonday = day === 1 ? 0 : (8 - day) % 7 || 7;
+    const monday = new Date(now);
+    monday.setUTCDate(now.getUTCDate() + daysUntilMonday);
+    return monday;
   }
 }

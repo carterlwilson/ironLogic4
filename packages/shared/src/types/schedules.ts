@@ -8,77 +8,104 @@ export enum DayOfWeek {
   SATURDAY = 6,
 }
 
-export interface ITimeSlot {
-  id: string;
-  startTime: string;  // "HH:mm" format (e.g., "09:00", "14:30")
-  endTime: string;    // "HH:mm" format (e.g., "10:00", "15:30")
-  capacity: number;
-  assignedClients: string[];  // User IDs of clients assigned to this timeslot
-}
-
-export interface ITimeslotWithAvailability extends ITimeSlot {
-  availableSpots: number;  // Computed: capacity - assignedClients.length
-  isUserAssigned: boolean;  // Computed: whether the requesting user is assigned
-}
-
-export interface IScheduleDay {
-  dayOfWeek: DayOfWeek;
-  timeSlots: ITimeSlot[];
-}
+// ===== Schedule Template (flat model — one document per recurring class slot) =====
 
 export interface IScheduleTemplate {
   id: string;
   gymId: string;
-  name: string;
-  description?: string;
-  coachIds: string[];  // REQUIRED: At least one coach must be assigned
-  days: IScheduleDay[];
-  createdBy: string;
+  coachId: string;
+  dayOfWeek: DayOfWeek;
+  period: 'AM' | 'PM';
+  time: string;       // start time "HH:mm"
+  endTime: string;    // end time "HH:mm"
+  maxCapacity: number;
+  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
-
-export interface IActiveSchedule {
-  id: string;
-  gymId: string;
-  templateId: string;
-  coachIds: string[];  // REQUIRED: At least one coach must be assigned
-  days: IScheduleDay[];
-  lastResetAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-// Request/Response types for API
 
 export interface CreateScheduleTemplateRequest {
-  name: string;
-  description?: string;
-  coachIds: string[];  // At least one required
-  days: IScheduleDay[];
+  coachId: string;
+  dayOfWeek: DayOfWeek;
+  period: 'AM' | 'PM';
+  time: string;
+  endTime: string;
+  maxCapacity: number;
 }
 
 export interface UpdateScheduleTemplateRequest {
-  name?: string;
-  description?: string;
-  coachIds?: string[];
-  days?: IScheduleDay[];
+  coachId?: string;
+  dayOfWeek?: DayOfWeek;
+  period?: 'AM' | 'PM';
+  time?: string;
+  endTime?: string;
+  maxCapacity?: number;
+  isActive?: boolean;
 }
 
-export interface CreateActiveScheduleRequest {
+// ===== Class Session (dated occurrence generated from a template) =====
+
+export interface IClassSession {
+  id: string;
+  templateId: string;
+  coachId: string;
+  gymId: string;
+  date: Date;             // midnight UTC of the specific calendar day
+  period: 'AM' | 'PM';   // denormalized from template
+  startTime: string;      // "HH:mm"
+  endTime: string;        // "HH:mm"
+  maxCapacity: number;    // snapshot at time of generation
+  createdAt: Date;
+}
+
+// ===== Client Default Schedule =====
+
+export interface IClientDefaultSchedule {
+  id: string;
+  clientId: string;
+  templateId: string;
+  isActive: boolean;
+  createdAt: Date;
+}
+
+export interface CreateClientDefaultScheduleRequest {
   templateId: string;
 }
 
-export interface AssignStaffRequest {
-  coachId: string;
+// ===== Enrollment =====
+
+export interface IEnrollment {
+  id: string;
+  sessionId: string;
+  clientId: string;
+  source: 'default' | 'override';
+  status: 'enrolled' | 'skipped';
+  enrolledAt: Date;
 }
 
-export interface JoinTimeslotRequest {
-  // Empty - user ID comes from auth
+// ===== Attendance =====
+
+export interface IAttendance {
+  id: string;
+  sessionId: string;
+  clientId: string;
+  status: 'present' | 'absent' | 'late';
+  recordedBy: string;    // coachId
+  recordedAt: Date;
 }
 
-export interface ResetScheduleResponse {
-  success: boolean;
-  resetCount: number;
-  message: string;
+export interface SubmitAttendanceRequest {
+  attendance: Array<{ clientId: string; status: 'present' | 'absent' | 'late' }>;
+}
+
+// ===== Session Generation =====
+
+export interface GenerateWeekRequest {
+  startDate?: string;    // ISO date string for Monday; defaults to next Monday
+}
+
+export interface GenerateWeekResponse {
+  sessionsCreated: number;
+  enrollmentsCreated: number;
+  weekStart: string;
 }

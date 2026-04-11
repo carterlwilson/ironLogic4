@@ -1,30 +1,30 @@
-import { Modal, Stack, TextInput, Textarea, Button, Group, MultiSelect, Text } from '@mantine/core';
+import { Modal, Stack, Select, Button, Group, Text, NumberInput } from '@mantine/core';
+import { TimeInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { IconCalendar } from '@tabler/icons-react';
-import type {
-  CreateScheduleTemplateRequest,
-} from '@ironlogic4/shared';
+import type { IScheduleTemplate, CreateScheduleTemplateRequest, UpdateScheduleTemplateRequest, DayOfWeek } from '@ironlogic4/shared';
 import type { Coach } from '../../../hooks/useCoaches';
+import { getAllDayOptions } from '../../../utils/scheduleUtils';
 
 interface TemplateFormModalProps {
   opened: boolean;
   onClose: () => void;
-  onSubmit: (data: CreateScheduleTemplateRequest) => Promise<void>;
+  onSubmit: (data: CreateScheduleTemplateRequest | UpdateScheduleTemplateRequest) => Promise<void>;
   loading?: boolean;
   coaches: Coach[];
   coachesLoading: boolean;
+  editingTemplate?: IScheduleTemplate | null;
 }
 
 interface FormValues {
-  name: string;
-  description: string;
-  coachIds: string[];
+  coachId: string;
+  dayOfWeek: string;
+  period: string;
+  time: string;
+  endTime: string;
+  maxCapacity: number;
 }
 
-/**
- * Modal for creating schedule templates
- * Only handles basic info - days/timeslots configured in edit page
- */
 export function TemplateFormModal({
   opened,
   onClose,
@@ -32,50 +32,53 @@ export function TemplateFormModal({
   loading = false,
   coaches,
   coachesLoading,
+  editingTemplate,
 }: TemplateFormModalProps) {
+  const isEditing = !!editingTemplate;
+
   const coachOptions = coaches.map((coach) => ({
     value: coach.id,
-    label: `${coach.firstName} ${coach.lastName}`.trim() || coach.email,
+    label: `${coach.firstName ?? ''} ${coach.lastName ?? ''}`.trim() || coach.email,
   }));
 
   const form = useForm<FormValues>({
     initialValues: {
-      name: '',
-      description: '',
-      coachIds: [],
+      coachId: editingTemplate?.coachId ?? '',
+      dayOfWeek: editingTemplate?.dayOfWeek?.toString() ?? '',
+      period: editingTemplate?.period ?? '',
+      time: editingTemplate?.time ?? '',
+      endTime: editingTemplate?.endTime ?? '',
+      maxCapacity: editingTemplate?.maxCapacity ?? 10,
     },
     validate: {
-      name: (value) => {
-        if (!value?.trim()) return 'Name is required';
-        if (value.trim().length > 100) return 'Name must be less than 100 characters';
+      coachId: (v) => (!v ? 'Coach is required' : null),
+      dayOfWeek: (v) => (!v ? 'Day is required' : null),
+      period: (v) => (!v ? 'Period is required' : null),
+      time: (v) => (!v ? 'Start time is required' : null),
+      endTime: (v, values) => {
+        if (!v) return 'End time is required';
+        if (values.time && v <= values.time) return 'End time must be after start time';
         return null;
       },
-      description: (value) => {
-        if (value && value.length > 500) return 'Description must be less than 500 characters';
-        return null;
-      },
-      coachIds: (value) => {
-        if (!value || value.length === 0) return 'At least one coach is required';
-        return null;
-      },
+      maxCapacity: (v) => (v < 1 ? 'Capacity must be at least 1' : null),
     },
   });
 
   const handleSubmit = async (values: FormValues) => {
     try {
-      const submitData: CreateScheduleTemplateRequest = {
-        name: values.name.trim(),
-        description: values.description?.trim() || undefined,
-        coachIds: values.coachIds,
-        days: [], // Empty - will be configured in edit page
+      const data = {
+        coachId: values.coachId,
+        dayOfWeek: Number(values.dayOfWeek) as DayOfWeek,
+        period: values.period as 'AM' | 'PM',
+        time: values.time,
+        endTime: values.endTime,
+        maxCapacity: values.maxCapacity,
       };
-
-      await onSubmit(submitData);
+      await onSubmit(data);
       form.reset();
       onClose();
-    } catch (error) {
-      // Error handling is done in the parent component
-      console.error('Error submitting template:', error);
+    } catch {
+      // error notifications handled by parent
     }
   };
 
@@ -90,51 +93,77 @@ export function TemplateFormModal({
       onClose={handleClose}
       title={
         <Group gap="sm">
-          <IconCalendar size={24} />
+          <IconCalendar size={20} />
           <Text size="lg" fw={600}>
-            Create Schedule Template
+            {isEditing ? 'Edit Template' : 'Add Template'}
           </Text>
         </Group>
       }
-      size="lg"
+      size="md"
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
-          <TextInput
-            label="Template Name"
-            placeholder="e.g., Weekly Schedule"
+          {isEditing && (
+            <Text size="sm" c="dimmed">
+              Changes apply to future generated sessions only — existing sessions are not affected.
+            </Text>
+          )}
+
+          <Select
+            label="Day of Week"
+            placeholder="Select day"
+            data={getAllDayOptions()}
             required
-            {...form.getInputProps('name')}
+            {...form.getInputProps('dayOfWeek')}
           />
 
-          <Textarea
-            label="Description"
-            placeholder="Describe this schedule template..."
-            rows={3}
-            {...form.getInputProps('description')}
+          <Select
+            label="Period"
+            placeholder="AM or PM"
+            data={[
+              { value: 'AM', label: 'AM' },
+              { value: 'PM', label: 'PM' },
+            ]}
+            required
+            {...form.getInputProps('period')}
           />
 
-          <MultiSelect
-            label="Coaches"
-            placeholder="Select coaches"
+          <Group grow>
+            <TimeInput
+              label="Start Time"
+              required
+              {...form.getInputProps('time')}
+            />
+            <TimeInput
+              label="End Time"
+              required
+              {...form.getInputProps('endTime')}
+            />
+          </Group>
+
+          <NumberInput
+            label="Max Capacity"
+            min={1}
+            required
+            {...form.getInputProps('maxCapacity')}
+          />
+
+          <Select
+            label="Coach"
+            placeholder="Select coach"
             data={coachOptions}
             required
             disabled={coachesLoading}
             searchable
-            {...form.getInputProps('coachIds')}
+            {...form.getInputProps('coachId')}
           />
 
-          <Text size="sm" c="dimmed">
-            After creating the template, add timeslots to each day of the week in the edit page.
-          </Text>
-
-          {/* Action Buttons */}
-          <Group justify="flex-end" mt="md">
+          <Group justify="flex-end" mt="sm">
             <Button variant="subtle" onClick={handleClose}>
               Cancel
             </Button>
             <Button type="submit" loading={loading}>
-              Create Template
+              {isEditing ? 'Save Changes' : 'Add Template'}
             </Button>
           </Group>
         </Stack>

@@ -7,9 +7,6 @@ interface TemplateToolbarProps {
   onAddTemplate: () => void;
 }
 
-/**
- * Toolbar for schedule templates with search and create actions
- */
 export function TemplateToolbar({
   searchQuery,
   onSearchChange,
@@ -18,14 +15,14 @@ export function TemplateToolbar({
   return (
     <Group justify="space-between">
       <TextInput
-        placeholder="Search templates..."
+        placeholder="Search by coach or day..."
+        leftSection={<IconSearch size={16} />}
         value={searchQuery}
         onChange={(e) => onSearchChange(e.currentTarget.value)}
-        leftSection={<IconSearch size={16} />}
-        style={{ flex: 1, maxWidth: 400 }}
+        w={260}
       />
       <Button leftSection={<IconPlus size={16} />} onClick={onAddTemplate}>
-        Create Template
+        Add Template
       </Button>
     </Group>
   );

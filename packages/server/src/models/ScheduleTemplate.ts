@@ -1,26 +1,31 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import {
-  IScheduleTemplate,
-  IScheduleDay,
-  ITimeSlot,
-  DayOfWeek
-} from '@ironlogic4/shared';
+import { IScheduleTemplate, DayOfWeek } from '@ironlogic4/shared';
 
-// Subdocument interfaces
-export interface TimeSlotDocument extends Omit<ITimeSlot, 'id'>, Document {}
+export interface ScheduleTemplateDocument extends Omit<IScheduleTemplate, 'id'>, Document {}
 
-export interface ScheduleDayDocument extends Omit<IScheduleDay, 'timeSlots'>, Document {
-  timeSlots: TimeSlotDocument[];
-}
-
-export interface ScheduleTemplateDocument extends Omit<IScheduleTemplate, 'id' | 'days'>, Document {
-  days: ScheduleDayDocument[];
-}
-
-// TimeSlot subdocument schema
-const timeSlotSchema = new Schema<TimeSlotDocument>(
+const scheduleTemplateSchema = new Schema<ScheduleTemplateDocument>(
   {
-    startTime: {
+    gymId: {
+      type: String,
+      ref: 'Gym',
+      required: true,
+    },
+    coachId: {
+      type: String,
+      ref: 'User',
+      required: true,
+    },
+    dayOfWeek: {
+      type: Number,
+      required: true,
+      enum: Object.values(DayOfWeek).filter(v => typeof v === 'number'),
+    },
+    period: {
+      type: String,
+      required: true,
+      enum: ['AM', 'PM'],
+    },
+    time: {
       type: String,
       required: true,
       match: /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/,
@@ -30,92 +35,15 @@ const timeSlotSchema = new Schema<TimeSlotDocument>(
       required: true,
       match: /^([0-1][0-9]|2[0-3]):[0-5][0-9]$/,
     },
-    capacity: {
+    maxCapacity: {
       type: Number,
       required: true,
       min: 1,
     },
-    assignedClients: {
-      type: [String],
-      ref: 'User',
-      default: [],
-    },
-  },
-  {
-    _id: true, // Generate _id for each timeslot
-    toJSON: {
-      transform: function (doc, ret) {
-        ret.id = ret._id;
-        delete (ret as any)._id;
-        return ret;
-      },
-    },
-  }
-);
-
-// ScheduleDay subdocument schema
-const scheduleDaySchema = new Schema<ScheduleDayDocument>(
-  {
-    dayOfWeek: {
-      type: Number,
+    isActive: {
+      type: Boolean,
       required: true,
-      enum: Object.values(DayOfWeek).filter(v => typeof v === 'number'),
-    },
-    timeSlots: {
-      type: [timeSlotSchema],
-      required: true,
-      default: [],
-    },
-  },
-  {
-    _id: false, // Don't generate _id for schedule days
-  }
-);
-
-// Main ScheduleTemplate schema
-const scheduleTemplateSchema = new Schema<ScheduleTemplateDocument>(
-  {
-    gymId: {
-      type: String,
-      ref: 'Gym',
-      required: true,
-    },
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-      maxlength: 100,
-    },
-    description: {
-      type: String,
-      trim: true,
-      maxlength: 500,
-    },
-    coachIds: {
-      type: [String],
-      ref: 'User',
-      required: true,
-      validate: {
-        validator: function(v: string[]) {
-          return v && v.length > 0;
-        },
-        message: 'At least one coach is required',
-      },
-    },
-    days: {
-      type: [scheduleDaySchema],
-      required: true,
-      validate: {
-        validator: function(v: ScheduleDayDocument[]) {
-          return v && v.length > 0;
-        },
-        message: 'At least one day is required',
-      },
-    },
-    createdBy: {
-      type: String,
-      ref: 'User',
-      required: true,
+      default: true,
     },
   },
   {
@@ -131,17 +59,9 @@ const scheduleTemplateSchema = new Schema<ScheduleTemplateDocument>(
   }
 );
 
-// Indexes for efficient queries
 scheduleTemplateSchema.index({ gymId: 1 });
-scheduleTemplateSchema.index({ coachIds: 1 });
-scheduleTemplateSchema.index({ gymId: 1, name: 1 }, { unique: true });
-
-// Virtual populate for coach details (optional, for future use)
-scheduleTemplateSchema.virtual('coaches', {
-  ref: 'User',
-  localField: 'coachIds',
-  foreignField: '_id',
-});
+scheduleTemplateSchema.index({ gymId: 1, dayOfWeek: 1, time: 1 });
+scheduleTemplateSchema.index({ coachId: 1 });
 
 export const ScheduleTemplate = mongoose.model<ScheduleTemplateDocument>(
   'ScheduleTemplate',

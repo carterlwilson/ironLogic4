@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { User } from '../models/User.js';
-import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
 import {
   UserType,
   ApiResponse,
@@ -399,15 +399,16 @@ export const deleteCoach = async (
 
     // Check for dependencies before deletion
 
-    // 1. Check for active schedules
-    const activeSchedules = await ActiveSchedule.findOne({
-      coachIds: id,
+    // 1. Check for active schedule templates assigned to this coach
+    const activeSchedules = await ScheduleTemplate.findOne({
+      coachId: id,
+      isActive: true,
     });
 
     if (activeSchedules) {
       res.status(409).json({
         success: false,
-        error: 'Cannot delete coach. Coach is assigned to active schedules.',
+        error: 'Cannot delete coach. Coach is assigned to active schedule templates.',
       });
       return;
     }
