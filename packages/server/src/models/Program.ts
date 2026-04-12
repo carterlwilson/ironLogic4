@@ -39,6 +39,7 @@ export interface ISet {
   reps: number;
   percentageOfMax: number;
   templateRepMaxId?: string;
+  isBenchmarkSet?: boolean;
 }
 
 /**
@@ -222,6 +223,10 @@ const setSchema = new Schema<ISet>(
     templateRepMaxId: {
       type: String,
       required: false,
+    },
+    isBenchmarkSet: {
+      type: Boolean,
+      default: false,
     },
   },
   { _id: false }

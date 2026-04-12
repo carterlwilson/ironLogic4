@@ -258,11 +258,16 @@ export const getCurrentWeekWorkouts = async (
           benchmarkName?: string;
           repMaxReps?: number;
           repMaxName?: string;
+          isBenchmarkSet?: boolean;
         }> | undefined;
 
         if (activity.sets && activity.sets.length > 0) {
           // Calculate weight for each set
           setCalculations = activity.sets.map((set, index) => {
+            // Enforce benchmark set contract: reps=1, percentageOfMax=100
+            const effectiveReps = set.isBenchmarkSet ? 1 : set.reps;
+            const effectivePercentage = set.isBenchmarkSet ? 100 : set.percentageOfMax;
+
             let calculatedWeightKg: number | undefined;
             let benchmarkName: string | undefined;
             let repMaxReps: number | undefined;
@@ -290,7 +295,7 @@ export const getCurrentWeekWorkouts = async (
                   const repMax = clientBenchmark.repMaxes.find((rm: any) => rm.templateRepMaxId === set.templateRepMaxId);
 
                   if (repMax?.weightKg) {
-                    const rawWeight = (repMax.weightKg * set.percentageOfMax) / 100;
+                    const rawWeight = (repMax.weightKg * effectivePercentage) / 100;
                     calculatedWeightKg = Math.round(rawWeight);
                   }
                 }
@@ -299,14 +304,15 @@ export const getCurrentWeekWorkouts = async (
 
             return {
               setNumber: index + 1, // 1-based index for display
-              reps: set.reps,
-              percentageOfMax: set.percentageOfMax,
+              reps: effectiveReps,
+              percentageOfMax: effectivePercentage,
               calculatedWeightKg,
               templateRepMaxId: set.templateRepMaxId,
               benchmarkTemplateId,
               benchmarkName,
               repMaxReps,
               repMaxName,
+              isBenchmarkSet: set.isBenchmarkSet ?? false,
             };
           });
         }

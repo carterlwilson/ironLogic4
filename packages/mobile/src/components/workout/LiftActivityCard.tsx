@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Stack, Text, Group, Button, ActionIcon, Badge, Paper, SegmentedControl } from '@mantine/core';
-import { IconCheck, IconWeight, IconAlertCircle, IconBarbell, IconPlus } from '@tabler/icons-react';
+import { IconCheck, IconWeight, IconAlertCircle, IconBarbell, IconPlus, IconTrophy } from '@tabler/icons-react';
 import { ActivityProgress } from '../../pages/WorkoutPage';
 import { useBarbellCalculator } from './barbell-calculator/useBarbellCalculator';
 import { BarbellCalculatorDrawer } from './barbell-calculator/BarbellCalculatorDrawer';
@@ -21,6 +22,7 @@ export function LiftActivityCard({
   onSetComplete,
   onDataRefresh,
 }: LiftActivityCardProps) {
+  const navigate = useNavigate();
   const [selectedSetIndex, setSelectedSetIndex] = useState(0);
   const [weightAdjustment, setWeightAdjustment] = useState(0);
   const [addBenchmarkModalOpened, setAddBenchmarkModalOpened] = useState(false);
@@ -95,8 +97,8 @@ export function LiftActivityCard({
           </Group>
         </Group>
 
-        {/* Weight Adjustment Row */}
-        {currentSet?.calculatedWeightKg !== undefined && (
+        {/* Weight Adjustment Row — hidden for benchmark sets */}
+        {currentSet?.calculatedWeightKg !== undefined && !currentSet.isBenchmarkSet && (
           <Group justify="space-between" align="center">
             <Text size="sm" c="dimmed">Adjust weight:</Text>
             <Group gap="xs">
@@ -139,8 +141,37 @@ export function LiftActivityCard({
           </div>
         )}
 
-        {/* Weight Information */}
-        {currentSet?.calculatedWeightKg !== undefined && (
+        {/* Benchmark Set UI */}
+        {currentSet?.isBenchmarkSet && (
+          <Paper p="md" radius="md" withBorder bg="yellow.0">
+            <Stack gap="sm">
+              <Group gap="xs" align="center">
+                <IconTrophy size={20} color="var(--mantine-color-yellow-7)" />
+                <Text size="sm" fw={600} c="yellow.9">Go for a new max here.</Text>
+              </Group>
+              <Text size="sm">
+                {currentSet.calculatedWeightKg !== undefined
+                  ? `Add 3-5 kgs to your current max of ${currentSet.calculatedWeightKg} kg`
+                  : 'No current max recorded yet.'}
+              </Text>
+              <Button
+                variant="filled"
+                color="yellow"
+                size="md"
+                leftSection={<IconTrophy size={16} />}
+                onClick={() => navigate('/benchmarks', {
+                  state: { benchmarkTemplateId: currentSet.benchmarkTemplateId },
+                })}
+                fullWidth
+              >
+                Set Max
+              </Button>
+            </Stack>
+          </Paper>
+        )}
+
+        {/* Normal Weight Information — hidden for benchmark sets */}
+        {currentSet?.calculatedWeightKg !== undefined && !currentSet.isBenchmarkSet && (
           <Paper p="md" radius="md" withBorder bg="white">
             <Stack gap="sm">
               <Group gap="xs" align="center">
@@ -175,7 +206,7 @@ export function LiftActivityCard({
           </Paper>
         )}
 
-        {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && (
+        {currentSet && currentSet.calculatedWeightKg === undefined && currentSet.percentageOfMax !== undefined && !currentSet.isBenchmarkSet && (
           <Paper p="md" radius="md" withBorder bg="orange.0">
             <Stack gap="sm">
               <Group gap="xs">

@@ -1,6 +1,6 @@
 import { Modal, Button, Select, Stack, Textarea, TextInput, NumberInput, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { BenchmarkTemplate, BenchmarkType, CreateMyBenchmarkInput, DistanceUnit } from '@ironlogic4/shared';
 import { IconWeight, IconCalendar, IconRun, IconClock } from '@tabler/icons-react';
 import { BenchmarkMeasurementInput } from './BenchmarkMeasurementInput';
@@ -13,6 +13,7 @@ interface CreateBenchmarkModalProps {
   onCreate: (data: CreateMyBenchmarkInput) => Promise<void>;
   templates: BenchmarkTemplate[];
   loading: boolean;
+  preSelectedTemplateId?: string;
 }
 
 export function CreateBenchmarkModal({
@@ -21,6 +22,7 @@ export function CreateBenchmarkModal({
   onCreate,
   templates,
   loading,
+  preSelectedTemplateId,
 }: CreateBenchmarkModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<BenchmarkTemplate | null>(null);
   const [fullTemplate, setFullTemplate] = useState<BenchmarkTemplate | null>(null);
@@ -74,7 +76,8 @@ export function CreateBenchmarkModal({
     },
   });
 
-  // Reset form and date when modal opens
+  // Reset form and date when modal opens; auto-select pre-selected template if provided
+  const didAutoSelect = useRef(false);
   useEffect(() => {
     if (opened) {
       form.reset();
@@ -84,8 +87,16 @@ export function CreateBenchmarkModal({
       setRepMaxValues({});
       setTimeSubMaxValues({});
       setDistanceSubMaxValues({});
+      didAutoSelect.current = false;
     }
   }, [opened]);
+
+  useEffect(() => {
+    if (opened && preSelectedTemplateId && templates.length > 0 && !didAutoSelect.current) {
+      didAutoSelect.current = true;
+      handleTemplateChange(preSelectedTemplateId);
+    }
+  }, [opened, preSelectedTemplateId, templates]);
 
   const templateOptions = useMemo(
     () =>
@@ -271,6 +282,7 @@ export function CreateBenchmarkModal({
             required
             size="lg"
             description="Choose which benchmark you want to record"
+            disabled={!!preSelectedTemplateId}
           />
 
           {selectedTemplate && selectedTemplate.type === BenchmarkType.WEIGHT && (

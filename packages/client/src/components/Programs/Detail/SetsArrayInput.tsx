@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Stack, Table, NumberInput, ActionIcon, Button, Group, Text, Select } from '@mantine/core';
-import { IconPlus, IconTrash, IconCopy, IconGripVertical } from '@tabler/icons-react';
+import { Stack, Table, NumberInput, ActionIcon, Button, Group, Text, Select, Checkbox, Tooltip } from '@mantine/core';
+import { IconPlus, IconTrash, IconCopy, IconGripVertical, IconTrophy } from '@tabler/icons-react';
 import { ISet } from '@ironlogic4/shared/types/programs';
 import {
   DndContext,
@@ -40,7 +40,7 @@ interface SortableSetRowProps {
   totalSets: number;
   benchmarkOptions: BenchmarkOption[];
   benchmarksLoading: boolean;
-  onUpdate: (index: number, field: keyof ISet, value: number | string | undefined) => void;
+  onUpdate: (index: number, field: keyof ISet, value: number | string | boolean | undefined) => void;
   onRemove: (index: number) => void;
   onCopy: (index: number) => void;
 }
@@ -64,15 +64,26 @@ function SortableSetRow({
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const isBenchmark = !!set.isBenchmarkSet;
+
+  const handleBenchmarkToggle = (checked: boolean) => {
+    onUpdate(index, 'isBenchmarkSet', checked);
+    if (checked) {
+      onUpdate(index, 'reps', 1);
+      onUpdate(index, 'percentageOfMax', 100);
+    }
+  };
+
   return (
     <Table.Tr ref={setNodeRef} style={style}>
       <Table.Td style={{ width: '24px', cursor: 'grab', color: 'var(--mantine-color-dimmed)' }} {...listeners} {...attributes}>
         <IconGripVertical size={16} />
       </Table.Td>
       <Table.Td>
-        <Text size="sm" fw={500}>
-          {index + 1}
-        </Text>
+        <Group gap={4} wrap="nowrap">
+          <Text size="sm" fw={500}>{index + 1}</Text>
+          {isBenchmark && <IconTrophy size={12} color="var(--mantine-color-yellow-6)" />}
+        </Group>
       </Table.Td>
       <Table.Td style={{ minWidth: '60px' }}>
         <NumberInput
@@ -83,6 +94,7 @@ function SortableSetRow({
           onChange={(val) => onUpdate(index, 'reps', val as number)}
           hideControls
           allowLeadingZeros={false}
+          disabled={isBenchmark}
           styles={{ input: { textAlign: 'center' } }}
         />
       </Table.Td>
@@ -95,6 +107,7 @@ function SortableSetRow({
           onChange={(val) => onUpdate(index, 'percentageOfMax', val as number)}
           hideControls
           allowLeadingZeros={false}
+          disabled={isBenchmark}
           styles={{ input: { textAlign: 'center' } }}
         />
       </Table.Td>
@@ -113,6 +126,17 @@ function SortableSetRow({
           />
         </Table.Td>
       )}
+      <Table.Td>
+        <Tooltip label="Benchmark set — athlete goes for a new max" position="top">
+          <Checkbox
+            size="xs"
+            checked={isBenchmark}
+            onChange={(e) => handleBenchmarkToggle(e.currentTarget.checked)}
+            color="yellow"
+            icon={() => <IconTrophy size={10} />}
+          />
+        </Tooltip>
+      </Table.Td>
       <Table.Td>
         <Group gap={4}>
           <ActionIcon
@@ -165,10 +189,12 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
     onChange(newSets);
   };
 
-  const handleUpdateSet = (index: number, field: keyof ISet, newValue: number | string | undefined) => {
+  const handleUpdateSet = (index: number, field: keyof ISet, newValue: number | string | boolean | undefined) => {
     const newSets = [...value];
     if (field === 'templateRepMaxId') {
       newSets[index] = { ...newSets[index], [field]: newValue as string | undefined };
+    } else if (field === 'isBenchmarkSet') {
+      newSets[index] = { ...newSets[index], [field]: newValue as boolean };
     } else {
       const valueToStore = newValue === undefined || newValue === null ? '' : newValue;
       newSets[index] = { ...newSets[index], [field]: valueToStore } as any;
@@ -223,6 +249,7 @@ export function SetsArrayInput({ value, onChange, error, benchmarkOptions = [], 
                   <Table.Th style={{ minWidth: '60px' }}>Reps</Table.Th>
                   <Table.Th style={{ minWidth: '60px' }}>% of Max</Table.Th>
                   {benchmarkOptions.length > 0 && <Table.Th>Rep Max</Table.Th>}
+                  <Table.Th style={{ width: '32px' }} title="Benchmark set"></Table.Th>
                   <Table.Th style={{ width: '70px' }}></Table.Th>
                 </Table.Tr>
               </Table.Thead>

@@ -1,6 +1,7 @@
 import { Container, Title, Text, Stack, Tabs, ActionIcon, Group } from '@mantine/core';
 import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useBenchmarks } from '../hooks/useBenchmarks';
 import { BenchmarkList } from '../components/benchmarks/BenchmarkList';
 import { BenchmarkProgressList } from '../components/benchmarks/BenchmarkProgressList';
@@ -19,6 +20,10 @@ import { getAllUniqueTags, filterBenchmarksByTag } from '../utils/tagUtils';
 import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 export const BenchmarksPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [preSelectedTemplateId, setPreSelectedTemplateId] = useState<string | undefined>(undefined);
+
   const {
     currentBenchmarks,
     historicalBenchmarks,
@@ -62,6 +67,17 @@ export const BenchmarksPage = () => {
     openCreateNewDistanceSubMax,
     closeModals,
   } = useBenchmarks();
+
+  // Auto-open CreateBenchmarkModal when navigated here with a benchmarkTemplateId
+  useEffect(() => {
+    const templateId = (location.state as any)?.benchmarkTemplateId as string | undefined;
+    if (templateId) {
+      setPreSelectedTemplateId(templateId);
+      openCreate();
+      // Clear the navigation state so the modal doesn't re-open on back navigation
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state]);
 
   // Tag filtering state
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -169,10 +185,11 @@ export const BenchmarksPage = () => {
       {/* Modals */}
       <CreateBenchmarkModal
         opened={isCreateOpen}
-        onClose={closeModals}
+        onClose={() => { setPreSelectedTemplateId(undefined); closeModals(); }}
         onCreate={handleCreateBenchmark}
         templates={templates}
         loading={loading}
+        preSelectedTemplateId={preSelectedTemplateId}
       />
 
       <EditBenchmarkModal

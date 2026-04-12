@@ -21,6 +21,7 @@ export interface ISet {
   reps: number;              // 1-100
   percentageOfMax: number;   // 0-200
   templateRepMaxId?: string; // Optional reference to TemplateRepMax for this set
+  isBenchmarkSet?: boolean;  // If true: reps locked to 1, percentageOfMax locked to 100, special mobile UI
 }
 
 /**
@@ -165,6 +166,7 @@ export interface ISetCalculation {
   benchmarkName?: string;        // Full name: "Back Squat - 3RM"
   repMaxReps?: number;           // The rep count (e.g., 3 for 3RM)
   repMaxName?: string;           // Display name e.g. "3RM", used in button label
+  isBenchmarkSet?: boolean;      // Passed through from ISet for special mobile display
 }
 
 /**
