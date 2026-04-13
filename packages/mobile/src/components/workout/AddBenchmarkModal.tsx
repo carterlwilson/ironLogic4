@@ -4,9 +4,7 @@ import { notifications } from '@mantine/notifications';
 import { IconWeight, IconCalendar } from '@tabler/icons-react';
 import { BenchmarkTemplate, ClientBenchmark } from '@ironlogic4/shared';
 import { createBenchmark, getBenchmarks, getBenchmarkTemplate, updateBenchmark } from '../../services/benchmarkApi';
-import { formatDateForInput, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
-
-const STALE_BENCHMARK_DAYS = 90;
+import { formatDateForInput, isBenchmarkEditable, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
 
 interface AddBenchmarkModalProps {
   opened: boolean;
@@ -16,11 +14,6 @@ interface AddBenchmarkModalProps {
   onSuccess: () => void;
 }
 
-function isBenchmarkStale(benchmark: ClientBenchmark): boolean {
-  const updatedAt = new Date(benchmark.updatedAt);
-  const daysSince = (Date.now() - updatedAt.getTime()) / (1000 * 60 * 60 * 24);
-  return daysSince >= STALE_BENCHMARK_DAYS;
-}
 
 export function AddBenchmarkModal({
   opened,
@@ -89,7 +82,7 @@ export function AddBenchmarkModal({
 
   const getModalTitle = () => {
     if (!existingBenchmark) return `Add Benchmark: ${benchmarkName}`;
-    if (isBenchmarkStale(existingBenchmark)) return `New Benchmark PR: ${benchmarkName}`;
+    if (!isBenchmarkEditable(existingBenchmark)) return `New Benchmark PR: ${benchmarkName}`;
     return `Update Benchmark: ${benchmarkName}`;
   };
 
@@ -163,7 +156,7 @@ export function AddBenchmarkModal({
           notes: notes.trim() || undefined,
         });
         successMessage = `Benchmark added for ${benchmarkName}`;
-      } else if (isBenchmarkStale(existingBenchmark)) {
+      } else if (!isBenchmarkEditable(existingBenchmark)) {
         await createBenchmark({
           templateId: benchmarkTemplateId,
           repMaxes: formRepMaxes,
@@ -212,7 +205,7 @@ export function AddBenchmarkModal({
         ) : fullTemplate?.templateRepMaxes && fullTemplate.templateRepMaxes.length > 0 ? (
           <>
             <Text size="sm" fw={500}>
-              {existingBenchmark && !isBenchmarkStale(existingBenchmark)
+              {existingBenchmark && !!isBenchmarkEditable(existingBenchmark)
                 ? 'Update your rep maxes (existing values pre-filled)'
                 : 'Enter your rep maxes (at least one required)'}
             </Text>
