@@ -2,11 +2,11 @@ import { useState, useMemo } from 'react';
 import { Container, Stack, Loader, Text, Paper, Button, Center } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import { useCurrentWeekWorkout } from '../hooks/useCurrentWeekWorkout';
+import { useWorkoutProgress } from '../hooks/useWorkoutProgress';
 import { WeekHeader } from '../components/workout/WeekHeader';
 import { DaySelector } from '../components/workout/DaySelector';
 import { ActivityList } from '../components/workout/ActivityList';
 import { RestTimer } from '../components/workout/RestTimer';
-import { ActivityType } from '@ironlogic4/shared';
 
 export interface SetProgress {
   completed: boolean;
@@ -20,7 +20,6 @@ export interface ActivityProgress {
 export const WorkoutPage = () => {
   const { data, loading, error, refetch } = useCurrentWeekWorkout();
   const [selectedDay, setSelectedDay] = useState(0);
-  const [activityProgress, setActivityProgress] = useState<Map<string, ActivityProgress>>(new Map());
   const [restTimerStart, setRestTimerStart] = useState<number | null>(null);
 
   // Get activities for selected day
@@ -29,80 +28,25 @@ export const WorkoutPage = () => {
     return data.currentWeek?.days[selectedDay]?.activities || [];
   }, [data, selectedDay]);
 
-  // Reset progress when day changes
+  const weekId = data?.currentWeek.id;
+  const dayId = data?.currentWeek.days[selectedDay]?.id;
+
+  const { getActivityProgress, handleSetComplete: persistSetComplete, handleActivityComplete } =
+    useWorkoutProgress(weekId, dayId, dayActivities);
+
   const handleDayChange = (day: number) => {
     setSelectedDay(day);
-    setActivityProgress(new Map());
     setRestTimerStart(null);
   };
 
-  // Handle set completion
+  // Handle set completion — persists via hook and starts rest timer
   const handleSetComplete = (activityId: string, setIndex: number) => {
-    setActivityProgress(prev => {
-      const newMap = new Map(prev);
-      const activity = dayActivities.find(a => a.id === activityId);
-      const setsCount = activity?.setCalculations?.length || 0;
-
-      const progress = newMap.get(activityId) || {
-        sets: Array(setsCount).fill({ completed: false }),
-        completed: false,
-      };
-
-      // Toggle set completion
-      const newSets = [...progress.sets];
-      newSets[setIndex] = { completed: !newSets[setIndex].completed };
-
-      newMap.set(activityId, {
-        ...progress,
-        sets: newSets,
-      });
-
-      // Start rest timer
-      if (newSets[setIndex].completed) {
-        setRestTimerStart(Date.now());
-      }
-
-      return newMap;
-    });
-  };
-
-  // Handle activity completion
-  const handleActivityComplete = (activityId: string) => {
-    setActivityProgress(prev => {
-      const newMap = new Map(prev);
-      const activity = dayActivities.find(a => a.id === activityId);
-
-      if (!activity) return newMap;
-
-      const setsCount = activity.type === ActivityType.LIFT
-        ? (activity.setCalculations?.length || 0)
-        : 0;
-
-      const progress = newMap.get(activityId) || {
-        sets: Array(setsCount).fill({ completed: false }),
-        completed: false,
-      };
-
-      newMap.set(activityId, {
-        ...progress,
-        completed: !progress.completed,
-      });
-
-      return newMap;
-    });
-  };
-
-  // Get progress for an activity
-  const getActivityProgress = (activityId: string): ActivityProgress => {
-    const activity = dayActivities.find(a => a.id === activityId);
-    const setsCount = activity?.type === ActivityType.LIFT
-      ? (activity.setCalculations?.length || 0)
-      : 0;
-
-    return activityProgress.get(activityId) || {
-      sets: Array(setsCount).fill({ completed: false }),
-      completed: false,
-    };
+    const currentProgress = getActivityProgress(activityId);
+    const wasCompleted = currentProgress.sets[setIndex]?.completed ?? false;
+    persistSetComplete(activityId, setIndex);
+    if (!wasCompleted) {
+      setRestTimerStart(Date.now());
+    }
   };
 
   if (loading) {
