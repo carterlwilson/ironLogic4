@@ -1,0 +1,72 @@
+[
+  {
+    "_id": "691429df90e2b21e1e0bc9a5",
+    "name": "Bench Press",
+    "notes": "",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T06:31:59.513Z",
+    "updatedAt": "2025-11-12T06:31:59.513Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914308290e2b21e1e0bcb71",
+    "name": "Press",
+    "notes": "",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T07:00:18.018Z",
+    "updatedAt": "2025-11-12T07:00:18.018Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914308990e2b21e1e0bcb7b",
+    "name": "Squat",
+    "notes": "",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T07:00:25.103Z",
+    "updatedAt": "2025-11-12T07:00:25.103Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914309890e2b21e1e0bcb85",
+    "name": "Deadlift",
+    "notes": "",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T07:00:40.577Z",
+    "updatedAt": "2025-11-12T07:00:40.577Z",
+    "__v": 0
+  },
+  {
+    "_id": "6914312490e2b21e1e0bcbb7",
+    "name": "Upper Body Pull",
+    "notes": "",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T07:03:00.834Z",
+    "updatedAt": "2025-11-12T07:03:00.834Z",
+    "__v": 0
+  },
+  {
+    "_id": "69640fefefef0e18cedbabdf",
+    "name": "Accessories",
+    "notes": "",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-01-11T21:02:39.563Z",
+    "updatedAt": "2026-01-11T21:02:39.563Z",
+    "__v": 0
+  },
+  {
+    "_id": "69890c6c591f81e754949fc9",
+    "name": "Cardio",
+    "notes": "",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-02-08T22:21:32.433Z",
+    "updatedAt": "2026-02-08T22:21:32.433Z",
+    "__v": 0
+  }
+]

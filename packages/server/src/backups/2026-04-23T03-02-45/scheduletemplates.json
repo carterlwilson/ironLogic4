@@ -1,0 +1,58 @@
+[
+  {
+    "_id": "69daba50a8f757e1705b8c3e",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "coachId": "69d85ea9a6ee6328b654ca6d",
+    "dayOfWeek": 1,
+    "period": "AM",
+    "time": "09:00",
+    "endTime": "10:00",
+    "maxCapacity": 10,
+    "isActive": true,
+    "createdAt": "2026-04-11T21:17:04.269Z",
+    "updatedAt": "2026-04-11T21:17:04.269Z",
+    "__v": 0
+  },
+  {
+    "_id": "69daba70a8f757e1705b8c4e",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "coachId": "69d85ea9a6ee6328b654ca6d",
+    "dayOfWeek": 2,
+    "period": "AM",
+    "time": "07:00",
+    "endTime": "08:00",
+    "maxCapacity": 10,
+    "isActive": true,
+    "createdAt": "2026-04-11T21:17:36.209Z",
+    "updatedAt": "2026-04-11T21:17:36.209Z",
+    "__v": 0
+  },
+  {
+    "_id": "69dac110a8f757e1705b8c5e",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "coachId": "69d85ea9a6ee6328b654ca6d",
+    "dayOfWeek": 3,
+    "period": "AM",
+    "time": "08:00",
+    "endTime": "09:00",
+    "maxCapacity": 10,
+    "isActive": true,
+    "createdAt": "2026-04-11T21:45:52.802Z",
+    "updatedAt": "2026-04-11T21:45:52.802Z",
+    "__v": 0
+  },
+  {
+    "_id": "69dac138a8f757e1705b8c6e",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "coachId": "69149d2290e2b21e1e0bce9b",
+    "dayOfWeek": 1,
+    "period": "AM",
+    "time": "09:00",
+    "endTime": "10:00",
+    "maxCapacity": 10,
+    "isActive": true,
+    "createdAt": "2026-04-11T21:46:32.853Z",
+    "updatedAt": "2026-04-11T21:46:32.853Z",
+    "__v": 0
+  }
+]
