@@ -6,7 +6,7 @@ dotenv.config();
 
 async function migrate() {
   try {
-    const mongoUri = process.env.MONGODB_PROD_URI;
+    const mongoUri = process.env.MONGODB_URI;
     if (!mongoUri) throw new Error('MONGODB_URI not set in environment');
 
     console.log('Connecting to MongoDB...');
