@@ -116,7 +116,7 @@ export const WorkoutPage = () => {
         {dayActivities.length === 0 ? (
           <Paper p="xl" radius="md" withBorder>
             <Text size="sm" c="dimmed" ta="center">
-              No activities scheduled for today. Enjoy your rest day!
+              No programmed workout available. Ask your coach for more info.
             </Text>
           </Paper>
         ) : (
