@@ -1,5 +1,5 @@
-import { Container, Title, Text, Stack, Card, Paper, Group, Badge } from '@mantine/core';
-import { IconDeviceMobile, IconWifiOff, IconBell, IconUser } from '@tabler/icons-react';
+import { Container, Title, Text, Stack, Paper, Group, Badge } from '@mantine/core';
+import { IconUser } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useAppTitle } from '../hooks/useAppTitle';
 
@@ -40,38 +40,6 @@ export function MobileHomePage() {
         <Text size="md" ta="center" c="dimmed">
           Your mobile training companion
         </Text>
-
-        <Stack gap="md">
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Stack gap="sm" align="center">
-              <IconDeviceMobile size={32} />
-              <Text fw={500}>Mobile Optimized</Text>
-              <Text size="sm" ta="center" c="dimmed">
-                Designed specifically for mobile devices with touch-friendly interfaces
-              </Text>
-            </Stack>
-          </Card>
-
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Stack gap="sm" align="center">
-              <IconWifiOff size={32} />
-              <Text fw={500}>Offline Support</Text>
-              <Text size="sm" ta="center" c="dimmed">
-                Works offline with cached content and background sync
-              </Text>
-            </Stack>
-          </Card>
-
-          <Card shadow="sm" padding="lg" radius="md" withBorder>
-            <Stack gap="sm" align="center">
-              <IconBell size={32} />
-              <Text fw={500}>Push Notifications</Text>
-              <Text size="sm" ta="center" c="dimmed">
-                Stay updated with real-time notifications
-              </Text>
-            </Stack>
-          </Card>
-        </Stack>
       </Stack>
     </Container>
   );

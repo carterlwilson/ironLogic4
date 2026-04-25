@@ -1,0 +1,726 @@
+[
+  {
+    "_id": "6927b408aec1c536cb3b4b34",
+    "name": "Bench Press",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "6913c2774dd3caf43ddd2fb5"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6914114390e2b21e1e0bc8b5"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69140e4690e2b21e1e0bc830"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6913c39b4dd3caf43ddd3045"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "691410b290e2b21e1e0bc88c"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-11T23:10:47.962Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z"
+  },
+  {
+    "_id": "6927b408aec1c536cb3b4b35",
+    "name": "Deadlift",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "691410cb90e2b21e1e0bc893"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6914112e90e2b21e1e0bc8ae"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "691410d890e2b21e1e0bc89a"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6914110a90e2b21e1e0bc8a7"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "6927c4a83c05fa18bbf7eeb8"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T04:44:59.268Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z"
+  },
+  {
+    "_id": "6927b408aec1c536cb3b4b36",
+    "name": "Push Press",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "6914119d90e2b21e1e0bc8d1"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6914119090e2b21e1e0bc8ca"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "6914118190e2b21e1e0bc8c3"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6914117590e2b21e1e0bc8bc"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "6927c4a83c05fa18bbf7eeb9"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T04:47:49.300Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z"
+  },
+  {
+    "_id": "6927b408aec1c536cb3b4b37",
+    "name": "Squat",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "691427b990e2b21e1e0bc8fa"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "691427ab90e2b21e1e0bc8f3"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "6914279890e2b21e1e0bc8ec"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6914278290e2b21e1e0bc8e5"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "6914276290e2b21e1e0bc8de"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T06:21:22.579Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z"
+  },
+  {
+    "_id": "6927b408aec1c536cb3b4b38",
+    "name": "Front Squat",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "6914282f90e2b21e1e0bc923"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6914281e90e2b21e1e0bc91c"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "6914281190e2b21e1e0bc915"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6914280990e2b21e1e0bc90e"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "691427fe90e2b21e1e0bc907"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T06:23:58.300Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z"
+  },
+  {
+    "_id": "6927b408aec1c536cb3b4b39",
+    "name": "Incline Bench Press",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "6927c4a83c05fa18bbf7eeba"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6927c4a83c05fa18bbf7eebb"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "6914289690e2b21e1e0bc947"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6914288990e2b21e1e0bc940"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "6914288090e2b21e1e0bc939"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T06:26:08.077Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z"
+  },
+  {
+    "_id": "6927b408aec1c536cb3b4b3a",
+    "name": "Overhead Press",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69142be490e2b21e1e0bca7b"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69142bc290e2b21e1e0bca74"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69142b8d90e2b21e1e0bca66"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69142b8090e2b21e1e0bca5f"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69142bad90e2b21e1e0bca6d"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-12T06:38:56.666Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z"
+  },
+  {
+    "_id": "6928761eef555160151317d3",
+    "name": "Test",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "6928761eef555160151317d4"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "6928761eef555160151317d5"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "6928761eef555160151317d6"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "6928761eef555160151317d7"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "6928761eef555160151317d8"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "69120f8344134fbe46a6ba84",
+    "createdAt": "2025-11-27T16:02:38.963Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "696410deefef0e18cedbae07",
+    "name": "KB RFE",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "696410deefef0e18cedbae08"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "696410deefef0e18cedbae09"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "696410deefef0e18cedbae0a"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "696410deefef0e18cedbae0b"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "696410deefef0e18cedbae0c"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-01-11T21:06:38.646Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "69641442efef0e18cedbb02d",
+    "name": "KB Row",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69641442efef0e18cedbb02e"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69641442efef0e18cedbb02f"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69641442efef0e18cedbb030"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69641442efef0e18cedbb031"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69641442efef0e18cedbb032"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-01-11T21:21:07.000Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "696419eeefef0e18cedbb3b4",
+    "name": "Barbell Curl",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "696419eeefef0e18cedbb3b5"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "696419eeefef0e18cedbb3b6"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "696419eeefef0e18cedbb3b7"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "696419eeefef0e18cedbb3b8"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "696419eeefef0e18cedbb3b9"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-01-11T21:45:18.598Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "69840c8a591f81e754947499",
+    "name": "Ski - Distance",
+    "notes": "",
+    "type": "distance",
+    "tags": [],
+    "templateRepMaxes": [],
+    "templateTimeSubMaxes": [
+      {
+        "name": "5 min",
+        "_id": "69840c8a591f81e75494749a"
+      }
+    ],
+    "templateDistanceSubMaxes": [],
+    "distanceUnit": "meters",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "69120f8344134fbe46a6ba84",
+    "createdAt": "2026-02-05T03:20:42.273Z",
+    "updatedAt": "2026-02-05T03:20:42.273Z",
+    "__v": 0
+  },
+  {
+    "_id": "69840cb1591f81e7549474ca",
+    "name": "Bike - Distance",
+    "notes": "",
+    "type": "distance",
+    "tags": [],
+    "templateRepMaxes": [],
+    "templateTimeSubMaxes": [
+      {
+        "name": "5 min",
+        "_id": "69840cb1591f81e7549474cb"
+      }
+    ],
+    "templateDistanceSubMaxes": [],
+    "distanceUnit": "kilometers",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "69120f8344134fbe46a6ba84",
+    "createdAt": "2026-02-05T03:21:21.422Z",
+    "updatedAt": "2026-02-05T03:21:21.422Z",
+    "__v": 0
+  },
+  {
+    "_id": "69840cc8591f81e7549474f7",
+    "name": "Row - Distance",
+    "notes": "",
+    "type": "distance",
+    "tags": [],
+    "templateRepMaxes": [],
+    "templateTimeSubMaxes": [
+      {
+        "name": "5 min",
+        "_id": "69840cc8591f81e7549474f8"
+      }
+    ],
+    "templateDistanceSubMaxes": [],
+    "distanceUnit": "meters",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "69120f8344134fbe46a6ba84",
+    "createdAt": "2026-02-05T03:21:44.077Z",
+    "updatedAt": "2026-02-13T23:12:48.075Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e5a2cf916d674f99acc023",
+    "name": "Lunge",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69e5a2cf916d674f99acc024"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69e5a2cf916d674f99acc025"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69e5a2cf916d674f99acc026"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69e5a2cf916d674f99acc027"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69e5a2cf916d674f99acc028"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "templateTimeSubMaxes": [],
+    "templateDistanceSubMaxes": [],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-04-20T03:51:43.294Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e5a2dc916d674f99acc03e",
+    "name": "KB Pullover",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69e5a2dc916d674f99acc03f"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69e5a2dc916d674f99acc040"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69e5a2dc916d674f99acc041"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69e5a2dc916d674f99acc042"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69e5a2dc916d674f99acc043"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "templateTimeSubMaxes": [],
+    "templateDistanceSubMaxes": [],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-04-20T03:51:56.548Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e5a2fd916d674f99acc059",
+    "name": "Barbell Biceps Curl",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69e5a2fd916d674f99acc05a"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69e5a2fd916d674f99acc05b"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69e5a2fd916d674f99acc05c"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69e5a2fd916d674f99acc05d"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69e5a2fd916d674f99acc05e"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "templateTimeSubMaxes": [],
+    "templateDistanceSubMaxes": [],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-04-20T03:52:29.628Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  },
+  {
+    "_id": "69e5a307916d674f99acc074",
+    "name": "KB Triceps Ext",
+    "notes": "",
+    "type": "weight",
+    "tags": [],
+    "templateRepMaxes": [
+      {
+        "reps": 1,
+        "name": "1RM",
+        "_id": "69e5a307916d674f99acc075"
+      },
+      {
+        "reps": 2,
+        "name": "2RM",
+        "_id": "69e5a307916d674f99acc076"
+      },
+      {
+        "reps": 3,
+        "name": "3RM",
+        "_id": "69e5a307916d674f99acc077"
+      },
+      {
+        "reps": 5,
+        "name": "5RM",
+        "_id": "69e5a307916d674f99acc078"
+      },
+      {
+        "reps": 8,
+        "name": "8RM",
+        "_id": "69e5a307916d674f99acc079"
+      },
+      {
+        "reps": 10,
+        "name": "10RM",
+        "_id": "69e992184c1c0831807febe1"
+      }
+    ],
+    "templateTimeSubMaxes": [],
+    "templateDistanceSubMaxes": [],
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2026-04-20T03:52:39.520Z",
+    "updatedAt": "2026-04-23T03:29:28.007Z",
+    "__v": 0
+  }
+]
