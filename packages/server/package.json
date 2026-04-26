@@ -16,7 +16,8 @@
     "seed:clear": "tsx src/scripts/seedData.ts --clear",
     "add-clients": "tsx src/scripts/addClients.ts",
     "sync:prod": "tsx src/scripts/syncProdData.ts",
-    "add-10rm": "tsx src/scripts/add10RmToWeightTemplates.ts"
+    "add-10rm": "tsx src/scripts/add10RmToWeightTemplates.ts",
+    "fix-dupes": "tsx src/scripts/fixDuplicate10RmIds.ts"
   },
   "dependencies": {
     "@ironlogic4/shared": "file:../shared",

@@ -1,0 +1,156 @@
+[
+  {
+    "_id": "6913c57b4dd3caf43ddd30c4",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "name": "Julia Burgdorf",
+    "coachIds": [
+      "6913c50d4dd3caf43ddd30b6"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-11T23:23:39.655Z",
+    "updatedAt": "2025-11-11T23:23:39.655Z",
+    "__v": 0
+  },
+  {
+    "_id": "691a843c9088014f260bcbe5",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "name": "Mike Haller",
+    "coachIds": [
+      "69149d2290e2b21e1e0bce9b"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": [
+          {
+            "startTime": "08:00",
+            "endTime": "09:00",
+            "capacity": 16,
+            "assignedClients": [
+              "6913c44c4dd3caf43ddd30a5",
+              "6913cd884dd3caf43ddd312d",
+              "6913cdad4dd3caf43ddd3134",
+              "6913cdd34dd3caf43ddd313b",
+              "6913cdf94dd3caf43ddd314b",
+              "6913ce1b4dd3caf43ddd3152",
+              "6913ce414dd3caf43ddd3159",
+              "6913ce704dd3caf43ddd3160",
+              "6913ceb24dd3caf43ddd3177",
+              "6913ceca4dd3caf43ddd317e",
+              "6913ceec4dd3caf43ddd3185",
+              "6913cf1a4dd3caf43ddd318c",
+              "6913cf354dd3caf43ddd3193",
+              "6913cf624dd3caf43ddd319a",
+              "6913cf834dd3caf43ddd31a1",
+              "6913ce8d4dd3caf43ddd3170"
+            ],
+            "_id": "691a89059088014f260bcdc6"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": [
+          {
+            "startTime": "08:00",
+            "endTime": "09:00",
+            "capacity": 16,
+            "assignedClients": [
+              "6913c44c4dd3caf43ddd30a5",
+              "6913cdad4dd3caf43ddd3134",
+              "6913ceec4dd3caf43ddd3185",
+              "6913cf1a4dd3caf43ddd318c",
+              "6913cdf94dd3caf43ddd314b",
+              "6913ce414dd3caf43ddd3159",
+              "6913cf624dd3caf43ddd319a",
+              "6913cf834dd3caf43ddd31a1",
+              "6913ceb24dd3caf43ddd3177",
+              "6913ceca4dd3caf43ddd317e",
+              "6913cdd34dd3caf43ddd313b",
+              "6913cd884dd3caf43ddd312d",
+              "6913ce1b4dd3caf43ddd3152",
+              "6913cfa64dd3caf43ddd31a8",
+              "6913cf354dd3caf43ddd3193"
+            ],
+            "_id": "691a89059088014f260bcdc7"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": [
+          {
+            "startTime": "08:00",
+            "endTime": "09:00",
+            "capacity": 14,
+            "assignedClients": [
+              "6913c44c4dd3caf43ddd30a5",
+              "6913ceec4dd3caf43ddd3185",
+              "6913cdad4dd3caf43ddd3134",
+              "6913ce414dd3caf43ddd3159",
+              "6913cf1a4dd3caf43ddd318c",
+              "6913d0084dd3caf43ddd31b6",
+              "6913cfe24dd3caf43ddd31af",
+              "6913ceca4dd3caf43ddd317e",
+              "6913d0ae4dd3caf43ddd31cb",
+              "6913d0344dd3caf43ddd31bd",
+              "6913cf834dd3caf43ddd31a1",
+              "6913d0584dd3caf43ddd31c4"
+            ],
+            "_id": "691a89059088014f260bcdc8"
+          }
+        ]
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "createdBy": "691261644d2e5e9cc486e32f",
+    "createdAt": "2025-11-17T02:11:08.344Z",
+    "updatedAt": "2025-11-17T02:31:33.530Z",
+    "__v": 0
+  }
+]
