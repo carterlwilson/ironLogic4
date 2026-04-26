@@ -1,7 +1,6 @@
 import { UnstyledButton, Group, Text, Stack, rem } from '@mantine/core';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  IconHome,
   IconBarbell,
   IconChartLine,
   IconCalendar,
@@ -15,11 +14,6 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  {
-    label: 'Home',
-    path: '/',
-    icon: IconHome,
-  },
   {
     label: 'Workout',
     path: '/workout',
