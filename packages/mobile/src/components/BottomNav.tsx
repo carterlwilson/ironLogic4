@@ -10,7 +10,7 @@ import {
 interface NavItem {
   label: string;
   path: string;
-  icon: typeof IconHome;
+  icon: typeof IconBarbell;
 }
 
 const NAV_ITEMS: NavItem[] = [
