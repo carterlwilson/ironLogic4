@@ -191,8 +191,11 @@ userSchema.index({ createdAt: -1 });
 // Index for program queries
 userSchema.index({ programId: 1 });
 
-// TTL index for automatic cleanup of expired reset tokens
-// MongoDB will automatically remove documents where resetTokenExpiry is older than 1 hour
-userSchema.index({ resetTokenExpiry: 1 }, { expireAfterSeconds: 3600 });
+// Index for token refresh lookups (prevents full collection scan on every refresh)
+userSchema.index({ 'refreshTokens.token': 1 });
+
+// NOTE: Do NOT add a TTL index on resetTokenExpiry. MongoDB TTL indexes delete the entire
+// document when the indexed field expires — that would silently delete user accounts.
+// Token expiry is enforced in application code (passwordReset controller).
 
 export const User = mongoose.model<UserDocument>('User', userSchema);

@@ -60,6 +60,7 @@ export const getAllPrograms = async (
     // Get programs and total count
     const [programs, total] = await Promise.all([
       Program.find(query)
+        .select('-blocks')
         .populate('gymId', 'name')
         .populate('createdBy', 'firstName lastName')
         .sort({ createdAt: -1 })
