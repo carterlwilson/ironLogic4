@@ -276,16 +276,16 @@ export const joinTimeslot = async (
       return;
     }
 
-    // Use atomic update to prevent race conditions
-    // Capacity is validated before this update (lines 262-277)
-    // The atomic operation prevents duplicate assignments
+    // Use atomic update to prevent race conditions — capacity check is included in
+    // the filter so concurrent joins on the last open slot can't both succeed
     const updatedSchedule = await ActiveSchedule.findOneAndUpdate(
       {
         _id: id,
         'days.timeSlots': {
           $elemMatch: {
             _id: timeslotId,
-            assignedClients: { $ne: clientId } // Not already assigned to THIS specific timeslot
+            assignedClients: { $ne: clientId },
+            $expr: { $lt: [{ $size: '$assignedClients' }, '$capacity'] },
           }
         },
       },
@@ -392,62 +392,31 @@ export const leaveTimeslot = async (
       return;
     }
 
-    const schedule = await ActiveSchedule.findById(id);
+    const updatedSchedule = await ActiveSchedule.findOneAndUpdate(
+      {
+        _id: id,
+        gymId: req.user.gymId,
+        'days.timeSlots': { $elemMatch: { _id: timeslotId, assignedClients: clientId } },
+      },
+      { $pull: { 'days.$[].timeSlots.$[slot].assignedClients': clientId } },
+      { arrayFilters: [{ 'slot._id': timeslotId }], new: true, runValidators: true }
+    );
 
-    if (!schedule) {
-      res.status(404).json({
-        success: false,
-        error: 'Active schedule not found',
-      });
-      return;
-    }
-
-    // Check if client belongs to the same gym
-    if (req.user.gymId !== schedule.gymId.toString()) {
-      res.status(403).json({
-        success: false,
-        error: 'You can only leave timeslots for your gym',
-      });
-      return;
-    }
-
-    // Find the timeslot and remove client
-    let timeslotFound = false;
-    let wasAssigned = false;
-
-    for (const day of schedule.days) {
-      for (const slot of day.timeSlots) {
-        if (slot.id === timeslotId) {
-          timeslotFound = true;
-
-          const clientIndex = slot.assignedClients.indexOf(clientId);
-          if (clientIndex !== -1) {
-            slot.assignedClients.splice(clientIndex, 1);
-            wasAssigned = true;
-          }
-          break;
-        }
+    if (!updatedSchedule) {
+      const schedule = await ActiveSchedule.findOne({ _id: id, gymId: req.user.gymId });
+      if (!schedule) {
+        res.status(404).json({ success: false, error: 'Active schedule not found' });
+        return;
       }
-      if (timeslotFound) break;
-    }
-
-    if (!timeslotFound) {
-      res.status(404).json({
-        success: false,
-        error: 'Timeslot not found',
-      });
+      const slotExists = schedule.days.some(d => d.timeSlots.some(s => s.id === timeslotId));
+      if (!slotExists) {
+        res.status(404).json({ success: false, error: 'Timeslot not found' });
+        return;
+      }
+      res.status(400).json({ success: false, error: 'You are not assigned to this timeslot' });
       return;
     }
 
-    if (!wasAssigned) {
-      res.status(400).json({
-        success: false,
-        error: 'You are not assigned to this timeslot',
-      });
-      return;
-    }
-
-    const updatedSchedule = await schedule.save();
     await updatedSchedule.populate('gymId', 'name');
     await updatedSchedule.populate('templateId', 'name');
 

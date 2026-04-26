@@ -409,20 +409,6 @@ export const deleteCoach = async (
       return;
     }
 
-    // 2. Check for assigned clients (if assignedCoachId field exists)
-    const assignedClients = await User.findOne({
-      userType: UserType.CLIENT,
-      assignedCoachId: id,
-    });
-
-    if (assignedClients) {
-      res.status(409).json({
-        success: false,
-        error: 'Cannot delete coach. Coach has assigned clients.',
-      });
-      return;
-    }
-
     // No dependencies found, proceed with hard delete
     await User.findByIdAndDelete(id);
 

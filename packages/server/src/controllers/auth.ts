@@ -10,7 +10,6 @@ import { generateToken, generateRefreshToken, getRefreshTokenExpiry } from '../u
  */
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   try {
-      console.log("logging in user")
     // Validate request body using LoginSchema
     const validationResult = LoginSchema.safeParse(req.body);
 
@@ -20,7 +19,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
         error: 'Validation failed',
         message: validationResult.error.errors.map(e => e.message).join(', ')
       };
-      console.log(response);
       res.status(400).json(response);
       return;
     }
@@ -29,12 +27,6 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     // Find user by email and include password field
     const user = await User.findOne({ email }).select('+password');
-    console.log('User lookup for email:', email);
-    console.log('User found:', user ? 'YES' : 'NO');
-    if (user) {
-      console.log('User email from DB:', user.email);
-      console.log('User has password field:', !!user.password);
-    }
     if (!user) {
       const response: ApiResponse = {
         success: false,
@@ -47,9 +39,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     // Compare password using user.comparePassword method
     const isPasswordValid = await user.comparePassword(password);
-    console.log('Password comparison result:', isPasswordValid);
     if (!isPasswordValid) {
-      console.log('Password validation FAILED for user:', user.email);
       const response: ApiResponse = {
         success: false,
         error: 'Invalid credentials',
