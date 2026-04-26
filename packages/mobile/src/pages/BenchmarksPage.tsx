@@ -1,5 +1,5 @@
-import { Container, Title, Text, Stack, Tabs, ActionIcon, Group } from '@mantine/core';
-import { IconPlus, IconRefresh } from '@tabler/icons-react';
+import { Container, Title, Stack, Tabs, ActionIcon, Group, TextInput } from '@mantine/core';
+import { IconPlus, IconRefresh, IconSearch, IconX } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import { useBenchmarks } from '../hooks/useBenchmarks';
 import { BenchmarkList } from '../components/benchmarks/BenchmarkList';
@@ -66,6 +66,7 @@ export const BenchmarksPage = () => {
   // Tag filtering state
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [filteredCurrentBenchmarks, setFilteredCurrentBenchmarks] = useState(currentBenchmarks);
   const [filteredHistoricalBenchmarks, setFilteredHistoricalBenchmarks] = useState(historicalBenchmarks);
 
@@ -75,17 +76,18 @@ export const BenchmarksPage = () => {
     const tags = getAllUniqueTags(allBenchmarks);
     setAvailableTags(tags);
 
-    // Auto-reset selectedTag if it no longer exists in available tags
     if (selectedTag && !tags.includes(selectedTag)) {
       setSelectedTag(null);
     }
 
-    // Filter benchmarks
-    const filteredCurrent = filterBenchmarksByTag(currentBenchmarks, selectedTag);
-    const filteredHistorical = filterBenchmarksByTag(historicalBenchmarks, selectedTag);
-    setFilteredCurrentBenchmarks(filteredCurrent);
-    setFilteredHistoricalBenchmarks(filteredHistorical);
-  }, [currentBenchmarks, historicalBenchmarks, selectedTag]);
+    const query = searchQuery.toLowerCase().trim();
+    const byTag = (list: typeof currentBenchmarks) => filterBenchmarksByTag(list, selectedTag);
+    const bySearch = (list: typeof currentBenchmarks) =>
+      query ? list.filter((b) => b.name.toLowerCase().includes(query)) : list;
+
+    setFilteredCurrentBenchmarks(bySearch(byTag(currentBenchmarks)));
+    setFilteredHistoricalBenchmarks(bySearch(byTag(historicalBenchmarks)));
+  }, [currentBenchmarks, historicalBenchmarks, selectedTag, searchQuery]);
 
   const handleTagSelect = (tag: string | null) => {
     setSelectedTag(tag);
@@ -98,9 +100,6 @@ export const BenchmarksPage = () => {
         <Group justify="space-between" align="center">
           <div>
             <Title order={1}>Benchmarks</Title>
-            <Text c="dimmed" size="sm">
-              Track your performance progress
-            </Text>
           </div>
           <Group gap="xs">
             <ActionIcon
@@ -121,6 +120,21 @@ export const BenchmarksPage = () => {
             </ActionIcon>
           </Group>
         </Group>
+
+        {/* Search */}
+        <TextInput
+          placeholder="Search benchmarks..."
+          leftSection={<IconSearch size={16} />}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.currentTarget.value)}
+          rightSection={
+            searchQuery ? (
+              <ActionIcon variant="transparent" size="sm" onClick={() => setSearchQuery('')}>
+                <IconX size={16} />
+              </ActionIcon>
+            ) : null
+          }
+        />
 
         {/* Tag Filter */}
         <TagFilter
