@@ -9,6 +9,7 @@ import {
   ProgramListParamsSchema,
   ProgramIdSchema
 } from '@ironlogic4/shared';
+import { buildGymScope } from '../utils/gymScope.js';
 
 /**
  * Get all programs with pagination and filtering
@@ -36,11 +37,7 @@ export const getAllPrograms = async (
     const query: any = {};
 
     // Gym filtering - required for owners, optional for admins
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    } else if (gymId) {
-      query.gymId = gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!, gymId));
 
     // Filter by isActive
     if (isActive !== undefined) {
@@ -114,9 +111,7 @@ export const getProgramById = async (
 
     // Build query with gym scoping for owners
     const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!));
 
     const program = await Program.findOne(query)
       .populate('gymId', 'name')
@@ -229,9 +224,7 @@ export const updateProgram = async (
 
     // Build query with gym scoping for owners
     const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!));
 
     // If blocks are being updated, check if program has been started
     if (updateData.blocks) {
@@ -300,9 +293,7 @@ export const deleteProgram = async (
 
     // Build query with gym scoping for owners
     const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!));
 
     const program = await Program.findOneAndUpdate(
       query,

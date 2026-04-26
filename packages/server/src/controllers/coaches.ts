@@ -13,6 +13,7 @@ import {
   ResetCoachPasswordSchema,
 } from '@ironlogic4/shared';
 import { generateRandomPassword, hashPassword } from '../utils/auth.js';
+import { buildGymScope } from '../utils/gymScope.js';
 
 /**
  * Get all coaches with pagination, search, and gym scoping
@@ -39,11 +40,7 @@ export const getAllCoaches = async (
     const query: any = { userType: UserType.COACH };
 
     // Gym scoping: owners can only see their gym's coaches, admins can filter by gymId
-    if (req.user?.userType === UserType.OWNER) {
-      query.gymId = req.user.gymId;
-    } else if (gymId) {
-      query.gymId = gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!, gymId));
 
     // Search by name or email
     if (search) {
