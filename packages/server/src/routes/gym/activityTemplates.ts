@@ -2,7 +2,6 @@ import express from 'express';
 import {
   verifyToken,
   requireGymStaffAccess,
-  AuthenticatedRequest,
 } from '../../middleware/auth.js';
 import {
   getAllActivityTemplates,

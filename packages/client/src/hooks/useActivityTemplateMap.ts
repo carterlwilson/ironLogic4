@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { activityTemplateApi } from '../services/activityTemplateApi';
 import type { ActivityTemplate } from '@ironlogic4/shared/types/activityTemplates';
 
@@ -10,42 +10,20 @@ interface UseActivityTemplateMapReturn {
 }
 
 export function useActivityTemplateMap(gymId: string | undefined): UseActivityTemplateMapReturn {
-  const [templateMap, setTemplateMap] = useState<Record<string, ActivityTemplate>>({});
-  const [templates, setTemplates] = useState<ActivityTemplate[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['activityTemplates', gymId],
+    queryFn: () => activityTemplateApi.getActivityTemplates({ gymId: gymId!, limit: 100 }),
+    enabled: !!gymId,
+    staleTime: 5 * 60 * 1000,
+    select: (response) => {
+      const templates = response.data || [];
+      const templateMap = templates.reduce((acc, t) => {
+        acc[t.id] = t;
+        return acc;
+      }, {} as Record<string, ActivityTemplate>);
+      return { templates, templateMap };
+    },
+  });
 
-  useEffect(() => {
-    if (!gymId) {
-      setTemplateMap({});
-      setTemplates([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    activityTemplateApi.getActivityTemplates({ gymId, limit: 100 })
-      .then(response => {
-        const templatesArray = response.data || [];
-        setTemplates(templatesArray);
-
-        // Create dictionary for quick lookup
-        const map = templatesArray.reduce((acc, template) => {
-          acc[template.id] = template;
-          return acc;
-        }, {} as Record<string, ActivityTemplate>);
-
-        setTemplateMap(map);
-      })
-      .catch(err => {
-        console.error('Failed to load activity templates:', err);
-        setError(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [gymId]);
-
-  return { templateMap, templates, isLoading, error };
+  return { templateMap: data?.templateMap ?? {}, templates: data?.templates ?? [], isLoading, error: error as Error | null };
 }

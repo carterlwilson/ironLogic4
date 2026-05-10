@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { activityGroupApi } from '../services/activityGroupApi';
 import type { ActivityGroup } from '@ironlogic4/shared/types/activityGroups';
 
@@ -9,31 +9,13 @@ interface UseActivityGroupsReturn {
 }
 
 export function useActivityGroups(gymId: string | undefined): UseActivityGroupsReturn {
-  const [groups, setGroups] = useState<ActivityGroup[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['activityGroups', gymId],
+    queryFn: () => activityGroupApi.getActivityGroups({ gymId: gymId!, limit: 100, page: 1 }),
+    enabled: !!gymId,
+    staleTime: 5 * 60 * 1000,
+    select: (response) => response.data || [],
+  });
 
-  useEffect(() => {
-    if (!gymId) {
-      setGroups([]);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    activityGroupApi.getActivityGroups({ gymId, limit: 100, page: 1 })
-      .then(response => {
-        setGroups(response.data || []);
-      })
-      .catch(err => {
-        console.error('Failed to load activity groups:', err);
-        setError(err);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [gymId]);
-
-  return { groups, isLoading, error };
+  return { groups: data ?? [], isLoading, error: error as Error | null };
 }

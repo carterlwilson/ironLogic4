@@ -80,6 +80,13 @@ export function useWorkoutProgress(
     setProgress(loadDayProgress(weekId, dayId));
   }, [weekId, dayId]);
 
+  // Persist progress asynchronously after render rather than blocking inside state updaters
+  useEffect(() => {
+    if (weekId && dayId) {
+      persistDayProgress(weekId, dayId, progress);
+    }
+  }, [progress, weekId, dayId]);
+
   const handleSetComplete = useCallback((activityId: string, setIndex: number) => {
     if (!weekId || !dayId) return;
 
@@ -101,7 +108,6 @@ export function useWorkoutProgress(
 
       const updated: ActivityProgress = { ...existing, sets: newSets };
       newMap.set(activityId, updated);
-      persistDayProgress(weekId, dayId, newMap);
       return newMap;
     });
   }, [weekId, dayId, activities]);
@@ -125,7 +131,6 @@ export function useWorkoutProgress(
 
       const updated: ActivityProgress = { ...existing, completed: !existing.completed };
       newMap.set(activityId, updated);
-      persistDayProgress(weekId, dayId, newMap);
       return newMap;
     });
   }, [weekId, dayId, activities]);

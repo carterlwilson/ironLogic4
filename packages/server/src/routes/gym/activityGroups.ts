@@ -2,7 +2,6 @@ import express from 'express';
 import {
   verifyToken,
   requireOwnerOrAdminForGym,
-  AuthenticatedRequest,
 } from '../../middleware/auth.js';
 import {
   getAllActivityGroups,

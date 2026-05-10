@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActivityGroup } from '../models/ActivityGroup.js';
-import { ApiResponse, PaginatedResponse, ActivityGroupListParams, CreateActivityGroupSchema, UpdateActivityGroupSchema, ActivityGroupListParamsSchema, ActivityGroupIdSchema } from '@ironlogic4/shared';
+import { ApiResponse, PaginatedResponse, CreateActivityGroupSchema, UpdateActivityGroupSchema, ActivityGroupListParamsSchema, ActivityGroupIdSchema } from '@ironlogic4/shared';
 import { cleanupActivityTemplateReferences } from '../services/activityGroupCleanup.js';
 import { buildGymScope } from '../utils/gymScope.js';
 

@@ -31,12 +31,16 @@ export interface InviteClientRequest {
   programId?: string;
 }
 
+type BenchmarkInput = Omit<ClientBenchmark, 'id' | 'createdAt' | 'updatedAt'> & {
+  id?: string;
+};
+
 export interface UpdateClientRequest {
   email?: string;
   firstName?: string;
   lastName?: string;
-  currentBenchmarks?: ClientBenchmark[];
-  historicalBenchmarks?: ClientBenchmark[];
+  currentBenchmarks?: BenchmarkInput[];
+  historicalBenchmarks?: BenchmarkInput[];
   programId?: string | null;
 }
 

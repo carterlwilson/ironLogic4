@@ -13,18 +13,13 @@ export function OtherActivityCard({
   progress,
   onActivityComplete,
 }: OtherActivityCardProps) {
-  const getCardColor = () => {
-    if (progress.completed) return 'green.0';
-    return undefined;
-  };
-
   return (
     <Card
       shadow="sm"
       padding="lg"
       radius="md"
       withBorder
-      bg={getCardColor()}
+      bg={progress.completed ? 'green.0' : undefined}
     >
       <Stack gap="md">
         {/* Header */}

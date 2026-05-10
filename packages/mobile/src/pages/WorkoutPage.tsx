@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Container, Stack, Loader, Text, Paper, Button, Center } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import { useCurrentWeekWorkout } from '../hooks/useCurrentWeekWorkout';
@@ -39,15 +39,14 @@ export const WorkoutPage = () => {
     setRestTimerStart(null);
   };
 
-  // Handle set completion — persists via hook and starts rest timer
-  const handleSetComplete = (activityId: string, setIndex: number) => {
+  const handleSetComplete = useCallback((activityId: string, setIndex: number) => {
     const currentProgress = getActivityProgress(activityId);
     const wasCompleted = currentProgress.sets[setIndex]?.completed ?? false;
     persistSetComplete(activityId, setIndex);
     if (!wasCompleted) {
       setRestTimerStart(Date.now());
     }
-  };
+  }, [getActivityProgress, persistSetComplete]);
 
   if (loading) {
     return (

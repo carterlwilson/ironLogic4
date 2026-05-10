@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Stack } from '@mantine/core';
 import { ActivityType } from '@ironlogic4/shared';
 import { LiftActivityCard } from './LiftActivityCard';
@@ -15,7 +16,7 @@ interface ActivityListProps {
   onDataRefresh?: () => void;
 }
 
-export function ActivityList({
+export const ActivityList = memo(function ActivityList({
   activities,
   getProgress,
   onSetComplete,
@@ -62,4 +63,4 @@ export function ActivityList({
       })}
     </Stack>
   );
-}
+});

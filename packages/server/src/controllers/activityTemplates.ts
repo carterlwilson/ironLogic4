@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActivityTemplate } from '../models/ActivityTemplate.js';
-import { ApiResponse, PaginatedResponse, ActivityTemplateListParams, CreateActivityTemplateSchema, UpdateActivityTemplateSchema, ActivityTemplateListParamsSchema, ActivityTemplateIdSchema } from '@ironlogic4/shared';
+import { ApiResponse, PaginatedResponse, CreateActivityTemplateSchema, UpdateActivityTemplateSchema, ActivityTemplateListParamsSchema, ActivityTemplateIdSchema } from '@ironlogic4/shared';
 import { buildGymScope } from '../utils/gymScope.js';
 
 /**

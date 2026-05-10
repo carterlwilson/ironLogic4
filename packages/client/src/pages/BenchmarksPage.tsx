@@ -48,19 +48,14 @@ export function BenchmarksPage() {
     setSearchQuery,
     setTypeFilter,
     clearFilters,
-    page,
-    pageSize,
     setPage,
     setPageSize,
     queryParams,
   } = useBenchmarkTemplateSearch();
 
-  // Load benchmark templates when filters change
   React.useEffect(() => {
-    if (gymId) {
-      loadBenchmarkTemplates({ ...queryParams, gymId });
-    }
-  }, [searchQuery, typeFilter, page, pageSize, gymId]);
+    if (gymId) loadBenchmarkTemplates({ ...queryParams, gymId });
+  }, [queryParams, gymId, loadBenchmarkTemplates]);
 
   const handleCreateTemplate = async (data: any) => {
     await createBenchmarkTemplate(data);
