@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Container, Stack, Loader, Text, Paper, Button, Center } from '@mantine/core';
+import { Container, Stack, Loader, Text, Paper, Button, Center, Modal, Group } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import { useCurrentWeekWorkout } from '../hooks/useCurrentWeekWorkout';
 import { useWorkoutProgress } from '../hooks/useWorkoutProgress';
@@ -21,6 +21,7 @@ export const WorkoutPage = () => {
   const { data, loading, error, refetch } = useCurrentWeekWorkout();
   const [selectedDay, setSelectedDay] = useState(0);
   const [restTimerStart, setRestTimerStart] = useState<number | null>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   // Get activities for selected day
   const dayActivities = useMemo(() => {
@@ -31,7 +32,7 @@ export const WorkoutPage = () => {
   const weekId = data?.currentWeek.id;
   const dayId = data?.currentWeek.days[selectedDay]?.id;
 
-  const { getActivityProgress, handleSetComplete: persistSetComplete, handleActivityComplete } =
+  const { getActivityProgress, handleSetComplete: persistSetComplete, handleActivityComplete, clearDayProgress } =
     useWorkoutProgress(weekId, dayId, dayActivities);
 
   const handleDayChange = (day: number) => {
@@ -120,14 +121,40 @@ export const WorkoutPage = () => {
             </Text>
           </Paper>
         ) : (
-          <ActivityList
-            activities={dayActivities}
-            getProgress={getActivityProgress}
-            onSetComplete={handleSetComplete}
-            onActivityComplete={handleActivityComplete}
-            onDataRefresh={refetch}
-          />
+          <>
+            <ActivityList
+              activities={dayActivities}
+              getProgress={getActivityProgress}
+              onSetComplete={handleSetComplete}
+              onActivityComplete={handleActivityComplete}
+              onDataRefresh={refetch}
+            />
+            <Center>
+              <Button
+                variant="light"
+                size="sm"
+                color="red"
+                onClick={() => setConfirmOpen(true)}
+              >
+                Reset day progress
+              </Button>
+            </Center>
+          </>
         )}
+
+        <Modal
+          opened={confirmOpen}
+          onClose={() => setConfirmOpen(false)}
+          title="Reset progress?"
+          centered
+          size="sm"
+        >
+          <Text size="sm">This will clear all set completions for this day.</Text>
+          <Group justify="flex-end" mt="md">
+            <Button variant="default" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button color="red" onClick={() => { clearDayProgress(); setConfirmOpen(false); }}>Reset</Button>
+          </Group>
+        </Modal>
       </Stack>
 
       {restTimerStart && (
