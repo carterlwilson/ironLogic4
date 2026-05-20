@@ -9,11 +9,8 @@ import {
   AssignStaffSchema,
   UserType,
 } from '@ironlogic4/shared';
+import { IdParamSchema } from '@ironlogic4/shared/schemas/api';
 import { z } from 'zod';
-
-const IdParamSchema = z.object({
-  id: z.string().min(1),
-});
 
 const TimeslotParamSchema = z.object({
   id: z.string().min(1),

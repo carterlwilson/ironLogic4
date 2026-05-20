@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { userApi } from '../services/userApi';
-import type { User } from '@ironlogic4/shared/types/users';
 
 export interface OwnerMapping {
   [ownerId: string]: string;
@@ -15,60 +14,27 @@ export interface UseOwnerMappingReturn {
 }
 
 export const useOwnerMapping = (): UseOwnerMappingReturn => {
-  const [ownerMapping, setOwnerMapping] = useState<OwnerMapping>({});
-  const [ownerOptions, setOwnerOptions] = useState<Array<{ value: string; label: string }>>([
-    { value: '', label: 'All Owners' }
-  ]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadOwners = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await userApi.getUsers({ role: 'owner', limit: 100 });
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['owners'],
+    queryFn: () => userApi.getUsers({ role: 'owner', limit: 100 }),
+    staleTime: 5 * 60 * 1000,
+    select: (response) => {
       const owners = response.data || [];
-
-      // Create mapping from owner ID to owner name
       const mapping: OwnerMapping = {};
-      owners.forEach((owner: User) => {
+      const options: Array<{ value: string; label: string }> = [{ value: '', label: 'All Owners' }];
+      owners.forEach(owner => {
         mapping[owner.id] = `${owner.firstName} ${owner.lastName}`;
+        options.push({ value: owner.id, label: `${owner.firstName} ${owner.lastName}` });
       });
-
-      // Create options for select dropdown
-      const options = [
-        { value: '', label: 'All Owners' },
-        ...owners.map((owner: User) => ({
-          value: owner.id,
-          label: `${owner.firstName} ${owner.lastName}`,
-        }))
-      ];
-
-      setOwnerMapping(mapping);
-      setOwnerOptions(options);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load owners';
-      setError(errorMessage);
-      console.error('Failed to load owners:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const refreshOwners = useCallback(() => {
-    return loadOwners();
-  }, [loadOwners]);
-
-  useEffect(() => {
-    loadOwners();
-  }, [loadOwners]);
+      return { ownerMapping: mapping, ownerOptions: options };
+    },
+  });
 
   return {
-    ownerMapping,
-    ownerOptions,
-    loading,
-    error,
-    refreshOwners,
+    ownerMapping: data?.ownerMapping ?? {},
+    ownerOptions: data?.ownerOptions ?? [{ value: '', label: 'All Owners' }],
+    loading: isLoading,
+    error: error?.message ?? null,
+    refreshOwners: async () => { await refetch(); },
   };
 };

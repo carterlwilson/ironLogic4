@@ -29,6 +29,15 @@ export function CreateBenchmarkModal({
   const [distanceSubMaxValues, setDistanceSubMaxValues] = useState<Record<string, number | string>>({});
   const [loadingTemplate, setLoadingTemplate] = useState(false);
 
+  const resetState = () => {
+    form.reset();
+    setSelectedTemplate(null);
+    setFullTemplate(null);
+    setRepMaxValues({});
+    setTimeSubMaxValues({});
+    setDistanceSubMaxValues({});
+  };
+
   const form = useForm<{
     templateId: string;
     recordedAt: string;
@@ -77,13 +86,8 @@ export function CreateBenchmarkModal({
   // Reset form and date when modal opens
   useEffect(() => {
     if (opened) {
-      form.reset();
+      resetState();
       form.setFieldValue('recordedAt', formatDateForInput(new Date()));
-      setSelectedTemplate(null);
-      setFullTemplate(null);
-      setRepMaxValues({});
-      setTimeSubMaxValues({});
-      setDistanceSubMaxValues({});
     }
   }, [opened]);
 
@@ -232,21 +236,11 @@ export function CreateBenchmarkModal({
     }
 
     await onCreate(data);
-    form.reset();
-    setSelectedTemplate(null);
-    setFullTemplate(null);
-    setRepMaxValues({});
-    setTimeSubMaxValues({});
-    setDistanceSubMaxValues({});
+    resetState();
   });
 
   const handleClose = () => {
-    form.reset();
-    setSelectedTemplate(null);
-    setFullTemplate(null);
-    setRepMaxValues({});
-    setTimeSubMaxValues({});
-    setDistanceSubMaxValues({});
+    resetState();
     onClose();
   };
 

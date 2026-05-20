@@ -11,6 +11,7 @@ import {
   BenchmarkTemplateListAllParamsSchema,
   BenchmarkTemplateIdSchema,
 } from '@ironlogic4/shared';
+import { buildGymScope } from '../utils/gymScope.js';
 
 /**
  * Get all benchmark templates with pagination, search, and filtering
@@ -37,11 +38,7 @@ export const getAllBenchmarkTemplates = async (
     const query: any = {};
 
     // Gym scoping: owners and coaches can only see their gym's templates, admins can filter by gymId
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
-      query.gymId = req.user.gymId;
-    } else if (gymId) {
-      query.gymId = gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!, gymId));
 
     // Text search on name and notes
     if (search) {
@@ -116,11 +113,7 @@ export const getAllBenchmarkTemplatesNoPagination = async (
     const query: any = {};
 
     // Gym scoping: owners and coaches can only see their gym's templates, admins can filter by gymId
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
-      query.gymId = req.user.gymId;
-    } else if (gymId) {
-      query.gymId = gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!, gymId));
 
     // Text search on name and notes
     if (search) {

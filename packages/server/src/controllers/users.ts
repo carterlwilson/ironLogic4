@@ -229,12 +229,9 @@ export const updateUser = async (
     // Save user (triggers pre-save hook for password hashing)
     await existingUser.save();
 
-    // Return user without password (toJSON automatically excludes password)
-    const updatedUser = existingUser.toJSON();
-
     res.json({
       success: true,
-      data: updatedUser ? updatedUser.toJSON() : null,
+      data: existingUser.toJSON(),
       message: 'User updated successfully',
     } as ApiResponse);
   } catch (error) {

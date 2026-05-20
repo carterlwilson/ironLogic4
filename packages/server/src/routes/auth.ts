@@ -1,14 +1,7 @@
 import { Router } from 'express';
-import { registerUser, loginUser, refreshAccessToken } from '../controllers/auth.js';
+import { loginUser, refreshAccessToken } from '../controllers/auth.js';
 
 const router = Router();
-
-/**
- * @route   POST /api/auth/register
- * @desc    Register a new user
- * @access  Public
- */
-router.post('/register', registerUser);
 
 /**
  * @route   POST /api/auth/login

@@ -597,7 +597,7 @@ function transformIds(obj: any): any {
   }
 
   // Handle Mongoose ObjectIds directly
-  if (obj.constructor && obj.constructor.name === 'ObjectID') {
+  if (obj instanceof mongoose.Types.ObjectId) {
     return obj.toString();
   }
 

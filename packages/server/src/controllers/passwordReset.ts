@@ -202,9 +202,6 @@ export const validateResetToken = async (req: Request, res: Response): Promise<v
       return;
     }
 
-    // Hash the provided token
-    const hashedToken = await hashResetToken(token);
-
     // Find all users with unexpired, unused reset tokens
     const users = await User.find({
       resetTokenExpiry: { $gt: new Date() },

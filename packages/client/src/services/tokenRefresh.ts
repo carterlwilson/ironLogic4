@@ -8,6 +8,19 @@ interface AuthTokens {
 let isRefreshing = false;
 let refreshSubscribers: Array<(token: string) => void> = [];
 
+let onTokensRefreshed: ((tokens: AuthTokens) => void) | null = null;
+
+export function setTokensRefreshedCallback(fn: ((tokens: AuthTokens) => void) | null): void {
+  onTokensRefreshed = fn;
+}
+
+export function resetRefreshState(): void {
+  isRefreshing = false;
+  // Drain subscribers so their promises resolve (and fail) rather than leaking on logout.
+  refreshSubscribers.forEach(cb => cb(''));
+  refreshSubscribers = [];
+}
+
 function onRefreshed(token: string) {
   refreshSubscribers.forEach(callback => callback(token));
   refreshSubscribers = [];
@@ -46,6 +59,7 @@ async function refreshAccessToken(): Promise<string | null> {
     };
 
     localStorage.setItem('authTokens', JSON.stringify(newTokens));
+    onTokensRefreshed?.(newTokens);
     return newTokens.accessToken;
   } catch (error) {
     console.error('Token refresh failed:', error);
@@ -68,7 +82,6 @@ export async function authenticatedRequest<T>(
 
   const { accessToken } = JSON.parse(authTokens);
 
-  // Add auth header
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${accessToken}`,
@@ -81,7 +94,6 @@ export async function authenticatedRequest<T>(
       headers,
     });
 
-    // Handle 401 - token expired
     if (response.status === 401) {
       if (!isRefreshing) {
         isRefreshing = true;
@@ -95,7 +107,6 @@ export async function authenticatedRequest<T>(
 
         onRefreshed(newAccessToken);
 
-        // Retry original request with new token
         response = await fetch(`${API_BASE_URL}${url}`, {
           ...options,
           headers: {
@@ -104,12 +115,10 @@ export async function authenticatedRequest<T>(
           },
         });
       } else {
-        // Wait for refresh to complete
         const newAccessToken = await new Promise<string>((resolve) => {
           addRefreshSubscriber(resolve);
         });
 
-        // Retry with new token
         response = await fetch(`${API_BASE_URL}${url}`, {
           ...options,
           headers: {

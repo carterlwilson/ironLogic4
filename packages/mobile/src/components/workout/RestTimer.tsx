@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Paper, Text, Group, ActionIcon, Box } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
-import { formatTime } from '../../utils/workoutUtils';
+import { formatTimeSeconds } from '../../utils/benchmarkUtils';
 
 interface RestTimerProps {
   startTime: number;
@@ -16,7 +16,7 @@ export function RestTimer({ startTime, onReset }: RestTimerProps) {
       const now = Date.now();
       const elapsed = Math.floor((now - startTime) / 1000);
       setElapsedSeconds(elapsed);
-    }, 100); // Update every 100ms for smooth display
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [startTime]);
@@ -44,7 +44,7 @@ export function RestTimer({ startTime, onReset }: RestTimerProps) {
               Rest Timer
             </Text>
             <Text size="xl" fw={700} c="white" style={{ fontVariantNumeric: 'tabular-nums' }}>
-              {formatTime(elapsedSeconds)}
+              {formatTimeSeconds(elapsedSeconds)}
             </Text>
           </div>
           <ActionIcon

@@ -16,11 +16,6 @@ export function CardioActivityCard({
   progress,
   onActivityComplete,
 }: CardioActivityCardProps) {
-  const getCardColor = () => {
-    if (progress.completed) return 'green.0';
-    return undefined;
-  };
-
   // Check if this is a benchmark-based cardio activity
   const isBenchmarkBased = activity.templateSubMaxId && activity.percentageOfMax;
 
@@ -56,7 +51,7 @@ export function CardioActivityCard({
       padding="lg"
       radius="md"
       withBorder
-      bg={getCardColor()}
+      bg={progress.completed ? 'green.0' : undefined}
     >
       <Stack gap="md">
         {/* Header */}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Title, Stack, Group, Button, Breadcrumbs, Anchor, Text, Loader, Center, Alert } from '@mantine/core';
 import { IconArrowLeft, IconAlertCircle } from '@tabler/icons-react';
@@ -28,11 +28,9 @@ export function ProgramDetailPage() {
   const [localProgram, setLocalProgram] = useState<IProgram | null>(null);
   const lastSavedProgramRef = useRef<IProgram | null>(null);
 
-  // Track which blocks, weeks, and days are expanded
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-  // Toggle function to add/remove IDs from the set
-  const toggleExpanded = (id: string) => {
+  const toggleExpanded = useCallback((id: string) => {
     setExpandedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
@@ -42,7 +40,7 @@ export function ProgramDetailPage() {
       }
       return next;
     });
-  };
+  }, []);
 
   // Convert activityGroups to groupOptions format for dropdown
   const groupOptions: ActivityGroupOption[] = useMemo(() => {
@@ -103,18 +101,16 @@ export function ProgramDetailPage() {
     }
   }, [data]);
 
-  const handleProgramChange = (updatedProgram: IProgram) => {
+  const handleProgramChange = useCallback((updatedProgram: IProgram) => {
     setLocalProgram(updatedProgram);
-  };
+  }, []);
 
-  const handleProgramChangeWithAutoSave = async (updatedProgram: IProgram) => {
+  const handleProgramChangeWithAutoSave = useCallback(async (updatedProgram: IProgram) => {
     if (!programId) return;
 
-    // Optimistically update local state
     setLocalProgram(updatedProgram);
 
     try {
-      // Convert id → _id for Mongoose to preserve subdocument IDs
       const programWithMongooseIds = convertIdsToMongoose(updatedProgram);
 
       await updateProgramStructure.mutateAsync({
@@ -122,10 +118,8 @@ export function ProgramDetailPage() {
         program: { blocks: programWithMongooseIds.blocks },
       });
 
-      // Update the last saved version on success
       lastSavedProgramRef.current = updatedProgram;
     } catch (error) {
-      // Rollback to last saved state on error
       if (lastSavedProgramRef.current) {
         setLocalProgram(lastSavedProgramRef.current);
         notifications.show({
@@ -136,7 +130,7 @@ export function ProgramDetailPage() {
         });
       }
     }
-  };
+  }, [programId, updateProgramStructure]);
 
   if (isLoading) {
     return (

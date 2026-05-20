@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../providers/AuthProvider';
 import {
   Container,
   Paper,
@@ -27,6 +28,7 @@ export function AcceptInvitePage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') || '';
+  const { authenticate } = useAuth();
 
   const [validating, setValidating] = useState(true);
   const [email, setEmail] = useState('');
@@ -90,14 +92,12 @@ export function AcceptInvitePage() {
         password: values.password,
       });
 
-      // Store tokens and user — same pattern as normal login
       const tokens = {
         accessToken: result.data.accessToken,
         refreshToken: result.data.refreshToken,
       };
       const user = { ...result.data.user, role: result.data.user.userType };
-      localStorage.setItem('authTokens', JSON.stringify(tokens));
-      localStorage.setItem('user', JSON.stringify(user));
+      authenticate(tokens, user);
 
       navigate('/', { replace: true });
     } catch (error: any) {

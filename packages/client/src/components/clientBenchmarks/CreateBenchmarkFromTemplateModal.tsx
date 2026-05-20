@@ -1,12 +1,12 @@
 import { Modal, Stack, Group, Button, Select, NumberInput, TextInput, Textarea, Text, Paper, Badge, Checkbox } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
 import { parseTimeString, validateTimeString } from '../../utils/benchmarkFormatters';
-import { getBenchmarkTemplate } from '../../services/benchmarkApi';
+import { useBenchmarkTemplate } from '../../hooks/useBenchmarkTemplate';
 
 interface CreateBenchmarkFromTemplateModalProps {
   opened: boolean;
@@ -34,7 +34,6 @@ export function CreateBenchmarkFromTemplateModal({
   loading = false,
 }: CreateBenchmarkFromTemplateModalProps) {
   const [selectedTemplate, setSelectedTemplate] = useState<BenchmarkTemplate | null>(null);
-  const [fullTemplate, setFullTemplate] = useState<BenchmarkTemplate | null>(null);
   const [isHistorical, setIsHistorical] = useState(false);
 
   const form = useForm<FormValues>({
@@ -72,31 +71,16 @@ export function CreateBenchmarkFromTemplateModal({
     },
   });
 
+  const { data: fullTemplate } = useBenchmarkTemplate(
+    selectedTemplate?.type === BenchmarkType.WEIGHT ? selectedTemplate?.id : null
+  );
+
   useEffect(() => {
-    const loadTemplate = async () => {
-      if (form.values.templateId) {
-        const template = templates.find((t) => t.id === form.values.templateId);
-        setSelectedTemplate(template || null);
-
-        // Fetch full template with templateRepMaxes for WEIGHT type
-        if (template?.type === BenchmarkType.WEIGHT) {
-          try {
-            const response = await getBenchmarkTemplate(template.id);
-            setFullTemplate(response.data);
-          } catch (error) {
-            console.error('Failed to load template details:', error);
-            setFullTemplate(null);
-          }
-        } else {
-          setFullTemplate(null);
-        }
-      } else {
-        setSelectedTemplate(null);
-        setFullTemplate(null);
-      }
-    };
-
-    loadTemplate();
+    if (form.values.templateId) {
+      setSelectedTemplate(templates.find((t) => t.id === form.values.templateId) || null);
+    } else {
+      setSelectedTemplate(null);
+    }
   }, [form.values.templateId, templates]);
 
   const handleSubmit = async (values: FormValues) => {

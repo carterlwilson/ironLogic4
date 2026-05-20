@@ -1,15 +1,14 @@
-import { Modal, Stack, TextInput, Textarea, Button, Group, NumberInput, Text } from '@mantine/core';
+import { Modal, Stack, TextInput, Textarea, Button, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState, useEffect } from 'react';
 import { BenchmarkType, DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
-import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
 import type { UpdateMyBenchmarkInput } from '@ironlogic4/shared';
 import { BenchmarkMeasurementInput } from './BenchmarkMeasurementInput';
+import { SubMaxInputGrid } from './SubMaxInputGrid';
 import { formatDateForInput, convertDistanceToMeters } from '../../utils/benchmarkUtils';
 import { parseTimeString, validateTimeString, parseDateStringToLocalDate } from '../../utils/benchmarkFormatters';
-import { getBenchmarkTemplate } from '../../services/benchmarkApi';
-import { IconWeight, IconRun, IconClock } from '@tabler/icons-react';
+import { useBenchmarkTemplate } from '../../hooks/useBenchmarkTemplate';
 
 interface EditBenchmarkModalProps {
   opened: boolean;
@@ -31,11 +30,18 @@ export function EditBenchmarkModal({
   onUpdate,
 }: EditBenchmarkModalProps) {
   const [loading, setLoading] = useState(false);
-  const [fullTemplate, setFullTemplate] = useState<BenchmarkTemplate | null>(null);
   const [repMaxValues, setRepMaxValues] = useState<Record<string, number | string>>({});
   const [timeSubMaxValues, setTimeSubMaxValues] = useState<Record<string, number | string>>({});
   const [distanceSubMaxValues, setDistanceSubMaxValues] = useState<Record<string, number | string>>({});
-  const [loadingTemplate, setLoadingTemplate] = useState(false);
+
+  const needsFullTemplate = opened && (
+    benchmark?.type === BenchmarkType.WEIGHT ||
+    benchmark?.type === BenchmarkType.DISTANCE ||
+    benchmark?.type === BenchmarkType.TIME
+  );
+  const { data: fullTemplate, isLoading: loadingTemplate } = useBenchmarkTemplate(
+    needsFullTemplate ? benchmark?.templateId : null
+  );
 
   const updateRepMaxValue = (templateRepMaxId: string, value: string | number) => {
     setRepMaxValues((prev) => ({
@@ -92,79 +98,58 @@ export function EditBenchmarkModal({
     },
   });
 
-  // Populate form when benchmark changes
   useEffect(() => {
-    if (benchmark && opened) {
-      // Handle WEIGHT, DISTANCE, and TIME types - always fetch template to check for sub-maxes
-      if (benchmark.type === BenchmarkType.WEIGHT ||
-          benchmark.type === BenchmarkType.DISTANCE ||
-          benchmark.type === BenchmarkType.TIME) {
+    if (!benchmark || !opened) return;
 
-        setLoadingTemplate(true);
-        getBenchmarkTemplate(benchmark.templateId)
-          .then((response) => {
-            setFullTemplate(response.data);
+    if (needsFullTemplate && !fullTemplate) return;
 
-            // Pre-fill based on type
-            if (benchmark.type === BenchmarkType.WEIGHT && benchmark.repMaxes) {
-              const prefilled: Record<string, number> = {};
-              benchmark.repMaxes.forEach((repMax) => {
-                prefilled[repMax.templateRepMaxId] = repMax.weightKg;
-              });
-              setRepMaxValues(prefilled);
-            } else if (benchmark.type === BenchmarkType.DISTANCE && benchmark.timeSubMaxes) {
-              const prefilled: Record<string, number> = {};
-              benchmark.timeSubMaxes.forEach((tsm) => {
-                // Convert from meters to display unit if needed
-                const distanceValue = response.data.distanceUnit === DistanceUnit.KILOMETERS
-                  ? tsm.distanceMeters / 1000
-                  : tsm.distanceMeters;
-                prefilled[tsm.templateSubMaxId] = distanceValue;
-              });
-              setTimeSubMaxValues(prefilled);
-            } else if (benchmark.type === BenchmarkType.TIME && benchmark.distanceSubMaxes) {
-              const prefilled: Record<string, number> = {};
-              benchmark.distanceSubMaxes.forEach((dsm) => {
-                prefilled[dsm.templateDistanceSubMaxId] = dsm.timeSeconds;
-              });
-              setDistanceSubMaxValues(prefilled);
-            }
-
-            // Set form values - for simple TIME benchmarks, include timeSeconds
-            form.setValues({
-              recordedAt: benchmark.recordedAt ? formatDateForInput(benchmark.recordedAt) :
-                         benchmark.repMaxes?.[0]?.recordedAt ? formatDateForInput(benchmark.repMaxes[0].recordedAt) :
-                         formatDateForInput(new Date()),
-              notes: benchmark.notes || '',
-              measurementValue: benchmark.type === BenchmarkType.TIME && !benchmark.distanceSubMaxes ? benchmark.timeSeconds : undefined,
-            });
-          })
-          .catch((error) => {
-            console.error('Failed to load template details:', error);
-          })
-          .finally(() => {
-            setLoadingTemplate(false);
-          });
-      } else {
-        // REPS and OTHER types - simple logic
-        const measurementValue =
-          benchmark.type === BenchmarkType.REPS ? benchmark.reps :
-          benchmark.otherNotes;
-
-        form.setValues({
-          recordedAt: benchmark.recordedAt ? formatDateForInput(benchmark.recordedAt) : formatDateForInput(new Date()),
-          notes: benchmark.notes || '',
-          measurementValue,
+    if (needsFullTemplate && fullTemplate) {
+      if (benchmark.type === BenchmarkType.WEIGHT && benchmark.repMaxes) {
+        const prefilled: Record<string, number> = {};
+        benchmark.repMaxes.forEach((repMax) => {
+          prefilled[repMax.templateRepMaxId] = repMax.weightKg;
         });
-
-        // Clear template state
-        setFullTemplate(null);
-        setRepMaxValues({});
-        setTimeSubMaxValues({});
-        setDistanceSubMaxValues({});
+        setRepMaxValues(prefilled);
+      } else if (benchmark.type === BenchmarkType.DISTANCE && benchmark.timeSubMaxes) {
+        const prefilled: Record<string, number> = {};
+        benchmark.timeSubMaxes.forEach((tsm) => {
+          const distanceValue = fullTemplate.distanceUnit === DistanceUnit.KILOMETERS
+            ? tsm.distanceMeters / 1000
+            : tsm.distanceMeters;
+          prefilled[tsm.templateSubMaxId] = distanceValue;
+        });
+        setTimeSubMaxValues(prefilled);
+      } else if (benchmark.type === BenchmarkType.TIME && benchmark.distanceSubMaxes) {
+        const prefilled: Record<string, number> = {};
+        benchmark.distanceSubMaxes.forEach((dsm) => {
+          prefilled[dsm.templateDistanceSubMaxId] = dsm.timeSeconds;
+        });
+        setDistanceSubMaxValues(prefilled);
       }
+
+      form.setValues({
+        recordedAt: benchmark.recordedAt ? formatDateForInput(benchmark.recordedAt) :
+                   benchmark.repMaxes?.[0]?.recordedAt ? formatDateForInput(benchmark.repMaxes[0].recordedAt) :
+                   formatDateForInput(new Date()),
+        notes: benchmark.notes || '',
+        measurementValue: benchmark.type === BenchmarkType.TIME && !benchmark.distanceSubMaxes ? benchmark.timeSeconds : undefined,
+      });
+    } else {
+      const measurementValue =
+        benchmark.type === BenchmarkType.REPS ? benchmark.reps :
+        benchmark.otherNotes;
+
+      form.setValues({
+        recordedAt: benchmark.recordedAt ? formatDateForInput(benchmark.recordedAt) : formatDateForInput(new Date()),
+        notes: benchmark.notes || '',
+        measurementValue,
+      });
+
+      setRepMaxValues({});
+      setTimeSubMaxValues({});
+      setDistanceSubMaxValues({});
     }
-  }, [benchmark, opened]);
+  }, [benchmark, opened, fullTemplate, needsFullTemplate]);
 
   const handleSubmit = async (values: FormValues) => {
     if (!benchmark) return;
@@ -280,86 +265,21 @@ export function EditBenchmarkModal({
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
-          {/* WEIGHT type - show rep max inputs */}
-          {benchmark.type === BenchmarkType.WEIGHT ? (
-            loadingTemplate ? (
-              <Text size="sm" c="dimmed">Loading rep max options...</Text>
-            ) : fullTemplate?.templateRepMaxes && fullTemplate.templateRepMaxes.length > 0 ? (
-              <Stack gap="md">
-                <Text size="sm" fw={500}>Update your rep maxes</Text>
-                {fullTemplate.templateRepMaxes
-                  .sort((a, b) => a.reps - b.reps)
-                  .map((trm) => (
-                    <NumberInput
-                      key={trm.id}
-                      label={`${trm.name} (${trm.reps} rep${trm.reps > 1 ? 's' : ''})`}
-                      placeholder="Weight in kg"
-                      value={repMaxValues[trm.id] || ''}
-                      onChange={(val) => updateRepMaxValue(trm.id, val)}
-                      min={0}
-                      step={0.5}
-                      decimalScale={1}
-                      leftSection={<IconWeight size={16} />}
-                    />
-                  ))}
-              </Stack>
-            ) : (
-              <Text size="sm" c="red">No rep max options available for this template</Text>
-            )
-          ) : benchmark.type === BenchmarkType.DISTANCE ? (
-            // DISTANCE type - show time interval inputs
-            loadingTemplate ? (
-              <Text size="sm" c="dimmed">Loading distance intervals...</Text>
-            ) : fullTemplate?.templateTimeSubMaxes && fullTemplate.templateTimeSubMaxes.length > 0 ? (
-              <Stack gap="md">
-                <Text size="sm" fw={500}>
-                  Update distances covered for each time interval in {fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 'kilometers' : 'meters'}
-                </Text>
-                {fullTemplate.templateTimeSubMaxes.map((tsm) => (
-                  <NumberInput
-                    key={tsm.id}
-                    label={tsm.name}
-                    placeholder={`Distance in ${fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 'km' : 'm'}`}
-                    value={timeSubMaxValues[tsm.id] || ''}
-                    onChange={(val) => updateTimeSubMaxValue(tsm.id, val)}
-                    min={0}
-                    step={fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 0.1 : 10}
-                    decimalScale={fullTemplate.distanceUnit === DistanceUnit.KILOMETERS ? 2 : 0}
-                    leftSection={<IconRun size={16} />}
-                    description={`Distance covered in ${tsm.name}`}
-                  />
-                ))}
-              </Stack>
-            ) : (
-              <Text size="sm" c="red">No time intervals available for this template</Text>
-            )
-          ) : benchmark.type === BenchmarkType.TIME && fullTemplate?.templateDistanceSubMaxes && fullTemplate.templateDistanceSubMaxes.length > 0 ? (
-            // TIME type with multiple distances - show distance interval inputs
-            loadingTemplate ? (
-              <Text size="sm" c="dimmed">Loading distance intervals...</Text>
-            ) : (
-              <Stack gap="md">
-                <Text size="sm" fw={500}>
-                  Update time taken for each distance interval (in seconds)
-                </Text>
-                {fullTemplate.templateDistanceSubMaxes.map((dsm) => (
-                  <NumberInput
-                    key={dsm.id}
-                    label={dsm.name}
-                    placeholder="Time in seconds"
-                    value={distanceSubMaxValues[dsm.id] || ''}
-                    onChange={(val) => updateDistanceSubMaxValue(dsm.id, val)}
-                    min={0}
-                    step={1}
-                    decimalScale={1}
-                    leftSection={<IconClock size={16} />}
-                    description={`Time to complete ${dsm.name}`}
-                  />
-                ))}
-              </Stack>
-            )
+          {benchmark.type === BenchmarkType.WEIGHT ||
+           benchmark.type === BenchmarkType.DISTANCE ||
+           (benchmark.type === BenchmarkType.TIME && (loadingTemplate || !!fullTemplate?.templateDistanceSubMaxes?.length)) ? (
+            <SubMaxInputGrid
+              benchmarkType={benchmark.type}
+              fullTemplate={fullTemplate}
+              loadingTemplate={loadingTemplate}
+              repMaxValues={repMaxValues}
+              onRepMaxChange={updateRepMaxValue}
+              timeSubMaxValues={timeSubMaxValues}
+              onTimeSubMaxChange={updateTimeSubMaxValue}
+              distanceSubMaxValues={distanceSubMaxValues}
+              onDistanceSubMaxChange={updateDistanceSubMaxValue}
+            />
           ) : (
-            // Non-sub-max types - existing input
             <BenchmarkMeasurementInput
               type={benchmark.type}
               value={form.values.measurementValue}

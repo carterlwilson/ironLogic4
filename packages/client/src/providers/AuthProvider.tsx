@@ -3,6 +3,7 @@ import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import type { AuthTokens } from '@ironlogic4/shared';
 import { redirectToMobileApp, shouldRedirectToMobile } from '../utils/redirectToMobile';
+import { setTokensRefreshedCallback, resetRefreshState } from '../services/tokenRefresh';
 
 interface LoginCredentials {
   email: string;
@@ -51,7 +52,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     tokens: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
     isAuthenticated: false,
   });
@@ -71,7 +72,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const tokens = { accessToken, refreshToken };
       const user = { ...serverUser, role: serverUser.userType };
 
-      // Store both tokens in localStorage for persistence
       localStorage.setItem('authTokens', JSON.stringify(tokens));
       localStorage.setItem('user', JSON.stringify(user));
 
@@ -83,14 +83,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isAuthenticated: true,
       });
 
-      // Check if user is client-type and redirect to mobile
       if (shouldRedirectToMobile(user)) {
-        // Clear client app's localStorage before redirect
         localStorage.removeItem('authTokens');
         localStorage.removeItem('user');
-
         redirectToMobileApp(tokens, user);
-        return { success: true, user, tokens }; // Redirect in progress
+        return { success: true, user, tokens };
       }
 
       notifications.show({
@@ -142,6 +139,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const logout = useCallback(() => {
+    resetRefreshState();
     localStorage.removeItem('authTokens');
     localStorage.removeItem('user');
 
@@ -174,22 +172,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const tokens = JSON.parse(storedTokens);
         const user = JSON.parse(storedUser);
 
-        // Validate token structure - if accessToken is null/undefined, clear old tokens
         if (!tokens.accessToken || tokens.accessToken === 'undefined' || tokens.accessToken === 'null') {
           console.warn('Invalid token structure detected, clearing auth state');
           localStorage.removeItem('authTokens');
           localStorage.removeItem('user');
+          setAuthState(prev => ({ ...prev, isLoading: false }));
           return;
         }
 
-        // Check if client user trying to access web app
         if (shouldRedirectToMobile(user)) {
-          // Clear client app's localStorage before redirect
           localStorage.removeItem('authTokens');
           localStorage.removeItem('user');
-
           redirectToMobileApp(tokens, user);
-          return; // Redirect in progress, don't set state
+          return; // don't set state while navigation is in progress
         }
 
         setAuthState({
@@ -199,17 +194,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error: null,
           isAuthenticated: true,
         });
+      } else {
+        setAuthState(prev => ({ ...prev, isLoading: false }));
       }
     } catch (error) {
       console.error('Failed to initialize auth state:', error);
       localStorage.removeItem('authTokens');
       localStorage.removeItem('user');
+      setAuthState(prev => ({ ...prev, isLoading: false }));
     }
   }, []);
 
-  // Automatically initialize auth state when provider mounts
   useEffect(() => {
+    // Register before initializeAuth so any token refresh triggered during init
+    // is captured by the callback.
+    setTokensRefreshedCallback((tokens: AuthTokens) => {
+      setAuthState(prev => ({ ...prev, tokens }));
+    });
     initializeAuth();
+    return () => setTokensRefreshedCallback(null);
   }, [initializeAuth]);
 
   const contextValue: AuthContextType = {

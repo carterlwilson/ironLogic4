@@ -64,8 +64,6 @@ export function ActivitiesPage() {
     hasFilters: hasGroupFilters,
     setSearchQuery: setGroupSearchQuery,
     clearFilters: clearGroupFilters,
-    page: groupPage,
-    pageSize: groupPageSize,
     setPage: setGroupPage,
     setPageSize: setGroupPageSize,
     queryParams: groupQueryParams,
@@ -99,8 +97,6 @@ export function ActivitiesPage() {
     setTypeFilter,
     setGroupFilter,
     clearFilters: clearTemplateFilters,
-    page: templatePage,
-    pageSize: templatePageSize,
     setPage: setTemplatePage,
     setPageSize: setTemplatePageSize,
     queryParams: templateQueryParams,
@@ -112,19 +108,13 @@ export function ActivitiesPage() {
     label: group.name,
   }));
 
-  // Load activity groups when filters change
   React.useEffect(() => {
-    if (gymId) {
-      loadActivityGroups({ ...groupQueryParams, gymId });
-    }
-  }, [groupSearchQuery, groupPage, groupPageSize, gymId]);
+    if (gymId) loadActivityGroups({ ...groupQueryParams, gymId });
+  }, [groupQueryParams, gymId, loadActivityGroups]);
 
-  // Load activity templates when filters change
   React.useEffect(() => {
-    if (gymId) {
-      loadActivityTemplates({ ...templateQueryParams, gymId });
-    }
-  }, [templateSearchQuery, typeFilter, groupFilter, templatePage, templatePageSize, gymId]);
+    if (gymId) loadActivityTemplates({ ...templateQueryParams, gymId });
+  }, [templateQueryParams, gymId, loadActivityTemplates]);
 
   const handleCreateGroup = async (data: any) => {
     await createActivityGroup(data);

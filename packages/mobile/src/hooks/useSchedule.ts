@@ -83,10 +83,6 @@ export function useSchedule() {
     async (scheduleId: string, timeslotId: string) => {
       if (!user) return;
 
-      // Save current state for rollback
-      const previousSchedules = state.schedules;
-
-      // Set loading state for this specific timeslot
       setState((prev) => ({
         ...prev,
         actionLoading: { ...prev.actionLoading, [timeslotId]: true },
@@ -97,14 +93,12 @@ export function useSchedule() {
         ...prev,
         schedules: prev.schedules.map((schedule) => {
           if (schedule.id !== scheduleId) return schedule;
-
           return {
             ...schedule,
             days: schedule.days.map((day) => ({
               ...day,
               timeSlots: day.timeSlots.map((slot) => {
                 if (slot.id !== timeslotId) return slot;
-
                 return {
                   ...slot,
                   assignedClients: [...slot.assignedClients, user.id],
@@ -119,23 +113,14 @@ export function useSchedule() {
 
       try {
         await joinTimeslot(scheduleId, timeslotId);
-
         notifications.show({
           title: 'Success',
           message: 'You have joined this timeslot!',
           color: 'green',
           autoClose: 3000,
         });
-
-        // Refresh data to ensure consistency
         await loadSchedules();
       } catch (error) {
-        // Rollback on error
-        setState((prev) => ({
-          ...prev,
-          schedules: previousSchedules,
-        }));
-
         const errorMessage = error instanceof Error ? error.message : 'Failed to join timeslot';
         notifications.show({
           title: 'Error',
@@ -143,6 +128,7 @@ export function useSchedule() {
           color: 'red',
           autoClose: 5000,
         });
+        await loadSchedules();
       } finally {
         setState((prev) => {
           const newActionLoading = { ...prev.actionLoading };
@@ -151,7 +137,7 @@ export function useSchedule() {
         });
       }
     },
-    [state.schedules, user, loadSchedules]
+    [user, loadSchedules]
   );
 
   /**
@@ -161,10 +147,6 @@ export function useSchedule() {
     async (scheduleId: string, timeslotId: string) => {
       if (!user) return;
 
-      // Save current state for rollback
-      const previousSchedules = state.schedules;
-
-      // Set loading state for this specific timeslot
       setState((prev) => ({
         ...prev,
         actionLoading: { ...prev.actionLoading, [timeslotId]: true },
@@ -175,14 +157,12 @@ export function useSchedule() {
         ...prev,
         schedules: prev.schedules.map((schedule) => {
           if (schedule.id !== scheduleId) return schedule;
-
           return {
             ...schedule,
             days: schedule.days.map((day) => ({
               ...day,
               timeSlots: day.timeSlots.map((slot) => {
                 if (slot.id !== timeslotId) return slot;
-
                 return {
                   ...slot,
                   assignedClients: slot.assignedClients.filter((id) => id !== user.id),
@@ -197,23 +177,14 @@ export function useSchedule() {
 
       try {
         await leaveTimeslot(scheduleId, timeslotId);
-
         notifications.show({
           title: 'Success',
           message: 'You have left this timeslot.',
           color: 'blue',
           autoClose: 3000,
         });
-
-        // Refresh data to ensure consistency
         await loadSchedules();
       } catch (error) {
-        // Rollback on error
-        setState((prev) => ({
-          ...prev,
-          schedules: previousSchedules,
-        }));
-
         const errorMessage = error instanceof Error ? error.message : 'Failed to leave timeslot';
         notifications.show({
           title: 'Error',
@@ -221,6 +192,7 @@ export function useSchedule() {
           color: 'red',
           autoClose: 5000,
         });
+        await loadSchedules();
       } finally {
         setState((prev) => {
           const newActionLoading = { ...prev.actionLoading };
@@ -229,7 +201,7 @@ export function useSchedule() {
         });
       }
     },
-    [state.schedules, user, loadSchedules]
+    [user, loadSchedules]
   );
 
   /**
