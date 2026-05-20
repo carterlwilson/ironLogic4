@@ -147,5 +147,12 @@ export function useWorkoutProgress(
     };
   }, [progress, activities]);
 
-  return { getActivityProgress, handleSetComplete, handleActivityComplete };
+  const clearDayProgress = useCallback(() => {
+    if (!weekId || !dayId) return;
+    const key = `${STORAGE_PREFIX}${weekId}:${dayId}`;
+    localStorage.removeItem(key);
+    setProgress(new Map());
+  }, [weekId, dayId]);
+
+  return { getActivityProgress, handleSetComplete, handleActivityComplete, clearDayProgress };
 }
