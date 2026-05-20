@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
-import { User } from '../models/User.js';
+import { User, UserDocument } from '../models/User.js';
 import { Program } from '../models/Program.js';
 import { Gym } from '../models/Gym.js';
 import {
@@ -16,6 +16,36 @@ import {
 import { generateRandomPassword } from '../utils/auth.js';
 import { generateResetToken, hashResetToken } from '../utils/tokenGenerator.js';
 import { sendInviteEmail } from '../utils/emailService.js';
+import { buildGymScope } from '../utils/gymScope.js';
+
+async function applyProgramAssignment(
+  client: UserDocument,
+  programId: string,
+  res: Response
+): Promise<boolean> {
+  const program = await Program.findById(programId);
+  if (!program) {
+    res.status(404).json({ success: false, error: 'Program not found' });
+    return false;
+  }
+  if (program.gymId !== client.gymId) {
+    res.status(400).json({ success: false, error: 'Program does not belong to this gym' });
+    return false;
+  }
+  if (program.currentProgress.startedAt === null && program.blocks.length > 0) {
+    program.currentProgress = {
+      blockIndex: 0,
+      weekIndex: 0,
+      startedAt: new Date(),
+      completedAt: null,
+      lastAdvancedAt: null,
+      totalWeeksCompleted: 0,
+    };
+    await program.save();
+  }
+  client.programId = programId;
+  return true;
+}
 
 /**
  * Get all clients with pagination, search, and gym scoping
@@ -42,11 +72,7 @@ export const getAllClients = async (
     const query: any = { userType: UserType.CLIENT };
 
     // Gym scoping: owners and coaches can only see their gym's clients, admins can filter by gymId
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
-      query.gymId = req.user.gymId;
-    } else if (gymId) {
-      query.gymId = gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!, gymId));
 
     // Search by name or email
     if (search) {
@@ -341,42 +367,8 @@ export const updateClient = async (
         client.programId = undefined;
       } else {
         // Validate and assign program
-        const program = await Program.findById(validatedData.programId);
-
-        if (!program) {
-          res.status(404).json({
-            success: false,
-            error: 'Program not found',
-          });
-          return;
-        }
-
-        // Verify program belongs to same gym as client
-        if (program.gymId !== client.gymId) {
-          res.status(400).json({
-            success: false,
-            error: 'Program must belong to the same gym as the client',
-          });
-          return;
-        }
-
-        // Auto-start program if not already started and has blocks
-        if (
-          program.currentProgress.startedAt === null &&
-          program.blocks.length > 0
-        ) {
-          program.currentProgress = {
-            blockIndex: 0,
-            weekIndex: 0,
-            startedAt: new Date(),
-            completedAt: null,
-            lastAdvancedAt: null,
-            totalWeeksCompleted: 0,
-          };
-          await program.save();
-        }
-
-        client.programId = validatedData.programId;
+        const assigned = await applyProgramAssignment(client, validatedData.programId, res);
+        if (!assigned) return;
       }
 
       // Save the client to persist programId changes
@@ -540,44 +532,8 @@ export const assignProgram = async (
       return;
     }
 
-    // Find and validate the program
-    const program = await Program.findById(programId);
-
-    if (!program) {
-      res.status(404).json({
-        success: false,
-        error: 'Program not found',
-      });
-      return;
-    }
-
-    // Verify program belongs to the same gym as the client
-    if (program.gymId !== client.gymId) {
-      res.status(400).json({
-        success: false,
-        error: 'Program must belong to the same gym as the client',
-      });
-      return;
-    }
-
-    // Auto-start program if not already started and has blocks
-    if (
-      program.currentProgress.startedAt === null &&
-      program.blocks.length > 0
-    ) {
-      program.currentProgress = {
-        blockIndex: 0,
-        weekIndex: 0,
-        startedAt: new Date(),
-        completedAt: null,
-        lastAdvancedAt: null,
-        totalWeeksCompleted: 0,
-      };
-      await program.save();
-    }
-
-    // Update client with programId
-    client.programId = programId;
+    const assigned = await applyProgramAssignment(client, programId, res);
+    if (!assigned) return;
     await client.save();
 
     // Return updated client with populated program

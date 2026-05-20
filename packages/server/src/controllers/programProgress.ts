@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { Program } from '../models/Program.js';
 import { ApiResponse, ProgramIdSchema, JumpToWeekSchema } from '@ironlogic4/shared';
+import { buildGymScope } from '../utils/gymScope.js';
 
 /**
  * Update Progress - Set program to a specific block and week position
@@ -29,9 +30,7 @@ export const updateProgress = async (
 
     // Build query with gym scoping for owners
     const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!));
 
     const program = await Program.findOne(query);
 
@@ -132,9 +131,7 @@ export const advanceWeek = async (
 
     // Build query with gym scoping for owners
     const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!));
 
     const program = await Program.findOne(query);
 
@@ -252,9 +249,7 @@ export const getCurrentProgress = async (
 
     // Build query with gym scoping for owners
     const query: any = { _id: id };
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!));
 
     const program = await Program.findOne(query)
       .populate('gymId', 'name')

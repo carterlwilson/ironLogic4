@@ -3,11 +3,10 @@ import { DatePickerInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { BenchmarkType, DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
-import type { BenchmarkTemplate } from '@ironlogic4/shared/types/benchmarkTemplates';
 import type { ClientBenchmark } from '@ironlogic4/shared/types/clientBenchmarks';
 import { parseTimeString, validateTimeString, formatTimeSeconds, parseDateStringToLocalDate } from '../../utils/benchmarkFormatters';
 import { formatDateForInput } from '../../utils/benchmarkUtils';
-import { getBenchmarkTemplate } from '../../services/benchmarkApi';
+import { useBenchmarkTemplate } from '../../hooks/useBenchmarkTemplate';
 import { RepMaxEditCard } from './RepMaxEditCard';
 
 interface EditBenchmarkModalProps {
@@ -34,11 +33,16 @@ export function EditBenchmarkModal({
   onSubmit,
   loading = false,
 }: EditBenchmarkModalProps) {
-  const [fullTemplate, setFullTemplate] = useState<BenchmarkTemplate | null>(null);
-  const [loadingTemplate, setLoadingTemplate] = useState(false);
   const [repMaxValues, setRepMaxValues] = useState<Record<string, { weightKg?: number | string; recordedAt?: string }>>({});
   const [timeSubMaxValues, setTimeSubMaxValues] = useState<Record<string, number | string>>({});
   const [distanceSubMaxValues, setDistanceSubMaxValues] = useState<Record<string, number | string>>({});
+
+  const needsFullTemplate = benchmark?.type === BenchmarkType.WEIGHT ||
+    benchmark?.type === BenchmarkType.DISTANCE ||
+    benchmark?.type === BenchmarkType.TIME;
+  const { data: fullTemplate, isLoading: loadingTemplate } = useBenchmarkTemplate(
+    needsFullTemplate ? benchmark?.templateId : null
+  );
 
   const form = useForm<FormValues>({
     initialValues: {
@@ -74,88 +78,65 @@ export function EditBenchmarkModal({
   });
 
   useEffect(() => {
-    const loadTemplateAndInitialize = async () => {
-      if (benchmark) {
-        // Fetch full template for WEIGHT, DISTANCE, and TIME types
-        if (benchmark.type === BenchmarkType.WEIGHT ||
-            benchmark.type === BenchmarkType.DISTANCE ||
-            benchmark.type === BenchmarkType.TIME) {
-          setLoadingTemplate(true);
-          try {
-            const response = await getBenchmarkTemplate(benchmark.templateId);
-            setFullTemplate(response.data);
+    if (!benchmark) return;
+    if (needsFullTemplate && !fullTemplate) return;
 
-            // Initialize type-specific values from existing benchmark data
-            if (benchmark.type === BenchmarkType.WEIGHT && benchmark.repMaxes) {
-              const initialValues: Record<string, { weightKg: number | string; recordedAt: string }> = {};
-              benchmark.repMaxes.forEach(repMax => {
-                initialValues[repMax.id] = {
-                  weightKg: repMax.weightKg,
-                  recordedAt: formatDateForInput(repMax.recordedAt),
-                };
-              });
-              setRepMaxValues(initialValues);
-            } else if (benchmark.type === BenchmarkType.DISTANCE && benchmark.timeSubMaxes) {
-              // Pre-fill timeSubMaxes for DISTANCE type
-              const prefilled: Record<string, number> = {};
-              benchmark.timeSubMaxes.forEach((tsm) => {
-                const distanceValue = response.data.distanceUnit === DistanceUnit.KILOMETERS
-                  ? tsm.distanceMeters / 1000
-                  : tsm.distanceMeters;
-                prefilled[tsm.templateSubMaxId] = distanceValue;
-              });
-              setTimeSubMaxValues(prefilled);
-            } else if (benchmark.type === BenchmarkType.TIME && benchmark.distanceSubMaxes) {
-              // Pre-fill distanceSubMaxes for TIME type
-              const prefilled: Record<string, number> = {};
-              benchmark.distanceSubMaxes.forEach((dsm) => {
-                prefilled[dsm.templateDistanceSubMaxId] = dsm.timeSeconds;
-              });
-              setDistanceSubMaxValues(prefilled);
-            }
-          } catch (error) {
-            console.error('Failed to load template details:', error);
-            setFullTemplate(null);
-          } finally {
-            setLoadingTemplate(false);
-          }
-        } else {
-          setFullTemplate(null);
-        }
-
-        // Get recordedAt from appropriate source based on type
-        let recordedDate: Date;
-        if (benchmark.recordedAt) {
-          recordedDate = new Date(benchmark.recordedAt);
-        } else if (benchmark.repMaxes?.[0]?.recordedAt) {
-          recordedDate = new Date(benchmark.repMaxes[0].recordedAt);
-        } else if (benchmark.timeSubMaxes?.[0]?.recordedAt) {
-          recordedDate = new Date(benchmark.timeSubMaxes[0].recordedAt);
-        } else if (benchmark.distanceSubMaxes?.[0]?.recordedAt) {
-          recordedDate = new Date(benchmark.distanceSubMaxes[0].recordedAt);
-        } else {
-          recordedDate = new Date();
-        }
-
-        const values: FormValues = {
-          recordedAt: recordedDate,
-          notes: benchmark.notes || '',
-        };
-
-        if (benchmark.type === BenchmarkType.TIME && benchmark.timeSeconds) {
-          values.timeString = formatTimeSeconds(benchmark.timeSeconds);
-        } else if (benchmark.type === BenchmarkType.REPS) {
-          values.reps = benchmark.reps;
-        } else if (benchmark.type === BenchmarkType.OTHER) {
-          values.otherNotes = benchmark.otherNotes;
-        }
-
-        form.setValues(values);
+    if (needsFullTemplate && fullTemplate) {
+      if (benchmark.type === BenchmarkType.WEIGHT && benchmark.repMaxes) {
+        const initialValues: Record<string, { weightKg: number | string; recordedAt: string }> = {};
+        benchmark.repMaxes.forEach(repMax => {
+          initialValues[repMax.id] = {
+            weightKg: repMax.weightKg,
+            recordedAt: formatDateForInput(repMax.recordedAt),
+          };
+        });
+        setRepMaxValues(initialValues);
+      } else if (benchmark.type === BenchmarkType.DISTANCE && benchmark.timeSubMaxes) {
+        const prefilled: Record<string, number> = {};
+        benchmark.timeSubMaxes.forEach((tsm) => {
+          const distanceValue = fullTemplate.distanceUnit === DistanceUnit.KILOMETERS
+            ? tsm.distanceMeters / 1000
+            : tsm.distanceMeters;
+          prefilled[tsm.templateSubMaxId] = distanceValue;
+        });
+        setTimeSubMaxValues(prefilled);
+      } else if (benchmark.type === BenchmarkType.TIME && benchmark.distanceSubMaxes) {
+        const prefilled: Record<string, number> = {};
+        benchmark.distanceSubMaxes.forEach((dsm) => {
+          prefilled[dsm.templateDistanceSubMaxId] = dsm.timeSeconds;
+        });
+        setDistanceSubMaxValues(prefilled);
       }
+    }
+
+    let recordedDate: Date;
+    if (benchmark.recordedAt) {
+      recordedDate = new Date(benchmark.recordedAt);
+    } else if (benchmark.repMaxes?.[0]?.recordedAt) {
+      recordedDate = new Date(benchmark.repMaxes[0].recordedAt);
+    } else if (benchmark.timeSubMaxes?.[0]?.recordedAt) {
+      recordedDate = new Date(benchmark.timeSubMaxes[0].recordedAt);
+    } else if (benchmark.distanceSubMaxes?.[0]?.recordedAt) {
+      recordedDate = new Date(benchmark.distanceSubMaxes[0].recordedAt);
+    } else {
+      recordedDate = new Date();
+    }
+
+    const values: FormValues = {
+      recordedAt: recordedDate,
+      notes: benchmark.notes || '',
     };
 
-    loadTemplateAndInitialize();
-  }, [benchmark]);
+    if (benchmark.type === BenchmarkType.TIME && benchmark.timeSeconds) {
+      values.timeString = formatTimeSeconds(benchmark.timeSeconds);
+    } else if (benchmark.type === BenchmarkType.REPS) {
+      values.reps = benchmark.reps;
+    } else if (benchmark.type === BenchmarkType.OTHER) {
+      values.otherNotes = benchmark.otherNotes;
+    }
+
+    form.setValues(values);
+  }, [benchmark, fullTemplate, needsFullTemplate]);
 
   const updateRepMaxValue = (repMaxId: string, field: 'weightKg' | 'recordedAt', value: any) => {
     setRepMaxValues(prev => ({

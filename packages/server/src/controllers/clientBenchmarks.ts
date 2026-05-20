@@ -6,6 +6,8 @@ import { Types } from 'mongoose';
 import {
   CreateMyBenchmarkInput,
   UpdateMyBenchmarkInput,
+  CreateMyBenchmarkSchema,
+  UpdateMyBenchmarkSchema,
 } from '@ironlogic4/shared';
 
 /**
@@ -74,7 +76,12 @@ export const createMyBenchmark = async (
 ): Promise<void> => {
   try {
     const userId = req.user!.id;
-    const input: CreateMyBenchmarkInput = req.body;
+    const bodyValidation = CreateMyBenchmarkSchema.safeParse(req.body);
+    if (!bodyValidation.success) {
+      res.status(400).json({ success: false, error: 'Invalid benchmark data', details: bodyValidation.error.errors });
+      return;
+    }
+    const input: CreateMyBenchmarkInput = bodyValidation.data;
 
     // 1. Validate template exists
     const template = await BenchmarkTemplate.findById(input.templateId);
@@ -203,7 +210,12 @@ export const updateMyBenchmark = async (
   try {
     const userId = req.user!.id;
     const { benchmarkId } = req.params;
-    const input: UpdateMyBenchmarkInput = req.body;
+    const bodyValidation = UpdateMyBenchmarkSchema.safeParse(req.body);
+    if (!bodyValidation.success) {
+      res.status(400).json({ success: false, error: 'Invalid benchmark data', details: bodyValidation.error.errors });
+      return;
+    }
+    const input: UpdateMyBenchmarkInput = bodyValidation.data;
 
     // 1. Find user and locate benchmark
     const user = await User.findById(userId);

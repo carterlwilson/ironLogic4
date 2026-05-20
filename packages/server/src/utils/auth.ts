@@ -39,13 +39,10 @@ export const comparePassword = async (
  */
 export const generateRandomPassword = (length: number = 12): string => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-  let password = '';
-
-  for (let i = 0; i < length; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-
-  return password;
+  const bytes = crypto.randomBytes(length);
+  return Array.from(bytes)
+    .map(b => chars[b % chars.length])
+    .join('');
 };
 
 /**
@@ -60,8 +57,12 @@ export const generateRefreshToken = (): string => {
  */
 export const getRefreshTokenExpiry = (): Date => {
   const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '90d';
-  const days = parseInt(expiresIn.replace('d', ''));
+  const days = parseInt(expiresIn.replace('d', ''), 10);
+  const safeDays = Number.isFinite(days) && days > 0 ? days : 90;
+  if (safeDays !== days) {
+    console.warn(`[auth] Invalid JWT_REFRESH_EXPIRES_IN "${expiresIn}", defaulting to 90 days`);
+  }
   const expiry = new Date();
-  expiry.setDate(expiry.getDate() + days);
+  expiry.setDate(expiry.getDate() + safeDays);
   return expiry;
 };

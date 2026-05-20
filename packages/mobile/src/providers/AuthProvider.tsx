@@ -35,7 +35,8 @@ interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<{ success: boolean; user?: User; tokens?: AuthTokens; error?: AuthError }>;
   logout: () => void;
   clearError: () => void;
-  initializeAuth: () => void;
+  initializeAuth: () => Promise<void>;
+  authenticate: (tokens: AuthTokens, user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -50,7 +51,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     tokens: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
     isAuthenticated: false,
   });
@@ -175,36 +176,63 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setAuthState(prev => ({ ...prev, error: null }));
   }, []);
 
-  const initializeAuth = useCallback(() => {
+  const authenticate = useCallback((tokens: AuthTokens, user: User) => {
+    localStorage.setItem('authTokens', JSON.stringify(tokens));
+    localStorage.setItem('user', JSON.stringify(user));
+    setAuthState({
+      user,
+      tokens,
+      isLoading: false,
+      error: null,
+      isAuthenticated: true,
+    });
+  }, []);
+
+  const initializeAuth = useCallback(async () => {
     try {
-      // FIRST: Check for tokens in URL hash (from client app redirect)
+      // FIRST: Check for tokens in URL hash (from client app redirect).
+      // Validate the refresh token against the server before accepting — this
+      // prevents a crafted link from injecting arbitrary tokens into auth state.
       const hashAuthData = importAuthFromHash();
 
       if (hashAuthData) {
-        // Store tokens from hash
-        localStorage.setItem('authTokens', JSON.stringify(hashAuthData.tokens));
-        localStorage.setItem('user', JSON.stringify(hashAuthData.user));
-
-        // Clear hash from URL
         clearAuthHash();
+        try {
+          const refreshResponse = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken: hashAuthData.tokens.refreshToken }),
+          });
 
-        // Set auth state
-        setAuthState({
-          user: hashAuthData.user,
-          tokens: hashAuthData.tokens,
-          isLoading: false,
-          error: null,
-          isAuthenticated: true,
-        });
+          if (refreshResponse.ok) {
+            const data = await refreshResponse.json();
+            const tokens: AuthTokens = {
+              accessToken: data.data.accessToken,
+              refreshToken: data.data.refreshToken,
+            };
+            localStorage.setItem('authTokens', JSON.stringify(tokens));
+            localStorage.setItem('user', JSON.stringify(hashAuthData.user));
 
-        // Show success notification
-        notifications.show({
-          title: 'Welcome!',
-          message: 'You have been redirected from the web app.',
-          color: 'green',
-        });
+            setAuthState({
+              user: hashAuthData.user,
+              tokens,
+              isLoading: false,
+              error: null,
+              isAuthenticated: true,
+            });
 
-        return;
+            notifications.show({
+              title: 'Welcome!',
+              message: 'You have been redirected from the web app.',
+              color: 'green',
+            });
+
+            return;
+          }
+          // Invalid or expired token in hash — fall through to localStorage
+        } catch {
+          // Network error during hash validation — fall through to localStorage
+        }
       }
 
       // FALLBACK: Check localStorage for existing session
@@ -222,12 +250,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
           error: null,
           isAuthenticated: true,
         });
+      } else {
+        setAuthState(prev => ({ ...prev, isLoading: false }));
       }
     } catch (error) {
       console.error('Failed to initialize auth state:', error);
       localStorage.removeItem('authTokens');
       localStorage.removeItem('user');
-      clearAuthHash(); // Clear hash on error too
+      setAuthState(prev => ({ ...prev, isLoading: false }));
     }
   }, []);
 
@@ -242,6 +272,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logout,
     clearError,
     initializeAuth,
+    authenticate,
   };
 
   return (

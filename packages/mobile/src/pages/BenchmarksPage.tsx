@@ -1,6 +1,6 @@
 import { Container, Title, Stack, Tabs, ActionIcon, Group, TextInput } from '@mantine/core';
 import { IconPlus, IconRefresh, IconSearch, IconX } from '@tabler/icons-react';
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useBenchmarks } from '../hooks/useBenchmarks';
 import { BenchmarkList } from '../components/benchmarks/BenchmarkList';
 import { BenchmarkProgressList } from '../components/benchmarks/BenchmarkProgressList';
@@ -63,31 +63,28 @@ export const BenchmarksPage = () => {
     closeModals,
   } = useBenchmarks();
 
-  // Tag filtering state
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredCurrentBenchmarks, setFilteredCurrentBenchmarks] = useState(currentBenchmarks);
-  const [filteredHistoricalBenchmarks, setFilteredHistoricalBenchmarks] = useState(historicalBenchmarks);
 
-  // Update available tags and filtered benchmarks when benchmarks change
-  useEffect(() => {
-    const allBenchmarks = [...currentBenchmarks, ...historicalBenchmarks];
-    const tags = getAllUniqueTags(allBenchmarks);
-    setAvailableTags(tags);
+  const availableTags = useMemo(
+    () => getAllUniqueTags([...currentBenchmarks, ...historicalBenchmarks]),
+    [currentBenchmarks, historicalBenchmarks]
+  );
 
-    if (selectedTag && !tags.includes(selectedTag)) {
-      setSelectedTag(null);
-    }
+  // Auto-clear tag selection when the tag disappears from the data
+  const effectiveTag = availableTags.includes(selectedTag!) ? selectedTag : null;
 
+  const filteredCurrentBenchmarks = useMemo(() => {
     const query = searchQuery.toLowerCase().trim();
-    const byTag = (list: typeof currentBenchmarks) => filterBenchmarksByTag(list, selectedTag);
-    const bySearch = (list: typeof currentBenchmarks) =>
-      query ? list.filter((b) => b.name.toLowerCase().includes(query)) : list;
+    const byTag = filterBenchmarksByTag(currentBenchmarks, effectiveTag);
+    return query ? byTag.filter((b) => b.name.toLowerCase().includes(query)) : byTag;
+  }, [currentBenchmarks, effectiveTag, searchQuery]);
 
-    setFilteredCurrentBenchmarks(bySearch(byTag(currentBenchmarks)));
-    setFilteredHistoricalBenchmarks(bySearch(byTag(historicalBenchmarks)));
-  }, [currentBenchmarks, historicalBenchmarks, selectedTag, searchQuery]);
+  const filteredHistoricalBenchmarks = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    const byTag = filterBenchmarksByTag(historicalBenchmarks, effectiveTag);
+    return query ? byTag.filter((b) => b.name.toLowerCase().includes(query)) : byTag;
+  }, [historicalBenchmarks, effectiveTag, searchQuery]);
 
   const handleTagSelect = (tag: string | null) => {
     setSelectedTag(tag);

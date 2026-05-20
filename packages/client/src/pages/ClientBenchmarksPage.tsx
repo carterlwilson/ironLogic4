@@ -74,27 +74,9 @@ export function ClientBenchmarksPage() {
     if (!client) return;
 
     try {
-      const newBenchmark: ClientBenchmark = {
-        ...benchmarkData,
-        id: Date.now().toString(), // Temporary ID, server will replace
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      // Determine which array to update based on isHistorical
       const updatePayload = isHistorical
-        ? {
-            historicalBenchmarks: [
-              ...(client.historicalBenchmarks || []),
-              newBenchmark,
-            ],
-          }
-        : {
-            currentBenchmarks: [
-              ...(client.currentBenchmarks || []),
-              newBenchmark,
-            ],
-          };
+        ? { historicalBenchmarks: [...(client.historicalBenchmarks || []), benchmarkData] }
+        : { currentBenchmarks: [...(client.currentBenchmarks || []), benchmarkData] };
 
       await clientApi.updateClient(client.id, updatePayload);
 

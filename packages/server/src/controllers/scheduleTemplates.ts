@@ -9,11 +9,8 @@ import {
   UpdateScheduleTemplateSchema,
   UserType,
 } from '@ironlogic4/shared';
-import { z } from 'zod';
-
-const IdParamSchema = z.object({
-  id: z.string().min(1),
-});
+import { IdParamSchema } from '@ironlogic4/shared/schemas/api';
+import { buildGymScope } from '../utils/gymScope.js';
 
 /**
  * Validate that coach IDs exist, belong to the gym, and have appropriate roles
@@ -57,11 +54,7 @@ export const getScheduleTemplates = async (
     const query: any = {};
 
     // Gym filtering - required for owners and coaches, optional for admins
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
-      query.gymId = req.user.gymId;
-    } else if (gymId) {
-      query.gymId = gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!, gymId as string | undefined));
 
     // Coach filtering - coaches can only see schedules they're assigned to
     if (req.user?.userType === UserType.COACH || coachId) {

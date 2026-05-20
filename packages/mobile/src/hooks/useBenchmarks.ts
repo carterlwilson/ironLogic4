@@ -15,7 +15,6 @@ import {
   createBenchmark,
   updateBenchmark,
   deleteBenchmark,
-  getBenchmarkTemplates,
 } from '../services/benchmarkApi';
 
 interface BenchmarksState {
@@ -123,6 +122,7 @@ export function useBenchmarks() {
         ...prev,
         currentBenchmarks: response.data.currentBenchmarks || [],
         historicalBenchmarks: response.data.historicalBenchmarks || [],
+        templates: response.data.templates,
         loading: false,
       }));
     } catch (error) {
@@ -134,27 +134,6 @@ export function useBenchmarks() {
         loading: false,
         error: errorMessage,
       }));
-      notifications.show({
-        title: 'Error',
-        message: errorMessage,
-        color: 'red',
-        autoClose: 5000,
-      });
-    }
-  }, []);
-
-  /**
-   * Load benchmark templates
-   */
-  const loadTemplates = useCallback(async () => {
-    try {
-      const response = await getBenchmarkTemplates();
-      setState((prev) => ({
-        ...prev,
-        templates: response.data,
-      }));
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load templates';
       notifications.show({
         title: 'Error',
         message: errorMessage,
@@ -377,7 +356,6 @@ export function useBenchmarks() {
   const openCreateNewTimeSubMax = useCallback(
     (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => {
       setSelectedTimeSubMaxForNew({ timeSubMax, benchmark, template, templateSubMaxName });
-      setModalState((prev) => ({ ...prev, isCreateNewRepMaxOpen: true }));
     },
     []
   );
@@ -399,7 +377,6 @@ export function useBenchmarks() {
   const openCreateNewDistanceSubMax = useCallback(
     (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => {
       setSelectedDistanceSubMaxForNew({ distanceSubMax, benchmark, template, templateDistanceSubMaxName });
-      setModalState((prev) => ({ ...prev, isCreateNewRepMaxOpen: true }));
     },
     []
   );
@@ -440,13 +417,9 @@ export function useBenchmarks() {
     [handleUpdateBenchmark]
   );
 
-  /**
-   * Load benchmarks and templates on mount
-   */
   useEffect(() => {
     loadBenchmarks();
-    loadTemplates();
-  }, [loadBenchmarks, loadTemplates]);
+  }, [loadBenchmarks]);
 
   return {
     // Data
@@ -484,7 +457,6 @@ export function useBenchmarks() {
     cancelDelete,
     confirmDelete,
     loadBenchmarks,
-    loadTemplates,
     handleCreateBenchmark,
     handleUpdateBenchmark,
     handleUpdateRepMax,

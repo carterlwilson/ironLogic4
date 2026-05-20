@@ -3,6 +3,7 @@ import { Stack, Paper, Group, Text, Badge, Collapse, ActionIcon } from '@mantine
 import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
 import { ClientBenchmark, BenchmarkType } from '@ironlogic4/shared';
 import { BenchmarkProgressChart } from './BenchmarkProgressChart';
+import { getBenchmarkTypeColor, getBenchmarkTypeLabel } from '../../utils/benchmarkUtils';
 
 interface BenchmarkProgressListProps {
   currentBenchmarks: ClientBenchmark[];
@@ -13,36 +14,6 @@ interface BenchmarkTemplate {
   name: string;
   type: BenchmarkType;
 }
-
-const getBenchmarkTypeColor = (type: BenchmarkType): string => {
-  switch (type) {
-    case BenchmarkType.WEIGHT:
-      return 'blue';
-    case BenchmarkType.TIME:
-      return 'green';
-    case BenchmarkType.REPS:
-      return 'orange';
-    case BenchmarkType.OTHER:
-      return 'gray';
-    default:
-      return 'gray';
-  }
-};
-
-const getBenchmarkTypeLabel = (type: BenchmarkType): string => {
-  switch (type) {
-    case BenchmarkType.WEIGHT:
-      return 'WEIGHT';
-    case BenchmarkType.TIME:
-      return 'TIME';
-    case BenchmarkType.REPS:
-      return 'REPS';
-    case BenchmarkType.OTHER:
-      return 'OTHER';
-    default:
-      return type;
-  }
-};
 
 export const BenchmarkProgressList = ({ currentBenchmarks }: BenchmarkProgressListProps) => {
   const [openIndex, setOpenIndex] = useState<number>(0);

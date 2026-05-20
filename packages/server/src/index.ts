@@ -30,38 +30,42 @@ const PORT = process.env.PORT || 3001;
 
 // Configure CORS
 const corsOrigin = process.env.CORS_ORIGIN;
+
+if (!corsOrigin && process.env.NODE_ENV === 'production') {
+  console.warn('[STARTUP] WARNING: CORS_ORIGIN is not set. Blocking all cross-origin requests.');
+}
+
+const isProduction = process.env.NODE_ENV === 'production';
 const corsOptions = corsOrigin
   ? {
-      origin: corsOrigin.split(',').map(origin => origin.trim()),
+      origin: corsOrigin.split(',').map((o: string) => o.trim()),
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
-      optionsSuccessStatus: 200
+      optionsSuccessStatus: 200,
     }
   : {
+      // In production with no CORS_ORIGIN set, block all cross-origin requests.
+      // In development, allow all origins so localhost works without extra config.
+      origin: isProduction ? false : true,
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization'],
-      optionsSuccessStatus: 200
-    }; // Default: allow all origins in development
+      optionsSuccessStatus: 200,
+    };
 
 app.use(helmet());
 app.use(cors(corsOptions));
 
-// Temporarily disable rate limiting to diagnose Railway deployment issue
-// The rate limiter validation was causing SIGTERM on startup
-// TODO: Re-enable once trust proxy issue is resolved
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: process.env.NODE_ENV === 'production' ? 100 : 1000, // 100 in prod, 1000 in dev
-//   message: 'Too many requests from this IP, please try again later.',
-//   validate: {
-//     trustProxy: false, // Disable trust proxy validation for Railway
-//   },
-// });
-// if (process.env.DISABLE_RATE_LIMIT !== 'true') {
-//   app.use(limiter);
-// }
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'production' ? 100 : 1000,
+  message: 'Too many requests from this IP, please try again later.',
+  validate: { trustProxy: false },
+});
+if (process.env.DISABLE_RATE_LIMIT !== 'true') {
+  app.use(limiter);
+}
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -96,16 +100,6 @@ app.get('/health', (req, res) => {
   console.log('[HEALTH CHECK] Health endpoint hit');
     res.status(200).send({
         success: true,
-    });
-});
-
-app.get('/ip', (req, res) => {
-    res.json({
-        ip: req.ip,
-        ips: req.ips,
-        headers: {
-            'x-forwarded-for': req.headers['x-forwarded-for']
-        }
     });
 });
 

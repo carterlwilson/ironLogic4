@@ -1,6 +1,5 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
 import { AppShell, Stack } from '@mantine/core';
-import { AuthGuard } from './components/AuthGuard';
 import { BottomNav } from './components/BottomNav';
 import { WorkoutPage } from './pages/WorkoutPage';
 import { BenchmarksPage } from './pages/BenchmarksPage';
@@ -9,7 +8,7 @@ import { ProfilePage } from './pages/ProfilePage';
 
 function App() {
   return (
-    <AuthGuard>
+    <>
       <AppShell
         header={{ height: 60 }}
         padding="md"
@@ -31,7 +30,7 @@ function App() {
         </AppShell.Main>
       </AppShell>
       <BottomNav />
-    </AuthGuard>
+    </>
   );
 }
 

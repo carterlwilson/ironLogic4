@@ -56,7 +56,6 @@ export function ProgramTable({
               <Table.Th>Name</Table.Th>
               <Table.Th>Description</Table.Th>
               <Table.Th>Status</Table.Th>
-              <Table.Th>Blocks</Table.Th>
               <Table.Th>Created</Table.Th>
               <Table.Th style={{ width: 120 }}>Actions</Table.Th>
             </Table.Tr>
@@ -76,9 +75,6 @@ export function ProgramTable({
                   <Badge color={program.isActive ? 'green' : 'gray'} size="sm">
                     {program.isActive ? 'Active' : 'Inactive'}
                   </Badge>
-                </Table.Td>
-                <Table.Td>
-                  <Text size="sm">{program.blocks.length}</Text>
                 </Table.Td>
                 <Table.Td>
                   <Text size="sm" c="dimmed">

@@ -40,7 +40,7 @@ export const verifyToken = async (
     const decoded = jwt.verify(token, secret) as { userId: string };
 
     // Find the user in the database
-    const user = await User.findById(decoded.userId).select('+password');
+    const user = await User.findById(decoded.userId);
     if (!user) {
       res.status(401).json({
         success: false,

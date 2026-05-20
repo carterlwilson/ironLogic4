@@ -14,6 +14,13 @@ import { getBenchmarkProgress } from '../../services/benchmarkApi';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
 
+interface ChartCacheEntry {
+  chartData: Array<Record<string, any>>;
+  series: Array<{ name: string; label: string }>;
+  unit: string;
+}
+const chartCache = new Map<string, ChartCacheEntry>();
+
 const PALETTE = [
   '#228be6',
   '#40c057',
@@ -36,11 +43,21 @@ export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartPro
   const [unit, setUnit] = useState<string>('');
 
   useEffect(() => {
+    const cached = chartCache.get(templateId);
+    if (cached) {
+      setChartData(cached.chartData);
+      setSeries(cached.series);
+      setUnit(cached.unit);
+      setLoading(false);
+      return;
+    }
+
     const fetchProgress = async () => {
       try {
         setLoading(true);
         setError(null);
         const data = await getBenchmarkProgress(templateId);
+        chartCache.set(templateId, { chartData: data.chartData, series: data.series, unit: data.unit });
         setChartData(data.chartData);
         setSeries(data.series);
         setUnit(data.unit);

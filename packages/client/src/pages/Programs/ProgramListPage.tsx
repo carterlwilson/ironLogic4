@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Container, Title, Stack } from '@mantine/core';
 import { useProgramList } from '../../hooks/usePrograms';
 import { ProgramToolbar } from '../../components/Programs/List/ProgramToolbar';
@@ -17,12 +17,7 @@ export function ProgramListPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState<IProgram | null>(null);
 
-  const { data, isLoading, refetch } = useProgramList(params);
-
-  // Load programs on mount
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
+  const { data, isLoading } = useProgramList(params);
 
   const handleSearch = (search: string) => {
     setParams(prev => ({ ...prev, search, page: 1 }));

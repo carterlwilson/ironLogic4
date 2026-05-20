@@ -1,7 +1,8 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActivityTemplate } from '../models/ActivityTemplate.js';
-import { ApiResponse, PaginatedResponse, ActivityTemplateListParams, CreateActivityTemplateSchema, UpdateActivityTemplateSchema, ActivityTemplateListParamsSchema, ActivityTemplateIdSchema } from '@ironlogic4/shared';
+import { ApiResponse, PaginatedResponse, CreateActivityTemplateSchema, UpdateActivityTemplateSchema, ActivityTemplateListParamsSchema, ActivityTemplateIdSchema } from '@ironlogic4/shared';
+import { buildGymScope } from '../utils/gymScope.js';
 
 /**
  * Get all activity templates with pagination and filtering
@@ -29,11 +30,7 @@ export const getAllActivityTemplates = async (
     const query: any = {};
 
     // Gym filtering - required for owners, optional for admins
-    if (req.user?.userType === 'owner') {
-      query.gymId = req.user.gymId;
-    } else if (gymId) {
-      query.gymId = gymId;
-    }
+    Object.assign(query, buildGymScope(req.user!, gymId));
 
     if (type) {
       query.type = type;

@@ -405,3 +405,21 @@ export function getDistanceSubMaxAgeInDays(distanceSubMax: DistanceSubMax): numb
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
 }
+export function getBenchmarkTypeColor(type: BenchmarkType): string {
+  switch (type) {
+    case BenchmarkType.WEIGHT: return 'blue';
+    case BenchmarkType.TIME: return 'green';
+    case BenchmarkType.REPS: return 'orange';
+    default: return 'gray';
+  }
+}
+
+export function getBenchmarkTypeLabel(type: BenchmarkType): string {
+  switch (type) {
+    case BenchmarkType.WEIGHT: return 'WEIGHT';
+    case BenchmarkType.TIME: return 'TIME';
+    case BenchmarkType.REPS: return 'REPS';
+    case BenchmarkType.OTHER: return 'OTHER';
+    default: return type;
+  }
+}
