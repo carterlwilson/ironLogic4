@@ -309,18 +309,50 @@ export function BenchmarkCard({
                         } else {
                           // Show placeholder card for unrecorded submax
                           return (
-                            <Paper
+                            <Card
                               key={templateRepMax.id}
-                              withBorder
-                              p="sm"
+                              shadow="xs"
+                              padding="sm"
                               radius="md"
-                              style={{ opacity: 0.6 }}
+                              withBorder
+                              style={{
+                                minHeight: '120px',
+                                cursor: isHistorical ? 'default' : 'pointer',
+                                opacity: 0.7,
+                              }}
+                              onClick={isHistorical ? undefined : () => isEditable ? onEdit(benchmark) : onCreateNew(benchmark)}
                             >
-                              <Stack gap="xs">
-                                <Text size="sm" fw={500}>{templateRepMax.name}</Text>
-                                <Text size="xs" c="dimmed">Not recorded yet</Text>
+                              <Stack gap="xs" h="100%" justify="space-between">
+                                <Group justify="space-between" align="flex-start">
+                                  <Badge color="gray" variant="light" size="md">
+                                    {templateRepMax.name}
+                                  </Badge>
+                                  {!isHistorical && isEditable && (
+                                    <ActionIcon
+                                      variant="subtle"
+                                      color="forestGreen"
+                                      size="sm"
+                                      onClick={(e) => { e.stopPropagation(); onEdit(benchmark); }}
+                                      aria-label={`Record ${templateRepMax.name}`}
+                                    >
+                                      <IconPencil size={14} />
+                                    </ActionIcon>
+                                  )}
+                                  {!isHistorical && !isEditable && (
+                                    <ActionIcon
+                                      variant="subtle"
+                                      color="orange"
+                                      size="sm"
+                                      onClick={(e) => { e.stopPropagation(); onCreateNew(benchmark); }}
+                                      aria-label={`Record ${templateRepMax.name}`}
+                                    >
+                                      <IconRefresh size={14} />
+                                    </ActionIcon>
+                                  )}
+                                </Group>
+                                <Text size="sm" c="dimmed" ta="center">Not recorded yet</Text>
                               </Stack>
-                            </Paper>
+                            </Card>
                           );
                         }
                       })}
@@ -372,18 +404,50 @@ export function BenchmarkCard({
                       } else {
                         // Show placeholder card for unrecorded submax
                         return (
-                          <Paper
+                          <Card
                             key={templateSubMax.id}
-                            withBorder
-                            p="sm"
+                            shadow="xs"
+                            padding="sm"
                             radius="md"
-                            style={{ opacity: 0.6 }}
+                            withBorder
+                            style={{
+                              minHeight: '120px',
+                              cursor: isHistorical ? 'default' : 'pointer',
+                              opacity: 0.7,
+                            }}
+                            onClick={isHistorical ? undefined : () => isEditable ? onEdit(benchmark) : onCreateNew(benchmark)}
                           >
-                            <Stack gap="xs">
-                              <Text size="sm" fw={500}>{templateSubMax.name}</Text>
-                              <Text size="xs" c="dimmed">Not recorded yet</Text>
+                            <Stack gap="xs" h="100%" justify="space-between">
+                              <Group justify="space-between" align="flex-start">
+                                <Badge color="gray" variant="light" size="md">
+                                  {templateSubMax.name}
+                                </Badge>
+                                {!isHistorical && isEditable && (
+                                  <ActionIcon
+                                    variant="subtle"
+                                    color="forestGreen"
+                                    size="sm"
+                                    onClick={(e) => { e.stopPropagation(); onEdit(benchmark); }}
+                                    aria-label={`Record ${templateSubMax.name}`}
+                                  >
+                                    <IconPencil size={14} />
+                                  </ActionIcon>
+                                )}
+                                {!isHistorical && !isEditable && (
+                                  <ActionIcon
+                                    variant="subtle"
+                                    color="orange"
+                                    size="sm"
+                                    onClick={(e) => { e.stopPropagation(); onCreateNew(benchmark); }}
+                                    aria-label={`Record ${templateSubMax.name}`}
+                                  >
+                                    <IconRefresh size={14} />
+                                  </ActionIcon>
+                                )}
+                              </Group>
+                              <Text size="sm" c="dimmed" ta="center">Not recorded yet</Text>
                             </Stack>
-                          </Paper>
+                          </Card>
                         );
                       }
                     })}
@@ -434,18 +498,50 @@ export function BenchmarkCard({
                       } else {
                         // Show placeholder card for unrecorded submax
                         return (
-                          <Paper
+                          <Card
                             key={templateDistanceSubMax.id}
-                            withBorder
-                            p="sm"
+                            shadow="xs"
+                            padding="sm"
                             radius="md"
-                            style={{ opacity: 0.6 }}
+                            withBorder
+                            style={{
+                              minHeight: '120px',
+                              cursor: isHistorical ? 'default' : 'pointer',
+                              opacity: 0.7,
+                            }}
+                            onClick={isHistorical ? undefined : () => isEditable ? onEdit(benchmark) : onCreateNew(benchmark)}
                           >
-                            <Stack gap="xs">
-                              <Text size="sm" fw={500}>{templateDistanceSubMax.name}</Text>
-                              <Text size="xs" c="dimmed">Not recorded yet</Text>
+                            <Stack gap="xs" h="100%" justify="space-between">
+                              <Group justify="space-between" align="flex-start">
+                                <Badge color="gray" variant="light" size="md">
+                                  {templateDistanceSubMax.name}
+                                </Badge>
+                                {!isHistorical && isEditable && (
+                                  <ActionIcon
+                                    variant="subtle"
+                                    color="forestGreen"
+                                    size="sm"
+                                    onClick={(e) => { e.stopPropagation(); onEdit(benchmark); }}
+                                    aria-label={`Record ${templateDistanceSubMax.name}`}
+                                  >
+                                    <IconPencil size={14} />
+                                  </ActionIcon>
+                                )}
+                                {!isHistorical && !isEditable && (
+                                  <ActionIcon
+                                    variant="subtle"
+                                    color="orange"
+                                    size="sm"
+                                    onClick={(e) => { e.stopPropagation(); onCreateNew(benchmark); }}
+                                    aria-label={`Record ${templateDistanceSubMax.name}`}
+                                  >
+                                    <IconRefresh size={14} />
+                                  </ActionIcon>
+                                )}
+                              </Group>
+                              <Text size="sm" c="dimmed" ta="center">Not recorded yet</Text>
                             </Stack>
-                          </Paper>
+                          </Card>
                         );
                       }
                     })}

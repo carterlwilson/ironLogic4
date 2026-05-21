@@ -158,6 +158,7 @@ export function BenchmarkTemplateModal({
           { reps: 3, name: '3RM' },
           { reps: 5, name: '5RM' },
           { reps: 8, name: '8RM' },
+          { reps: 10, name: '10RM' },
         ];
       }
 
@@ -188,6 +189,7 @@ export function BenchmarkTemplateModal({
             { reps: 3, name: '3RM' },
             { reps: 5, name: '5RM' },
             { reps: 8, name: '8RM' },
+            { reps: 10, name: '10RM' },
           ]
         : undefined;
 
