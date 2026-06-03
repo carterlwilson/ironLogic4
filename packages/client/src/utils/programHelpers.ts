@@ -409,7 +409,7 @@ export function copyBlock(program: IProgram, blockId: string): IProgram {
   const clonedBlock = JSON.parse(JSON.stringify(sourceBlock));
   const copiedBlock = regenerateBlockIds(clonedBlock);
   copiedBlock.order = sourceIndex + 1;
-  copiedBlock.name = `${sourceBlock.name} (Copy)`;
+  copiedBlock.name = `Block ${program.blocks.length + 1}`;
 
   return produce(program, draft => {
     // Insert after source
@@ -446,6 +446,7 @@ export function copyWeek(program: IProgram, weekId: string): IProgram {
   const clonedWeek = JSON.parse(JSON.stringify(sourceWeek));
   const copiedWeek = regenerateWeekIds(clonedWeek);
   copiedWeek.order = sourceIndex + 1;
+  copiedWeek.name = `Week ${program.blocks[blockIndex].weeks.length + 1}`;
 
   return produce(program, draft => {
     // Insert after source
@@ -487,6 +488,7 @@ export function copyDay(program: IProgram, dayId: string): IProgram {
   const clonedDay = JSON.parse(JSON.stringify(sourceDay));
   const copiedDay = regenerateDayIds(clonedDay);
   copiedDay.order = sourceIndex + 1;
+  copiedDay.name = `Day ${program.blocks[blockIndex].weeks[weekIndex].days.length + 1}`;
 
   return produce(program, draft => {
     // Insert after source
