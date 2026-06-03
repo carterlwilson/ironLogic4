@@ -6,6 +6,7 @@ import {
   IconCalendar,
   IconUser,
 } from '@tabler/icons-react';
+import { useAuth } from '../providers/AuthProvider';
 
 interface NavItem {
   label: string;
@@ -39,6 +40,12 @@ const NAV_ITEMS: NavItem[] = [
 export const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
+
+  const isCoach = user?.role === 'coach' || user?.role === 'admin_coach';
+  const visibleItems = isCoach
+    ? NAV_ITEMS.filter((item) => item.path === '/schedule')
+    : NAV_ITEMS;
 
   return (
     <Group
@@ -56,7 +63,7 @@ export const BottomNav = () => {
         paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
-      {NAV_ITEMS.map((item) => {
+      {visibleItems.map((item) => {
         const isActive = location.pathname === item.path;
         const Icon = item.icon;
 

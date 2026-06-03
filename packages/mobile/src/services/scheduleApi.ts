@@ -1,4 +1,4 @@
-import type { IClassSession, IClientDefaultSchedule, IEnrollment } from '@ironlogic4/shared';
+import type { IClassSession, IClientDefaultSchedule, IEnrollment, IScheduleTemplate, ITemplateClient } from '@ironlogic4/shared';
 import { apiRequest } from './api';
 
 export interface IClassSessionWithAvailability extends IClassSession {
@@ -80,4 +80,39 @@ export async function addDefault(templateId: string): Promise<{ success: true; d
 
 export async function removeDefault(id: string): Promise<{ success: true; message: string }> {
   return apiRequest(`/api/gym/schedules/defaults/${id}`, { method: 'DELETE' });
+}
+
+export interface ClientSummary {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export async function getTemplates(): Promise<{ success: true; data: IScheduleTemplate[] }> {
+  return apiRequest('/api/gym/schedules/templates');
+}
+
+export async function getTemplateClients(templateId: string): Promise<{ success: true; data: ITemplateClient[] }> {
+  return apiRequest(`/api/gym/schedules/templates/${templateId}/clients`);
+}
+
+export async function assignClientToTemplate(templateId: string, clientId: string): Promise<{ success: true }> {
+  return apiRequest(`/api/gym/schedules/templates/${templateId}/clients`, {
+    method: 'POST',
+    body: JSON.stringify({ clientId }),
+  });
+}
+
+export async function removeClientFromTemplate(templateId: string, clientId: string): Promise<{ success: true }> {
+  return apiRequest(`/api/gym/schedules/templates/${templateId}/clients/${clientId}`, { method: 'DELETE' });
+}
+
+export async function getGymClients(params?: { search?: string; page?: number; limit?: number }): Promise<{ success: true; data: ClientSummary[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> {
+  const query = new URLSearchParams();
+  if (params?.search) query.set('search', params.search);
+  if (params?.page) query.set('page', String(params.page));
+  if (params?.limit) query.set('limit', String(params.limit));
+  const qs = query.toString();
+  return apiRequest(`/api/gym/clients${qs ? `?${qs}` : ''}`);
 }

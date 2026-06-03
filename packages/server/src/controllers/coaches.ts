@@ -36,7 +36,7 @@ export const getAllCoaches = async (
     const { gymId, search, page, limit } = validation.data;
     const skip = (page - 1) * limit;
 
-    const query: any = { userType: UserType.COACH };
+    const query: any = { userType: { $in: [UserType.COACH, UserType.ADMIN_COACH] } };
 
     // Gym scoping: owners can only see their gym's coaches, admins can filter by gymId
     if (req.user?.userType === UserType.OWNER) {
@@ -116,8 +116,8 @@ export const getCoachById = async (
       return;
     }
 
-    // Verify coach is actually a COACH user type
-    if (coach.userType !== UserType.COACH) {
+    // Verify user is a coach-type role
+    if (coach.userType !== UserType.COACH && coach.userType !== UserType.ADMIN_COACH) {
       res.status(404).json({
         success: false,
         error: 'Coach not found',
@@ -275,7 +275,7 @@ export const updateCoach = async (
     const validatedData = bodyValidation.data;
 
     // Check for disallowed fields
-    const disallowedFields = ['gymId', 'userType', 'password'];
+    const disallowedFields = ['gymId', 'password'];
     const providedFields = Object.keys(req.body);
     const foundDisallowed = providedFields.find(field => disallowedFields.includes(field));
 
@@ -297,8 +297,8 @@ export const updateCoach = async (
       return;
     }
 
-    // Verify coach is actually a COACH user type
-    if (coach.userType !== UserType.COACH) {
+    // Verify user is a coach-type role
+    if (coach.userType !== UserType.COACH && coach.userType !== UserType.ADMIN_COACH) {
       res.status(404).json({
         success: false,
         error: 'Coach not found',
@@ -379,8 +379,8 @@ export const deleteCoach = async (
       return;
     }
 
-    // Verify coach is actually a COACH user type
-    if (coach.userType !== UserType.COACH) {
+    // Verify user is a coach-type role
+    if (coach.userType !== UserType.COACH && coach.userType !== UserType.ADMIN_COACH) {
       res.status(404).json({
         success: false,
         error: 'Coach not found',
@@ -478,8 +478,8 @@ export const resetCoachPassword = async (
       return;
     }
 
-    // Verify coach is actually a COACH user type
-    if (coach.userType !== UserType.COACH) {
+    // Verify user is a coach-type role
+    if (coach.userType !== UserType.COACH && coach.userType !== UserType.ADMIN_COACH) {
       res.status(404).json({
         success: false,
         error: 'Coach not found',

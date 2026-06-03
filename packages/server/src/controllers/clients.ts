@@ -41,8 +41,8 @@ export const getAllClients = async (
 
     const query: any = { userType: UserType.CLIENT };
 
-    // Gym scoping: owners and coaches can only see their gym's clients, admins can filter by gymId
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
+    // Gym scoping: owners, coaches, and admin coaches can only see their gym's clients, admins can filter by gymId
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) {
       query.gymId = req.user.gymId;
     } else if (gymId) {
       query.gymId = gymId;
@@ -128,8 +128,8 @@ export const getClientById = async (
       return;
     }
 
-    // Gym scoping: owners and coaches can only access their gym's clients
-    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && client.gymId !== req.user.gymId) {
+    // Gym scoping: owners, coaches, and admin coaches can only access their gym's clients
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) && client.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only access your own gym\'s clients.',
@@ -173,8 +173,8 @@ export const createClient = async (
 
     const { email, firstName, lastName, gymId, password, generatePassword, programId } = validation.data;
 
-    // Gym scoping: owners and coaches can only create clients for their gym
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
+    // Gym scoping: owners, coaches, and admin coaches can only create clients for their gym
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) {
       if (gymId !== req.user.gymId) {
         res.status(403).json({
           success: false,
@@ -313,8 +313,8 @@ export const updateClient = async (
       return;
     }
 
-    // Gym scoping: owners and coaches can only update their gym's clients
-    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && client.gymId !== req.user.gymId) {
+    // Gym scoping: owners, coaches, and admin coaches can only update their gym's clients
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) && client.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only update your own gym\'s clients.',
@@ -531,8 +531,8 @@ export const assignProgram = async (
       return;
     }
 
-    // Gym scoping: owners and coaches can only assign programs to their gym's clients
-    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && client.gymId !== req.user.gymId) {
+    // Gym scoping: owners, coaches, and admin coaches can only assign programs to their gym's clients
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) && client.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only assign programs to your own gym\'s clients.',
@@ -766,8 +766,8 @@ export const unassignProgram = async (
       return;
     }
 
-    // Gym scoping: owners and coaches can only unassign programs from their gym's clients
-    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && client.gymId !== req.user.gymId) {
+    // Gym scoping: owners, coaches, and admin coaches can only unassign programs from their gym's clients
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) && client.gymId !== req.user.gymId) {
       res.status(403).json({
         success: false,
         error: 'Access denied. You can only unassign programs from your own gym\'s clients.',

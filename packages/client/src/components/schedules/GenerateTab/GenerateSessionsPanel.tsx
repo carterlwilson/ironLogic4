@@ -1,35 +1,55 @@
 import { useState } from 'react';
-import { Paper, Stack, Text, Button, Alert } from '@mantine/core';
-import { DatePickerInput } from '@mantine/dates';
+import { Paper, Stack, Text, Button, Alert, Group, ActionIcon } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconCalendarPlus } from '@tabler/icons-react';
+import { IconCalendarPlus, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { scheduleApi } from '../../../services/scheduleApi';
 import type { GenerateWeekResponse } from '@ironlogic4/shared';
 
-function nextMondayString(): string {
-  const today = new Date();
-  const day = today.getDay();
-  const daysUntil = day === 1 ? 7 : (8 - day) % 7 || 7;
-  const d = new Date(today);
-  d.setDate(today.getDate() + daysUntil);
-  // Return YYYY-MM-DD in local time
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${dd}`;
+function getMondayOfWeek(date: Date): Date {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+
+function toLocalDateString(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
 export function GenerateSessionsPanel() {
-  const [targetDate, setTargetDate] = useState<string | null>(nextMondayString());
+  const [weekStart, setWeekStart] = useState<Date>(() => {
+    const next = getMondayOfWeek(new Date());
+    next.setDate(next.getDate() + 7);
+    return next;
+  });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GenerateWeekResponse | null>(null);
 
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  const weekLabel = `${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${weekEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+  const prevWeek = () => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() - 7);
+    setWeekStart(d);
+  };
+
+  const nextWeek = () => {
+    const d = new Date(weekStart);
+    d.setDate(d.getDate() + 7);
+    setWeekStart(d);
+  };
+
   const handleGenerate = async () => {
-    if (!targetDate) return;
     setLoading(true);
     setResult(null);
     try {
-      const res = await scheduleApi.generateWeek(targetDate);
+      const res = await scheduleApi.generateWeek(toLocalDateString(weekStart));
       const data = res.data ?? null;
       setResult(data);
       notifications.show({
@@ -59,20 +79,22 @@ export function GenerateSessionsPanel() {
           Clients with default schedules are automatically enrolled.
         </Text>
 
-        <DatePickerInput
-          label="Week Starting (Monday)"
-          value={targetDate}
-          onChange={setTargetDate}
-          placeholder="Select Monday of target week"
-          getDayProps={(date) => ({ disabled: new Date(date).getDay() !== 1 })}
-          maw={320}
-        />
+        <Group gap="xs">
+          <ActionIcon variant="subtle" onClick={prevWeek}>
+            <IconChevronLeft size={16} />
+          </ActionIcon>
+          <Text fw={500} size="sm" style={{ minWidth: 200, textAlign: 'center' }}>
+            {weekLabel}
+          </Text>
+          <ActionIcon variant="subtle" onClick={nextWeek}>
+            <IconChevronRight size={16} />
+          </ActionIcon>
+        </Group>
 
         <div>
           <Button
             color="blue"
             loading={loading}
-            disabled={!targetDate}
             onClick={handleGenerate}
             leftSection={<IconCalendarPlus size={16} />}
           >

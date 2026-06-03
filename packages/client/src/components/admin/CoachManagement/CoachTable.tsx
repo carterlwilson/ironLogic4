@@ -85,6 +85,7 @@ export function CoachTable({
               <Table.Th>Name</Table.Th>
               <Table.Th>Email</Table.Th>
               {isAdmin && <Table.Th>Gym</Table.Th>}
+              <Table.Th>Role</Table.Th>
               <Table.Th>Created</Table.Th>
               <Table.Th style={{ textAlign: 'right' }}>Actions</Table.Th>
             </Table.Tr>

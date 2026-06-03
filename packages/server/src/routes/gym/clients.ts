@@ -2,7 +2,9 @@ import express from 'express';
 import {
   verifyToken,
   requireGymStaffAccess,
+  requireRole,
 } from '../../middleware/auth.js';
+import { UserType } from '@ironlogic4/shared';
 import {
   getAllClients,
   getClientById,
@@ -31,8 +33,8 @@ router.post('/invite', verifyToken, requireGymStaffAccess, sendClientInvite);
 // Update a client
 router.put('/:id', verifyToken, updateClient);
 
-// Delete a client
-router.delete('/:id', verifyToken, deleteClient);
+// Delete a client (admin_coach cannot delete clients)
+router.delete('/:id', verifyToken, requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]), deleteClient);
 
 // Assign a program to a client
 router.patch('/:id/program', verifyToken, assignProgram);

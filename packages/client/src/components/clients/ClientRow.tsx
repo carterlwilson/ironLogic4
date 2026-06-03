@@ -2,6 +2,7 @@ import { Table, Group, ActionIcon, Tooltip, Text, Badge } from '@mantine/core';
 import { IconEdit, IconTrash, IconBarbell } from '@tabler/icons-react';
 import type { User } from '@ironlogic4/shared/types/users';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../providers/AuthProvider';
 
 interface ClientRowProps {
   client: User;
@@ -12,6 +13,8 @@ interface ClientRowProps {
 
 export function ClientRow({ client, onEdit, onDelete, programNameMap }: ClientRowProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const canDelete = user?.role !== 'admin_coach';
 
   // Get program name from dictionary
   const programName = client.programId ? programNameMap[client.programId] : null;
@@ -72,15 +75,17 @@ export function ClientRow({ client, onEdit, onDelete, programNameMap }: ClientRo
               <IconEdit size={16} />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="Delete Client">
-            <ActionIcon
-              variant="light"
-              color="red"
-              onClick={() => onDelete(client)}
-            >
-              <IconTrash size={16} />
-            </ActionIcon>
-          </Tooltip>
+          {canDelete && (
+            <Tooltip label="Delete Client">
+              <ActionIcon
+                variant="light"
+                color="red"
+                onClick={() => onDelete(client)}
+              >
+                <IconTrash size={16} />
+              </ActionIcon>
+            </Tooltip>
+          )}
         </Group>
       </Table.Td>
     </Table.Tr>

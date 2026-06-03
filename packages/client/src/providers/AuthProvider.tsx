@@ -17,7 +17,7 @@ interface AuthError {
 interface User {
   id: string;
   email: string;
-  role: 'admin' | 'owner' | 'coach' | 'client';
+  role: 'admin' | 'owner' | 'coach' | 'admin_coach' | 'client';
   firstName?: string;
   lastName?: string;
   gymId?: string;

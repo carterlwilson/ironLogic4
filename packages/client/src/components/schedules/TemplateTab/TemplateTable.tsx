@@ -1,9 +1,10 @@
 import { Accordion, Table, Paper, Text, Badge, Group, ActionIcon, Stack, Skeleton, Tooltip } from '@mantine/core';
-import { IconEdit, IconTrash, IconToggleLeft, IconToggleRight } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconToggleLeft, IconToggleRight, IconUsers } from '@tabler/icons-react';
 import type { IScheduleTemplate } from '@ironlogic4/shared';
 import type { Coach } from '../../../hooks/useCoaches';
 import { EmptyState } from '../shared/EmptyState';
 import { getDayName, formatTimeRange } from '../../../utils/scheduleUtils';
+import { useAuth } from '../../../providers/AuthProvider';
 
 const DAY_ORDER = [0, 1, 2, 3, 4, 5, 6] as const;
 
@@ -15,6 +16,7 @@ interface TemplateTableProps {
   onDelete: (template: IScheduleTemplate) => void;
   onToggleActive: (template: IScheduleTemplate) => void;
   onAddTemplate: () => void;
+  onAssignClients: (template: IScheduleTemplate) => void;
 }
 
 export function TemplateTable({
@@ -25,8 +27,11 @@ export function TemplateTable({
   onDelete,
   onToggleActive,
   onAddTemplate,
+  onAssignClients,
 }: TemplateTableProps) {
   const coachMap = new Map(coaches.map(c => [c.id, c]));
+  const { user } = useAuth();
+  const canDelete = user?.role !== 'admin_coach';
 
   if (loading) {
     return (
@@ -105,7 +110,7 @@ export function TemplateTable({
                             <Text size="sm">{coachName}</Text>
                           </Table.Td>
                           <Table.Td>
-                            <Text size="sm">{template.maxCapacity}</Text>
+                            <Text size="sm">{template.assignedCount ?? 0} / {template.maxCapacity}</Text>
                           </Table.Td>
                           <Table.Td>
                             <Badge variant="light" color={template.isActive ? 'green' : 'gray'}>
@@ -125,12 +130,19 @@ export function TemplateTable({
                                     : <IconToggleLeft size={16} />}
                                 </ActionIcon>
                               </Tooltip>
+                              <Tooltip label="Assign clients">
+                                <ActionIcon variant="light" color="grape" onClick={() => onAssignClients(template)}>
+                                  <IconUsers size={16} />
+                                </ActionIcon>
+                              </Tooltip>
                               <ActionIcon variant="light" color="blue" onClick={() => onEdit(template)}>
                                 <IconEdit size={16} />
                               </ActionIcon>
-                              <ActionIcon variant="light" color="red" onClick={() => onDelete(template)}>
-                                <IconTrash size={16} />
-                              </ActionIcon>
+                              {canDelete && (
+                                <ActionIcon variant="light" color="red" onClick={() => onDelete(template)}>
+                                  <IconTrash size={16} />
+                                </ActionIcon>
+                              )}
                             </Group>
                           </Table.Td>
                         </Table.Tr>

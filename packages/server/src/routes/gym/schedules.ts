@@ -33,6 +33,11 @@ import {
   addDefault,
   removeDefault,
 } from '../../controllers/clientDefaults.js';
+import {
+  getTemplateClients,
+  assignClientToTemplate,
+  removeClientFromTemplate,
+} from '../../controllers/templateClients.js';
 import { ScheduleResetService } from '../../services/ScheduleResetService.js';
 import { GenerateWeekSchema, UserType } from '@ironlogic4/shared';
 
@@ -43,28 +48,28 @@ const router = express.Router();
 router.get(
   '/templates',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.ADMIN_COACH]),
   getScheduleTemplates
 );
 
 router.get(
   '/templates/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.ADMIN_COACH]),
   getScheduleTemplateById
 );
 
 router.post(
   '/templates',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
   createScheduleTemplate
 );
 
 router.put(
   '/templates/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
   updateScheduleTemplate
 );
 
@@ -75,13 +80,36 @@ router.delete(
   deleteScheduleTemplate
 );
 
+// ===== Template Client Assignments =====
+
+router.get(
+  '/templates/:id/clients',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
+  getTemplateClients
+);
+
+router.post(
+  '/templates/:id/clients',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
+  assignClientToTemplate
+);
+
+router.delete(
+  '/templates/:id/clients/:clientId',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
+  removeClientFromTemplate
+);
+
 // ===== Class Sessions =====
 
 // Week view (must come before /:id to avoid 'coach' matching as an id)
 router.get(
   '/sessions/coach/week',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.ADMIN_COACH]),
   getSessionsByCoachWeek
 );
 
@@ -89,7 +117,7 @@ router.get(
 router.get(
   '/sessions/coach/:date',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.ADMIN_COACH]),
   getSessionsByCoachDay
 );
 
@@ -100,7 +128,7 @@ router.get('/sessions', verifyToken, getSessionsForDate);
 router.get(
   '/sessions/:id',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.ADMIN_COACH]),
   getSessionById
 );
 
@@ -130,7 +158,7 @@ router.delete('/sessions/:sessionId/enroll', verifyToken, unenrollFromSession);
 router.post(
   '/sessions/:sessionId/enroll/admin',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
   adminEnrollClient
 );
 
@@ -138,7 +166,7 @@ router.post(
 router.delete(
   '/sessions/:sessionId/enroll/admin',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
   adminUnenrollClient
 );
 
@@ -147,14 +175,14 @@ router.delete(
 router.post(
   '/sessions/:sessionId/attendance',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.ADMIN_COACH]),
   submitAttendance
 );
 
 router.get(
   '/sessions/:sessionId/attendance',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH, UserType.ADMIN_COACH]),
   getAttendance
 );
 
@@ -169,7 +197,7 @@ router.delete('/defaults/:id', verifyToken, removeDefault);
 router.post(
   '/generate-week',
   verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER]),
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.ADMIN_COACH]),
   async (req, res) => {
     try {
       const validation = GenerateWeekSchema.safeParse(req.body);

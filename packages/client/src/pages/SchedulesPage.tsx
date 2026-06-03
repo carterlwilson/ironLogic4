@@ -14,13 +14,14 @@ import {
   TemplateTable,
   TemplateFormModal,
   DeleteTemplateModal,
+  AssignClientsModal,
 } from '../components/schedules/TemplateTab';
 import type { CreateScheduleTemplateRequest, UpdateScheduleTemplateRequest } from '@ironlogic4/shared';
 
 export function SchedulesPage() {
   const { user } = useAuth();
 
-  if (!user || (user.role !== 'admin' && user.role !== 'owner')) {
+  if (!user || (user.role !== 'admin' && user.role !== 'owner' && user.role !== 'admin_coach')) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -37,6 +38,8 @@ export function SchedulesPage() {
   const [editingTemplate, setEditingTemplate] = useState<IScheduleTemplate | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deletingTemplate, setDeletingTemplate] = useState<IScheduleTemplate | null>(null);
+  const [assignClientsOpen, setAssignClientsOpen] = useState(false);
+  const [assigningTemplate, setAssigningTemplate] = useState<IScheduleTemplate | null>(null);
 
   const loadTemplates = useCallback(async () => {
     setTemplatesLoading(true);
@@ -125,6 +128,7 @@ export function SchedulesPage() {
   const openAdd = () => { setEditingTemplate(null); setFormModalOpen(true); };
   const openEdit = (t: IScheduleTemplate) => { setEditingTemplate(t); setFormModalOpen(true); };
   const openDelete = (t: IScheduleTemplate) => { setDeletingTemplate(t); setDeleteModalOpen(true); };
+  const openAssignClients = (t: IScheduleTemplate) => { setAssigningTemplate(t); setAssignClientsOpen(true); };
 
   return (
     <Container size="xl" py="xl">
@@ -166,6 +170,7 @@ export function SchedulesPage() {
                 onDelete={openDelete}
                 onToggleActive={handleToggleActive}
                 onAddTemplate={openAdd}
+                onAssignClients={openAssignClients}
               />
             </Stack>
           </Tabs.Panel>
@@ -195,6 +200,13 @@ export function SchedulesPage() {
           template={deletingTemplate}
           onConfirm={handleDeleteTemplate}
           loading={templatesLoading}
+        />
+
+        <AssignClientsModal
+          opened={assignClientsOpen}
+          onClose={() => { setAssignClientsOpen(false); loadTemplates(); }}
+          template={assigningTemplate}
+          gymId={gymId}
         />
       </Stack>
     </Container>

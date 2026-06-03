@@ -71,3 +71,9 @@ export const GenerateWeekSchema = z.object({
 export const AvailableSchedulesQuerySchema = z.object({
   gymId: z.string().min(1).optional(),
 });
+
+// ===== Admin Assign Client Schema =====
+
+export const AdminAssignClientSchema = z.object({
+  clientId: z.string().min(1),
+});

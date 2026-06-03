@@ -16,8 +16,8 @@ import { DeleteClientModal } from '../components/clients/DeleteClientModal';
 export function ClientsPage() {
   const { user } = useAuth();
 
-  // Only owners and coaches can access
-  if (user?.role !== 'owner' && user?.role !== 'coach') {
+  // Only owners, coaches, and admin coaches can access
+  if (user?.role !== 'owner' && user?.role !== 'coach' && user?.role !== 'admin_coach') {
     return <Navigate to="/dashboard" replace />;
   }
 

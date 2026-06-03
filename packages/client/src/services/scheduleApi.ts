@@ -25,6 +25,14 @@ export interface ISessionDetail extends IClassSession {
   roster: ISessionRosterEntry[];
 }
 
+export interface ITemplateClient {
+  defaultId: string;
+  clientId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 class ScheduleApiService {
   private apiBaseUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
   private baseUrl = `${this.apiBaseUrl}/api/gym/schedules`;
@@ -122,6 +130,25 @@ class ScheduleApiService {
     return this.request<ApiResponse>(`/sessions/${sessionId}/enroll/admin`, {
       method: 'DELETE',
       body: JSON.stringify({ clientId }),
+    });
+  }
+
+  // ==================== TEMPLATE CLIENT ASSIGNMENTS ====================
+
+  async getTemplateClients(templateId: string): Promise<ApiResponse<ITemplateClient[]>> {
+    return this.request<ApiResponse<ITemplateClient[]>>(`/templates/${templateId}/clients`);
+  }
+
+  async assignClientToTemplate(templateId: string, clientId: string): Promise<ApiResponse> {
+    return this.request<ApiResponse>(`/templates/${templateId}/clients`, {
+      method: 'POST',
+      body: JSON.stringify({ clientId }),
+    });
+  }
+
+  async removeClientFromTemplate(templateId: string, clientId: string): Promise<ApiResponse> {
+    return this.request<ApiResponse>(`/templates/${templateId}/clients/${clientId}`, {
+      method: 'DELETE',
     });
   }
 

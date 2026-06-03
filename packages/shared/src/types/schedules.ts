@@ -20,6 +20,7 @@ export interface IScheduleTemplate {
   endTime: string;    // end time "HH:mm"
   maxCapacity: number;
   isActive: boolean;
+  assignedCount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -108,4 +109,16 @@ export interface GenerateWeekResponse {
   sessionsCreated: number;
   enrollmentsCreated: number;
   weekStart: string;
+}
+
+export interface ITemplateClient {
+  defaultId: string;
+  clientId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface AdminAssignClientRequest {
+  clientId: string;
 }

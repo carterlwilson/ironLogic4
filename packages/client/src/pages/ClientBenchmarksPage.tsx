@@ -34,8 +34,8 @@ export function ClientBenchmarksPage() {
   // Load benchmark templates
   const { templates, loading: templatesLoading } = useBenchmarkTemplates(user?.gymId);
 
-  // Only owners and coaches can access
-  if (user?.role !== 'owner' && user?.role !== 'coach') {
+  // Only owners, coaches, and admin coaches can access
+  if (user?.role !== 'owner' && user?.role !== 'coach' && user?.role !== 'admin_coach') {
     return <Navigate to="/dashboard" replace />;
   }
 

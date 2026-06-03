@@ -1,6 +1,7 @@
 import { Table, Group, ActionIcon, Tooltip, Text } from '@mantine/core';
 import { IconEdit, IconTrash, IconLock } from '@tabler/icons-react';
 import type { CoachResponse } from '@ironlogic4/shared/types/coaches';
+import { UserBadge } from '../UserManagement/UserBadge';
 
 interface CoachRowProps {
   coach: CoachResponse;
@@ -34,6 +35,9 @@ export function CoachRow({
           <Text size="sm">{gymName || 'Unknown'}</Text>
         </Table.Td>
       )}
+      <Table.Td>
+        <UserBadge role={coach.userType} />
+      </Table.Td>
       <Table.Td>
         <Text size="sm" c="dimmed">
           {new Date(coach.createdAt).toLocaleDateString()}

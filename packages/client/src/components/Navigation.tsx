@@ -45,8 +45,8 @@ export function Navigation() {
     navigate('/', { replace: true });
   };
 
-  // Admin and owner users get full navigation
-  const hasFullNavAccess = user?.role === 'admin' || user?.role === 'owner';
+  // Admin, owner, and admin_coach users get full navigation
+  const hasFullNavAccess = user?.role === 'admin' || user?.role === 'owner' || user?.role === 'admin_coach';
 
   // Client users only see Benchmarks
   const isClient = user?.role === 'client';

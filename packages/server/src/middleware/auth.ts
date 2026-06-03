@@ -112,6 +112,7 @@ export const requireAdminOrCoach = requireRole([
   UserType.ADMIN,
   UserType.OWNER,
   UserType.COACH,
+  UserType.ADMIN_COACH,
 ]);
 
 /**
@@ -145,8 +146,8 @@ export const requireUserManagementPermission = (targetUserType?: UserType) => {
         }
     }
 
-    // Coach can only manage client users
-    if (userType === UserType.COACH) {
+    // Coach and admin_coach can only manage client users
+    if (userType === UserType.COACH || userType === UserType.ADMIN_COACH) {
       if (!targetUserType || targetUserType === UserType.CLIENT) {
         next();
         return;
@@ -258,8 +259,12 @@ export const requireGymStaffAccess = (req: AuthenticatedRequest, res: Response, 
     return;
   }
 
-  // Owners and Coaches must have a gym assignment
-  if (user.userType === UserType.OWNER || user.userType === UserType.COACH) {
+  // Owners, coaches, and admin coaches must have a gym assignment
+  if (
+    user.userType === UserType.OWNER ||
+    user.userType === UserType.COACH ||
+    user.userType === UserType.ADMIN_COACH
+  ) {
     if (!user.gymId) {
       res.status(400).json({
         success: false,

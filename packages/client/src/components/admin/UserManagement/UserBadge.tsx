@@ -22,6 +22,11 @@ const getRoleConfig = (role: UserType) => {
         color: 'blue',
         label: 'Coach',
       };
+    case 'admin_coach':
+      return {
+        color: 'teal',
+        label: 'Admin Coach',
+      };
     case 'client':
       return {
         color: 'gray',

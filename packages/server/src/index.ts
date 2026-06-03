@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { ClientDefaultSchedule } from './models/ClientDefaultSchedule.js';
 import authRoutes from './routes/auth.js';
 import passwordResetRoutes from './routes/passwordReset.js';
 import inviteRoutes from './routes/invite.js';
@@ -135,6 +136,10 @@ const connectDB = async () => {
 
     await mongoose.connect(mongoUri);
     console.log('[STARTUP] MongoDB connected successfully');
+
+    // One-time migration: drop stale index from old schema (timeslotId → templateId rename)
+    await ClientDefaultSchedule.collection.dropIndex('clientId_1_timeslotId_1').catch(() => {});
+    console.log('[STARTUP] Stale index migration complete');
 
     // Log the actual connected database name
     const dbName = mongoose.connection.db?.databaseName;

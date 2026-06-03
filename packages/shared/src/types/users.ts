@@ -4,6 +4,7 @@ export enum UserType {
   ADMIN = 'admin',
   OWNER = 'owner',
   COACH = 'coach',
+  ADMIN_COACH = 'admin_coach',
   CLIENT = 'client'
 }
 

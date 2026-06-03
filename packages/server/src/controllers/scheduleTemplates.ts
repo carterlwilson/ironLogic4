@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
 import { ClassSession } from '../models/ClassSession.js';
+import { ClientDefaultSchedule } from '../models/ClientDefaultSchedule.js';
 import { User } from '../models/User.js';
 import {
   ApiResponse,
@@ -22,7 +23,7 @@ async function validateCoachId(coachId: string, gymId: string): Promise<{ valid:
   const coach = await User.findById(coachId);
   if (!coach) return { valid: false, error: 'Coach not found' };
   if (coach.gymId !== gymId) return { valid: false, error: 'Coach does not belong to this gym' };
-  if (!['coach', 'admin', 'owner'].includes(coach.userType)) {
+  if (!['coach', 'admin', 'owner', 'admin_coach'].includes(coach.userType)) {
     return { valid: false, error: 'User must have a coach, admin, or owner role' };
   }
   return { valid: true };
@@ -39,7 +40,7 @@ export const getScheduleTemplates = async (
   try {
     const query: any = {};
 
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) {
       query.gymId = req.user.gymId;
     } else if (req.query.gymId) {
       query.gymId = req.query.gymId;
@@ -47,9 +48,19 @@ export const getScheduleTemplates = async (
 
     const templates = await ScheduleTemplate.find(query).sort({ dayOfWeek: 1, time: 1 });
 
+    const templateIds = templates.map(t => (t._id as any).toString());
+    const counts = await ClientDefaultSchedule.aggregate([
+      { $match: { templateId: { $in: templateIds }, isActive: true } },
+      { $group: { _id: '$templateId', count: { $sum: 1 } } },
+    ]);
+    const countMap = new Map(counts.map((c: any) => [c._id, c.count]));
+
     const response: ApiResponse<any> = {
       success: true,
-      data: templates.map(t => t.toJSON()),
+      data: templates.map(t => ({
+        ...t.toJSON(),
+        assignedCount: countMap.get((t._id as any).toString()) ?? 0,
+      })),
     };
 
     res.json(response);
@@ -81,7 +92,7 @@ export const getScheduleTemplateById = async (
     }
 
     if (
-      (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) &&
+      (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) &&
       template.gymId !== req.user.gymId
     ) {
       res.status(403).json({ success: false, error: 'Access denied' });
@@ -115,7 +126,7 @@ export const createScheduleTemplate = async (
     }
 
     let gymId: string | undefined;
-    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) {
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) {
       if (!req.user.gymId) {
         res.status(400).json({ success: false, error: 'You must be assigned to a gym' });
         return;
@@ -132,6 +143,20 @@ export const createScheduleTemplate = async (
     const coachValidation = await validateCoachId(validation.data.coachId, gymId);
     if (!coachValidation.valid) {
       res.status(400).json({ success: false, error: coachValidation.error });
+      return;
+    }
+
+    const overlapping = await ScheduleTemplate.findOne({
+      coachId: validation.data.coachId,
+      dayOfWeek: validation.data.dayOfWeek,
+      time: { $lt: validation.data.endTime },
+      endTime: { $gt: validation.data.time },
+    });
+    if (overlapping) {
+      res.status(400).json({
+        success: false,
+        error: `This coach already has a template on that day from ${overlapping.time} to ${overlapping.endTime}`,
+      });
       return;
     }
 
@@ -176,7 +201,7 @@ export const updateScheduleTemplate = async (
     }
 
     if (
-      (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) &&
+      (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) &&
       template.gymId !== req.user.gymId
     ) {
       res.status(403).json({ success: false, error: 'Access denied' });
@@ -189,6 +214,26 @@ export const updateScheduleTemplate = async (
         res.status(400).json({ success: false, error: coachValidation.error });
         return;
       }
+    }
+
+    const effectiveCoachId = bodyValidation.data.coachId ?? template.coachId;
+    const effectiveDayOfWeek = bodyValidation.data.dayOfWeek ?? template.dayOfWeek;
+    const effectiveTime = bodyValidation.data.time ?? template.time;
+    const effectiveEndTime = bodyValidation.data.endTime ?? template.endTime;
+
+    const overlapping = await ScheduleTemplate.findOne({
+      _id: { $ne: template._id },
+      coachId: effectiveCoachId,
+      dayOfWeek: effectiveDayOfWeek,
+      time: { $lt: effectiveEndTime },
+      endTime: { $gt: effectiveTime },
+    });
+    if (overlapping) {
+      res.status(400).json({
+        success: false,
+        error: `This coach already has a template on that day from ${overlapping.time} to ${overlapping.endTime}`,
+      });
+      return;
     }
 
     const updated = await ScheduleTemplate.findByIdAndUpdate(
@@ -230,7 +275,7 @@ export const deleteScheduleTemplate = async (
     }
 
     if (
-      (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) &&
+      (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.ADMIN_COACH) &&
       template.gymId !== req.user.gymId
     ) {
       res.status(403).json({ success: false, error: 'Access denied' });
@@ -246,6 +291,7 @@ export const deleteScheduleTemplate = async (
       return;
     }
 
+    await ClientDefaultSchedule.deleteMany({ templateId: validation.data.id });
     await ScheduleTemplate.findByIdAndDelete(validation.data.id);
     res.json({ success: true, message: 'Schedule template deleted successfully' });
   } catch (error) {

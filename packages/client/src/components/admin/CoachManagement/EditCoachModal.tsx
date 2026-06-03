@@ -1,8 +1,9 @@
-import { Modal, Stack, Group, TextInput, Button } from '@mantine/core';
+import { Modal, Stack, Group, TextInput, Button, Select } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconUser, IconMail } from '@tabler/icons-react';
+import { IconUser, IconMail, IconShield } from '@tabler/icons-react';
 import { useEffect } from 'react';
 import type { CoachResponse, UpdateCoachRequest } from '@ironlogic4/shared/types/coaches';
+import { UserType } from '@ironlogic4/shared/types/users';
 
 interface EditCoachModalProps {
   opened: boolean;
@@ -26,6 +27,7 @@ export function EditCoachModal({
       email: '',
       firstName: '',
       lastName: '',
+      userType: UserType.COACH,
     },
     validate: {
       email: (value) => {
@@ -55,6 +57,7 @@ export function EditCoachModal({
         email: coach.email,
         firstName: coach.firstName,
         lastName: coach.lastName,
+        userType: coach.userType as UserType.COACH | UserType.ADMIN_COACH,
       });
     }
   }, [coach]);
@@ -118,6 +121,17 @@ export function EditCoachModal({
               {...form.getInputProps('lastName')}
             />
           </Group>
+
+          <Select
+            label="Role"
+            leftSection={<IconShield size={16} />}
+            data={[
+              { value: UserType.COACH, label: 'Coach' },
+              { value: UserType.ADMIN_COACH, label: 'Admin Coach' },
+            ]}
+            allowDeselect={false}
+            {...form.getInputProps('userType')}
+          />
 
           {/* Actions */}
           <Group justify="space-between" gap="md" mt="md">

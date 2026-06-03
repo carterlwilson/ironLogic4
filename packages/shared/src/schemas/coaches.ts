@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { UserType } from '../types/users.js';
 
 const objectId = z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format');
 
@@ -30,10 +31,11 @@ export const UpdateCoachSchema = z.object({
   email: z.string().email('Invalid email address').toLowerCase().trim().optional(),
   firstName: z.string().min(1, 'First name is required').max(50, 'First name must be less than 50 characters').trim().optional(),
   lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters').trim().optional(),
+  userType: z.enum([UserType.COACH, UserType.ADMIN_COACH]).optional(),
 }).refine(
   (data) => {
     // At least one field must be provided
-    return data.email || data.firstName || data.lastName;
+    return data.email || data.firstName || data.lastName || data.userType;
   },
   { message: 'At least one field must be updated' }
 );
