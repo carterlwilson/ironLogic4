@@ -20,7 +20,9 @@
     "migration:conversion-doc": "tsx src/scripts/generateConversionDoc.ts",
     "migration:import-requests": "tsx src/scripts/generateImportRequests.ts",
     "migration:import-clients": "tsx src/scripts/importClients.ts",
-    "migration:update-program": "tsx src/scripts/updateMigratedClientProgram.ts"
+    "migration:update-program": "tsx src/scripts/updateMigratedClientProgram.ts",
+    "migration:welcome-emails": "tsx src/scripts/sendWelcomeEmails.ts",
+    "migration:welcome-emails-test": "tsx src/scripts/sendWelcomeEmails.ts --test"
   },
   "dependencies": {
     "@ironlogic4/shared": "file:../shared",
