@@ -71,6 +71,11 @@ export const BenchmarksPage = () => {
     [currentBenchmarks, historicalBenchmarks]
   );
 
+  const availableTemplates = useMemo(() => {
+    const usedTemplateIds = new Set(currentBenchmarks.map((b) => b.templateId));
+    return templates.filter((t) => !usedTemplateIds.has(t.id));
+  }, [templates, currentBenchmarks]);
+
   // Auto-clear tag selection when the tag disappears from the data
   const effectiveTag = availableTags.includes(selectedTag!) ? selectedTag : null;
 
@@ -182,7 +187,7 @@ export const BenchmarksPage = () => {
         opened={isCreateOpen}
         onClose={closeModals}
         onCreate={handleCreateBenchmark}
-        templates={templates}
+        templates={availableTemplates}
         loading={loading}
       />
 
