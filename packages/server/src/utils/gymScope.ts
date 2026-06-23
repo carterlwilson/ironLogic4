@@ -5,7 +5,11 @@ export function buildGymScope(
   user: UserDocument,
   requestedGymId?: string
 ): { gymId?: string } {
-  if (user.userType === UserType.OWNER || user.userType === UserType.COACH) {
+  if (
+    user.userType === UserType.OWNER ||
+    user.userType === UserType.COACH ||
+    user.userType === UserType.CLIENT
+  ) {
     return { gymId: user.gymId };
   }
   return requestedGymId ? { gymId: requestedGymId } : {};
