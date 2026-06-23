@@ -12,6 +12,7 @@ import {
 import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 import {
   getBenchmarks,
+  getBenchmarkTemplates,
   createBenchmark,
   updateBenchmark,
   deleteBenchmark,
@@ -110,9 +111,11 @@ export function useBenchmarks() {
   const loadBenchmarks = useCallback(async () => {
     setState((prev) => ({ ...prev, loading: true, error: null }));
     try {
-      const response = await getBenchmarks();
+      const [response, templatesResponse] = await Promise.all([
+        getBenchmarks(),
+        getBenchmarkTemplates(),
+      ]);
 
-      // Templates are now included in the response (fixes N+1 problem)
       const templateMap = new Map(
         response.data.templates.map((t) => [t.id, t])
       );
@@ -122,7 +125,7 @@ export function useBenchmarks() {
         ...prev,
         currentBenchmarks: response.data.currentBenchmarks || [],
         historicalBenchmarks: response.data.historicalBenchmarks || [],
-        templates: response.data.templates,
+        templates: templatesResponse.data,
         loading: false,
       }));
     } catch (error) {
