@@ -71,7 +71,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Request logging middleware for debugging
 app.use((req, res, next) => {
-  console.log(`[REQUEST] ${req.method} ${req.path} from ${req.ip}`);
+  const realIp = req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip;
+  console.log(`[REQUEST] ${req.method} ${req.path} from ${realIp}`);
   next();
 });
 

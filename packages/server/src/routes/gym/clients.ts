@@ -32,7 +32,7 @@ router.post('/invite', verifyToken, requireGymStaffAccess, sendClientInvite);
 router.put('/:id', verifyToken, updateClient);
 
 // Delete a client
-router.delete('/:id', verifyToken, deleteClient);
+router.delete('/:id', verifyToken, requireGymStaffAccess, deleteClient);
 
 // Assign a program to a client
 router.patch('/:id/program', verifyToken, assignProgram);
