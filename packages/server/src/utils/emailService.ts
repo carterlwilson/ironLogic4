@@ -39,7 +39,7 @@ export const sendPasswordResetEmail = async (
     to: email,
     from: verifiedSender,
     subject: 'Reset your gym account password',
-    text: `Hi ${firstName},\n\nYou recently requested to reset your password for your gym account.\n\nClick the link below to reset your password:\n${resetLink}\n\nThis link will expire in 30 minutes.\n\nIf you did not request a password reset, please ignore this email or contact support if you have concerns.\n\nBest regards,\nYour Gym Team`,
+    text: `Hi ${firstName},\n\nYou recently requested to reset your password for your gym account.\n\nClick the link below to reset your password:\n${resetLink}\n\nThis link will expire in 5 days.\n\nIf you did not request a password reset, please ignore this email or contact support if you have concerns.\n\nBest regards,\nYour Gym Team`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -71,7 +71,7 @@ export const sendPasswordResetEmail = async (
             </p>
             <div style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin-top: 30px; border-radius: 4px;">
               <p style="margin: 0; font-size: 14px; color: #856404;">
-                <strong>Important:</strong> This link will expire in 30 minutes for security purposes.
+                <strong>Important:</strong> This link will expire in 5 days for security purposes.
               </p>
             </div>
           </div>

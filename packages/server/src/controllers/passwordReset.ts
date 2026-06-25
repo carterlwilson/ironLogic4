@@ -50,9 +50,8 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
     const resetToken = generateResetToken();
     const hashedToken = await hashResetToken(resetToken);
 
-    // Set token expiry to 30 minutes from now
     const tokenExpiry = new Date();
-    tokenExpiry.setMinutes(tokenExpiry.getMinutes() + 30);
+    tokenExpiry.setDate(tokenExpiry.getDate() + 5);
 
     // Save hashed token to user document
     user.resetToken = hashedToken;
