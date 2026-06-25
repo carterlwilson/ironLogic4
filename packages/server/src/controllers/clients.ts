@@ -363,16 +363,16 @@ export const updateClient = async (
     // Handle program assignment/unassignment if provided
     if (validatedData.programId !== undefined) {
       if (validatedData.programId === null || validatedData.programId === '') {
-        // Unassign program
+        // Unassign program — use $unset to avoid triggering full document validation
+        await User.findByIdAndUpdate(id, { $unset: { programId: 1 } });
         client.programId = undefined;
       } else {
         // Validate and assign program
         const assigned = await applyProgramAssignment(client, validatedData.programId, res);
         if (!assigned) return;
+        // Persist programId change without triggering full document validation on stale fields
+        await User.findByIdAndUpdate(id, { programId: client.programId });
       }
-
-      // Save the client to persist programId changes
-      await client.save();
     }
 
     // Field sanitization - strip protected fields
