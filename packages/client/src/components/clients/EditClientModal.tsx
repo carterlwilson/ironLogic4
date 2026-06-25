@@ -45,8 +45,8 @@ export function EditClientModal({ opened, onClose, client, onSubmit, loading = f
   useEffect(() => {
     if (client) {
       form.setValues({
-        firstName: client.firstName,
-        lastName: client.lastName,
+        firstName: client.firstName || '',
+        lastName: client.lastName || '',
         email: client.email,
       });
       setProgramId(client.programId || '');
