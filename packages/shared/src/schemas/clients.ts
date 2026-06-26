@@ -69,8 +69,8 @@ export const ClientListParamsSchema = z.object({
  */
 export const CreateClientSchema = z.object({
   email: z.string().email('Invalid email address').toLowerCase().trim(),
-  firstName: z.string().min(1, 'First name is required').max(50, 'First name must be less than 50 characters').trim(),
-  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters').trim(),
+  firstName: z.string().trim().min(1, 'First name is required').max(50, 'First name must be less than 50 characters'),
+  lastName: z.string().trim().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters'),
   gymId: objectId,
   password: z.string().min(8, 'Password must be at least 8 characters').optional(),
   generatePassword: z.boolean().optional().default(true),
@@ -82,8 +82,8 @@ export const CreateClientSchema = z.object({
  */
 export const UpdateClientSchema = z.object({
   email: z.string().email('Invalid email address').toLowerCase().trim().optional(),
-  firstName: z.string().min(1, 'First name is required').max(50, 'First name must be less than 50 characters').trim().optional(),
-  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters').trim().optional(),
+  firstName: z.string().trim().min(1, 'First name is required').max(50, 'First name must be less than 50 characters').optional(),
+  lastName: z.string().trim().min(1, 'Last name is required').max(50, 'Last name must be less than 50 characters').optional(),
   currentBenchmarks: z.array(ClientBenchmarkSchema).optional(),
   historicalBenchmarks: z.array(ClientBenchmarkSchema).optional(),
   programId: nullableObjectId,
