@@ -37,9 +37,9 @@ export const sendPasswordResetEmail = async (
 
   const msg = {
     to: email,
-    from: verifiedSender,
-    subject: 'Reset your gym account password',
-    text: `Hi ${firstName},\n\nYou recently requested to reset your password for your gym account.\n\nClick the link below to reset your password:\n${resetLink}\n\nThis link will expire in 5 days.\n\nIf you did not request a password reset, please ignore this email or contact support if you have concerns.\n\nBest regards,\nYour Gym Team`,
+    from: { name: 'Cully Strength', email: verifiedSender },
+    subject: 'Reset your Cully Strength password',
+    text: `Hi ${firstName},\n\nYou recently requested to reset your password for your Cully Strength account.\n\nClick the link below to reset your password:\n${resetLink}\n\nThis link will expire in 5 days.\n\nIf you did not request a password reset, please ignore this email or contact support if you have concerns.\n\nBest regards,\nThe Cully Strength Team`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -53,7 +53,7 @@ export const sendPasswordResetEmail = async (
             <h1 style="color: #228be6; margin-top: 0;">Password Reset Request</h1>
             <p style="font-size: 16px; margin-bottom: 20px;">Hi ${firstName},</p>
             <p style="font-size: 16px; margin-bottom: 20px;">
-              You recently requested to reset your password for your gym account.
+              You recently requested to reset your password for your Cully Strength account.
             </p>
             <p style="font-size: 16px; margin-bottom: 30px;">
               Click the button below to reset your password:
@@ -81,7 +81,7 @@ export const sendPasswordResetEmail = async (
             </p>
             <p style="margin: 0;">
               Best regards,<br>
-              Your Gym Team
+              The Cully Strength Team
             </p>
           </div>
         </body>
@@ -133,7 +133,7 @@ export const sendInviteEmail = async (
 
   const msg = {
     to: email,
-    from: verifiedSender,
+    from: { name: 'Cully Strength', email: verifiedSender },
     subject: `You've been invited to join ${gymName}`,
     text: `${greeting}\n\n${gymName} has invited you to join their gym.\n\nClick the link below to create your account:\n${inviteLink}\n\nThis link will expire in 7 days.\n\nIf you were not expecting this invitation, you can safely ignore this email.\n\nBest regards,\nThe IronLogic Team`,
     html: `
