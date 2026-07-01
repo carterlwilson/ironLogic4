@@ -65,10 +65,88 @@ export const getMyBenchmarks = async (
   }
 };
 
+const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+
+function shouldCreateNewVersion(existing: any, input: CreateMyBenchmarkInput): boolean {
+  const now = Date.now();
+
+  if (input.repMaxes?.length) {
+    return input.repMaxes.some(submitted => {
+      const counterpart = existing.repMaxes?.find(
+        (rm: any) => rm.templateRepMaxId === submitted.templateRepMaxId
+      );
+      return counterpart && (now - new Date(counterpart.recordedAt).getTime()) >= FIVE_DAYS_MS;
+    });
+  }
+
+  if (input.timeSubMaxes?.length) {
+    return input.timeSubMaxes.some(submitted => {
+      const counterpart = existing.timeSubMaxes?.find(
+        (tsm: any) => tsm.templateSubMaxId === submitted.templateSubMaxId
+      );
+      return counterpart && (now - new Date(counterpart.recordedAt).getTime()) >= FIVE_DAYS_MS;
+    });
+  }
+
+  if (input.distanceSubMaxes?.length) {
+    return input.distanceSubMaxes.some(submitted => {
+      const counterpart = existing.distanceSubMaxes?.find(
+        (dsm: any) => dsm.templateDistanceSubMaxId === submitted.templateDistanceSubMaxId
+      );
+      return counterpart && (now - new Date(counterpart.recordedAt).getTime()) >= FIVE_DAYS_MS;
+    });
+  }
+
+  // Scalar types: use benchmark-level recordedAt
+  if (existing.recordedAt) {
+    return (now - new Date(existing.recordedAt).getTime()) >= FIVE_DAYS_MS;
+  }
+  return false;
+}
+
+function mergeRepMaxes(existing: any[], submitted: any[]): any[] {
+  const merged = [...existing];
+  for (const s of submitted) {
+    const idx = merged.findIndex(rm => rm.templateRepMaxId === s.templateRepMaxId);
+    if (idx >= 0) {
+      merged[idx] = { ...merged[idx], weightKg: s.weightKg, recordedAt: new Date(s.recordedAt) };
+    } else {
+      merged.push(s);
+    }
+  }
+  return merged;
+}
+
+function mergeTimeSubMaxes(existing: any[], submitted: any[]): any[] {
+  const merged = [...existing];
+  for (const s of submitted) {
+    const idx = merged.findIndex(tsm => tsm.templateSubMaxId === s.templateSubMaxId);
+    if (idx >= 0) {
+      merged[idx] = { ...merged[idx], distanceMeters: s.distanceMeters, recordedAt: new Date(s.recordedAt) };
+    } else {
+      merged.push(s);
+    }
+  }
+  return merged;
+}
+
+function mergeDistanceSubMaxes(existing: any[], submitted: any[]): any[] {
+  const merged = [...existing];
+  for (const s of submitted) {
+    const idx = merged.findIndex(dsm => dsm.templateDistanceSubMaxId === s.templateDistanceSubMaxId);
+    if (idx >= 0) {
+      merged[idx] = { ...merged[idx], timeSeconds: s.timeSeconds, recordedAt: new Date(s.recordedAt) };
+    } else {
+      merged.push(s);
+    }
+  }
+  return merged;
+}
+
 /**
  * POST /api/me/benchmarks
- * Create new benchmark from template
- * Optionally moves an old benchmark to historical if oldBenchmarkId is provided
+ * Create new benchmark from template.
+ * Server automatically routes to edit-in-place or new-version based on sub-max age.
  */
 export const createMyBenchmark = async (
   req: AuthenticatedRequest,
@@ -103,38 +181,112 @@ export const createMyBenchmark = async (
       return;
     }
 
-    // 3. If replacing an old benchmark, validate it exists and move it to historical
-    if (input.oldBenchmarkId) {
-      const user = await User.findById(userId);
-      if (!user) {
-        res.status(404).json({
-          success: false,
-          error: 'User not found',
-        });
-        return;
-      }
-
-      // Find the old benchmark in currentBenchmarks
-      const oldBenchmark = user.currentBenchmarks?.find(
-        (b) => b._id.toString() === input.oldBenchmarkId
-      );
-
-      if (!oldBenchmark) {
-        res.status(404).json({
-          success: false,
-          error: 'Old benchmark not found in current benchmarks',
-        });
-        return;
-      }
-
-      // Move old benchmark to historical using atomic operation
-      await User.findByIdAndUpdate(userId, {
-        $pull: { currentBenchmarks: { _id: input.oldBenchmarkId } },
-        $push: { historicalBenchmarks: oldBenchmark },
-      });
+    // 3. Load user and find existing currentBenchmark for this template
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
     }
 
-    // 4. Create new benchmark subdocument
+    const existingBenchmark = user.currentBenchmarks?.find(
+      (b) => b.templateId.toString() === input.templateId
+    );
+
+    if (existingBenchmark) {
+      const createNewVersion = shouldCreateNewVersion(existingBenchmark, input);
+
+      if (!createNewVersion) {
+        // Edit-in-place: merge submitted sub-maxes into existing, leave others untouched
+        const updateFields: any = { updatedAt: new Date() };
+
+        if (input.repMaxes?.length) {
+          updateFields['currentBenchmarks.$.repMaxes'] = mergeRepMaxes(
+            existingBenchmark.repMaxes || [], input.repMaxes
+          );
+        }
+        if (input.timeSubMaxes?.length) {
+          updateFields['currentBenchmarks.$.timeSubMaxes'] = mergeTimeSubMaxes(
+            existingBenchmark.timeSubMaxes || [], input.timeSubMaxes
+          );
+        }
+        if (input.distanceSubMaxes?.length) {
+          updateFields['currentBenchmarks.$.distanceSubMaxes'] = mergeDistanceSubMaxes(
+            existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes
+          );
+        }
+        if (input.timeSeconds !== undefined) updateFields['currentBenchmarks.$.timeSeconds'] = input.timeSeconds;
+        if (input.reps !== undefined) updateFields['currentBenchmarks.$.reps'] = input.reps;
+        if (input.otherNotes !== undefined) updateFields['currentBenchmarks.$.otherNotes'] = input.otherNotes;
+        if (input.recordedAt) updateFields['currentBenchmarks.$.recordedAt'] = new Date(input.recordedAt);
+        if (input.notes !== undefined) updateFields['currentBenchmarks.$.notes'] = input.notes;
+
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: userId, 'currentBenchmarks._id': existingBenchmark._id },
+          { $set: updateFields },
+          { new: true, select: 'currentBenchmarks historicalBenchmarks' }
+        );
+
+        const userData = updatedUser!.toJSON();
+        res.status(200).json({
+          success: true,
+          data: {
+            currentBenchmarks: userData.currentBenchmarks || [],
+            historicalBenchmarks: userData.historicalBenchmarks || [],
+          },
+          message: 'Benchmark updated in place',
+        });
+        return;
+      }
+
+      // New-version path: merge submitted sub-maxes into old, archive old, create new
+      const mergedRepMaxes = mergeRepMaxes(existingBenchmark.repMaxes || [], input.repMaxes || []);
+      const mergedTimeSubMaxes = mergeTimeSubMaxes(existingBenchmark.timeSubMaxes || [], input.timeSubMaxes || []);
+      const mergedDistanceSubMaxes = mergeDistanceSubMaxes(existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes || []);
+
+      const newBenchmark = {
+        _id: new Types.ObjectId(),
+        templateId: template.id,
+        name: template.name,
+        type: template.type,
+        tags: template.tags || [],
+        notes: input.notes,
+        recordedAt: input.recordedAt ? new Date(input.recordedAt) : undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...(mergedRepMaxes.length > 0 && { repMaxes: mergedRepMaxes }),
+        ...(mergedTimeSubMaxes.length > 0 && { timeSubMaxes: mergedTimeSubMaxes }),
+        ...(mergedDistanceSubMaxes.length > 0 && { distanceSubMaxes: mergedDistanceSubMaxes }),
+        ...(input.timeSeconds !== undefined && { timeSeconds: input.timeSeconds }),
+        ...(input.reps !== undefined && { reps: input.reps }),
+        ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
+      };
+
+      // Archive old benchmark
+      await User.findByIdAndUpdate(userId, {
+        $pull: { currentBenchmarks: { _id: existingBenchmark._id } },
+        $push: { historicalBenchmarks: existingBenchmark },
+      });
+
+      // Push new benchmark
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $push: { currentBenchmarks: newBenchmark } },
+        { new: true, select: 'currentBenchmarks historicalBenchmarks' }
+      );
+
+      const userData = updatedUser!.toJSON();
+      res.status(201).json({
+        success: true,
+        data: {
+          currentBenchmarks: userData.currentBenchmarks || [],
+          historicalBenchmarks: userData.historicalBenchmarks || [],
+        },
+        message: 'New benchmark version created',
+      });
+      return;
+    }
+
+    // No existing benchmark — create fresh
     const newBenchmark = {
       _id: new Types.ObjectId(),
       templateId: template.id,
@@ -145,7 +297,6 @@ export const createMyBenchmark = async (
       recordedAt: input.recordedAt ? new Date(input.recordedAt) : undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
-      // Spread measurement field
       ...(input.repMaxes !== undefined && { repMaxes: input.repMaxes }),
       ...(input.timeSubMaxes !== undefined && { timeSubMaxes: input.timeSubMaxes }),
       ...(input.distanceSubMaxes !== undefined && { distanceSubMaxes: input.distanceSubMaxes }),
@@ -154,41 +305,25 @@ export const createMyBenchmark = async (
       ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
     };
 
-    // 5. Add to user's currentBenchmarks using atomic update
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {
-        $push: { currentBenchmarks: newBenchmark },
-      },
-      { new: true, select: 'currentBenchmarks' }
+      { $push: { currentBenchmarks: newBenchmark } },
+      { new: true, select: 'currentBenchmarks historicalBenchmarks' }
     );
 
     if (!updatedUser) {
-      res.status(404).json({
-        success: false,
-        error: 'User not found',
-      });
+      res.status(404).json({ success: false, error: 'User not found' });
       return;
     }
 
-    // 6. Convert to JSON to trigger toJSON transform
     const userData = updatedUser.toJSON();
-
-    // 7. Find the newly created benchmark
-    const createdBenchmark = userData.currentBenchmarks?.find(
-      (b: any) => b.id === newBenchmark._id.toString()
-    );
-
-    const message = input.oldBenchmarkId
-      ? 'Benchmark created and old benchmark moved to historical'
-      : 'Benchmark created successfully';
-
     res.status(201).json({
       success: true,
       data: {
-        benchmark: createdBenchmark,
+        currentBenchmarks: userData.currentBenchmarks || [],
+        historicalBenchmarks: userData.historicalBenchmarks || [],
       },
-      message,
+      message: 'Benchmark created successfully',
     });
   } catch (error) {
     console.error('Error creating benchmark:', error);

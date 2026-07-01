@@ -118,7 +118,6 @@ export const CreateMyBenchmarkSchema = z.object({
   otherNotes: z.string().min(1).max(500).optional(),
   recordedAt: z.coerce.date().optional(),
 
-  oldBenchmarkId: z.string().regex(/^[0-9a-fA-F]{24}$/, 'Invalid ObjectId format').optional(),
 }).refine(
   (data) => {
     // Exactly one measurement field should be provided

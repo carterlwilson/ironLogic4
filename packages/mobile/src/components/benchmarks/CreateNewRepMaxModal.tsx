@@ -61,42 +61,13 @@ export function CreateNewRepMaxModal({
     const recordedDate = parseDateStringToLocalDate(values.recordedAt);
     const newWeight = typeof values.weightKg === 'string' ? parseFloat(values.weightKg) : values.weightKg;
 
-    // Build repMaxes array: updated target + copied others + new template submaxes
-    // Step 1: Update or copy existing rep maxes
-    const existingRepMaxes = (oldBenchmark.repMaxes || []).map(rm => {
-      if (rm.id === targetRepMax.id) {
-        // This is the target rep max - use new values
-        return {
-          templateRepMaxId: rm.templateRepMaxId,
-          weightKg: newWeight,
-          recordedAt: recordedDate,
-        };
-      } else {
-        // Copy existing rep max values
-        return {
-          templateRepMaxId: rm.templateRepMaxId,
-          weightKg: rm.weightKg,
-          recordedAt: rm.recordedAt, // Keep original date
-        };
-      }
-    });
-
-    // Step 2: Add NEW template submaxes that don't exist in old benchmark
-    const newTemplateRepMaxes = (template?.templateRepMaxes || [])
-      .filter(trm => !oldBenchmark.repMaxes?.some(rm => rm.templateRepMaxId === trm.id))
-      .map(trm => ({
-        templateRepMaxId: trm.id,
-        weightKg: 0,  // Default value for new submaxes
-        recordedAt: recordedDate,
-      }));
-
-    // Step 3: Combine both
-    const repMaxes = [...existingRepMaxes, ...newTemplateRepMaxes];
-
     const data: CreateMyBenchmarkInput = {
       templateId: oldBenchmark.templateId,
-      oldBenchmarkId: oldBenchmark.id, // Triggers move to historical
-      repMaxes,
+      repMaxes: [{
+        templateRepMaxId: targetRepMax.templateRepMaxId,
+        weightKg: newWeight,
+        recordedAt: recordedDate,
+      }],
       notes: values.notes || undefined,
     };
 
@@ -118,7 +89,7 @@ export function CreateNewRepMaxModal({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Create New Rep Max"
+      title="Update Rep Max"
       size="lg"
       fullScreen
     >
@@ -191,7 +162,7 @@ export function CreateNewRepMaxModal({
           />
 
           <Button type="submit" fullWidth size="lg" loading={loading}>
-            Create New Benchmark
+            Save Changes
           </Button>
         </Stack>
       </form>

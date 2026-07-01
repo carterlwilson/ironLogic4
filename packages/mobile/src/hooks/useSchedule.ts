@@ -1,352 +1,126 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { notifications } from '@mantine/notifications';
 import {
   getAvailableSchedules,
-  joinTimeslot,
-  leaveTimeslot,
+  joinTimeslot as joinTimeslotApi,
+  leaveTimeslot as leaveTimeslotApi,
   IActiveScheduleWithAvailability,
 } from '../services/scheduleApi';
-import { useAuth } from '../providers/AuthProvider';
-import { ITimeslotWithAvailability } from '@ironlogic4/shared';
 
-interface ScheduleState {
-  schedules: IActiveScheduleWithAvailability[];
-  selectedCoachId: string | null;
-  loading: boolean;
-  error: string | null;
-  actionLoading: { [timeslotId: string]: boolean };
-}
-
-interface CoachData {
-  id: string;
-  name: string;
-  totalSpots: number;
-  availableSpots: number;
-  userBookings: number;
-}
-
-interface TimeslotWithSchedule extends ITimeslotWithAvailability {
+export interface FlatTimeslot {
+  timeslotId: string;
   scheduleId: string;
   dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  capacity: number;
+  availableSpots: number;
+  isUserAssigned: boolean;
+  coaches: { id: string; firstName: string; lastName: string }[];
+}
+
+// The shared IActiveSchedule type only has `coachIds`, but this endpoint also
+// attaches a `coaches` array (id/firstName/lastName) to each schedule at runtime.
+type ScheduleWithCoaches = IActiveScheduleWithAvailability & {
+  coaches: { id: string; firstName: string; lastName: string }[];
+};
+
+function flattenSchedules(schedules: IActiveScheduleWithAvailability[]): FlatTimeslot[] {
+  const flat: FlatTimeslot[] = [];
+
+  for (const schedule of schedules as ScheduleWithCoaches[]) {
+    const coaches = schedule.coaches ?? [];
+    for (const day of schedule.days) {
+      for (const timeSlot of day.timeSlots) {
+        flat.push({
+          timeslotId: timeSlot.id,
+          scheduleId: schedule.id,
+          dayOfWeek: day.dayOfWeek,
+          startTime: timeSlot.startTime,
+          endTime: timeSlot.endTime,
+          capacity: timeSlot.capacity,
+          availableSpots: timeSlot.availableSpots,
+          isUserAssigned: timeSlot.isUserAssigned,
+          coaches,
+        });
+      }
+    }
+  }
+
+  return flat;
 }
 
 export function useSchedule() {
-  const { user } = useAuth();
-  const [state, setState] = useState<ScheduleState>({
-    schedules: [],
-    selectedCoachId: null,
-    loading: false,
-    error: null,
-    actionLoading: {},
-  });
+  const [flatSlots, setFlatSlots] = useState<FlatTimeslot[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({});
 
-  /**
-   * Load schedules from API
-   */
-  const loadSchedules = useCallback(async () => {
-    setState((prev) => ({ ...prev, loading: true, error: null }));
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await getAvailableSchedules();
-      setState((prev) => ({
-        ...prev,
-        schedules: response.data || [],
-        loading: false,
-      }));
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load schedules';
-      setState((prev) => ({
-        ...prev,
-        schedules: [],
-        loading: false,
-        error: errorMessage,
-      }));
+      setFlatSlots(flattenSchedules(response.data));
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load schedule';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const joinTimeslot = useCallback(async (slot: FlatTimeslot) => {
+    setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: true }));
+    try {
+      await joinTimeslotApi(slot.scheduleId, slot.timeslotId);
+      await refresh();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to join timeslot';
       notifications.show({
         title: 'Error',
         message: errorMessage,
         color: 'red',
         autoClose: 5000,
       });
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: false }));
     }
-  }, []);
+  }, [refresh]);
 
-  /**
-   * Select a coach to view their timeslots
-   */
-  const selectCoach = useCallback((coachId: string | null) => {
-    setState((prev) => ({ ...prev, selectedCoachId: coachId }));
-  }, []);
-
-  /**
-   * Join a timeslot with optimistic update
-   */
-  const handleJoinTimeslot = useCallback(
-    async (scheduleId: string, timeslotId: string) => {
-      if (!user) return;
-
-      setState((prev) => ({
-        ...prev,
-        actionLoading: { ...prev.actionLoading, [timeslotId]: true },
-      }));
-
-      // Optimistic update
-      setState((prev) => ({
-        ...prev,
-        schedules: prev.schedules.map((schedule) => {
-          if (schedule.id !== scheduleId) return schedule;
-          return {
-            ...schedule,
-            days: schedule.days.map((day) => ({
-              ...day,
-              timeSlots: day.timeSlots.map((slot) => {
-                if (slot.id !== timeslotId) return slot;
-                return {
-                  ...slot,
-                  assignedClients: [...slot.assignedClients, user.id],
-                  availableSpots: slot.availableSpots - 1,
-                  isUserAssigned: true,
-                };
-              }),
-            })),
-          };
-        }),
-      }));
-
-      try {
-        await joinTimeslot(scheduleId, timeslotId);
-        notifications.show({
-          title: 'Success',
-          message: 'You have joined this timeslot!',
-          color: 'green',
-          autoClose: 3000,
-        });
-        await loadSchedules();
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to join timeslot';
-        notifications.show({
-          title: 'Error',
-          message: errorMessage,
-          color: 'red',
-          autoClose: 5000,
-        });
-        await loadSchedules();
-      } finally {
-        setState((prev) => {
-          const newActionLoading = { ...prev.actionLoading };
-          delete newActionLoading[timeslotId];
-          return { ...prev, actionLoading: newActionLoading };
-        });
-      }
-    },
-    [user, loadSchedules]
-  );
-
-  /**
-   * Leave a timeslot with optimistic update
-   */
-  const handleLeaveTimeslot = useCallback(
-    async (scheduleId: string, timeslotId: string) => {
-      if (!user) return;
-
-      setState((prev) => ({
-        ...prev,
-        actionLoading: { ...prev.actionLoading, [timeslotId]: true },
-      }));
-
-      // Optimistic update
-      setState((prev) => ({
-        ...prev,
-        schedules: prev.schedules.map((schedule) => {
-          if (schedule.id !== scheduleId) return schedule;
-          return {
-            ...schedule,
-            days: schedule.days.map((day) => ({
-              ...day,
-              timeSlots: day.timeSlots.map((slot) => {
-                if (slot.id !== timeslotId) return slot;
-                return {
-                  ...slot,
-                  assignedClients: slot.assignedClients.filter((id) => id !== user.id),
-                  availableSpots: slot.availableSpots + 1,
-                  isUserAssigned: false,
-                };
-              }),
-            })),
-          };
-        }),
-      }));
-
-      try {
-        await leaveTimeslot(scheduleId, timeslotId);
-        notifications.show({
-          title: 'Success',
-          message: 'You have left this timeslot.',
-          color: 'blue',
-          autoClose: 3000,
-        });
-        await loadSchedules();
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to leave timeslot';
-        notifications.show({
-          title: 'Error',
-          message: errorMessage,
-          color: 'red',
-          autoClose: 5000,
-        });
-        await loadSchedules();
-      } finally {
-        setState((prev) => {
-          const newActionLoading = { ...prev.actionLoading };
-          delete newActionLoading[timeslotId];
-          return { ...prev, actionLoading: newActionLoading };
-        });
-      }
-    },
-    [user, loadSchedules]
-  );
-
-  /**
-   * Computed: Get coach data for all coaches
-   */
-  const coachesData = useMemo((): CoachData[] => {
-    // Group schedules by coach
-    const coachMap = new Map<string, CoachData>();
-
-    state.schedules.forEach((schedule) => {
-      // Use the coaches array from the API response if available
-      const scheduleCoaches = (schedule as any).coaches || [];
-
-      schedule.coachIds.forEach((coachId) => {
-        if (!coachMap.has(coachId)) {
-          // Find coach details from the schedule's coaches array
-          const coachDetails = scheduleCoaches.find((c: any) => c.id === coachId);
-          const coachName = coachDetails
-            ? `${coachDetails.firstName} ${coachDetails.lastName}`.trim() || coachDetails.email
-            : `Coach ${coachId.slice(-4)}`; // Fallback to ID if not found
-
-          coachMap.set(coachId, {
-            id: coachId,
-            name: coachName,
-            totalSpots: 0,
-            availableSpots: 0,
-            userBookings: 0,
-          });
-        }
-
-        const coachData = coachMap.get(coachId)!;
-
-        schedule.days.forEach((day) => {
-          day.timeSlots.forEach((slot) => {
-            coachData.totalSpots += slot.capacity;
-            coachData.availableSpots += slot.availableSpots;
-            if (slot.isUserAssigned) {
-              coachData.userBookings += 1;
-            }
-          });
-        });
+  const leaveTimeslot = useCallback(async (slot: FlatTimeslot) => {
+    setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: true }));
+    try {
+      await leaveTimeslotApi(slot.scheduleId, slot.timeslotId);
+      await refresh();
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to leave timeslot';
+      notifications.show({
+        title: 'Error',
+        message: errorMessage,
+        color: 'red',
+        autoClose: 5000,
       });
-    });
+    } finally {
+      setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: false }));
+    }
+  }, [refresh]);
 
-    return Array.from(coachMap.values());
-  }, [state.schedules]);
-
-  /**
-   * Computed: Get selected coach data
-   */
-  const selectedCoach = useMemo((): CoachData | null => {
-    if (!state.selectedCoachId) return null;
-    return coachesData.find((c) => c.id === state.selectedCoachId) || null;
-  }, [state.selectedCoachId, coachesData]);
-
-  /**
-   * Computed: Get timeslots for selected coach grouped by day
-   */
-  const timeslotsByDay = useMemo((): Map<number, TimeslotWithSchedule[]> => {
-    if (!state.selectedCoachId) return new Map();
-
-    const dayMap = new Map<number, TimeslotWithSchedule[]>();
-
-    state.schedules.forEach((schedule) => {
-      if (!schedule.coachIds.includes(state.selectedCoachId!)) return;
-
-      schedule.days.forEach((day) => {
-        if (!dayMap.has(day.dayOfWeek)) {
-          dayMap.set(day.dayOfWeek, []);
-        }
-
-        const timeslotsWithSchedule = day.timeSlots.map((slot: any) => ({
-          ...slot,
-          id: slot.id,
-          scheduleId: schedule.id,
-          dayOfWeek: day.dayOfWeek,
-        }));
-
-        dayMap.get(day.dayOfWeek)!.push(...timeslotsWithSchedule);
-      });
-    });
-
-    // Sort timeslots within each day by start time
-    dayMap.forEach((slots) => {
-      slots.sort((a, b) => a.startTime.localeCompare(b.startTime));
-    });
-
-    return dayMap;
-  }, [state.schedules, state.selectedCoachId]);
-
-  /**
-   * Computed: Get user's timeslots grouped by coach
-   */
-  const userTimeslotsByCoach = useMemo((): Map<string, TimeslotWithSchedule[]> => {
-    const coachMap = new Map<string, TimeslotWithSchedule[]>();
-
-    state.schedules.forEach((schedule) => {
-      schedule.coachIds.forEach((coachId) => {
-        if (!coachMap.has(coachId)) {
-          coachMap.set(coachId, []);
-        }
-
-        schedule.days.forEach((day) => {
-          day.timeSlots
-            .filter((slot) => slot.isUserAssigned)
-            .forEach((slot: any) => {
-              coachMap.get(coachId)!.push({
-                ...slot,
-                id: slot.id,
-                scheduleId: schedule.id,
-                dayOfWeek: day.dayOfWeek,
-              });
-            });
-        });
-      });
-    });
-
-    return coachMap;
-  }, [state.schedules]);
-
-  /**
-   * Load schedules on mount
-   */
   useEffect(() => {
-    if (user?.gymId) {
-      loadSchedules();
-    }
-  }, [user?.gymId, loadSchedules]);
+    refresh();
+  }, [refresh]);
+
+  const mySlots = flatSlots.filter((slot) => slot.isUserAssigned);
+  const availableSlots = flatSlots.filter((slot) => slot.availableSpots > 0 && !slot.isUserAssigned);
 
   return {
-    // Data
-    schedules: state.schedules,
-    coachesData,
-    selectedCoach,
-    selectedCoachId: state.selectedCoachId,
-    timeslotsByDay,
-    userTimeslotsByCoach,
-    loading: state.loading,
-    error: state.error,
-    actionLoading: state.actionLoading,
-
-    // Actions
-    loadSchedules,
-    selectCoach,
-    joinTimeslot: handleJoinTimeslot,
-    leaveTimeslot: handleLeaveTimeslot,
+    mySlots,
+    availableSlots,
+    loading,
+    error,
+    refresh,
+    joinTimeslot,
+    leaveTimeslot,
+    actionLoading,
   };
 }

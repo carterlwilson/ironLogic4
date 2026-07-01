@@ -1,15 +1,11 @@
 import { Card, Text, Group, Badge, Button, Stack, Paper, Collapse, ActionIcon, SimpleGrid, Skeleton, Menu } from '@mantine/core';
-import { IconPencil, IconRefresh, IconClock, IconChevronDown, IconDotsVertical, IconTrash } from '@tabler/icons-react';
+import { IconPencil, IconClock, IconChevronDown, IconDotsVertical, IconTrash } from '@tabler/icons-react';
 import { ClientBenchmark, BenchmarkTemplate, RepMax, TimeSubMax, DistanceSubMax } from '@ironlogic4/shared';
-import { BenchmarkType, DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
+import { BenchmarkType } from '@ironlogic4/shared/types/benchmarkTemplates';
 import {
-  isBenchmarkEditable,
   formatDate,
   formatMeasurement,
   getBenchmarkAgeInDays,
-  isRepMaxEditable,
-  isTimeSubMaxEditable,
-  isDistanceSubMaxEditable,
 } from '../../utils/benchmarkUtils';
 import { useState } from 'react';
 import { RepMaxCard } from './RepMaxCard';
@@ -19,12 +15,10 @@ import { DistanceSubMaxCard } from './DistanceSubMaxCard';
 interface UnrecordedSubMaxCardProps {
   name: string;
   isHistorical: boolean;
-  isEditable: boolean;
-  onEdit: () => void;
-  onCreateNew: () => void;
+  onUpdate?: () => void;
 }
 
-function UnrecordedSubMaxCard({ name, isHistorical, isEditable, onEdit, onCreateNew }: UnrecordedSubMaxCardProps) {
+function UnrecordedSubMaxCard({ name, isHistorical, onUpdate }: UnrecordedSubMaxCardProps) {
   return (
     <Card
       shadow="xs"
@@ -33,36 +27,25 @@ function UnrecordedSubMaxCard({ name, isHistorical, isEditable, onEdit, onCreate
       withBorder
       style={{
         minHeight: '120px',
-        cursor: isHistorical ? 'default' : 'pointer',
+        cursor: !isHistorical && onUpdate ? 'pointer' : 'default',
         opacity: 0.7,
       }}
-      onClick={isHistorical ? undefined : () => (isEditable ? onEdit() : onCreateNew())}
+      onClick={!isHistorical && onUpdate ? () => onUpdate() : undefined}
     >
       <Stack gap="xs" h="100%" justify="space-between">
         <Group justify="space-between" align="flex-start">
           <Badge color="gray" variant="light" size="md">
             {name}
           </Badge>
-          {!isHistorical && isEditable && (
+          {!isHistorical && onUpdate && (
             <ActionIcon
               variant="subtle"
               color="forestGreen"
               size="sm"
-              onClick={(e) => { e.stopPropagation(); onEdit(); }}
+              onClick={(e) => { e.stopPropagation(); onUpdate(); }}
               aria-label={`Record ${name}`}
             >
               <IconPencil size={14} />
-            </ActionIcon>
-          )}
-          {!isHistorical && !isEditable && (
-            <ActionIcon
-              variant="subtle"
-              color="orange"
-              size="sm"
-              onClick={(e) => { e.stopPropagation(); onCreateNew(); }}
-              aria-label={`Record ${name}`}
-            >
-              <IconRefresh size={14} />
             </ActionIcon>
           )}
         </Group>
@@ -76,14 +59,10 @@ interface BenchmarkCardProps {
   benchmark: ClientBenchmark;
   isHistorical: boolean;
   onEdit: (benchmark: ClientBenchmark) => void;
-  onCreateNew: (benchmark: ClientBenchmark) => void;
-  template?: BenchmarkTemplate;  // Template data to get rep max names
-  onEditRepMax?: (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => void;
-  onCreateNewRepMax?: (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => void;
-  onEditTimeSubMax?: (timeSubMax: TimeSubMax, benchmarkId: string, allTimeSubMaxes: TimeSubMax[], templateSubMaxName: string, benchmarkName: string, distanceUnit: DistanceUnit) => void;
-  onCreateNewTimeSubMax?: (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => void;
-  onEditDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmarkId: string, allDistanceSubMaxes: DistanceSubMax[], templateDistanceSubMaxName: string, benchmarkName: string) => void;
-  onCreateNewDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => void;
+  template?: BenchmarkTemplate;
+  onUpdateRepMax?: (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => void;
+  onUpdateTimeSubMax?: (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => void;
+  onUpdateDistanceSubMax?: (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => void;
   onDelete?: (benchmark: ClientBenchmark) => void;
 }
 
@@ -91,18 +70,13 @@ export function BenchmarkCard({
   benchmark,
   isHistorical,
   onEdit,
-  onCreateNew,
   template,
-  onEditRepMax,
-  onCreateNewRepMax,
-  onEditTimeSubMax,
-  onCreateNewTimeSubMax,
-  onEditDistanceSubMax,
-  onCreateNewDistanceSubMax,
+  onUpdateRepMax,
+  onUpdateTimeSubMax,
+  onUpdateDistanceSubMax,
   onDelete,
 }: BenchmarkCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const isEditable = !isHistorical && isBenchmarkEditable(benchmark);
   const ageInDays = getBenchmarkAgeInDays(benchmark);
 
   const measurementValue = formatMeasurement(
@@ -128,105 +102,50 @@ export function BenchmarkCard({
     return getTemplateRepMax(templateRepMaxId)?.reps;
   };
 
-  const handleEditRepMax = (repMax: RepMax) => {
-    if (onEditRepMax && benchmark.repMaxes) {
+  const handleUpdateRepMax = (repMax: RepMax) => {
+    if (onUpdateRepMax && template) {
       const templateRepMaxName = getTemplateName(repMax.templateRepMaxId);
-      onEditRepMax(repMax, benchmark.id, benchmark.repMaxes, templateRepMaxName, benchmark.name);
+      const templateRepMaxReps = getTemplateReps(repMax.templateRepMaxId) || 1;
+      onUpdateRepMax(repMax, benchmark, template, templateRepMaxName, templateRepMaxReps);
     }
   };
 
-  const handleCreateNewRepMax = (repMax: RepMax) => {
-    if (onCreateNewRepMax && benchmark.repMaxes && template) {
-      const templateRepMaxName = getTemplateName(repMax.templateRepMaxId);
-      const templateRepMaxReps = getTemplateReps(repMax.templateRepMaxId);
-      onCreateNewRepMax(repMax, benchmark, template, templateRepMaxName, templateRepMaxReps || 1);
-    }
-  };
-
-  const handleEditTimeSubMax = (timeSubMax: TimeSubMax) => {
-    if (onEditTimeSubMax && benchmark.timeSubMaxes && template) {
+  const handleUpdateTimeSubMax = (timeSubMax: TimeSubMax) => {
+    if (onUpdateTimeSubMax && template) {
       const templateSubMax = template.templateTimeSubMaxes?.find(t => t.id === timeSubMax.templateSubMaxId);
       const templateSubMaxName = templateSubMax?.name || 'Unknown';
-      onEditTimeSubMax(timeSubMax, benchmark.id, benchmark.timeSubMaxes, templateSubMaxName, benchmark.name, template.distanceUnit!);
+      onUpdateTimeSubMax(timeSubMax, benchmark, template, templateSubMaxName);
     }
   };
 
-  const handleCreateNewTimeSubMax = (timeSubMax: TimeSubMax) => {
-    if (onCreateNewTimeSubMax && benchmark.timeSubMaxes && template) {
-      const templateSubMax = template.templateTimeSubMaxes?.find(t => t.id === timeSubMax.templateSubMaxId);
-      const templateSubMaxName = templateSubMax?.name || 'Unknown';
-      onCreateNewTimeSubMax(timeSubMax, benchmark, template, templateSubMaxName);
-    }
-  };
-
-  const handleEditDistanceSubMax = (distanceSubMax: DistanceSubMax) => {
-    if (onEditDistanceSubMax && benchmark.distanceSubMaxes && template) {
+  const handleUpdateDistanceSubMax = (distanceSubMax: DistanceSubMax) => {
+    if (onUpdateDistanceSubMax && template) {
       const templateDistanceSubMax = template.templateDistanceSubMaxes?.find(t => t.id === distanceSubMax.templateDistanceSubMaxId);
       const templateDistanceSubMaxName = templateDistanceSubMax?.name || 'Unknown';
-      onEditDistanceSubMax(distanceSubMax, benchmark.id, benchmark.distanceSubMaxes, templateDistanceSubMaxName, benchmark.name);
-    }
-  };
-
-  const handleCreateNewDistanceSubMax = (distanceSubMax: DistanceSubMax) => {
-    if (onCreateNewDistanceSubMax && benchmark.distanceSubMaxes && template) {
-      const templateDistanceSubMax = template.templateDistanceSubMaxes?.find(t => t.id === distanceSubMax.templateDistanceSubMaxId);
-      const templateDistanceSubMaxName = templateDistanceSubMax?.name || 'Unknown';
-      onCreateNewDistanceSubMax(distanceSubMax, benchmark, template, templateDistanceSubMaxName);
+      onUpdateDistanceSubMax(distanceSubMax, benchmark, template, templateDistanceSubMaxName);
     }
   };
 
   const getBadgeColor = () => {
     if (isHistorical) return 'gray';
-    if (isEditable) return 'forestGreen';
-    return 'orange';
+    return 'forestGreen';
   };
 
   const getActionButton = () => {
-    // WEIGHT, DISTANCE, and TIME benchmarks check editability
-    if (benchmark.type === BenchmarkType.WEIGHT || benchmark.type === BenchmarkType.DISTANCE || benchmark.type === BenchmarkType.TIME) {
-      // Historical benchmarks are view-only
-      if (isHistorical) {
-        return null;
-      }
+    if (isHistorical) return null;
 
-      // If editable (< 14 days), show Edit button
-      if (isEditable) {
-        return (
-          <Button
-            variant="light"
-            color="forestGreen"
-            size="md"
-            leftSection={<IconPencil size={18} />}
-            onClick={() => onEdit(benchmark)}
-            fullWidth
-          >
-            Edit
-          </Button>
-        );
-      }
-
-      // Show "Create New" button for old benchmarks (>= 14 days)
-      return (
-        <Button
-          variant="light"
-          color="orange"
-          size="md"
-          leftSection={<IconRefresh size={18} />}
-          onClick={() => onCreateNew(benchmark)}
-          fullWidth
-        >
-          Create New
-        </Button>
-      );
-    }
-
-    // Historical benchmarks are view-only
-    if (isHistorical) {
+    // WEIGHT and DISTANCE — sub-max cards handle individual updates
+    if (benchmark.type === BenchmarkType.WEIGHT || benchmark.type === BenchmarkType.DISTANCE) {
       return null;
     }
 
-    // Current benchmarks for other types: editable or create new
-    if (isEditable) {
+    // TIME — complex (with distanceSubMaxes) or scalar
+    if (benchmark.type === BenchmarkType.TIME) {
+      // If template has distanceSubMaxes, those cards handle updates
+      if (template?.templateDistanceSubMaxes && template.templateDistanceSubMaxes.length > 0) {
+        return null;
+      }
+      // Scalar TIME or template not yet loaded — show Update button
       return (
         <Button
           variant="light"
@@ -236,21 +155,22 @@ export function BenchmarkCard({
           onClick={() => onEdit(benchmark)}
           fullWidth
         >
-          Edit
+          Update
         </Button>
       );
     }
 
+    // REPS and OTHER
     return (
       <Button
         variant="light"
-        color="orange"
+        color="forestGreen"
         size="md"
-        leftSection={<IconRefresh size={18} />}
-        onClick={() => onCreateNew(benchmark)}
+        leftSection={<IconPencil size={18} />}
+        onClick={() => onEdit(benchmark)}
         fullWidth
       >
-        Create New
+        Update
       </Button>
     );
   };
@@ -276,7 +196,7 @@ export function BenchmarkCard({
                 </ActionIcon>
               </Menu.Target>
               <Menu.Dropdown>
-                {!isHistorical && (
+                {!isHistorical && (benchmark.type === BenchmarkType.REPS || benchmark.type === BenchmarkType.OTHER || (benchmark.type === BenchmarkType.TIME && !template?.templateDistanceSubMaxes?.length)) && (
                   <Menu.Item
                     leftSection={<IconPencil size={16} />}
                     onClick={() => onEdit(benchmark)}
@@ -341,13 +261,11 @@ export function BenchmarkCard({
                     {[...template.templateRepMaxes]
                       .sort((a, b) => a.reps - b.reps)
                       .map((templateRepMax) => {
-                        // Find existing rep max value for this template submax
                         const existingRepMax = benchmark.repMaxes?.find(
                           rm => rm.templateRepMaxId === templateRepMax.id
                         );
 
                         if (existingRepMax) {
-                          // Show actual value card
                           return (
                             <RepMaxCard
                               key={existingRepMax.id}
@@ -357,9 +275,7 @@ export function BenchmarkCard({
                               templateRepMaxName={templateRepMax.name}
                               templateRepMaxReps={templateRepMax.reps}
                               isHistorical={isHistorical}
-                              isEditable={isRepMaxEditable(existingRepMax)}
-                              onEdit={() => handleEditRepMax(existingRepMax)}
-                              onCreateNew={() => handleCreateNewRepMax(existingRepMax)}
+                              onUpdate={!isHistorical ? () => handleUpdateRepMax(existingRepMax) : undefined}
                             />
                           );
                         } else {
@@ -368,9 +284,17 @@ export function BenchmarkCard({
                               key={templateRepMax.id}
                               name={templateRepMax.name}
                               isHistorical={isHistorical}
-                              isEditable={isEditable}
-                              onEdit={() => onEdit(benchmark)}
-                              onCreateNew={() => onCreateNew(benchmark)}
+                              onUpdate={!isHistorical && onUpdateRepMax && template ? () => {
+                                const syntheticRepMax: RepMax = {
+                                  id: '',
+                                  templateRepMaxId: templateRepMax.id,
+                                  weightKg: 0,
+                                  recordedAt: new Date(),
+                                  createdAt: new Date(),
+                                  updatedAt: new Date(),
+                                };
+                                onUpdateRepMax(syntheticRepMax, benchmark, template, templateRepMax.name, templateRepMax.reps);
+                              } : undefined}
                             />
                           );
                         }
@@ -399,13 +323,11 @@ export function BenchmarkCard({
                   <Text size="sm" fw={500} c="dimmed">Distances</Text>
                   <SimpleGrid cols={2} spacing="sm">
                     {template.templateTimeSubMaxes.map((templateSubMax) => {
-                      // Find existing time submax value for this template submax
                       const existingTimeSubMax = benchmark.timeSubMaxes?.find(
                         tsm => tsm.templateSubMaxId === templateSubMax.id
                       );
 
                       if (existingTimeSubMax) {
-                        // Show actual value card
                         return (
                           <TimeSubMaxCard
                             key={existingTimeSubMax.id}
@@ -415,9 +337,7 @@ export function BenchmarkCard({
                             templateSubMaxName={templateSubMax.name}
                             distanceUnit={template.distanceUnit!}
                             isHistorical={isHistorical}
-                            isEditable={isTimeSubMaxEditable(existingTimeSubMax)}
-                            onEdit={() => handleEditTimeSubMax(existingTimeSubMax)}
-                            onCreateNew={() => handleCreateNewTimeSubMax(existingTimeSubMax)}
+                            onUpdate={!isHistorical ? () => handleUpdateTimeSubMax(existingTimeSubMax) : undefined}
                           />
                         );
                       } else {
@@ -426,9 +346,17 @@ export function BenchmarkCard({
                             key={templateSubMax.id}
                             name={templateSubMax.name}
                             isHistorical={isHistorical}
-                            isEditable={isEditable}
-                            onEdit={() => onEdit(benchmark)}
-                            onCreateNew={() => onCreateNew(benchmark)}
+                            onUpdate={!isHistorical && onUpdateTimeSubMax && template ? () => {
+                              const syntheticTimeSubMax: TimeSubMax = {
+                                id: '',
+                                templateSubMaxId: templateSubMax.id,
+                                distanceMeters: 0,
+                                recordedAt: new Date(),
+                                createdAt: new Date(),
+                                updatedAt: new Date(),
+                              };
+                              onUpdateTimeSubMax(syntheticTimeSubMax, benchmark, template, templateSubMax.name);
+                            } : undefined}
                           />
                         );
                       }
@@ -457,13 +385,11 @@ export function BenchmarkCard({
                   <Text size="sm" fw={500} c="dimmed">Times</Text>
                   <SimpleGrid cols={2} spacing="sm">
                     {template.templateDistanceSubMaxes.map((templateDistanceSubMax) => {
-                      // Find existing distance submax value for this template submax
                       const existingDistanceSubMax = benchmark.distanceSubMaxes?.find(
                         dsm => dsm.templateDistanceSubMaxId === templateDistanceSubMax.id
                       );
 
                       if (existingDistanceSubMax) {
-                        // Show actual value card
                         return (
                           <DistanceSubMaxCard
                             key={existingDistanceSubMax.id}
@@ -472,9 +398,7 @@ export function BenchmarkCard({
                             benchmarkName={benchmark.name}
                             templateDistanceSubMaxName={templateDistanceSubMax.name}
                             isHistorical={isHistorical}
-                            isEditable={isDistanceSubMaxEditable(existingDistanceSubMax)}
-                            onEdit={() => handleEditDistanceSubMax(existingDistanceSubMax)}
-                            onCreateNew={() => handleCreateNewDistanceSubMax(existingDistanceSubMax)}
+                            onUpdate={!isHistorical ? () => handleUpdateDistanceSubMax(existingDistanceSubMax) : undefined}
                           />
                         );
                       } else {
@@ -483,9 +407,17 @@ export function BenchmarkCard({
                             key={templateDistanceSubMax.id}
                             name={templateDistanceSubMax.name}
                             isHistorical={isHistorical}
-                            isEditable={isEditable}
-                            onEdit={() => onEdit(benchmark)}
-                            onCreateNew={() => onCreateNew(benchmark)}
+                            onUpdate={!isHistorical && onUpdateDistanceSubMax && template ? () => {
+                              const syntheticDistanceSubMax: DistanceSubMax = {
+                                id: '',
+                                templateDistanceSubMaxId: templateDistanceSubMax.id,
+                                timeSeconds: 0,
+                                recordedAt: new Date(),
+                                createdAt: new Date(),
+                                updatedAt: new Date(),
+                              };
+                              onUpdateDistanceSubMax(syntheticDistanceSubMax, benchmark, template, templateDistanceSubMax.name);
+                            } : undefined}
                           />
                         );
                       }

@@ -1,9 +1,9 @@
-import { Modal, Button, Stack, Textarea, TextInput, Text, Badge, Group, Paper, Divider, NumberInput } from '@mantine/core';
+import { Modal, Button, Stack, Textarea, TextInput, NumberInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
 import { ClientBenchmark, BenchmarkTemplate, CreateMyBenchmarkInput, DistanceSubMax } from '@ironlogic4/shared';
 import { IconClock, IconCalendar } from '@tabler/icons-react';
-import { formatDateForInput, formatDate, getDistanceSubMaxAgeInDays, parseDateStringToLocalDate, formatTimeSeconds } from '../../utils/benchmarkUtils';
+import { formatDateForInput, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
 
 interface CreateNewDistanceSubMaxModalProps {
   opened: boolean;
@@ -61,42 +61,13 @@ export function CreateNewDistanceSubMaxModal({
     const recordedDate = parseDateStringToLocalDate(values.recordedAt);
     const newTimeSeconds = typeof values.timeSeconds === 'string' ? parseFloat(values.timeSeconds) : values.timeSeconds;
 
-    // Build distanceSubMaxes array: updated target + copied others + new template submaxes
-    // Step 1: Update or copy existing distance submaxes
-    const existingDistanceSubMaxes = (oldBenchmark.distanceSubMaxes || []).map(dsm => {
-      if (dsm.id === targetDistanceSubMax.id) {
-        // This is the target distance sub-max - use new values
-        return {
-          templateDistanceSubMaxId: dsm.templateDistanceSubMaxId,
-          timeSeconds: newTimeSeconds,
-          recordedAt: recordedDate,
-        };
-      } else {
-        // Copy existing distance sub-max values
-        return {
-          templateDistanceSubMaxId: dsm.templateDistanceSubMaxId,
-          timeSeconds: dsm.timeSeconds,
-          recordedAt: dsm.recordedAt, // Keep original date
-        };
-      }
-    });
-
-    // Step 2: Add NEW template submaxes that don't exist in old benchmark
-    const newTemplateDistanceSubMaxes = (template?.templateDistanceSubMaxes || [])
-      .filter(tdsm => !oldBenchmark.distanceSubMaxes?.some(dsm => dsm.templateDistanceSubMaxId === tdsm.id))
-      .map(tdsm => ({
-        templateDistanceSubMaxId: tdsm.id,
-        timeSeconds: 0,  // Default value for new submaxes
-        recordedAt: recordedDate,
-      }));
-
-    // Step 3: Combine both
-    const distanceSubMaxes = [...existingDistanceSubMaxes, ...newTemplateDistanceSubMaxes];
-
     const data: CreateMyBenchmarkInput = {
       templateId: oldBenchmark.templateId,
-      oldBenchmarkId: oldBenchmark.id, // Triggers move to historical
-      distanceSubMaxes,
+      distanceSubMaxes: [{
+        templateDistanceSubMaxId: targetDistanceSubMax.templateDistanceSubMaxId,
+        timeSeconds: newTimeSeconds,
+        recordedAt: recordedDate,
+      }],
       notes: values.notes || undefined,
     };
 
@@ -110,8 +81,6 @@ export function CreateNewDistanceSubMaxModal({
 
   if (!oldBenchmark || !targetDistanceSubMax || !template) return null;
 
-  const ageInDays = getDistanceSubMaxAgeInDays(targetDistanceSubMax);
-
   // Find template name for this distanceSubMax
   const templateDistanceSubMax = template.templateDistanceSubMaxes?.find(t => t.id === targetDistanceSubMax.templateDistanceSubMaxId);
   const templateDistanceSubMaxName = templateDistanceSubMax?.name || 'Unknown';
@@ -120,77 +89,52 @@ export function CreateNewDistanceSubMaxModal({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Create New from Historical"
+      title="Update Time"
       size="lg"
       fullScreen
     >
-      <Stack gap="md">
-        {/* Old Benchmark Reference */}
-        <Paper p="md" withBorder>
-          <Stack gap="sm">
-            <Group justify="space-between">
-              <Text fw={600}>{oldBenchmark.name}</Text>
-              <Badge color="gray" variant="light">
-                Historical ({ageInDays} days old)
-              </Badge>
-            </Group>
-            <Group justify="space-between">
-              <Text size="sm" c="dimmed">{templateDistanceSubMaxName}</Text>
-              <Text size="sm" fw={500}>
-                {formatTimeSeconds(targetDistanceSubMax.timeSeconds)}
-              </Text>
-            </Group>
-            <Text size="xs" c="dimmed">
-              Recorded: {formatDate(targetDistanceSubMax.recordedAt)}
-            </Text>
-          </Stack>
-        </Paper>
+      <form onSubmit={handleSubmit}>
+        <Stack gap="md">
+          <NumberInput
+            label="Time"
+            placeholder="Enter time in seconds"
+            value={form.values.timeSeconds}
+            onChange={(value) => form.setFieldValue('timeSeconds', value)}
+            error={form.errors.timeSeconds}
+            required
+            min={0}
+            step={0.1}
+            decimalScale={1}
+            size="lg"
+            leftSection={<IconClock size={18} />}
+            description={`Time to complete ${templateDistanceSubMaxName}`}
+          />
 
-        <Divider label="New Benchmark Values" labelPosition="center" />
+          <TextInput
+            label="Date Recorded"
+            type="date"
+            {...form.getInputProps('recordedAt')}
+            required
+            size="lg"
+            max={formatDateForInput(new Date())}
+            leftSection={<IconCalendar size={18} />}
+            description="When did you achieve this time?"
+          />
 
-        <form onSubmit={handleSubmit}>
-          <Stack gap="md">
-            <NumberInput
-              label="Time"
-              placeholder="Enter time in seconds"
-              value={form.values.timeSeconds}
-              onChange={(value) => form.setFieldValue('timeSeconds', value)}
-              error={form.errors.timeSeconds}
-              required
-              min={0}
-              step={0.1}
-              decimalScale={1}
-              size="lg"
-              leftSection={<IconClock size={18} />}
-              description={`Time to complete ${templateDistanceSubMaxName}`}
-            />
+          <Textarea
+            label="Notes (Optional)"
+            placeholder="Add any notes about this benchmark..."
+            {...form.getInputProps('notes')}
+            minRows={3}
+            maxRows={5}
+            size="lg"
+          />
 
-            <TextInput
-              label="Date Recorded"
-              type="date"
-              {...form.getInputProps('recordedAt')}
-              required
-              size="lg"
-              max={formatDateForInput(new Date())}
-              leftSection={<IconCalendar size={18} />}
-              description="When did you achieve this time?"
-            />
-
-            <Textarea
-              label="Notes (Optional)"
-              placeholder="Add any notes about this benchmark..."
-              {...form.getInputProps('notes')}
-              minRows={3}
-              maxRows={5}
-              size="lg"
-            />
-
-            <Button type="submit" fullWidth size="lg" loading={loading}>
-              Create New Benchmark
-            </Button>
-          </Stack>
-        </form>
-      </Stack>
+          <Button type="submit" fullWidth size="lg" loading={loading}>
+            Save Changes
+          </Button>
+        </Stack>
+      </form>
     </Modal>
   );
 }
