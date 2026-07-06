@@ -30,7 +30,8 @@ const BaseActivitySchema = z.object({
   distanceUnit: DistanceUnitSchema.optional(),
   repetitions: z.number().int().min(1).max(10000).optional(),
   templateSubMaxId: objectId.optional(), // Reference to benchmark sub-max for cardio
-  percentageOfMax: z.number().min(0, 'Percentage must be at least 0').max(200, 'Percentage cannot exceed 200').optional()
+  percentageOfMax: z.number().min(0, 'Percentage must be at least 0').max(200, 'Percentage cannot exceed 200').optional(),
+  notes: z.string().trim().max(500, 'Notes must be less than 500 characters').optional()
 });
 
 // Activity schema with refinements

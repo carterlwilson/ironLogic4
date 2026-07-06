@@ -4,6 +4,7 @@ import { ActivityProgress } from '../../pages/WorkoutPage';
 import { CardioType } from '@ironlogic4/shared/types/programs';
 import type { WorkoutActivity } from '@ironlogic4/shared/types/programs';
 import { formatTimeSeconds } from '../../utils/benchmarkUtils';
+import { ActivityNotesBox } from './ActivityNotesBox';
 
 interface CardioActivityCardProps {
   activity: WorkoutActivity;
@@ -72,6 +73,9 @@ export function CardioActivityCard({
             </Badge>
           )}
         </Group>
+
+        {/* Notes */}
+        <ActivityNotesBox activity={activity} />
 
         {/* DISTANCE benchmark prescription */}
         {isBenchmarkBased && activity.calculatedDistanceMeters && (

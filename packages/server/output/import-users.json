@@ -1,0 +1,4113 @@
+[
+  {
+    "firstName": "Matt",
+    "lastName": "Armstrong",
+    "email": "mvarmstrong@yahoo.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 85
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 75
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 52
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 85
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 83
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 120
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 120
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3160
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914289690e2b21e1e0bc947",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 153
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 150
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 65
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Erin",
+    "lastName": "Leddy",
+    "email": "erinjleddy@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 53
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 23
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 31
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 23
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 22
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 17
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 31
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 43
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 996
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2200
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 27
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Andrew",
+    "lastName": "Carruthers",
+    "email": "aecarruth@yahoo.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 52
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 83
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 83
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 53
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 43
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1060
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 800
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3040000
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Kiel",
+    "lastName": "Johnson",
+    "email": "kielij@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 22
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 47
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 58
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2900
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 800
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1050
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 62
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 60
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Kate",
+    "lastName": "Incerto",
+    "email": "k.incerto@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 296000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1198
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 31
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 34
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 56
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 59
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 58
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 57
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1185
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 46
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 46
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 94
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Gwen",
+    "lastName": "Martin",
+    "email": "gwen@geary.me",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 31
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 21
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 54
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 23
+          },
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 20
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 912
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 53
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2220
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 28
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Sarah",
+    "lastName": "Morgan",
+    "email": "ciaobellarose@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 29
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 44
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 29
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 63
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 20580000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 0
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Leanne",
+    "lastName": "Thng",
+    "email": "leanne.thng@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 28
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 23
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 19
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 22
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 17
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 720
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 26
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 26
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 53
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 54
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2370
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1044
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 26
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 25
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Whitney",
+    "lastName": "Baker",
+    "email": "whitneypahl.baker@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 49
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 47
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 0
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2900
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6914289690e2b21e1e0bc947",
+            "weightKg": 19
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 23
+          },
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 20
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 64
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 770
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 968
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Molly",
+    "lastName": "Burtchaell",
+    "email": "molly.b.4036@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 32
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 34
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "weightKg": 22
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 925
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 20
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 21
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Pascal",
+    "lastName": "",
+    "email": "ehill@dlrgroup.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 31
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 23
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 51
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 30
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Matt ",
+    "lastName": "Jensen",
+    "email": "Eightycats@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 56
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 61
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 86
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 95
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1099
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 73
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 84
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 92
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 79
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3140
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1234
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 67
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 77
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 125
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 128
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 127
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 75
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 71
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 78
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 65
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Ben",
+    "lastName": "Watts",
+    "email": "stoikal@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 63
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 87
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 87
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 58
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 75
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 990
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 68
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 74
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2960
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1269
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 118
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 120
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 125
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Julia",
+    "lastName": "Burgdorf",
+    "email": "julia@cullystrength.com",
+    "benchmarks": [
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1143
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 100
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Bryan",
+    "lastName": "Wu",
+    "email": "bryanwu07@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 70
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 70
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 64
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 50
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Andrew",
+    "lastName": "Arehart",
+    "email": "ajarehart@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 53
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 57
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 69
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 63
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 90
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 53
+          },
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 50
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2800
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 55
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Amy",
+    "lastName": "Handler",
+    "email": "bigrock_candymountain@yahoo.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 28
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 36
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2500
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 749
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 68
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 32
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 688
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "John",
+    "lastName": "MacMorris Adix",
+    "email": "jmacadix4@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 49
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 49
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 83.5
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 79
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 110
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 51
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 51
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Pete",
+    "lastName": "O'Farrell",
+    "email": "pjofar@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 80
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 78
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 85
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 120
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 44
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3500
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1387
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Joan",
+    "lastName": "Stewart",
+    "email": "joan.stewart@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 71
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 72
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 62
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 63
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 46
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 79
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 74
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 85
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 78
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 38
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 103
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 94
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2880
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 44
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Ben",
+    "lastName": "Hassey",
+    "email": "benhassey@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 51
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 46
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 66
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 68
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 114
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 107
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1006
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 62
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 56
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3080000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1240
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 117
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 114
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Mike",
+    "lastName": "White",
+    "email": "mtwhite06@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 62
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 86
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 108
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 105
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 97
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 317000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 56
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 73
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 72
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 68
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 949
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 74
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 73
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 71
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1202
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 105
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 105
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 105
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Bethany",
+    "lastName": "Pope",
+    "email": "bethanyjl@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 274000
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 846
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1006
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Zev",
+    "lastName": "Youra",
+    "email": "zevyoura@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3000000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1253
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "weightKg": 51
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 62
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 94
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 104
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 105
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 75
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 67
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 70
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1180
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 125
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 125
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 56
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Katie",
+    "lastName": "Felver",
+    "email": "kmfelver@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 85
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2920000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1192
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 29
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 49
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 46
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 78
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 97
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 81
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 39
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Josie",
+    "lastName": "Schmidt",
+    "email": "tulagems@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 66
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 50
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1025
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2800
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 36
+          },
+          {
+            "templateRepMaxId": "6914289690e2b21e1e0bc947",
+            "weightKg": 33
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 876
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 68
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 39
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Max",
+    "lastName": "Gubkin",
+    "email": "gubkmaxim@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 90
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 115
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 81
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1119
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 105
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 155
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 145
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 66
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 87
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 105
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1078
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3060
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 82
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 165
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 160
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Bill",
+    "lastName": "Tollner",
+    "email": "btomusic20@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 56
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 58
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 64
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 58
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 85
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 75
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 47
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 72
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1029
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 37
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3230
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Amanda",
+    "lastName": "Gonzales",
+    "email": "amanda.gonzales.n@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 58
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 62
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 52
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 38
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 73
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1120
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2560
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Klint",
+    "lastName": "Finley",
+    "email": "klintfinley@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 20
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 20
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1250
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 68
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 75
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 75
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 38
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Julia",
+    "lastName": "Cordes",
+    "email": "juliacordes86@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 24
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 23
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 26
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 62
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 820
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3080
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1188
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 36
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 79
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 80
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 51
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 35
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Dana",
+    "lastName": "Schreiber",
+    "email": "dschreib7@yahoo.com",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 24
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 29
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 26
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 14
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 14
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 26
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1170
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 675
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2420
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 33
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 46
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 44
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 26
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 31
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 24
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 25
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  },
+  {
+    "firstName": "Kaleb",
+    "lastName": "",
+    "email": "kalebnunn@gmail.com",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 324000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "weightKg": 47
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "weightKg": 53
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "weightKg": 68
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "weightKg": 64
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "weightKg": 67
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "weightKg": 50
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "weightKg": 72
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "weightKg": 66
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1274
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "weightKg": 54
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "weightKg": 104
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "weightKg": 115
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "weightKg": 40
+          }
+        ]
+      }
+    ],
+    "programId": "69dc4b4680a3c5e4f8720cc2"
+  }
+]
