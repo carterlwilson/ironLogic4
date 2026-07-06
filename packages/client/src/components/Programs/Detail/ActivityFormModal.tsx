@@ -1,4 +1,4 @@
-import { Modal, Stack, Select, NumberInput, Button, Group, Radio } from '@mantine/core';
+import { Modal, Stack, Select, NumberInput, Button, Group, Radio, Textarea } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { ActivityType } from '@ironlogic4/shared/types/activityTemplates';
@@ -37,6 +37,7 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
       repetitions: existingActivity?.repetitions || undefined,
       templateSubMaxId: existingActivity?.templateSubMaxId || undefined,
       percentageOfMax: existingActivity?.percentageOfMax || undefined,
+      notes: existingActivity?.notes || undefined,
     },
     validate: {
       activityTemplateId: (value) => (!value ? 'Activity template is required' : null),
@@ -69,6 +70,7 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
         repetitions: existingActivity.repetitions,
         templateSubMaxId: existingActivity.templateSubMaxId,
         percentageOfMax: existingActivity.percentageOfMax,
+        notes: existingActivity.notes,
       });
       setSelectedType(existingActivity.type);
       // Set cardio prescription type based on whether templateSubMaxId exists
@@ -333,6 +335,14 @@ export function ActivityFormModal({ opened, onClose, onSubmit, existingActivity,
             </>
           )}
 
+          <Textarea
+            label="Notes"
+            placeholder="Optional note visible to clients (e.g. coaching cue, substitution)"
+            autosize
+            minRows={2}
+            maxLength={500}
+            {...form.getInputProps('notes')}
+          />
 
           <Group justify="flex-end" mt="md">
             <Button variant="subtle" onClick={handleClose}>
