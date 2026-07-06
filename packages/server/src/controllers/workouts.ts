@@ -242,6 +242,7 @@ export const getCurrentWeekWorkouts = async (
             distanceUnit: activity.distanceUnit,
             templateSubMaxId: activity.templateSubMaxId,
             percentageOfMax: activity.percentageOfMax,
+            notes: activity.notes,
             templateName: 'Unknown Activity',
             templateNotes: undefined,
           };
@@ -404,6 +405,7 @@ export const getCurrentWeekWorkouts = async (
           repetitions: activity.repetitions,
           templateSubMaxId: activity.templateSubMaxId,
           percentageOfMax: activity.percentageOfMax,
+          notes: activity.notes,
           templateName: template.name,
           templateNotes: template.notes,
           setCalculations,

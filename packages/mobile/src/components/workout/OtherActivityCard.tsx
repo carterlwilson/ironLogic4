@@ -1,5 +1,6 @@
 import { Card, Stack, Text, Group, Button, Badge, Paper } from '@mantine/core';
 import { ActivityProgress } from '../../pages/WorkoutPage';
+import { ActivityNotesBox } from './ActivityNotesBox';
 import type { WorkoutActivity } from '@ironlogic4/shared/types/programs';
 
 interface OtherActivityCardProps {
@@ -35,6 +36,9 @@ export function OtherActivityCard({
             </Badge>
           )}
         </Group>
+
+        {/* Notes */}
+        <ActivityNotesBox activity={activity} />
 
         {/* Description */}
         {activity.description && (

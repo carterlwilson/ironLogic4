@@ -210,6 +210,11 @@ export function ActivityCard({ activity, program, onProgramChange, onProgramChan
                 {getActivityDetails()}
               </Text>
             )}
+            {activity.notes && (
+              <Text size="xs" c="dimmed" fs="italic" truncate="end">
+                {activity.notes}
+              </Text>
+            )}
           </Stack>
 
           <Menu withinPortal position="bottom-end">

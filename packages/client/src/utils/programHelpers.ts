@@ -580,6 +580,7 @@ export function convertIdsToMongoose(program: IProgram): any {
             type: activity.type,
             order: activity.order,
             activityTemplateId: activity.activityTemplateId,
+            notes: activity.notes,
             // Include type-specific fields
             ...(activity.type === 'lift' && {
               sets: activity.sets,
