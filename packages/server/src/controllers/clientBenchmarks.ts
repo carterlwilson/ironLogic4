@@ -104,8 +104,16 @@ function shouldCreateNewVersion(existing: any, input: CreateMyBenchmarkInput): b
   return false;
 }
 
+// Mongoose subdocuments store their data on a hidden `_doc` property rather than as
+// own enumerable properties, so spreading one directly (`{...subdoc}`) silently drops
+// its fields when later cast by Mongoose during a $push/$set update. Convert to a plain
+// object first so overrides actually stick.
+function toPlainObject(doc: any): any {
+  return typeof doc?.toObject === 'function' ? doc.toObject() : doc;
+}
+
 function mergeRepMaxes(existing: any[], submitted: any[]): any[] {
-  const merged = [...existing];
+  const merged = existing.map(toPlainObject);
   for (const s of submitted) {
     const idx = merged.findIndex(rm => rm.templateRepMaxId === s.templateRepMaxId);
     if (idx >= 0) {
@@ -118,7 +126,7 @@ function mergeRepMaxes(existing: any[], submitted: any[]): any[] {
 }
 
 function mergeTimeSubMaxes(existing: any[], submitted: any[]): any[] {
-  const merged = [...existing];
+  const merged = existing.map(toPlainObject);
   for (const s of submitted) {
     const idx = merged.findIndex(tsm => tsm.templateSubMaxId === s.templateSubMaxId);
     if (idx >= 0) {
@@ -131,7 +139,7 @@ function mergeTimeSubMaxes(existing: any[], submitted: any[]): any[] {
 }
 
 function mergeDistanceSubMaxes(existing: any[], submitted: any[]): any[] {
-  const merged = [...existing];
+  const merged = existing.map(toPlainObject);
   for (const s of submitted) {
     const idx = merged.findIndex(dsm => dsm.templateDistanceSubMaxId === s.templateDistanceSubMaxId);
     if (idx >= 0) {
