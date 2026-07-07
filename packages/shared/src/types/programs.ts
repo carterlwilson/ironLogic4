@@ -25,7 +25,7 @@ export interface ISet {
 
 /**
  * Activity - represents a single planned activity within a day
- * Total fields: 12
+ * Total fields: 13
  */
 export interface IActivity {
   id: string;
@@ -46,6 +46,8 @@ export interface IActivity {
   // Benchmark mode (any cardio type)
   templateSubMaxId?: string;          // Reference to benchmark sub-max for cardio activities
   percentageOfMax?: number;           // Percentage of benchmark (0-200)
+
+  notes?: string;                     // Free-text note from coach/admin/owner, visible to clients
 }
 
 /**

@@ -73,6 +73,7 @@ export interface IActivity {
   repetitions?: number;
   templateSubMaxId?: string;
   percentageOfMax?: number;
+  notes?: string;
 }
 
 /**
@@ -291,6 +292,11 @@ const activitySchema = new Schema<IActivity>(
       min: 0,
       max: 200,
       required: false,
+    },
+    notes: {
+      type: String,
+      trim: true,
+      maxlength: 500,
     },
   },
   { _id: true }
