@@ -7,6 +7,7 @@ import { getBenchmarkTypeColor, getBenchmarkTypeLabel } from '../../utils/benchm
 
 interface BenchmarkProgressListProps {
   currentBenchmarks: ClientBenchmark[];
+  refreshKey?: number;
 }
 
 interface BenchmarkTemplate {
@@ -15,7 +16,7 @@ interface BenchmarkTemplate {
   type: BenchmarkType;
 }
 
-export const BenchmarkProgressList = ({ currentBenchmarks }: BenchmarkProgressListProps) => {
+export const BenchmarkProgressList = ({ currentBenchmarks, refreshKey }: BenchmarkProgressListProps) => {
   const [openIndex, setOpenIndex] = useState<number>(0);
 
   // Extract unique templates from current benchmarks
@@ -84,6 +85,7 @@ export const BenchmarkProgressList = ({ currentBenchmarks }: BenchmarkProgressLi
                 <BenchmarkProgressChart
                   templateId={template.templateId}
                   benchmarkName={template.name}
+                  refreshKey={refreshKey}
                 />
               </Paper>
             </Collapse>

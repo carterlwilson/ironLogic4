@@ -9,7 +9,6 @@ import {
   TimeSubMax,
   DistanceSubMax,
 } from '@ironlogic4/shared';
-import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 import {
   getBenchmarks,
   getBenchmarkTemplates,
@@ -29,7 +28,6 @@ interface BenchmarksState {
 interface ModalState {
   isCreateOpen: boolean;
   isEditOpen: boolean;
-  isCreateNewFromOldOpen: boolean;
   isCreateNewRepMaxOpen: boolean;
   selectedBenchmark: ClientBenchmark | null;
   selectedTemplate: BenchmarkTemplate | null;
@@ -47,7 +45,6 @@ export function useBenchmarks() {
   const [modalState, setModalState] = useState<ModalState>({
     isCreateOpen: false,
     isEditOpen: false,
-    isCreateNewFromOldOpen: false,
     isCreateNewRepMaxOpen: false,
     selectedBenchmark: null,
     selectedTemplate: null,
@@ -58,14 +55,8 @@ export function useBenchmarks() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [benchmarkTemplates, setBenchmarkTemplates] = useState<Map<string, BenchmarkTemplate>>(new Map());
-  const [selectedRepMax, setSelectedRepMax] = useState<{
-    repMax: RepMax;
-    benchmarkId: string;
-    allRepMaxes: RepMax[];
-    templateRepMaxName: string;
-    benchmarkName: string;
-  } | null>(null);
-  const [isEditRepMaxOpen, setIsEditRepMaxOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
   const [selectedRepMaxForNew, setSelectedRepMaxForNew] = useState<{
     repMax: RepMax;
     benchmark: ClientBenchmark;
@@ -74,15 +65,6 @@ export function useBenchmarks() {
     templateRepMaxReps: number;
   } | null>(null);
 
-  const [selectedTimeSubMax, setSelectedTimeSubMax] = useState<{
-    timeSubMax: TimeSubMax;
-    benchmarkId: string;
-    allTimeSubMaxes: TimeSubMax[];
-    templateSubMaxName: string;
-    benchmarkName: string;
-    distanceUnit: DistanceUnit;
-  } | null>(null);
-  const [isEditTimeSubMaxOpen, setIsEditTimeSubMaxOpen] = useState(false);
   const [selectedTimeSubMaxForNew, setSelectedTimeSubMaxForNew] = useState<{
     timeSubMax: TimeSubMax;
     benchmark: ClientBenchmark;
@@ -90,14 +72,6 @@ export function useBenchmarks() {
     templateSubMaxName: string;
   } | null>(null);
 
-  const [selectedDistanceSubMax, setSelectedDistanceSubMax] = useState<{
-    distanceSubMax: DistanceSubMax;
-    benchmarkId: string;
-    allDistanceSubMaxes: DistanceSubMax[];
-    templateDistanceSubMaxName: string;
-    benchmarkName: string;
-  } | null>(null);
-  const [isEditDistanceSubMaxOpen, setIsEditDistanceSubMaxOpen] = useState(false);
   const [selectedDistanceSubMaxForNew, setSelectedDistanceSubMaxForNew] = useState<{
     distanceSubMax: DistanceSubMax;
     benchmark: ClientBenchmark;
@@ -128,6 +102,7 @@ export function useBenchmarks() {
         templates: templatesResponse.data,
         loading: false,
       }));
+      setRefreshKey((k) => k + 1);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load benchmarks';
       setState((prev) => ({
@@ -159,9 +134,12 @@ export function useBenchmarks() {
         setModalState((prev) => ({
           ...prev,
           isCreateOpen: false,
-          isCreateNewFromOldOpen: false,
-          isCreateNewRepMaxOpen: false
+          isEditOpen: false,
+          isCreateNewRepMaxOpen: false,
         }));
+        setSelectedRepMaxForNew(null);
+        setSelectedTimeSubMaxForNew(null);
+        setSelectedDistanceSubMaxForNew(null);
         notifications.show({
           title: 'Success',
           message: response.message || 'Benchmark created successfully',
@@ -287,52 +265,23 @@ export function useBenchmarks() {
   }, []);
 
   /**
-   * Open create new from old modal
-   */
-  const openCreateNewFromOld = useCallback((benchmark: ClientBenchmark) => {
-    setModalState((prev) => ({
-      ...prev,
-      isCreateNewFromOldOpen: true,
-      selectedBenchmark: benchmark,
-    }));
-  }, []);
-
-  /**
    * Close all modals
    */
   const closeModals = useCallback(() => {
     setModalState({
       isCreateOpen: false,
       isEditOpen: false,
-      isCreateNewFromOldOpen: false,
       isCreateNewRepMaxOpen: false,
       selectedBenchmark: null,
       selectedTemplate: null,
     });
-    setIsEditRepMaxOpen(false);
-    setSelectedRepMax(null);
     setSelectedRepMaxForNew(null);
-    setIsEditTimeSubMaxOpen(false);
-    setSelectedTimeSubMax(null);
     setSelectedTimeSubMaxForNew(null);
-    setIsEditDistanceSubMaxOpen(false);
-    setSelectedDistanceSubMax(null);
     setSelectedDistanceSubMaxForNew(null);
   }, []);
 
   /**
-   * Open edit rep max modal
-   */
-  const openEditRepMax = useCallback(
-    (repMax: RepMax, benchmarkId: string, allRepMaxes: RepMax[], templateRepMaxName: string, benchmarkName: string) => {
-      setSelectedRepMax({ repMax, benchmarkId, allRepMaxes, templateRepMaxName, benchmarkName });
-      setIsEditRepMaxOpen(true);
-    },
-    []
-  );
-
-  /**
-   * Open create new from old rep max modal
+   * Open create new rep max modal (universal entry point for all rep max updates)
    */
   const openCreateNewRepMax = useCallback(
     (repMax: RepMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateRepMaxName: string, templateRepMaxReps: number) => {
@@ -343,18 +292,7 @@ export function useBenchmarks() {
   );
 
   /**
-   * Open edit time sub max modal
-   */
-  const openEditTimeSubMax = useCallback(
-    (timeSubMax: TimeSubMax, benchmarkId: string, allTimeSubMaxes: TimeSubMax[], templateSubMaxName: string, benchmarkName: string, distanceUnit: DistanceUnit) => {
-      setSelectedTimeSubMax({ timeSubMax, benchmarkId, allTimeSubMaxes, templateSubMaxName, benchmarkName, distanceUnit });
-      setIsEditTimeSubMaxOpen(true);
-    },
-    []
-  );
-
-  /**
-   * Open create new from old time sub max modal
+   * Open create new time sub max modal (universal entry point for all time sub-max updates)
    */
   const openCreateNewTimeSubMax = useCallback(
     (timeSubMax: TimeSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateSubMaxName: string) => {
@@ -364,60 +302,13 @@ export function useBenchmarks() {
   );
 
   /**
-   * Open edit distance sub max modal
-   */
-  const openEditDistanceSubMax = useCallback(
-    (distanceSubMax: DistanceSubMax, benchmarkId: string, allDistanceSubMaxes: DistanceSubMax[], templateDistanceSubMaxName: string, benchmarkName: string) => {
-      setSelectedDistanceSubMax({ distanceSubMax, benchmarkId, allDistanceSubMaxes, templateDistanceSubMaxName, benchmarkName });
-      setIsEditDistanceSubMaxOpen(true);
-    },
-    []
-  );
-
-  /**
-   * Open create new from old distance sub max modal
+   * Open create new distance sub max modal (universal entry point for all distance sub-max updates)
    */
   const openCreateNewDistanceSubMax = useCallback(
     (distanceSubMax: DistanceSubMax, benchmark: ClientBenchmark, template: BenchmarkTemplate, templateDistanceSubMaxName: string) => {
       setSelectedDistanceSubMaxForNew({ distanceSubMax, benchmark, template, templateDistanceSubMaxName });
     },
     []
-  );
-
-  /**
-   * Update a specific rep max
-   */
-  const handleUpdateRepMax = useCallback(
-    async (benchmarkId: string, updatedRepMaxes: RepMax[]) => {
-      await handleUpdateBenchmark(benchmarkId, { repMaxes: updatedRepMaxes });
-      setIsEditRepMaxOpen(false);
-      setSelectedRepMax(null);
-    },
-    [handleUpdateBenchmark]
-  );
-
-  /**
-   * Update a specific time sub max
-   */
-  const handleUpdateTimeSubMax = useCallback(
-    async (benchmarkId: string, updatedTimeSubMaxes: TimeSubMax[]) => {
-      await handleUpdateBenchmark(benchmarkId, { timeSubMaxes: updatedTimeSubMaxes });
-      setIsEditTimeSubMaxOpen(false);
-      setSelectedTimeSubMax(null);
-    },
-    [handleUpdateBenchmark]
-  );
-
-  /**
-   * Update a specific distance sub max
-   */
-  const handleUpdateDistanceSubMax = useCallback(
-    async (benchmarkId: string, updatedDistanceSubMaxes: DistanceSubMax[]) => {
-      await handleUpdateBenchmark(benchmarkId, { distanceSubMaxes: updatedDistanceSubMaxes });
-      setIsEditDistanceSubMaxOpen(false);
-      setSelectedDistanceSubMax(null);
-    },
-    [handleUpdateBenchmark]
   );
 
   useEffect(() => {
@@ -432,6 +323,7 @@ export function useBenchmarks() {
     benchmarkTemplates,
     loading: state.loading,
     error: state.error,
+    refreshKey,
 
     // Delete state
     isDeleteOpen,
@@ -441,18 +333,11 @@ export function useBenchmarks() {
     // Modal state
     isCreateOpen: modalState.isCreateOpen,
     isEditOpen: modalState.isEditOpen,
-    isCreateNewFromOldOpen: modalState.isCreateNewFromOldOpen,
     isCreateNewRepMaxOpen: modalState.isCreateNewRepMaxOpen,
-    isEditRepMaxOpen,
     selectedBenchmark: modalState.selectedBenchmark,
     selectedTemplate: modalState.selectedTemplate,
-    selectedRepMax,
     selectedRepMaxForNew,
-    isEditTimeSubMaxOpen,
-    selectedTimeSubMax,
     selectedTimeSubMaxForNew,
-    isEditDistanceSubMaxOpen,
-    selectedDistanceSubMax,
     selectedDistanceSubMaxForNew,
 
     // Actions
@@ -462,17 +347,10 @@ export function useBenchmarks() {
     loadBenchmarks,
     handleCreateBenchmark,
     handleUpdateBenchmark,
-    handleUpdateRepMax,
-    handleUpdateTimeSubMax,
-    handleUpdateDistanceSubMax,
     openCreate,
     openEdit,
-    openCreateNewFromOld,
-    openEditRepMax,
     openCreateNewRepMax,
-    openEditTimeSubMax,
     openCreateNewTimeSubMax,
-    openEditDistanceSubMax,
     openCreateNewDistanceSubMax,
     closeModals,
   };

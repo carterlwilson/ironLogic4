@@ -6,6 +6,7 @@ import {
   BenchmarkType
 } from '@ironlogic4/shared';
 import { apiRequest } from './api';
+import { clearProgressCache } from './benchmarkProgressCache';
 
 interface GetBenchmarksResponse {
   success: true;
@@ -63,10 +64,12 @@ export async function getBenchmarks(): Promise<GetBenchmarksResponse> {
 export async function createBenchmark(
   data: CreateMyBenchmarkInput
 ): Promise<CreateBenchmarkResponse> {
-  return apiRequest<CreateBenchmarkResponse>('/api/me/benchmarks', {
+  const response = await apiRequest<CreateBenchmarkResponse>('/api/me/benchmarks', {
     method: 'POST',
     body: JSON.stringify(data),
   });
+  clearProgressCache();
+  return response;
 }
 
 /**
@@ -76,10 +79,12 @@ export async function updateBenchmark(
   benchmarkId: string,
   data: UpdateMyBenchmarkInput
 ): Promise<UpdateBenchmarkResponse> {
-  return apiRequest<UpdateBenchmarkResponse>(`/api/me/benchmarks/${benchmarkId}`, {
+  const response = await apiRequest<UpdateBenchmarkResponse>(`/api/me/benchmarks/${benchmarkId}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
+  clearProgressCache();
+  return response;
 }
 
 /**
@@ -103,6 +108,7 @@ export async function deleteBenchmark(benchmarkId: string): Promise<void> {
   await apiRequest<{ success: true; message: string }>(`/api/me/benchmarks/${benchmarkId}`, {
     method: 'DELETE',
   });
+  clearProgressCache();
 }
 
 /**
