@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { notifications } from '@mantine/notifications';
+import { useAuth } from '../providers/AuthProvider';
 import {
   getAvailableSchedules,
   joinTimeslot as joinTimeslotApi,
@@ -51,6 +52,7 @@ function flattenSchedules(schedules: IActiveScheduleWithAvailability[]): FlatTim
 }
 
 export function useSchedule() {
+  const { user } = useAuth();
   const [flatSlots, setFlatSlots] = useState<FlatTimeslot[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,6 +73,7 @@ export function useSchedule() {
   }, []);
 
   const joinTimeslot = useCallback(async (slot: FlatTimeslot) => {
+    if (!user) return;
     setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: true }));
     try {
       await joinTimeslotApi(slot.scheduleId, slot.timeslotId);
@@ -86,9 +89,10 @@ export function useSchedule() {
     } finally {
       setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: false }));
     }
-  }, [refresh]);
+  }, [refresh, user]);
 
   const leaveTimeslot = useCallback(async (slot: FlatTimeslot) => {
+    if (!user) return;
     setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: true }));
     try {
       await leaveTimeslotApi(slot.scheduleId, slot.timeslotId);
@@ -104,7 +108,7 @@ export function useSchedule() {
     } finally {
       setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: false }));
     }
-  }, [refresh]);
+  }, [refresh, user]);
 
   useEffect(() => {
     refresh();

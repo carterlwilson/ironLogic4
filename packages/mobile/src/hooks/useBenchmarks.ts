@@ -55,6 +55,7 @@ export function useBenchmarks() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [benchmarkTemplates, setBenchmarkTemplates] = useState<Map<string, BenchmarkTemplate>>(new Map());
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [selectedRepMaxForNew, setSelectedRepMaxForNew] = useState<{
     repMax: RepMax;
@@ -101,6 +102,7 @@ export function useBenchmarks() {
         templates: templatesResponse.data,
         loading: false,
       }));
+      setRefreshKey((k) => k + 1);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load benchmarks';
       setState((prev) => ({
@@ -321,6 +323,7 @@ export function useBenchmarks() {
     benchmarkTemplates,
     loading: state.loading,
     error: state.error,
+    refreshKey,
 
     // Delete state
     isDeleteOpen,

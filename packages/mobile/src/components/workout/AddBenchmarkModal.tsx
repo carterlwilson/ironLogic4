@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Modal, Stack, NumberInput, Textarea, TextInput, Button, Group, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconWeight, IconCalendar } from '@tabler/icons-react';
@@ -29,6 +29,7 @@ export function AddBenchmarkModal({
   const [recordedAt, setRecordedAt] = useState(formatDateForInput(new Date()));
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  const initialRepMaxValuesRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     if (!opened) return;
@@ -38,6 +39,7 @@ export function AddBenchmarkModal({
     setNotes('');
     setFullTemplate(null);
     setExistingBenchmark(null);
+    initialRepMaxValuesRef.current = {};
 
     setLoadingData(true);
     Promise.all([
@@ -52,15 +54,19 @@ export function AddBenchmarkModal({
         ) ?? null;
         setExistingBenchmark(existing);
 
-        // Pre-populate form with existing rep max values
+        // Pre-populate form with existing rep max values, and remember the originals so
+        // submit can tell which buckets the user actually changed vs. left untouched.
         if (existing?.repMaxes) {
           const values: Record<string, number | string> = {};
+          const initial: Record<string, number> = {};
           existing.repMaxes.forEach((rm) => {
             if (rm.weightKg > 0) {
               values[rm.templateRepMaxId] = rm.weightKg;
+              initial[rm.templateRepMaxId] = rm.weightKg;
             }
           });
           setRepMaxValues(values);
+          initialRepMaxValuesRef.current = initial;
         }
       })
       .catch(() => {
@@ -88,16 +94,20 @@ export function AddBenchmarkModal({
   const handleSubmit = async () => {
     if (!fullTemplate?.templateRepMaxes?.length) return;
 
-    const formRepMaxes = fullTemplate.templateRepMaxes.map((trm) => {
-      const val = repMaxValues[trm.id];
-      return {
-        templateRepMaxId: trm.id,
-        weightKg: val && val !== '' ? (typeof val === 'string' ? parseFloat(val) : val) : 0,
-        recordedAt: parseDateStringToLocalDate(recordedAt),
-      };
-    });
+    // Only submit buckets the user actually entered or changed — buckets left as-is
+    // are omitted so the server's merge leaves their original recordedAt untouched.
+    const formRepMaxes = fullTemplate.templateRepMaxes
+      .map((trm) => {
+        const val = repMaxValues[trm.id];
+        return {
+          templateRepMaxId: trm.id,
+          weightKg: val && val !== '' ? (typeof val === 'string' ? parseFloat(val) : val) : 0,
+        };
+      })
+      .filter((rm) => rm.weightKg > 0 && rm.weightKg !== initialRepMaxValuesRef.current[rm.templateRepMaxId])
+      .map((rm) => ({ ...rm, recordedAt: parseDateStringToLocalDate(recordedAt) }));
 
-    const hasAnyValue = formRepMaxes.some((rm) => rm.weightKg > 0);
+    const hasAnyValue = formRepMaxes.length > 0;
     if (!hasAnyValue) {
       notifications.show({
         title: 'Missing Data',

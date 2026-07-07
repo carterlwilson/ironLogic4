@@ -20,6 +20,7 @@ export const BenchmarksPage = () => {
     templates,
     benchmarkTemplates,
     loading,
+    refreshKey,
     isCreateOpen,
     isEditOpen,
     isCreateNewRepMaxOpen,
@@ -153,7 +154,7 @@ export const BenchmarksPage = () => {
           </Tabs.Panel>
 
           <Tabs.Panel value="historical">
-            <BenchmarkProgressList currentBenchmarks={filteredCurrentBenchmarks} />
+            <BenchmarkProgressList currentBenchmarks={filteredCurrentBenchmarks} refreshKey={refreshKey} />
           </Tabs.Panel>
         </Tabs>
       </Stack>

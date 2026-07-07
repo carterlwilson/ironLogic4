@@ -112,38 +112,12 @@ function toPlainObject(doc: any): any {
   return typeof doc?.toObject === 'function' ? doc.toObject() : doc;
 }
 
-function mergeRepMaxes(existing: any[], submitted: any[]): any[] {
+function mergeSubMaxes(existing: any[], submitted: any[], idField: string, valueField: string): any[] {
   const merged = existing.map(toPlainObject);
   for (const s of submitted) {
-    const idx = merged.findIndex(rm => rm.templateRepMaxId === s.templateRepMaxId);
+    const idx = merged.findIndex(item => item[idField] === s[idField]);
     if (idx >= 0) {
-      merged[idx] = { ...merged[idx], weightKg: s.weightKg, recordedAt: new Date(s.recordedAt) };
-    } else {
-      merged.push(s);
-    }
-  }
-  return merged;
-}
-
-function mergeTimeSubMaxes(existing: any[], submitted: any[]): any[] {
-  const merged = existing.map(toPlainObject);
-  for (const s of submitted) {
-    const idx = merged.findIndex(tsm => tsm.templateSubMaxId === s.templateSubMaxId);
-    if (idx >= 0) {
-      merged[idx] = { ...merged[idx], distanceMeters: s.distanceMeters, recordedAt: new Date(s.recordedAt) };
-    } else {
-      merged.push(s);
-    }
-  }
-  return merged;
-}
-
-function mergeDistanceSubMaxes(existing: any[], submitted: any[]): any[] {
-  const merged = existing.map(toPlainObject);
-  for (const s of submitted) {
-    const idx = merged.findIndex(dsm => dsm.templateDistanceSubMaxId === s.templateDistanceSubMaxId);
-    if (idx >= 0) {
-      merged[idx] = { ...merged[idx], timeSeconds: s.timeSeconds, recordedAt: new Date(s.recordedAt) };
+      merged[idx] = { ...merged[idx], [valueField]: s[valueField], recordedAt: new Date(s.recordedAt) };
     } else {
       merged.push(s);
     }
@@ -205,21 +179,21 @@ export const createMyBenchmark = async (
 
       if (!createNewVersion) {
         // Edit-in-place: merge submitted sub-maxes into existing, leave others untouched
-        const updateFields: any = { updatedAt: new Date() };
+        const updateFields: any = { 'currentBenchmarks.$.updatedAt': new Date() };
 
         if (input.repMaxes?.length) {
-          updateFields['currentBenchmarks.$.repMaxes'] = mergeRepMaxes(
-            existingBenchmark.repMaxes || [], input.repMaxes
+          updateFields['currentBenchmarks.$.repMaxes'] = mergeSubMaxes(
+            existingBenchmark.repMaxes || [], input.repMaxes, 'templateRepMaxId', 'weightKg'
           );
         }
         if (input.timeSubMaxes?.length) {
-          updateFields['currentBenchmarks.$.timeSubMaxes'] = mergeTimeSubMaxes(
-            existingBenchmark.timeSubMaxes || [], input.timeSubMaxes
+          updateFields['currentBenchmarks.$.timeSubMaxes'] = mergeSubMaxes(
+            existingBenchmark.timeSubMaxes || [], input.timeSubMaxes, 'templateSubMaxId', 'distanceMeters'
           );
         }
         if (input.distanceSubMaxes?.length) {
-          updateFields['currentBenchmarks.$.distanceSubMaxes'] = mergeDistanceSubMaxes(
-            existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes
+          updateFields['currentBenchmarks.$.distanceSubMaxes'] = mergeSubMaxes(
+            existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes, 'templateDistanceSubMaxId', 'timeSeconds'
           );
         }
         if (input.timeSeconds !== undefined) updateFields['currentBenchmarks.$.timeSeconds'] = input.timeSeconds;
@@ -234,7 +208,12 @@ export const createMyBenchmark = async (
           { new: true, select: 'currentBenchmarks historicalBenchmarks' }
         );
 
-        const userData = updatedUser!.toJSON();
+        if (!updatedUser) {
+          res.status(404).json({ success: false, error: 'Benchmark not found or was modified concurrently' });
+          return;
+        }
+
+        const userData = updatedUser.toJSON();
         res.status(200).json({
           success: true,
           data: {
@@ -247,9 +226,9 @@ export const createMyBenchmark = async (
       }
 
       // New-version path: merge submitted sub-maxes into old, archive old, create new
-      const mergedRepMaxes = mergeRepMaxes(existingBenchmark.repMaxes || [], input.repMaxes || []);
-      const mergedTimeSubMaxes = mergeTimeSubMaxes(existingBenchmark.timeSubMaxes || [], input.timeSubMaxes || []);
-      const mergedDistanceSubMaxes = mergeDistanceSubMaxes(existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes || []);
+      const mergedRepMaxes = mergeSubMaxes(existingBenchmark.repMaxes || [], input.repMaxes || [], 'templateRepMaxId', 'weightKg');
+      const mergedTimeSubMaxes = mergeSubMaxes(existingBenchmark.timeSubMaxes || [], input.timeSubMaxes || [], 'templateSubMaxId', 'distanceMeters');
+      const mergedDistanceSubMaxes = mergeSubMaxes(existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes || [], 'templateDistanceSubMaxId', 'timeSeconds');
 
       const newBenchmark = {
         _id: new Types.ObjectId(),
@@ -269,20 +248,28 @@ export const createMyBenchmark = async (
         ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
       };
 
-      // Archive old benchmark
-      await User.findByIdAndUpdate(userId, {
-        $pull: { currentBenchmarks: { _id: existingBenchmark._id } },
-        $push: { historicalBenchmarks: existingBenchmark },
-      });
+      // Archive old benchmark and add the new one in a single atomic update so there's
+      // no window where the old version is removed but the new one isn't in place yet.
+      const newCurrentBenchmarks = (user.currentBenchmarks || [])
+        .filter(b => b._id.toString() !== existingBenchmark._id.toString())
+        .map(toPlainObject)
+        .concat([newBenchmark]);
 
-      // Push new benchmark
       const updatedUser = await User.findByIdAndUpdate(
         userId,
-        { $push: { currentBenchmarks: newBenchmark } },
+        {
+          $set: { currentBenchmarks: newCurrentBenchmarks },
+          $push: { historicalBenchmarks: existingBenchmark },
+        },
         { new: true, select: 'currentBenchmarks historicalBenchmarks' }
       );
 
-      const userData = updatedUser!.toJSON();
+      if (!updatedUser) {
+        res.status(404).json({ success: false, error: 'User not found' });
+        return;
+      }
+
+      const userData = updatedUser.toJSON();
       res.status(201).json({
         success: true,
         data: {

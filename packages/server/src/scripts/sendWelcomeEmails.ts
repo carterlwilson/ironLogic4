@@ -50,14 +50,17 @@ for (const user of TEST_MODE ? importUsers.slice(0, 1) : importUsers) {
   try {
     // Generate a reset token valid for 7 days
     const plainToken  = crypto.randomBytes(32).toString('hex');
-    const hashedToken = await bcrypt.hash(plainToken, 12);
     const expiry      = new Date();
     expiry.setDate(expiry.getDate() + 7);
 
-    await db.collection('users').updateOne(
-      { _id: dbUser._id },
-      { $set: { resetToken: hashedToken, resetTokenExpiry: expiry, resetTokenUsed: false, updatedAt: new Date() } }
-    );
+    // In --test mode, only preview the email — don't touch the real user's reset token.
+    if (!TEST_MODE) {
+      const hashedToken = await bcrypt.hash(plainToken, 12);
+      await db.collection('users').updateOne(
+        { _id: dbUser._id },
+        { $set: { resetToken: hashedToken, resetTokenExpiry: expiry, resetTokenUsed: false, updatedAt: new Date() } }
+      );
+    }
 
     const resetLink = `${RESET_BASE}?token=${plainToken}`;
     const recipient = TEST_MODE ? TEST_EMAIL : email;
