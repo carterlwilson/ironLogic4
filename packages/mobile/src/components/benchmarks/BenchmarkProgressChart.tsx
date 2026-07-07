@@ -11,15 +11,9 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { getBenchmarkProgress } from '../../services/benchmarkApi';
+import { getCachedProgress, setCachedProgress } from '../../services/benchmarkProgressCache';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
-
-interface ChartCacheEntry {
-  chartData: Array<Record<string, any>>;
-  series: Array<{ name: string; label: string }>;
-  unit: string;
-}
-const chartCache = new Map<string, ChartCacheEntry>();
 
 const PALETTE = [
   '#228be6',
@@ -33,9 +27,10 @@ const PALETTE = [
 interface BenchmarkProgressChartProps {
   templateId: string;
   benchmarkName: string;
+  refreshKey?: number;
 }
 
-export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartProps) => {
+export const BenchmarkProgressChart = ({ templateId, refreshKey }: BenchmarkProgressChartProps) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [chartData, setChartData] = useState<Array<Record<string, any>>>([]);
@@ -43,7 +38,7 @@ export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartPro
   const [unit, setUnit] = useState<string>('');
 
   useEffect(() => {
-    const cached = chartCache.get(templateId);
+    const cached = getCachedProgress(templateId);
     if (cached) {
       setChartData(cached.chartData);
       setSeries(cached.series);
@@ -57,7 +52,7 @@ export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartPro
         setLoading(true);
         setError(null);
         const data = await getBenchmarkProgress(templateId);
-        chartCache.set(templateId, { chartData: data.chartData, series: data.series, unit: data.unit });
+        setCachedProgress(templateId, { chartData: data.chartData, series: data.series, unit: data.unit });
         setChartData(data.chartData);
         setSeries(data.series);
         setUnit(data.unit);
@@ -69,7 +64,7 @@ export const BenchmarkProgressChart = ({ templateId }: BenchmarkProgressChartPro
     };
 
     fetchProgress();
-  }, [templateId]);
+  }, [templateId, refreshKey]);
 
   if (loading) {
     return (

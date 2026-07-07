@@ -1,9 +1,9 @@
-import { Modal, Button, Stack, Textarea, TextInput, Text, Badge, Group, Paper, Divider, NumberInput } from '@mantine/core';
+import { Modal, Button, Stack, Textarea, TextInput, NumberInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect } from 'react';
 import { ClientBenchmark, BenchmarkTemplate, CreateMyBenchmarkInput, TimeSubMax } from '@ironlogic4/shared';
 import { IconRun, IconCalendar } from '@tabler/icons-react';
-import { formatDateForInput, formatDate, getTimeSubMaxAgeInDays, parseDateStringToLocalDate, convertDistanceToMeters } from '../../utils/benchmarkUtils';
+import { formatDateForInput, parseDateStringToLocalDate, convertDistanceToMeters } from '../../utils/benchmarkUtils';
 import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 interface CreateNewTimeSubMaxModalProps {
@@ -66,8 +66,6 @@ export function CreateNewTimeSubMaxModal({
     if (!oldBenchmark || !targetTimeSubMax || !template) return;
 
     const recordedDate = parseDateStringToLocalDate(values.recordedAt);
-
-    // Convert display value back to meters
     const newDistanceMeters = template.distanceUnit === DistanceUnit.KILOMETERS
       ? convertDistanceToMeters(
           typeof values.distanceValue === 'string' ? parseFloat(values.distanceValue) : values.distanceValue,
@@ -75,42 +73,13 @@ export function CreateNewTimeSubMaxModal({
         )
       : (typeof values.distanceValue === 'string' ? parseFloat(values.distanceValue) : values.distanceValue);
 
-    // Build timeSubMaxes array: updated target + copied others + new template submaxes
-    // Step 1: Update or copy existing time submaxes
-    const existingTimeSubMaxes = (oldBenchmark.timeSubMaxes || []).map(tsm => {
-      if (tsm.id === targetTimeSubMax.id) {
-        // This is the target time sub-max - use new values
-        return {
-          templateSubMaxId: tsm.templateSubMaxId,
-          distanceMeters: newDistanceMeters,
-          recordedAt: recordedDate,
-        };
-      } else {
-        // Copy existing time sub-max values
-        return {
-          templateSubMaxId: tsm.templateSubMaxId,
-          distanceMeters: tsm.distanceMeters,
-          recordedAt: tsm.recordedAt, // Keep original date
-        };
-      }
-    });
-
-    // Step 2: Add NEW template submaxes that don't exist in old benchmark
-    const newTemplateTimeSubMaxes = (template?.templateTimeSubMaxes || [])
-      .filter(ttsm => !oldBenchmark.timeSubMaxes?.some(tsm => tsm.templateSubMaxId === ttsm.id))
-      .map(ttsm => ({
-        templateSubMaxId: ttsm.id,
-        distanceMeters: 0,  // Default value for new submaxes
-        recordedAt: recordedDate,
-      }));
-
-    // Step 3: Combine both
-    const timeSubMaxes = [...existingTimeSubMaxes, ...newTemplateTimeSubMaxes];
-
     const data: CreateMyBenchmarkInput = {
       templateId: oldBenchmark.templateId,
-      oldBenchmarkId: oldBenchmark.id, // Triggers move to historical
-      timeSubMaxes,
+      timeSubMaxes: [{
+        templateSubMaxId: targetTimeSubMax.templateSubMaxId,
+        distanceMeters: newDistanceMeters,
+        recordedAt: recordedDate,
+      }],
       notes: values.notes || undefined,
     };
 
@@ -124,11 +93,7 @@ export function CreateNewTimeSubMaxModal({
 
   if (!oldBenchmark || !targetTimeSubMax || !template) return null;
 
-  const ageInDays = getTimeSubMaxAgeInDays(targetTimeSubMax);
   const unitLabel = template.distanceUnit === DistanceUnit.KILOMETERS ? 'km' : 'm';
-  const displayValue = template.distanceUnit === DistanceUnit.KILOMETERS
-    ? (targetTimeSubMax.distanceMeters / 1000).toFixed(2)
-    : targetTimeSubMax.distanceMeters.toString();
 
   // Find template name for this timeSubMax
   const templateSubMax = template.templateTimeSubMaxes?.find(t => t.id === targetTimeSubMax.templateSubMaxId);
@@ -138,77 +103,52 @@ export function CreateNewTimeSubMaxModal({
     <Modal
       opened={opened}
       onClose={handleClose}
-      title="Create New from Historical"
+      title="Update Distance"
       size="lg"
       fullScreen
     >
-      <Stack gap="md">
-        {/* Old Benchmark Reference */}
-        <Paper p="md" withBorder>
-          <Stack gap="sm">
-            <Group justify="space-between">
-              <Text fw={600}>{oldBenchmark.name}</Text>
-              <Badge color="gray" variant="light">
-                Historical ({ageInDays} days old)
-              </Badge>
-            </Group>
-            <Group justify="space-between">
-              <Text size="sm" c="dimmed">{templateSubMaxName}</Text>
-              <Text size="sm" fw={500}>
-                {displayValue} {unitLabel}
-              </Text>
-            </Group>
-            <Text size="xs" c="dimmed">
-              Recorded: {formatDate(targetTimeSubMax.recordedAt)}
-            </Text>
-          </Stack>
-        </Paper>
+      <form onSubmit={handleSubmit}>
+        <Stack gap="md">
+          <NumberInput
+            label="Distance"
+            placeholder={`Enter distance in ${template.distanceUnit === DistanceUnit.KILOMETERS ? 'kilometers' : 'meters'}`}
+            value={form.values.distanceValue}
+            onChange={(value) => form.setFieldValue('distanceValue', value)}
+            error={form.errors.distanceValue}
+            required
+            min={0}
+            step={template.distanceUnit === DistanceUnit.KILOMETERS ? 0.1 : 10}
+            decimalScale={template.distanceUnit === DistanceUnit.KILOMETERS ? 2 : 0}
+            size="lg"
+            leftSection={<IconRun size={18} />}
+            description={`Distance covered in ${templateSubMaxName} (${unitLabel})`}
+          />
 
-        <Divider label="New Benchmark Values" labelPosition="center" />
+          <TextInput
+            label="Date Recorded"
+            type="date"
+            {...form.getInputProps('recordedAt')}
+            required
+            size="lg"
+            max={formatDateForInput(new Date())}
+            leftSection={<IconCalendar size={18} />}
+            description="When did you achieve this distance?"
+          />
 
-        <form onSubmit={handleSubmit}>
-          <Stack gap="md">
-            <NumberInput
-              label="Distance"
-              placeholder={`Enter distance in ${template.distanceUnit === DistanceUnit.KILOMETERS ? 'kilometers' : 'meters'}`}
-              value={form.values.distanceValue}
-              onChange={(value) => form.setFieldValue('distanceValue', value)}
-              error={form.errors.distanceValue}
-              required
-              min={0}
-              step={template.distanceUnit === DistanceUnit.KILOMETERS ? 0.1 : 10}
-              decimalScale={template.distanceUnit === DistanceUnit.KILOMETERS ? 2 : 0}
-              size="lg"
-              leftSection={<IconRun size={18} />}
-              description={`Distance covered in ${templateSubMaxName}`}
-            />
+          <Textarea
+            label="Notes (Optional)"
+            placeholder="Add any notes about this benchmark..."
+            {...form.getInputProps('notes')}
+            minRows={3}
+            maxRows={5}
+            size="lg"
+          />
 
-            <TextInput
-              label="Date Recorded"
-              type="date"
-              {...form.getInputProps('recordedAt')}
-              required
-              size="lg"
-              max={formatDateForInput(new Date())}
-              leftSection={<IconCalendar size={18} />}
-              description="When did you achieve this distance?"
-            />
-
-            <Textarea
-              label="Notes (Optional)"
-              placeholder="Add any notes about this benchmark..."
-              {...form.getInputProps('notes')}
-              minRows={3}
-              maxRows={5}
-              size="lg"
-            />
-
-            <Button type="submit" fullWidth size="lg" loading={loading}>
-              Create New Benchmark
-            </Button>
-          </Stack>
-        </form>
-      </Stack>
+          <Button type="submit" fullWidth size="lg" loading={loading}>
+            Save Changes
+          </Button>
+        </Stack>
+      </form>
     </Modal>
   );
 }

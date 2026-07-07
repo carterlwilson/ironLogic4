@@ -1,5 +1,5 @@
 import { Card, Text, Group, Badge, ActionIcon, Stack } from '@mantine/core';
-import { IconPencil, IconClock, IconRefresh } from '@tabler/icons-react';
+import { IconPencil, IconClock } from '@tabler/icons-react';
 import { TimeSubMax } from '@ironlogic4/shared/types/clientBenchmarks';
 import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 import { formatDate, getTimeSubMaxAgeInDays } from '../../utils/benchmarkUtils';
@@ -11,9 +11,7 @@ interface TimeSubMaxCardProps {
   templateSubMaxName: string;  // e.g., "1 min", "3 min"
   distanceUnit: DistanceUnit;  // For display (meters/kilometers)
   isHistorical: boolean;
-  isEditable: boolean;  // Based on age (< 14 days)
-  onEdit: () => void;
-  onCreateNew?: () => void;
+  onUpdate?: () => void;
 }
 
 export function TimeSubMaxCard({
@@ -21,17 +19,9 @@ export function TimeSubMaxCard({
   templateSubMaxName,
   distanceUnit,
   isHistorical,
-  isEditable,
-  onEdit,
-  onCreateNew,
+  onUpdate,
 }: TimeSubMaxCardProps) {
   const ageInDays = getTimeSubMaxAgeInDays(timeSubMax);
-  const isOldAndCreatable = !isHistorical && !isEditable && onCreateNew;
-
-  const handleClick = () => {
-    const handler = !isHistorical && isEditable ? onEdit : isOldAndCreatable ? onCreateNew : undefined;
-    if (handler) handler();
-  };
 
   // Convert distance for display
   const distanceValue = distanceUnit === DistanceUnit.KILOMETERS
@@ -48,9 +38,9 @@ export function TimeSubMaxCard({
       style={{
         position: 'relative',
         minHeight: '120px',
-        cursor: !isHistorical && (isEditable || isOldAndCreatable) ? 'pointer' : 'default',
+        cursor: !isHistorical && onUpdate ? 'pointer' : 'default',
       }}
-      onClick={handleClick}
+      onClick={!isHistorical && onUpdate ? () => onUpdate() : undefined}
     >
       <Stack gap="xs" h="100%" justify="space-between">
         {/* Header with badge and icon */}
@@ -58,32 +48,18 @@ export function TimeSubMaxCard({
           <Badge color="forestGreen" variant="light" size="md">
             {templateSubMaxName}
           </Badge>
-          {!isHistorical && isEditable && (
+          {!isHistorical && onUpdate && (
             <ActionIcon
               variant="subtle"
               color="forestGreen"
               size="sm"
               onClick={(e) => {
-                e.stopPropagation(); // Prevent double triggering
-                onEdit();
+                e.stopPropagation();
+                onUpdate();
               }}
-              aria-label={`Edit ${templateSubMaxName}`}
+              aria-label={`Update ${templateSubMaxName}`}
             >
               <IconPencil size={14} />
-            </ActionIcon>
-          )}
-          {isOldAndCreatable && (
-            <ActionIcon
-              variant="subtle"
-              color="orange"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent double triggering
-                onCreateNew();
-              }}
-              aria-label={`Create new ${templateSubMaxName}`}
-            >
-              <IconRefresh size={14} />
             </ActionIcon>
           )}
         </Group>
