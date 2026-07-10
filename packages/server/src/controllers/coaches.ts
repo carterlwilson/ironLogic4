@@ -14,6 +14,7 @@ import {
 } from '@ironlogic4/shared';
 import { generateRandomPassword, hashPassword } from '../utils/auth.js';
 import { buildGymScope } from '../utils/gymScope.js';
+import { logUserDeletion } from '../utils/deletedUserLog.js';
 
 /**
  * Get all coaches with pagination, search, and gym scoping
@@ -411,6 +412,7 @@ export const deleteCoach = async (
 
     // No dependencies found, proceed with hard delete
     await User.findByIdAndDelete(id);
+    void logUserDeletion(coach, req.user, req, 'coaches.deleteCoach');
 
     const response: ApiResponse<null> = {
       success: true,

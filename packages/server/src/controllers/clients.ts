@@ -17,6 +17,7 @@ import { generateRandomPassword } from '../utils/auth.js';
 import { generateResetToken, hashResetToken } from '../utils/tokenGenerator.js';
 import { sendInviteEmail } from '../utils/emailService.js';
 import { buildGymScope } from '../utils/gymScope.js';
+import { logUserDeletion } from '../utils/deletedUserLog.js';
 
 async function applyProgramAssignment(
   client: UserDocument,
@@ -458,6 +459,7 @@ export const deleteClient = async (
     }
 
     await User.findByIdAndDelete(id);
+    void logUserDeletion(client, req.user, req, 'clients.deleteClient');
 
     const response: ApiResponse<null> = {
       success: true,
