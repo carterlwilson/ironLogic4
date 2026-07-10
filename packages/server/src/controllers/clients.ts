@@ -459,7 +459,7 @@ export const deleteClient = async (
     }
 
     await User.findByIdAndDelete(id);
-    void logUserDeletion(client, req.user, req, 'clients.deleteClient');
+    void logUserDeletion(client, req.user, 'clients.deleteClient');
 
     const response: ApiResponse<null> = {
       success: true,

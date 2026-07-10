@@ -412,7 +412,7 @@ export const deleteCoach = async (
 
     // No dependencies found, proceed with hard delete
     await User.findByIdAndDelete(id);
-    void logUserDeletion(coach, req.user, req, 'coaches.deleteCoach');
+    void logUserDeletion(coach, req.user, 'coaches.deleteCoach');
 
     const response: ApiResponse<null> = {
       success: true,

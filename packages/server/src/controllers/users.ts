@@ -273,7 +273,7 @@ export const deleteUser = async (
       return;
     }
 
-    void logUserDeletion(user, req.user, req, 'users.deleteUser');
+    void logUserDeletion(user, req.user, 'users.deleteUser');
 
     res.json({
       success: true,
