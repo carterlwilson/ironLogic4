@@ -125,6 +125,43 @@ function mergeSubMaxes(existing: any[], submitted: any[], idField: string, value
   return merged;
 }
 
+// A rep max with fewer reps must be >= one with more reps (if you can lift X for 5 reps,
+// you can lift at least X for 1 rep). When the user submits a value, treat it as ground
+// truth and adjust any other, untouched buckets that are now physically inconsistent with
+// it. recordedAt is intentionally left as-is on adjusted buckets — they weren't re-tested,
+// just inferred.
+function normalizeRepMaxes(
+  merged: any[],
+  repsById: Map<string, number>,
+  authoritativeIds: Set<string>
+): any[] {
+  const authoritative = merged.filter(rm => authoritativeIds.has(rm.templateRepMaxId));
+  if (authoritative.length === 0) return merged;
+
+  return merged.map(rm => {
+    if (authoritativeIds.has(rm.templateRepMaxId)) return rm;
+    const reps = repsById.get(rm.templateRepMaxId);
+    if (reps === undefined) return rm;
+
+    let lowerBound = -Infinity; // must be >= weight of any authoritative entry with MORE reps
+    let upperBound = Infinity;  // must be <= weight of any authoritative entry with FEWER reps
+    for (const a of authoritative) {
+      const aReps = repsById.get(a.templateRepMaxId);
+      if (aReps === undefined) continue;
+      if (aReps > reps) lowerBound = Math.max(lowerBound, a.weightKg);
+      else if (aReps < reps) upperBound = Math.min(upperBound, a.weightKg);
+    }
+
+    if (lowerBound > -Infinity && rm.weightKg < lowerBound) {
+      return { ...rm, weightKg: lowerBound };
+    }
+    if (upperBound < Infinity && rm.weightKg > upperBound) {
+      return { ...rm, weightKg: upperBound };
+    }
+    return rm;
+  });
+}
+
 /**
  * POST /api/me/benchmarks
  * Create new benchmark from template.
@@ -182,9 +219,12 @@ export const createMyBenchmark = async (
         const updateFields: any = { 'currentBenchmarks.$.updatedAt': new Date() };
 
         if (input.repMaxes?.length) {
-          updateFields['currentBenchmarks.$.repMaxes'] = mergeSubMaxes(
+          const merged = mergeSubMaxes(
             existingBenchmark.repMaxes || [], input.repMaxes, 'templateRepMaxId', 'weightKg'
           );
+          const repsById = new Map((template.templateRepMaxes || []).map((trm: any) => [trm._id.toString(), trm.reps]));
+          const authoritativeIds = new Set(input.repMaxes.map(rm => rm.templateRepMaxId));
+          updateFields['currentBenchmarks.$.repMaxes'] = normalizeRepMaxes(merged, repsById, authoritativeIds);
         }
         if (input.timeSubMaxes?.length) {
           updateFields['currentBenchmarks.$.timeSubMaxes'] = mergeSubMaxes(
@@ -226,7 +266,12 @@ export const createMyBenchmark = async (
       }
 
       // New-version path: merge submitted sub-maxes into old, archive old, create new
-      const mergedRepMaxes = mergeSubMaxes(existingBenchmark.repMaxes || [], input.repMaxes || [], 'templateRepMaxId', 'weightKg');
+      let mergedRepMaxes = mergeSubMaxes(existingBenchmark.repMaxes || [], input.repMaxes || [], 'templateRepMaxId', 'weightKg');
+      if (input.repMaxes?.length) {
+        const repsById = new Map((template.templateRepMaxes || []).map((trm: any) => [trm._id.toString(), trm.reps]));
+        const authoritativeIds = new Set(input.repMaxes.map(rm => rm.templateRepMaxId));
+        mergedRepMaxes = normalizeRepMaxes(mergedRepMaxes, repsById, authoritativeIds);
+      }
       const mergedTimeSubMaxes = mergeSubMaxes(existingBenchmark.timeSubMaxes || [], input.timeSubMaxes || [], 'templateSubMaxId', 'distanceMeters');
       const mergedDistanceSubMaxes = mergeSubMaxes(existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes || [], 'templateDistanceSubMaxId', 'timeSeconds');
 
