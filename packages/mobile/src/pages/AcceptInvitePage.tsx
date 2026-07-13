@@ -44,8 +44,18 @@ export function AcceptInvitePage() {
       confirmPassword: '',
     },
     validate: {
-      firstName: (value) => (!value.trim() ? 'First name is required' : null),
-      lastName: (value) => (!value.trim() ? 'Last name is required' : null),
+      firstName: (value) => {
+        const trimmed = value.trim();
+        if (!trimmed) return 'First name is required';
+        if (trimmed.toLowerCase() === 'pending') return 'Please enter your actual first name';
+        return null;
+      },
+      lastName: (value) => {
+        const trimmed = value.trim();
+        if (!trimmed) return 'Last name is required';
+        if (trimmed.toLowerCase() === 'user') return 'Please enter your actual last name';
+        return null;
+      },
       password: (value) =>
         value.length < 8 ? 'Password must be at least 8 characters' : null,
       confirmPassword: (value, values) =>
@@ -64,8 +74,12 @@ export function AcceptInvitePage() {
       .then((result) => {
         if (result.valid && result.data) {
           setEmail(result.data.email);
-          if (result.data.firstName) form.setFieldValue('firstName', result.data.firstName);
-          if (result.data.lastName) form.setFieldValue('lastName', result.data.lastName);
+          if (result.data.firstName && result.data.firstName.trim().toLowerCase() !== 'pending') {
+            form.setFieldValue('firstName', result.data.firstName);
+          }
+          if (result.data.lastName && result.data.lastName.trim().toLowerCase() !== 'user') {
+            form.setFieldValue('lastName', result.data.lastName);
+          }
         } else {
           setValidationError(
             'This invite link is invalid or has expired. Please contact your gym to request a new invitation.'
