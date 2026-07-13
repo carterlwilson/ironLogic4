@@ -128,8 +128,9 @@ function mergeSubMaxes(existing: any[], submitted: any[], idField: string, value
 // A rep max with fewer reps must be >= one with more reps (if you can lift X for 5 reps,
 // you can lift at least X for 1 rep). When the user submits a value, treat it as ground
 // truth and adjust any other, untouched buckets that are now physically inconsistent with
-// it. recordedAt is intentionally left as-is on adjusted buckets — they weren't re-tested,
-// just inferred.
+// it. recordedAt is stamped with the correction time on adjusted buckets — leaving the old
+// date attached to a changed value would misrepresent when that value became current. The
+// true historical value/date is preserved separately via the forced new-version archival.
 function normalizeRepMaxes(
   merged: any[],
   repsById: Map<string, number>,
@@ -137,6 +138,8 @@ function normalizeRepMaxes(
 ): any[] {
   const authoritative = merged.filter(rm => authoritativeIds.has(rm.templateRepMaxId));
   if (authoritative.length === 0) return merged;
+
+  const now = new Date();
 
   return merged.map(rm => {
     if (authoritativeIds.has(rm.templateRepMaxId)) return rm;
@@ -153,10 +156,10 @@ function normalizeRepMaxes(
     }
 
     if (lowerBound > -Infinity && rm.weightKg < lowerBound) {
-      return { ...rm, weightKg: lowerBound };
+      return { ...rm, weightKg: lowerBound, recordedAt: now };
     }
     if (upperBound < Infinity && rm.weightKg > upperBound) {
-      return { ...rm, weightKg: upperBound };
+      return { ...rm, weightKg: upperBound, recordedAt: now };
     }
     return rm;
   });
@@ -500,7 +503,7 @@ export const updateMyBenchmark = async (
         ? userData.currentBenchmarks
         : userData.historicalBenchmarks;
 
-    const updatedBenchmark = benchmarks?.find((b: any) => b.id === benchmarkId);
+    const updatedBenchmark = benchmarks?.find((b: any) => b.id?.toString() === benchmarkId);
 
     res.status(200).json({
       success: true,
@@ -530,7 +533,28 @@ export const deleteMyBenchmark = async (
     const userId = req.user!.id;
     const { benchmarkId } = req.params;
 
-    const result = await User.updateOne(
+    // MongoDB's $pull across two array fields in one update reports modifiedCount:1 even when
+    // neither array had a matching element, so existence must be checked explicitly beforehand
+    // rather than inferred from the update result.
+    const user = await User.findById(userId).select('currentBenchmarks historicalBenchmarks');
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
+    }
+
+    const exists =
+      user.currentBenchmarks?.some((b) => b._id.toString() === benchmarkId) ||
+      user.historicalBenchmarks?.some((b) => b._id.toString() === benchmarkId);
+
+    if (!exists) {
+      res.status(404).json({
+        success: false,
+        error: 'Benchmark not found',
+      });
+      return;
+    }
+
+    await User.updateOne(
       { _id: userId },
       {
         $pull: {
@@ -539,14 +563,6 @@ export const deleteMyBenchmark = async (
         },
       }
     );
-
-    if (result.modifiedCount === 0) {
-      res.status(404).json({
-        success: false,
-        error: 'Benchmark not found',
-      });
-      return;
-    }
 
     res.status(200).json({
       success: true,
