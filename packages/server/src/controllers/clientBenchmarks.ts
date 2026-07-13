@@ -212,19 +212,29 @@ export const createMyBenchmark = async (
     );
 
     if (existingBenchmark) {
-      const createNewVersion = shouldCreateNewVersion(existingBenchmark, input);
+      // Compute the repMax merge/normalization once up front so we can tell whether
+      // normalizeRepMaxes is about to silently rewrite an untouched bucket. If it is,
+      // that bucket's prior value needs a home in history — the only place this app
+      // has for that is a full-benchmark archival, so such an adjustment must force
+      // the new-version path regardless of the submitted bucket's own staleness.
+      let mergedRepMaxes: any[] = (existingBenchmark.repMaxes || []).map(toPlainObject);
+      let repMaxesWereAdjusted = false;
+      if (input.repMaxes?.length) {
+        const repsById = new Map((template.templateRepMaxes || []).map((trm: any) => [trm._id.toString(), trm.reps]));
+        const authoritativeIds = new Set(input.repMaxes.map(rm => rm.templateRepMaxId));
+        const merged = mergeSubMaxes(existingBenchmark.repMaxes || [], input.repMaxes, 'templateRepMaxId', 'weightKg');
+        mergedRepMaxes = normalizeRepMaxes(merged, repsById, authoritativeIds);
+        repMaxesWereAdjusted = mergedRepMaxes.some((rm, i) => rm.weightKg !== merged[i].weightKg);
+      }
+
+      const createNewVersion = shouldCreateNewVersion(existingBenchmark, input) || repMaxesWereAdjusted;
 
       if (!createNewVersion) {
         // Edit-in-place: merge submitted sub-maxes into existing, leave others untouched
         const updateFields: any = { 'currentBenchmarks.$.updatedAt': new Date() };
 
         if (input.repMaxes?.length) {
-          const merged = mergeSubMaxes(
-            existingBenchmark.repMaxes || [], input.repMaxes, 'templateRepMaxId', 'weightKg'
-          );
-          const repsById = new Map((template.templateRepMaxes || []).map((trm: any) => [trm._id.toString(), trm.reps]));
-          const authoritativeIds = new Set(input.repMaxes.map(rm => rm.templateRepMaxId));
-          updateFields['currentBenchmarks.$.repMaxes'] = normalizeRepMaxes(merged, repsById, authoritativeIds);
+          updateFields['currentBenchmarks.$.repMaxes'] = mergedRepMaxes;
         }
         if (input.timeSubMaxes?.length) {
           updateFields['currentBenchmarks.$.timeSubMaxes'] = mergeSubMaxes(
@@ -265,13 +275,9 @@ export const createMyBenchmark = async (
         return;
       }
 
-      // New-version path: merge submitted sub-maxes into old, archive old, create new
-      let mergedRepMaxes = mergeSubMaxes(existingBenchmark.repMaxes || [], input.repMaxes || [], 'templateRepMaxId', 'weightKg');
-      if (input.repMaxes?.length) {
-        const repsById = new Map((template.templateRepMaxes || []).map((trm: any) => [trm._id.toString(), trm.reps]));
-        const authoritativeIds = new Set(input.repMaxes.map(rm => rm.templateRepMaxId));
-        mergedRepMaxes = normalizeRepMaxes(mergedRepMaxes, repsById, authoritativeIds);
-      }
+      // New-version path: merge submitted sub-maxes into old, archive old, create new.
+      // mergedRepMaxes was already computed above (hoisted so we could tell whether an
+      // adjustment happened before deciding on this path).
       const mergedTimeSubMaxes = mergeSubMaxes(existingBenchmark.timeSubMaxes || [], input.timeSubMaxes || [], 'templateSubMaxId', 'distanceMeters');
       const mergedDistanceSubMaxes = mergeSubMaxes(existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes || [], 'templateDistanceSubMaxId', 'timeSeconds');
 
