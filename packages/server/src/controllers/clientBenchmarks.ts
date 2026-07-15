@@ -127,10 +127,10 @@ function mergeSubMaxes(existing: any[], submitted: any[], idField: string, value
 
 // A rep max with fewer reps must be >= one with more reps (if you can lift X for 5 reps,
 // you can lift at least X for 1 rep). When the user submits a value, treat it as ground
-// truth and adjust any other, untouched buckets that are now physically inconsistent with
-// it. recordedAt is stamped with the correction time on adjusted buckets — leaving the old
-// date attached to a changed value would misrepresent when that value became current. The
-// true historical value/date is preserved separately via the forced new-version archival.
+// truth and raise any other, untouched bucket that's now known to be too low relative to it.
+// Buckets are never lowered automatically: a new, lower-rep submission that's smaller than an
+// existing higher-rep-count value is left as-is rather than silently overwritten — clamping
+// downward previously caused real historical maxes to be erased without the user's knowledge.
 function normalizeRepMaxes(
   merged: any[],
   repsById: Map<string, number>,
@@ -147,19 +147,14 @@ function normalizeRepMaxes(
     if (reps === undefined) return rm;
 
     let lowerBound = -Infinity; // must be >= weight of any authoritative entry with MORE reps
-    let upperBound = Infinity;  // must be <= weight of any authoritative entry with FEWER reps
     for (const a of authoritative) {
       const aReps = repsById.get(a.templateRepMaxId);
       if (aReps === undefined) continue;
       if (aReps > reps) lowerBound = Math.max(lowerBound, a.weightKg);
-      else if (aReps < reps) upperBound = Math.min(upperBound, a.weightKg);
     }
 
     if (lowerBound > -Infinity && rm.weightKg < lowerBound) {
       return { ...rm, weightKg: lowerBound, recordedAt: now };
-    }
-    if (upperBound < Infinity && rm.weightKg > upperBound) {
-      return { ...rm, weightKg: upperBound, recordedAt: now };
     }
     return rm;
   });
