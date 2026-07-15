@@ -122,22 +122,52 @@ describe('weight benchmarks (repMaxes)', () => {
     expect(findRepMax(archivedV2, fiveRM).weightKg).toBe(80); // true original value preserved
     expect(findRepMax(archivedV2, tenRM)).toBeUndefined();
 
-    // Step 6: submitting a 3RM that's inconsistent with both 5RM and 10RM clamps both
-    // simultaneously.
+    // Step 6: submitting a 3RM that's smaller than the existing 5RM/10RM (90) no longer clamps
+    // them down — downward correction was removed after it caused real historical maxes to be
+    // silently overwritten in production. With no counterpart and no adjustment, this is a plain
+    // edit-in-place; 3RM is stored as submitted, and 5RM/10RM are left untouched.
     res = await apiFetch('POST', '/api/me/benchmarks', {
       templateId,
       repMaxes: [{ templateRepMaxId: threeRM, weightKg: 50, recordedAt: new Date().toISOString() }],
     });
-    expect(res.status).toBe(201);
-    expect(res.json.message).toBe('New benchmark version created');
+    expect(res.status).toBe(200);
+    expect(res.json.message).toBe('Benchmark updated in place');
     current = findCurrent(res.json.data, templateId);
-    expect(current.id).not.toBe(benchmarkIdV3);
+    expect(current.id).toBe(benchmarkIdV3);
     expect(findRepMax(current, threeRM).weightKg).toBe(50);
-    expect(findRepMax(current, fiveRM).weightKg).toBe(50);
-    expect(findRepMax(current, tenRM).weightKg).toBe(50);
-    const archivedV3 = findHistorical(res.json.data, benchmarkIdV3);
-    expect(findRepMax(archivedV3, fiveRM).weightKg).toBe(90);
-    expect(findRepMax(archivedV3, tenRM).weightKg).toBe(90);
+    expect(findRepMax(current, fiveRM).weightKg).toBe(90);
+    expect(findRepMax(current, tenRM).weightKg).toBe(90);
+  });
+
+  it('never clamps an existing higher-rep-count bucket down when a smaller lower-rep value is submitted (regression: previously overwrote real historical maxes)', async () => {
+    let { json } = await apiFetch('GET', '/api/me/benchmarks');
+    const existing = findCurrent(json.data, templateId);
+    if (existing) {
+      await apiFetch('DELETE', `/api/me/benchmarks/${existing.id}`);
+    }
+
+    const now = new Date().toISOString();
+    let res = await apiFetch('POST', '/api/me/benchmarks', {
+      templateId,
+      repMaxes: [{ templateRepMaxId: fiveRM, weightKg: 90, recordedAt: now }],
+    });
+    expect(res.status).toBe(201);
+    let current = findCurrent(res.json.data, templateId);
+    const benchmarkId = current.id;
+    const fiveRMBeforeSubmission = findRepMax(current, fiveRM);
+
+    res = await apiFetch('POST', '/api/me/benchmarks', {
+      templateId,
+      repMaxes: [{ templateRepMaxId: oneRM, weightKg: 50, recordedAt: new Date().toISOString() }],
+    });
+    expect(res.status).toBe(200);
+    expect(res.json.message).toBe('Benchmark updated in place');
+    current = findCurrent(res.json.data, templateId);
+    expect(current.id).toBe(benchmarkId);
+    expect(findRepMax(current, oneRM).weightKg).toBe(50);
+    const fiveRMAfterSubmission = findRepMax(current, fiveRM);
+    expect(fiveRMAfterSubmission.weightKg).toBe(90);
+    expect(fiveRMAfterSubmission.recordedAt).toBe(fiveRMBeforeSubmission.recordedAt);
   });
 
   it('fresh creation is never normalized, even with physically inconsistent values', async () => {
