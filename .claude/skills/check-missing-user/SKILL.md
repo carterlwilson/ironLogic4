@@ -15,6 +15,7 @@ Use this skill when the user asks to check whether a specific user is in the new
 - **Benchmark templates:** `packages/server/output/benchmark-templates.json`
 - **Default password:** `CullyStrength123` (bcrypt hash before inserting)
 - **userType value:** `'client'` (lowercase — never uppercase 'CLIENT')
+- **`recordedAt` for imported maxes:** never use the current date/time. Backfilled historical maxes with a "just now" timestamp cause the new app's history logic to treat them as freshly-tested, which has caused visible bugs. Use a fixed past date instead — current convention is `2026-06-01`. This date is a standing convention, not a one-off; confirm with the user it's still correct if it starts looking stale (e.g. more than a few months old relative to today).
 
 ## Step 1: Check the database
 
@@ -75,6 +76,7 @@ Write a temporary script to `packages/server/src/scripts/addUser<Name>.ts`, run 
 - Use `$push: { currentBenchmarks: { $each: [...] } }` if adding benchmarks to an existing user
 - Use `insertOne` for new users with all fields: `email`, `firstName`, `lastName`, `userType`, `password` (bcrypt hashed), `gymId`, `currentBenchmarks`, `historicalBenchmarks: []`, `createdAt`, `updatedAt`
 - Use `new Types.ObjectId()` for each benchmark `_id`
+- Set every imported `recordedAt` (repMaxes/timeSubMaxes/distanceSubMaxes) to the fixed past date from **Key constants** above — not `new Date()`
 
 Run with:
 ```bash
