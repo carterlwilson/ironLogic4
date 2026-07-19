@@ -1,0 +1,4070 @@
+[
+  {
+    "email": "allison.l.meyer@gmail.com",
+    "firstName": "Ally",
+    "lastName": "Meyer",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 51
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 49
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2880000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1022
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 29
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 61
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 41
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 84
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 75
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "ana.m.grecu@gmail.com",
+    "firstName": "Ana",
+    "lastName": "Grecu",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 50
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "andreamarie522@gmail.com",
+    "firstName": "Andrea",
+    "lastName": "Garrity",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "repMaxName": "8RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 29
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2600000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 24
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 31
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 53
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 700
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1066
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 62
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 75
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 70
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "blakejohnson.pdx@gmail.com",
+    "firstName": "Blake",
+    "lastName": "Cahoots",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2700
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1485
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 135
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 150
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 130
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 75
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 116
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 180
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 190
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 210
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 130
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 120
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 71
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 80
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "carolinekeiko@yahoo.com",
+    "firstName": "Caroline",
+    "lastName": "Pope",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3050000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "repMaxName": "8RM",
+            "weightKg": 31
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 49
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 58
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 31
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 46
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 69
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 88
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1262
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 115
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 115
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 120
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 45
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "christiemichellestewart@gmail.com",
+    "firstName": "Christie",
+    "lastName": "Stewart",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2810
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1053
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 31
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 39
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 46
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 52
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 73
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 72
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 80
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 41
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 59
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914289690e2b21e1e0bc947",
+            "repMaxName": "3RM",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 84
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 85
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 91
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "drbryanthieme@gmail.com",
+    "firstName": "Bryan",
+    "lastName": "Thieme",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3190000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 62
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 73
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 86
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 81
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 80
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 91
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 102
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 110
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 75
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 90
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1352
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 67
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 62
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 71
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 130
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 151
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 135
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 68
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "emmalanctot@gmail.com",
+    "firstName": "Emma",
+    "lastName": "Lanctot",
+    "benchmarks": [
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2980000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "repMaxName": "8RM",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 39
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 28
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 68
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 50
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 46
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1203
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 33
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 92
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 90
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "ericaleet@gmail.com",
+    "firstName": "Erica",
+    "lastName": "Thompson",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 22
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 37
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "freytaryn9@gmail.com",
+    "firstName": "Taryn",
+    "lastName": "Frey",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 100
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 1000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914289690e2b21e1e0bc947",
+            "repMaxName": "3RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 100
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "gkopetersen@gmail.com",
+    "firstName": "Gabe",
+    "lastName": "Petersen",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 49
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 26
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 26
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 29
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2720
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 18
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 20
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 19
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 781
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 16
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1019
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "jane.unterberger9@gmail.com",
+    "firstName": "Jane",
+    "lastName": "Unterberger",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "repMaxName": "8RM",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 29
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 56
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 69
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 942
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 48
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 46
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2950000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1252
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 79
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 79
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "jaoleonard@gmail.com",
+    "firstName": "Jason",
+    "lastName": "Leonard",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 41
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 48
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 59
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2950000
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 99
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 94
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 112
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1005
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 71
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 82
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 78
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1232
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 76
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 73
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 90
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 67
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 125
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 140
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 120
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 62
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "jbkingrey@gmail.com",
+    "firstName": "Jess",
+    "lastName": "Kingrey",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 37
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 938
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 32
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 0
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 34
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 52
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 30
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "jonesadamj@icloud.com",
+    "firstName": "Adam",
+    "lastName": "Jones",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 59
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "jules.rae@gmail.com",
+    "firstName": "Juli",
+    "lastName": "Vignola",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2800
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 36
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 74
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 51
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1141
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 57
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 54
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 62
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 93
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 94
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 90
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 38
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "kgpetersen07@gmail.com",
+    "firstName": "Ken",
+    "lastName": "Petersen",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 33
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 37
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1288
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 55
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 65
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 70
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1053
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 48
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2960
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "6927c4a83c05fa18bbf7eeba",
+            "repMaxName": "1RM",
+            "weightKg": 38
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 64
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 74
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "kkbbrenes@gmail.com",
+    "firstName": "Kristin",
+    "lastName": "Bacon-Brenes",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 19
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "lfranson@gmail.com",
+    "firstName": "Leigann",
+    "lastName": "Franson",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 36
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 38
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1056
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 58
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 56
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2800
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 29
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 48
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 65
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 33
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 30
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "mattfinlayson@gmail.com",
+    "firstName": "Matt",
+    "lastName": "Finlayson",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 44
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 112
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 137
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 56
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 124
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 110
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 100
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 114
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 978
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 68
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 75
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 77
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 75
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2720
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1202
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 145
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 143
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 150
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 67
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 66
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 66
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "memryhamik@gmail.com",
+    "firstName": "Memry",
+    "lastName": "Hamik",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2900
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 30
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 68
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 63
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 73
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 35
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 47
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1010
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 33
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1108
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 79
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 85
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 35
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "mikehaller1212@gmail.com",
+    "firstName": "Michael",
+    "lastName": "Haller",
+    "benchmarks": [
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3500
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 86
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 94
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 110
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 68
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6927c4a83c05fa18bbf7eeba",
+            "repMaxName": "1RM",
+            "weightKg": 0
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 535
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 135
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 140
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 60
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 85
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 82
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "oscarmurden@gmail.com",
+    "firstName": "Oscar",
+    "lastName": "Murden",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 122
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 103
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 105
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "repMaxName": "8RM",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 82
+          },
+          {
+            "templateRepMaxId": "6927c4a83c05fa18bbf7eeba",
+            "repMaxName": "1RM",
+            "weightKg": 0
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 105
+          },
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 93
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 95
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 100
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3200
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 70
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 85
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 90
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 85
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 55
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 117
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 120
+          },
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 125
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 74
+          },
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 73
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 70
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "sashavidalon@gmail.com",
+    "firstName": "Sasha",
+    "lastName": "Vindalon",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 76
+          },
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 71
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 74
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 71
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 34
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 715
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2630000
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1103
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 27
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 97
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 93
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 104
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 36
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 37
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 35
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "stuffedcarrot@gmail.com",
+    "firstName": "Kristina",
+    "lastName": "Hogg",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "repMaxName": "8RM",
+            "weightKg": 22
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 25
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 2270
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691427fe90e2b21e1e0bc907",
+            "repMaxName": "8RM",
+            "weightKg": 27
+          },
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 40
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 16
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 19
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 20
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 31
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914276290e2b21e1e0bc8de",
+            "repMaxName": "8RM",
+            "weightKg": 52
+          },
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 66
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 59
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 86
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 730
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 31
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 31.5
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 34
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 47
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 876
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 25
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 23
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 20
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 60
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 72
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 57
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "tawonda50@yahoo.com",
+    "firstName": "Ann",
+    "lastName": "Ochi",
+    "benchmarks": [
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 719
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 16
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 15
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 17
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 14
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 20
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 53
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 48
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 51
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 38
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 45
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 21
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 23
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 24
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914289690e2b21e1e0bc947",
+            "repMaxName": "3RM",
+            "weightKg": 18
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 18
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 18
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "email": "thesoloip@gmail.com",
+    "firstName": "Pending",
+    "lastName": "User",
+    "benchmarks": [
+      {
+        "templateId": "6927b408aec1c536cb3b4b39",
+        "templateName": "Incline Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914288090e2b21e1e0bc939",
+            "repMaxName": "8RM",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "6914288990e2b21e1e0bc940",
+            "repMaxName": "5RM",
+            "weightKg": 38
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b3a",
+        "templateName": "Overhead Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "69142bad90e2b21e1e0bca6d",
+            "repMaxName": "8RM",
+            "weightKg": 28
+          },
+          {
+            "templateRepMaxId": "69142b8d90e2b21e1e0bca66",
+            "repMaxName": "3RM",
+            "weightKg": 32
+          },
+          {
+            "templateRepMaxId": "69142b8090e2b21e1e0bca5f",
+            "repMaxName": "5RM",
+            "weightKg": 30
+          },
+          {
+            "templateRepMaxId": "69142be490e2b21e1e0bca7b",
+            "repMaxName": "1RM",
+            "weightKg": 35
+          }
+        ]
+      },
+      {
+        "templateId": "69840c8a591f81e754947499",
+        "templateName": "Ski - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840c8a591f81e75494749a",
+            "distanceMeters": 1100
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b34",
+        "templateName": "Bench Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410b290e2b21e1e0bc88c",
+            "repMaxName": "8RM",
+            "weightKg": 39
+          },
+          {
+            "templateRepMaxId": "69140e4690e2b21e1e0bc830",
+            "repMaxName": "3RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6913c39b4dd3caf43ddd3045",
+            "repMaxName": "5RM",
+            "weightKg": 41
+          },
+          {
+            "templateRepMaxId": "6913c2774dd3caf43ddd2fb5",
+            "repMaxName": "1RM",
+            "weightKg": 43
+          }
+        ]
+      },
+      {
+        "templateId": "69840cb1591f81e7549474ca",
+        "templateName": "Bike - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cb1591f81e7549474cb",
+            "distanceMeters": 3110
+          }
+        ]
+      },
+      {
+        "templateId": "69840cc8591f81e7549474f7",
+        "templateName": "Row - Distance",
+        "timeSubMaxes": [
+          {
+            "templateSubMaxId": "69840cc8591f81e7549474f8",
+            "distanceMeters": 1274
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b38",
+        "templateName": "Front Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914281190e2b21e1e0bc915",
+            "repMaxName": "3RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914280990e2b21e1e0bc90e",
+            "repMaxName": "5RM",
+            "weightKg": 40
+          },
+          {
+            "templateRepMaxId": "6914282f90e2b21e1e0bc923",
+            "repMaxName": "1RM",
+            "weightKg": 50
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b37",
+        "templateName": "Squat",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914279890e2b21e1e0bc8ec",
+            "repMaxName": "3RM",
+            "weightKg": 50
+          },
+          {
+            "templateRepMaxId": "6914278290e2b21e1e0bc8e5",
+            "repMaxName": "5RM",
+            "weightKg": 45
+          },
+          {
+            "templateRepMaxId": "691427b990e2b21e1e0bc8fa",
+            "repMaxName": "1RM",
+            "weightKg": 57
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b36",
+        "templateName": "Push Press",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "6914118190e2b21e1e0bc8c3",
+            "repMaxName": "3RM",
+            "weightKg": 43
+          },
+          {
+            "templateRepMaxId": "6914117590e2b21e1e0bc8bc",
+            "repMaxName": "5RM",
+            "weightKg": 42
+          },
+          {
+            "templateRepMaxId": "6914119d90e2b21e1e0bc8d1",
+            "repMaxName": "1RM",
+            "weightKg": 42
+          }
+        ]
+      },
+      {
+        "templateId": "6927b408aec1c536cb3b4b35",
+        "templateName": "Deadlift",
+        "repMaxes": [
+          {
+            "templateRepMaxId": "691410d890e2b21e1e0bc89a",
+            "repMaxName": "3RM",
+            "weightKg": 72
+          },
+          {
+            "templateRepMaxId": "6914110a90e2b21e1e0bc8a7",
+            "repMaxName": "5RM",
+            "weightKg": 80
+          },
+          {
+            "templateRepMaxId": "691410cb90e2b21e1e0bc893",
+            "repMaxName": "1RM",
+            "weightKg": 76
+          }
+        ]
+      }
+    ]
+  }
+]

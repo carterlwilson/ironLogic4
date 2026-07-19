@@ -153,15 +153,14 @@ export const useMyBenchmarks = (): UseMyBenchmarksReturn => {
     }
   }, [loadBenchmarks]);
 
-  const createNewFromOld = useCallback(async (oldBenchmark: ClientBenchmark, data: CreateMyBenchmarkInput) => {
+  const createNewFromOld = useCallback(async (_oldBenchmark: ClientBenchmark, data: CreateMyBenchmarkInput) => {
     try {
       setState(prev => ({ ...prev, loading: true }));
 
-      // Create the new benchmark and pass the old benchmark ID to move it to historical
-      await clientBenchmarkApi.createMyBenchmark({
-        ...data,
-        oldBenchmarkId: oldBenchmark.id,
-      });
+      // The server decides edit-in-place vs. new-version automatically based on how
+      // stale the existing values are, so just submit the data and reflect its actual
+      // outcome (via `message`) rather than assuming a new version was archived.
+      const response = await clientBenchmarkApi.createMyBenchmark(data);
 
       // Close modal
       setState(prev => ({
@@ -173,7 +172,7 @@ export const useMyBenchmarks = (): UseMyBenchmarksReturn => {
 
       notifications.show({
         title: 'Success',
-        message: 'New benchmark created and old benchmark moved to historical',
+        message: response.message ?? 'Benchmark saved',
         color: 'green',
         autoClose: 3000,
       });

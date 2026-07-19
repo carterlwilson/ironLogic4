@@ -6,17 +6,12 @@ import { BenchmarkList } from '../components/benchmarks/BenchmarkList';
 import { BenchmarkProgressList } from '../components/benchmarks/BenchmarkProgressList';
 import { CreateBenchmarkModal } from '../components/benchmarks/CreateBenchmarkModal';
 import { EditBenchmarkModal } from '../components/benchmarks/EditBenchmarkModal';
-import { EditRepMaxModal } from '../components/benchmarks/EditRepMaxModal';
-import { EditTimeSubMaxModal } from '../components/benchmarks/EditTimeSubMaxModal';
-import { EditDistanceSubMaxModal } from '../components/benchmarks/EditDistanceSubMaxModal';
-import { CreateNewFromOldModal } from '../components/benchmarks/CreateNewFromOldModal';
 import { CreateNewRepMaxModal } from '../components/benchmarks/CreateNewRepMaxModal';
 import { CreateNewTimeSubMaxModal } from '../components/benchmarks/CreateNewTimeSubMaxModal';
 import { CreateNewDistanceSubMaxModal } from '../components/benchmarks/CreateNewDistanceSubMaxModal';
 import { ConfirmDeleteBenchmarkModal } from '../components/benchmarks/ConfirmDeleteBenchmarkModal';
 import { TagFilter } from '../components/benchmarks/TagFilter';
 import { getAllUniqueTags, filterBenchmarksByTag } from '../utils/tagUtils';
-import { DistanceUnit } from '@ironlogic4/shared/types/benchmarkTemplates';
 
 export const BenchmarksPage = () => {
   const {
@@ -25,26 +20,16 @@ export const BenchmarksPage = () => {
     templates,
     benchmarkTemplates,
     loading,
+    refreshKey,
     isCreateOpen,
     isEditOpen,
-    isCreateNewFromOldOpen,
     isCreateNewRepMaxOpen,
-    isEditRepMaxOpen,
-    isEditTimeSubMaxOpen,
-    isEditDistanceSubMaxOpen,
     selectedBenchmark,
-    selectedRepMax,
     selectedRepMaxForNew,
-    selectedTimeSubMax,
     selectedTimeSubMaxForNew,
-    selectedDistanceSubMax,
     selectedDistanceSubMaxForNew,
     loadBenchmarks,
     handleCreateBenchmark,
-    handleUpdateBenchmark,
-    handleUpdateRepMax,
-    handleUpdateTimeSubMax,
-    handleUpdateDistanceSubMax,
     isDeleteOpen,
     isDeleting,
     benchmarkToDelete,
@@ -53,12 +38,8 @@ export const BenchmarksPage = () => {
     confirmDelete,
     openCreate,
     openEdit,
-    openCreateNewFromOld,
-    openEditRepMax,
     openCreateNewRepMax,
-    openEditTimeSubMax,
     openCreateNewTimeSubMax,
-    openEditDistanceSubMax,
     openCreateNewDistanceSubMax,
     closeModals,
   } = useBenchmarks();
@@ -164,20 +145,16 @@ export const BenchmarksPage = () => {
               isHistorical={false}
               loading={loading}
               onEdit={openEdit}
-              onCreateNew={openCreateNewFromOld}
               onDelete={openDelete}
               benchmarkTemplates={benchmarkTemplates}
-              onEditRepMax={openEditRepMax}
-              onCreateNewRepMax={openCreateNewRepMax}
-              onEditTimeSubMax={openEditTimeSubMax}
-              onCreateNewTimeSubMax={openCreateNewTimeSubMax}
-              onEditDistanceSubMax={openEditDistanceSubMax}
-              onCreateNewDistanceSubMax={openCreateNewDistanceSubMax}
+              onUpdateRepMax={openCreateNewRepMax}
+              onUpdateTimeSubMax={openCreateNewTimeSubMax}
+              onUpdateDistanceSubMax={openCreateNewDistanceSubMax}
             />
           </Tabs.Panel>
 
           <Tabs.Panel value="historical">
-            <BenchmarkProgressList currentBenchmarks={filteredCurrentBenchmarks} />
+            <BenchmarkProgressList currentBenchmarks={filteredCurrentBenchmarks} refreshKey={refreshKey} />
           </Tabs.Panel>
         </Tabs>
       </Stack>
@@ -194,28 +171,8 @@ export const BenchmarksPage = () => {
       <EditBenchmarkModal
         opened={isEditOpen}
         onClose={closeModals}
-        onUpdate={handleUpdateBenchmark}
-        benchmark={selectedBenchmark}
-        loading={loading}
-      />
-
-      <EditRepMaxModal
-        opened={isEditRepMaxOpen}
-        onClose={closeModals}
-        repMax={selectedRepMax?.repMax || null}
-        benchmarkId={selectedRepMax?.benchmarkId || ''}
-        benchmarkName={selectedRepMax?.benchmarkName || ''}
-        templateRepMaxName={selectedRepMax?.templateRepMaxName || ''}
-        allRepMaxes={selectedRepMax?.allRepMaxes || []}
-        onUpdate={handleUpdateRepMax}
-        loading={loading}
-      />
-
-      <CreateNewFromOldModal
-        opened={isCreateNewFromOldOpen}
-        onClose={closeModals}
         onCreate={handleCreateBenchmark}
-        oldBenchmark={selectedBenchmark}
+        benchmark={selectedBenchmark}
         loading={loading}
       />
 
@@ -226,31 +183,6 @@ export const BenchmarksPage = () => {
         oldBenchmark={selectedRepMaxForNew?.benchmark || null}
         targetRepMax={selectedRepMaxForNew?.repMax || null}
         template={selectedRepMaxForNew?.template || null}
-        loading={loading}
-      />
-
-      <EditTimeSubMaxModal
-        opened={isEditTimeSubMaxOpen}
-        onClose={closeModals}
-        timeSubMax={selectedTimeSubMax?.timeSubMax || null}
-        benchmarkId={selectedTimeSubMax?.benchmarkId || ''}
-        benchmarkName={selectedTimeSubMax?.benchmarkName || ''}
-        templateSubMaxName={selectedTimeSubMax?.templateSubMaxName || ''}
-        distanceUnit={selectedTimeSubMax?.distanceUnit || DistanceUnit.METERS}
-        allTimeSubMaxes={selectedTimeSubMax?.allTimeSubMaxes || []}
-        onUpdate={handleUpdateTimeSubMax}
-        loading={loading}
-      />
-
-      <EditDistanceSubMaxModal
-        opened={isEditDistanceSubMaxOpen}
-        onClose={closeModals}
-        distanceSubMax={selectedDistanceSubMax?.distanceSubMax || null}
-        benchmarkId={selectedDistanceSubMax?.benchmarkId || ''}
-        benchmarkName={selectedDistanceSubMax?.benchmarkName || ''}
-        templateDistanceSubMaxName={selectedDistanceSubMax?.templateDistanceSubMaxName || ''}
-        allDistanceSubMaxes={selectedDistanceSubMax?.allDistanceSubMaxes || []}
-        onUpdate={handleUpdateDistanceSubMax}
         loading={loading}
       />
 

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Modal, Stack, NumberInput, Textarea, TextInput, Button, Group, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconWeight, IconCalendar } from '@tabler/icons-react';
 import { BenchmarkTemplate, ClientBenchmark } from '@ironlogic4/shared';
-import { createBenchmark, getBenchmarks, getBenchmarkTemplate, updateBenchmark } from '../../services/benchmarkApi';
-import { formatDateForInput, isBenchmarkEditable, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
+import { createBenchmark, getBenchmarks, getBenchmarkTemplate } from '../../services/benchmarkApi';
+import { formatDateForInput, parseDateStringToLocalDate } from '../../utils/benchmarkUtils';
 
 interface AddBenchmarkModalProps {
   opened: boolean;
@@ -29,6 +29,7 @@ export function AddBenchmarkModal({
   const [recordedAt, setRecordedAt] = useState(formatDateForInput(new Date()));
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  const initialRepMaxValuesRef = useRef<Record<string, number>>({});
 
   useEffect(() => {
     if (!opened) return;
@@ -38,6 +39,7 @@ export function AddBenchmarkModal({
     setNotes('');
     setFullTemplate(null);
     setExistingBenchmark(null);
+    initialRepMaxValuesRef.current = {};
 
     setLoadingData(true);
     Promise.all([
@@ -52,15 +54,19 @@ export function AddBenchmarkModal({
         ) ?? null;
         setExistingBenchmark(existing);
 
-        // Pre-populate form with existing rep max values
+        // Pre-populate form with existing rep max values, and remember the originals so
+        // submit can tell which buckets the user actually changed vs. left untouched.
         if (existing?.repMaxes) {
           const values: Record<string, number | string> = {};
+          const initial: Record<string, number> = {};
           existing.repMaxes.forEach((rm) => {
             if (rm.weightKg > 0) {
               values[rm.templateRepMaxId] = rm.weightKg;
+              initial[rm.templateRepMaxId] = rm.weightKg;
             }
           });
           setRepMaxValues(values);
+          initialRepMaxValuesRef.current = initial;
         }
       })
       .catch(() => {
@@ -82,51 +88,26 @@ export function AddBenchmarkModal({
 
   const getModalTitle = () => {
     if (!existingBenchmark) return `Add Benchmark: ${benchmarkName}`;
-    if (!isBenchmarkEditable(existingBenchmark)) return `New Benchmark PR: ${benchmarkName}`;
     return `Update Benchmark: ${benchmarkName}`;
-  };
-
-  const getMergedRepMaxes = (existing: ClientBenchmark) => {
-    // Start with existing rep maxes
-    const merged = new Map<string, { weightKg: number; recordedAt: Date }>(
-      (existing.repMaxes ?? []).map((rm) => [
-        rm.templateRepMaxId,
-        { weightKg: rm.weightKg, recordedAt: new Date(rm.recordedAt) },
-      ])
-    );
-
-    // Overlay non-zero form values
-    fullTemplate?.templateRepMaxes?.forEach((trm) => {
-      const val = repMaxValues[trm.id];
-      const numVal = val && val !== '' ? (typeof val === 'string' ? parseFloat(val) : val) : 0;
-      if (numVal > 0) {
-        merged.set(trm.id, {
-          weightKg: numVal,
-          recordedAt: parseDateStringToLocalDate(recordedAt),
-        });
-      }
-    });
-
-    return Array.from(merged.entries()).map(([templateRepMaxId, data]) => ({
-      templateRepMaxId,
-      weightKg: data.weightKg,
-      recordedAt: data.recordedAt,
-    }));
   };
 
   const handleSubmit = async () => {
     if (!fullTemplate?.templateRepMaxes?.length) return;
 
-    const formRepMaxes = fullTemplate.templateRepMaxes.map((trm) => {
-      const val = repMaxValues[trm.id];
-      return {
-        templateRepMaxId: trm.id,
-        weightKg: val && val !== '' ? (typeof val === 'string' ? parseFloat(val) : val) : 0,
-        recordedAt: parseDateStringToLocalDate(recordedAt),
-      };
-    });
+    // Only submit buckets the user actually entered or changed — buckets left as-is
+    // are omitted so the server's merge leaves their original recordedAt untouched.
+    const formRepMaxes = fullTemplate.templateRepMaxes
+      .map((trm) => {
+        const val = repMaxValues[trm.id];
+        return {
+          templateRepMaxId: trm.id,
+          weightKg: val && val !== '' ? (typeof val === 'string' ? parseFloat(val) : val) : 0,
+        };
+      })
+      .filter((rm) => rm.weightKg > 0 && rm.weightKg !== initialRepMaxValuesRef.current[rm.templateRepMaxId])
+      .map((rm) => ({ ...rm, recordedAt: parseDateStringToLocalDate(recordedAt) }));
 
-    const hasAnyValue = formRepMaxes.some((rm) => rm.weightKg > 0);
+    const hasAnyValue = formRepMaxes.length > 0;
     if (!hasAnyValue) {
       notifications.show({
         title: 'Missing Data',
@@ -149,29 +130,14 @@ export function AddBenchmarkModal({
     try {
       let successMessage: string;
 
-      if (!existingBenchmark) {
-        await createBenchmark({
-          templateId: benchmarkTemplateId,
-          repMaxes: formRepMaxes,
-          notes: notes.trim() || undefined,
-        });
-        successMessage = `Benchmark added for ${benchmarkName}`;
-      } else if (!isBenchmarkEditable(existingBenchmark)) {
-        await createBenchmark({
-          templateId: benchmarkTemplateId,
-          repMaxes: formRepMaxes,
-          notes: notes.trim() || undefined,
-          oldBenchmarkId: existingBenchmark.id,
-        });
-        successMessage = `New PR recorded for ${benchmarkName}! Previous benchmark archived.`;
-      } else {
-        const mergedRepMaxes = getMergedRepMaxes(existingBenchmark);
-        await updateBenchmark(existingBenchmark.id, {
-          repMaxes: mergedRepMaxes,
-          notes: notes.trim() || undefined,
-        });
-        successMessage = `Benchmark updated for ${benchmarkName}`;
-      }
+      await createBenchmark({
+        templateId: benchmarkTemplateId,
+        repMaxes: formRepMaxes,
+        notes: notes.trim() || undefined,
+      });
+      successMessage = existingBenchmark
+        ? `Benchmark updated for ${benchmarkName}`
+        : `Benchmark added for ${benchmarkName}`;
 
       notifications.show({
         title: 'Benchmark Saved',
@@ -205,7 +171,7 @@ export function AddBenchmarkModal({
         ) : fullTemplate?.templateRepMaxes && fullTemplate.templateRepMaxes.length > 0 ? (
           <>
             <Text size="sm" fw={500}>
-              {existingBenchmark && !!isBenchmarkEditable(existingBenchmark)
+              {existingBenchmark
                 ? 'Update your rep maxes (existing values pre-filled)'
                 : 'Enter your rep maxes (at least one required)'}
             </Text>

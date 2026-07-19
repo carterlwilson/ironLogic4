@@ -5,6 +5,7 @@ import { ActivityProgress } from '../../pages/WorkoutPage';
 import { useBarbellCalculator } from './barbell-calculator/useBarbellCalculator';
 import { BarbellCalculatorDrawer } from './barbell-calculator/BarbellCalculatorDrawer';
 import { AddBenchmarkModal } from './AddBenchmarkModal';
+import { ActivityNotesBox } from './ActivityNotesBox';
 import type { WorkoutActivity, ISetCalculation } from '@ironlogic4/shared/types/programs';
 
 interface LiftActivityCardProps {
@@ -94,6 +95,9 @@ export function LiftActivityCard({
             )}
           </Group>
         </Group>
+
+        {/* Notes */}
+        <ActivityNotesBox activity={activity} />
 
         {/* Weight Adjustment Row */}
         {currentSet?.calculatedWeightKg !== undefined && (

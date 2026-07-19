@@ -1,4 +1,5 @@
 import { DayOfWeek } from '@ironlogic4/shared';
+import type { FlatTimeslot } from '../hooks/useSchedule';
 
 /**
  * Convert 24-hour time format to 12-hour with AM/PM
@@ -66,4 +67,41 @@ export function getCapacityColor(availableSpots: number, capacity: number): stri
   if (percentFilled >= 75) return 'orange';
   if (percentFilled >= 50) return 'yellow';
   return 'green';
+}
+
+/**
+ * Group flat timeslots by day of week, splitting each day into AM/PM sections
+ * @param slots - Flat list of timeslots
+ * @returns Map of dayOfWeek to { am, pm } slot arrays, sorted by startTime ascending.
+ *          Days with no slots are omitted.
+ */
+export function groupSlotsByDay(
+  slots: FlatTimeslot[]
+): Map<number, { am: FlatTimeslot[]; pm: FlatTimeslot[] }> {
+  const grouped = new Map<number, { am: FlatTimeslot[]; pm: FlatTimeslot[] }>();
+
+  for (const slot of slots) {
+    if (!grouped.has(slot.dayOfWeek)) {
+      grouped.set(slot.dayOfWeek, { am: [], pm: [] });
+    }
+    const day = grouped.get(slot.dayOfWeek)!;
+    if (slot.startTime < '12:00') {
+      day.am.push(slot);
+    } else {
+      day.pm.push(slot);
+    }
+  }
+
+  for (const day of grouped.values()) {
+    day.am.sort((a, b) => a.startTime.localeCompare(b.startTime));
+    day.pm.sort((a, b) => a.startTime.localeCompare(b.startTime));
+  }
+
+  for (const [dayOfWeek, day] of grouped) {
+    if (day.am.length + day.pm.length === 0) {
+      grouped.delete(dayOfWeek);
+    }
+  }
+
+  return grouped;
 }

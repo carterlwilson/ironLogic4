@@ -42,8 +42,8 @@ class ClientBenchmarkApiService {
     };
   }
 
-  async createMyBenchmark(data: CreateMyBenchmarkInput): Promise<ApiResponse<{ benchmark: ClientBenchmark }>> {
-    return authenticatedRequest<ApiResponse<{ benchmark: ClientBenchmark }>>('/api/me/benchmarks', {
+  async createMyBenchmark(data: CreateMyBenchmarkInput): Promise<ApiResponse<MyBenchmarksResponse>> {
+    return authenticatedRequest<ApiResponse<MyBenchmarksResponse>>('/api/me/benchmarks', {
       method: 'POST',
       body: JSON.stringify(data),
     });

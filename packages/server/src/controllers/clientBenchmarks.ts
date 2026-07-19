@@ -65,10 +65,105 @@ export const getMyBenchmarks = async (
   }
 };
 
+const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+
+function shouldCreateNewVersion(existing: any, input: CreateMyBenchmarkInput): boolean {
+  const now = Date.now();
+
+  if (input.repMaxes?.length) {
+    return input.repMaxes.some(submitted => {
+      const counterpart = existing.repMaxes?.find(
+        (rm: any) => rm.templateRepMaxId === submitted.templateRepMaxId
+      );
+      return counterpart && (now - new Date(counterpart.recordedAt).getTime()) >= FIVE_DAYS_MS;
+    });
+  }
+
+  if (input.timeSubMaxes?.length) {
+    return input.timeSubMaxes.some(submitted => {
+      const counterpart = existing.timeSubMaxes?.find(
+        (tsm: any) => tsm.templateSubMaxId === submitted.templateSubMaxId
+      );
+      return counterpart && (now - new Date(counterpart.recordedAt).getTime()) >= FIVE_DAYS_MS;
+    });
+  }
+
+  if (input.distanceSubMaxes?.length) {
+    return input.distanceSubMaxes.some(submitted => {
+      const counterpart = existing.distanceSubMaxes?.find(
+        (dsm: any) => dsm.templateDistanceSubMaxId === submitted.templateDistanceSubMaxId
+      );
+      return counterpart && (now - new Date(counterpart.recordedAt).getTime()) >= FIVE_DAYS_MS;
+    });
+  }
+
+  // Scalar types: use benchmark-level recordedAt
+  if (existing.recordedAt) {
+    return (now - new Date(existing.recordedAt).getTime()) >= FIVE_DAYS_MS;
+  }
+  return false;
+}
+
+// Mongoose subdocuments store their data on a hidden `_doc` property rather than as
+// own enumerable properties, so spreading one directly (`{...subdoc}`) silently drops
+// its fields when later cast by Mongoose during a $push/$set update. Convert to a plain
+// object first so overrides actually stick.
+function toPlainObject(doc: any): any {
+  return typeof doc?.toObject === 'function' ? doc.toObject() : doc;
+}
+
+function mergeSubMaxes(existing: any[], submitted: any[], idField: string, valueField: string): any[] {
+  const merged = existing.map(toPlainObject);
+  for (const s of submitted) {
+    const idx = merged.findIndex(item => item[idField] === s[idField]);
+    if (idx >= 0) {
+      merged[idx] = { ...merged[idx], [valueField]: s[valueField], recordedAt: new Date(s.recordedAt) };
+    } else {
+      merged.push(s);
+    }
+  }
+  return merged;
+}
+
+// A rep max with fewer reps must be >= one with more reps (if you can lift X for 5 reps,
+// you can lift at least X for 1 rep). When the user submits a value, treat it as ground
+// truth and raise any other, untouched bucket that's now known to be too low relative to it.
+// Buckets are never lowered automatically: a new, lower-rep submission that's smaller than an
+// existing higher-rep-count value is left as-is rather than silently overwritten — clamping
+// downward previously caused real historical maxes to be erased without the user's knowledge.
+function normalizeRepMaxes(
+  merged: any[],
+  repsById: Map<string, number>,
+  authoritativeIds: Set<string>
+): any[] {
+  const authoritative = merged.filter(rm => authoritativeIds.has(rm.templateRepMaxId));
+  if (authoritative.length === 0) return merged;
+
+  const now = new Date();
+
+  return merged.map(rm => {
+    if (authoritativeIds.has(rm.templateRepMaxId)) return rm;
+    const reps = repsById.get(rm.templateRepMaxId);
+    if (reps === undefined) return rm;
+
+    let lowerBound = -Infinity; // must be >= weight of any authoritative entry with MORE reps
+    for (const a of authoritative) {
+      const aReps = repsById.get(a.templateRepMaxId);
+      if (aReps === undefined) continue;
+      if (aReps > reps) lowerBound = Math.max(lowerBound, a.weightKg);
+    }
+
+    if (lowerBound > -Infinity && rm.weightKg < lowerBound) {
+      return { ...rm, weightKg: lowerBound, recordedAt: now };
+    }
+    return rm;
+  });
+}
+
 /**
  * POST /api/me/benchmarks
- * Create new benchmark from template
- * Optionally moves an old benchmark to historical if oldBenchmarkId is provided
+ * Create new benchmark from template.
+ * Server automatically routes to edit-in-place or new-version based on sub-max age.
  */
 export const createMyBenchmark = async (
   req: AuthenticatedRequest,
@@ -103,38 +198,139 @@ export const createMyBenchmark = async (
       return;
     }
 
-    // 3. If replacing an old benchmark, validate it exists and move it to historical
-    if (input.oldBenchmarkId) {
-      const user = await User.findById(userId);
-      if (!user) {
-        res.status(404).json({
-          success: false,
-          error: 'User not found',
-        });
-        return;
-      }
-
-      // Find the old benchmark in currentBenchmarks
-      const oldBenchmark = user.currentBenchmarks?.find(
-        (b) => b._id.toString() === input.oldBenchmarkId
-      );
-
-      if (!oldBenchmark) {
-        res.status(404).json({
-          success: false,
-          error: 'Old benchmark not found in current benchmarks',
-        });
-        return;
-      }
-
-      // Move old benchmark to historical using atomic operation
-      await User.findByIdAndUpdate(userId, {
-        $pull: { currentBenchmarks: { _id: input.oldBenchmarkId } },
-        $push: { historicalBenchmarks: oldBenchmark },
-      });
+    // 3. Load user and find existing currentBenchmark for this template
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
     }
 
-    // 4. Create new benchmark subdocument
+    const existingBenchmark = user.currentBenchmarks?.find(
+      (b) => b.templateId.toString() === input.templateId
+    );
+
+    if (existingBenchmark) {
+      // Compute the repMax merge/normalization once up front so we can tell whether
+      // normalizeRepMaxes is about to silently rewrite an untouched bucket. If it is,
+      // that bucket's prior value needs a home in history — the only place this app
+      // has for that is a full-benchmark archival, so such an adjustment must force
+      // the new-version path regardless of the submitted bucket's own staleness.
+      let mergedRepMaxes: any[] = (existingBenchmark.repMaxes || []).map(toPlainObject);
+      let repMaxesWereAdjusted = false;
+      if (input.repMaxes?.length) {
+        const repsById = new Map((template.templateRepMaxes || []).map((trm: any) => [trm._id.toString(), trm.reps]));
+        const authoritativeIds = new Set(input.repMaxes.map(rm => rm.templateRepMaxId));
+        const merged = mergeSubMaxes(existingBenchmark.repMaxes || [], input.repMaxes, 'templateRepMaxId', 'weightKg');
+        mergedRepMaxes = normalizeRepMaxes(merged, repsById, authoritativeIds);
+        repMaxesWereAdjusted = mergedRepMaxes.some((rm, i) => rm.weightKg !== merged[i].weightKg);
+      }
+
+      const createNewVersion = shouldCreateNewVersion(existingBenchmark, input) || repMaxesWereAdjusted;
+
+      if (!createNewVersion) {
+        // Edit-in-place: merge submitted sub-maxes into existing, leave others untouched
+        const updateFields: any = { 'currentBenchmarks.$.updatedAt': new Date() };
+
+        if (input.repMaxes?.length) {
+          updateFields['currentBenchmarks.$.repMaxes'] = mergedRepMaxes;
+        }
+        if (input.timeSubMaxes?.length) {
+          updateFields['currentBenchmarks.$.timeSubMaxes'] = mergeSubMaxes(
+            existingBenchmark.timeSubMaxes || [], input.timeSubMaxes, 'templateSubMaxId', 'distanceMeters'
+          );
+        }
+        if (input.distanceSubMaxes?.length) {
+          updateFields['currentBenchmarks.$.distanceSubMaxes'] = mergeSubMaxes(
+            existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes, 'templateDistanceSubMaxId', 'timeSeconds'
+          );
+        }
+        if (input.timeSeconds !== undefined) updateFields['currentBenchmarks.$.timeSeconds'] = input.timeSeconds;
+        if (input.reps !== undefined) updateFields['currentBenchmarks.$.reps'] = input.reps;
+        if (input.otherNotes !== undefined) updateFields['currentBenchmarks.$.otherNotes'] = input.otherNotes;
+        if (input.recordedAt) updateFields['currentBenchmarks.$.recordedAt'] = new Date(input.recordedAt);
+        if (input.notes !== undefined) updateFields['currentBenchmarks.$.notes'] = input.notes;
+
+        const updatedUser = await User.findOneAndUpdate(
+          { _id: userId, 'currentBenchmarks._id': existingBenchmark._id },
+          { $set: updateFields },
+          { new: true, select: 'currentBenchmarks historicalBenchmarks' }
+        );
+
+        if (!updatedUser) {
+          res.status(404).json({ success: false, error: 'Benchmark not found or was modified concurrently' });
+          return;
+        }
+
+        const userData = updatedUser.toJSON();
+        res.status(200).json({
+          success: true,
+          data: {
+            currentBenchmarks: userData.currentBenchmarks || [],
+            historicalBenchmarks: userData.historicalBenchmarks || [],
+          },
+          message: 'Benchmark updated in place',
+        });
+        return;
+      }
+
+      // New-version path: merge submitted sub-maxes into old, archive old, create new.
+      // mergedRepMaxes was already computed above (hoisted so we could tell whether an
+      // adjustment happened before deciding on this path).
+      const mergedTimeSubMaxes = mergeSubMaxes(existingBenchmark.timeSubMaxes || [], input.timeSubMaxes || [], 'templateSubMaxId', 'distanceMeters');
+      const mergedDistanceSubMaxes = mergeSubMaxes(existingBenchmark.distanceSubMaxes || [], input.distanceSubMaxes || [], 'templateDistanceSubMaxId', 'timeSeconds');
+
+      const newBenchmark = {
+        _id: new Types.ObjectId(),
+        templateId: template.id,
+        name: template.name,
+        type: template.type,
+        tags: template.tags || [],
+        notes: input.notes,
+        recordedAt: input.recordedAt ? new Date(input.recordedAt) : undefined,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        ...(mergedRepMaxes.length > 0 && { repMaxes: mergedRepMaxes }),
+        ...(mergedTimeSubMaxes.length > 0 && { timeSubMaxes: mergedTimeSubMaxes }),
+        ...(mergedDistanceSubMaxes.length > 0 && { distanceSubMaxes: mergedDistanceSubMaxes }),
+        ...(input.timeSeconds !== undefined && { timeSeconds: input.timeSeconds }),
+        ...(input.reps !== undefined && { reps: input.reps }),
+        ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
+      };
+
+      // Archive old benchmark and add the new one in a single atomic update so there's
+      // no window where the old version is removed but the new one isn't in place yet.
+      const newCurrentBenchmarks = (user.currentBenchmarks || [])
+        .filter(b => b._id.toString() !== existingBenchmark._id.toString())
+        .map(toPlainObject)
+        .concat([newBenchmark]);
+
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: { currentBenchmarks: newCurrentBenchmarks },
+          $push: { historicalBenchmarks: existingBenchmark },
+        },
+        { new: true, select: 'currentBenchmarks historicalBenchmarks' }
+      );
+
+      if (!updatedUser) {
+        res.status(404).json({ success: false, error: 'User not found' });
+        return;
+      }
+
+      const userData = updatedUser.toJSON();
+      res.status(201).json({
+        success: true,
+        data: {
+          currentBenchmarks: userData.currentBenchmarks || [],
+          historicalBenchmarks: userData.historicalBenchmarks || [],
+        },
+        message: 'New benchmark version created',
+      });
+      return;
+    }
+
+    // No existing benchmark — create fresh
     const newBenchmark = {
       _id: new Types.ObjectId(),
       templateId: template.id,
@@ -145,7 +341,6 @@ export const createMyBenchmark = async (
       recordedAt: input.recordedAt ? new Date(input.recordedAt) : undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
-      // Spread measurement field
       ...(input.repMaxes !== undefined && { repMaxes: input.repMaxes }),
       ...(input.timeSubMaxes !== undefined && { timeSubMaxes: input.timeSubMaxes }),
       ...(input.distanceSubMaxes !== undefined && { distanceSubMaxes: input.distanceSubMaxes }),
@@ -154,41 +349,25 @@ export const createMyBenchmark = async (
       ...(input.otherNotes !== undefined && { otherNotes: input.otherNotes }),
     };
 
-    // 5. Add to user's currentBenchmarks using atomic update
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      {
-        $push: { currentBenchmarks: newBenchmark },
-      },
-      { new: true, select: 'currentBenchmarks' }
+      { $push: { currentBenchmarks: newBenchmark } },
+      { new: true, select: 'currentBenchmarks historicalBenchmarks' }
     );
 
     if (!updatedUser) {
-      res.status(404).json({
-        success: false,
-        error: 'User not found',
-      });
+      res.status(404).json({ success: false, error: 'User not found' });
       return;
     }
 
-    // 6. Convert to JSON to trigger toJSON transform
     const userData = updatedUser.toJSON();
-
-    // 7. Find the newly created benchmark
-    const createdBenchmark = userData.currentBenchmarks?.find(
-      (b: any) => b.id === newBenchmark._id.toString()
-    );
-
-    const message = input.oldBenchmarkId
-      ? 'Benchmark created and old benchmark moved to historical'
-      : 'Benchmark created successfully';
-
     res.status(201).json({
       success: true,
       data: {
-        benchmark: createdBenchmark,
+        currentBenchmarks: userData.currentBenchmarks || [],
+        historicalBenchmarks: userData.historicalBenchmarks || [],
       },
-      message,
+      message: 'Benchmark created successfully',
     });
   } catch (error) {
     console.error('Error creating benchmark:', error);
@@ -319,7 +498,7 @@ export const updateMyBenchmark = async (
         ? userData.currentBenchmarks
         : userData.historicalBenchmarks;
 
-    const updatedBenchmark = benchmarks?.find((b: any) => b.id === benchmarkId);
+    const updatedBenchmark = benchmarks?.find((b: any) => b.id?.toString() === benchmarkId);
 
     res.status(200).json({
       success: true,
@@ -349,7 +528,28 @@ export const deleteMyBenchmark = async (
     const userId = req.user!.id;
     const { benchmarkId } = req.params;
 
-    const result = await User.updateOne(
+    // MongoDB's $pull across two array fields in one update reports modifiedCount:1 even when
+    // neither array had a matching element, so existence must be checked explicitly beforehand
+    // rather than inferred from the update result.
+    const user = await User.findById(userId).select('currentBenchmarks historicalBenchmarks');
+    if (!user) {
+      res.status(404).json({ success: false, error: 'User not found' });
+      return;
+    }
+
+    const exists =
+      user.currentBenchmarks?.some((b) => b._id.toString() === benchmarkId) ||
+      user.historicalBenchmarks?.some((b) => b._id.toString() === benchmarkId);
+
+    if (!exists) {
+      res.status(404).json({
+        success: false,
+        error: 'Benchmark not found',
+      });
+      return;
+    }
+
+    await User.updateOne(
       { _id: userId },
       {
         $pull: {
@@ -358,14 +558,6 @@ export const deleteMyBenchmark = async (
         },
       }
     );
-
-    if (result.modifiedCount === 0) {
-      res.status(404).json({
-        success: false,
-        error: 'Benchmark not found',
-      });
-      return;
-    }
 
     res.status(200).json({
       success: true,

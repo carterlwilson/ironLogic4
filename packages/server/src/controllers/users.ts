@@ -6,6 +6,7 @@ import { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 import { UserType } from '@ironlogic4/shared/types/users';
 import { z } from 'zod';
 import { generateRandomPassword } from '../utils/auth.js';
+import { logUserDeletion } from '../utils/deletedUserLog.js';
 
 // Update user schema for validation
 const UpdateUserSchema = z.object({
@@ -271,6 +272,8 @@ export const deleteUser = async (
       } as ApiResponse);
       return;
     }
+
+    void logUserDeletion(user, req.user, 'users.deleteUser');
 
     res.json({
       success: true,
