@@ -277,7 +277,10 @@ export const joinTimeslot = async (
     }
 
     // Use atomic update to prevent race conditions — capacity check is included in
-    // the filter so concurrent joins on the last open slot can't both succeed
+    // the filter so concurrent joins on the last open slot can't both succeed.
+    // $expr is not allowed inside $elemMatch, so we enforce capacity by checking that
+    // the (capacity-1) index of assignedClients doesn't exist yet, which is only true
+    // when assignedClients.length < capacity.
     const updatedSchedule = await ActiveSchedule.findOneAndUpdate(
       {
         _id: id,
@@ -285,7 +288,7 @@ export const joinTimeslot = async (
           $elemMatch: {
             _id: timeslotId,
             assignedClients: { $ne: clientId },
-            $expr: { $lt: [{ $size: '$assignedClients' }, '$capacity'] },
+            [`assignedClients.${targetCapacity! - 1}`]: { $exists: false },
           }
         },
       },

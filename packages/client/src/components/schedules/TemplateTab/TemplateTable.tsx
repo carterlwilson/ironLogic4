@@ -1,8 +1,7 @@
-import { Table, Paper, Text, Badge, Group, ActionIcon, Stack, Skeleton } from '@mantine/core';
+import { Table, Paper, Text, Group, ActionIcon, Stack, Skeleton } from '@mantine/core';
 import { IconEdit, IconTrash, IconUsers } from '@tabler/icons-react';
 import type { IScheduleTemplate } from '@ironlogic4/shared';
 import { EmptyState } from '../shared/EmptyState';
-import { getDayName } from '../../../utils/scheduleUtils';
 
 interface TemplateTableProps {
   templates: IScheduleTemplate[];
@@ -52,7 +51,6 @@ export function TemplateTable({
           <Table.Tr>
             <Table.Th>Name</Table.Th>
             <Table.Th>Description</Table.Th>
-            <Table.Th>Days</Table.Th>
             <Table.Th>Coaches</Table.Th>
             <Table.Th>Actions</Table.Th>
           </Table.Tr>
@@ -67,15 +65,6 @@ export function TemplateTable({
                 <Text size="sm" c="dimmed" lineClamp={1}>
                   {template.description || 'No description'}
                 </Text>
-              </Table.Td>
-              <Table.Td>
-                <Group gap="xs">
-                  {template.days.map((day) => (
-                    <Badge key={day.dayOfWeek} size="sm" variant="light">
-                      {getDayName(day.dayOfWeek)}
-                    </Badge>
-                  ))}
-                </Group>
               </Table.Td>
               <Table.Td>
                 <Group gap="xs">
