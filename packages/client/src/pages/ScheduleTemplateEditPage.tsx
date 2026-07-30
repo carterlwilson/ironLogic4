@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Container,
@@ -14,13 +14,72 @@ import {
   Paper,
   Divider,
 } from '@mantine/core';
+import { useDebouncedCallback } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconCalendar, IconDeviceFloppy, IconArrowLeft } from '@tabler/icons-react';
-import type { IScheduleTemplate, UpdateScheduleTemplateRequest } from '@ironlogic4/shared';
+import { IconCalendar, IconArrowLeft, IconCheck, IconAlertCircle, IconAlertTriangle } from '@tabler/icons-react';
+import type { UpdateScheduleTemplateRequest } from '@ironlogic4/shared';
 import { scheduleApi } from '../services/scheduleApi';
 import { useCoaches } from '../hooks/useCoaches';
 import { useAuth } from '../providers/AuthProvider';
 import { DayConfigCard, type DayConfigData } from '../components/schedules/TemplateEdit';
+
+type SaveStatus = 'saved' | 'pending' | 'saving' | 'blocked' | 'error';
+
+interface FormSnapshot {
+  name: string;
+  description: string;
+  coachIds: string[];
+  days: DayConfigData[];
+}
+
+function renderSaveStatus(
+  status: SaveStatus,
+  error: string | null,
+  blockedReason: string,
+  onRetry: () => void
+) {
+  switch (status) {
+    case 'pending':
+      return (
+        <Group gap={6}>
+          <Loader size="xs" />
+          <Text size="sm" c="dimmed">Unsaved changes…</Text>
+        </Group>
+      );
+    case 'saving':
+      return (
+        <Group gap={6}>
+          <Loader size="xs" />
+          <Text size="sm" c="dimmed">Saving…</Text>
+        </Group>
+      );
+    case 'blocked':
+      return (
+        <Group gap={6}>
+          <IconAlertTriangle size={16} color="var(--mantine-color-yellow-7)" />
+          <Text size="sm" c="dimmed">{blockedReason}</Text>
+        </Group>
+      );
+    case 'error':
+      return (
+        <Group gap={6}>
+          <IconAlertCircle size={16} color="var(--mantine-color-red-6)" />
+          <Text size="sm" c="red">{error || 'Save failed'}</Text>
+          <Button variant="subtle" size="xs" onClick={onRetry}>
+            Retry
+          </Button>
+        </Group>
+      );
+    case 'saved':
+    default:
+      return (
+        <Group gap={6}>
+          <IconCheck size={16} color="var(--mantine-color-green-6)" />
+          <Text size="sm" c="dimmed">All changes saved</Text>
+        </Group>
+      );
+  }
+}
 
 /**
  * Full-page editor for editing schedule templates
@@ -33,9 +92,7 @@ export function ScheduleTemplateEditPage() {
   const gymId = user?.gymId || '';
 
   // State
-  const [template, setTemplate] = useState<IScheduleTemplate | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
 
   // Form state
   const [name, setName] = useState('');
@@ -43,8 +100,12 @@ export function ScheduleTemplateEditPage() {
   const [coachIds, setCoachIds] = useState<string[]>([]);
   const [days, setDays] = useState<DayConfigData[]>([]);
 
-  // Track if form has changes
-  const [isDirty, setIsDirty] = useState(false);
+  // Autosave state
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('saved');
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const lastSavedRef = useRef<FormSnapshot | null>(null);
+  const inFlightRef = useRef(false);
+  const pendingRef = useRef(false);
 
   // Fetch coaches
   const { coaches, loading: coachesLoading } = useCoaches(gymId);
@@ -71,22 +132,28 @@ export function ScheduleTemplateEditPage() {
           throw new Error('Template not found');
         }
 
-        setTemplate(loadedTemplate);
+        const loadedDays: DayConfigData[] = loadedTemplate.days.map((day) => ({
+          dayOfWeek: day.dayOfWeek,
+          timeSlots: day.timeSlots.map((ts) => ({
+            id: ts.id,
+            startTime: ts.startTime,
+            endTime: ts.endTime,
+            capacity: ts.capacity,
+            assignedClients: ts.assignedClients || [],
+          })),
+        }));
+
         setName(loadedTemplate.name);
         setDescription(loadedTemplate.description || '');
         setCoachIds(loadedTemplate.coachIds);
-        setDays(
-          loadedTemplate.days.map((day) => ({
-            dayOfWeek: day.dayOfWeek,
-            timeSlots: day.timeSlots.map((ts) => ({
-              id: ts.id,
-              startTime: ts.startTime,
-              endTime: ts.endTime,
-              capacity: ts.capacity,
-              assignedClients: ts.assignedClients || [],
-            })),
-          }))
-        );
+        setDays(loadedDays);
+
+        lastSavedRef.current = {
+          name: loadedTemplate.name,
+          description: loadedTemplate.description || '',
+          coachIds: loadedTemplate.coachIds,
+          days: loadedDays,
+        };
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to load template';
         notifications.show({
@@ -104,84 +171,35 @@ export function ScheduleTemplateEditPage() {
     loadTemplate();
   }, [templateId, navigate]);
 
-  // Track changes
-  useEffect(() => {
-    if (!template) return;
+  const debouncedAutosave = useDebouncedCallback(() => {
+    void performAutosave();
+  }, { delay: 800, flushOnUnmount: true });
 
-    const hasChanges =
-      name !== template.name ||
-      description !== (template.description || '') ||
-      JSON.stringify(coachIds) !== JSON.stringify(template.coachIds) ||
-      JSON.stringify(days) !== JSON.stringify(
-        template.days.map((day) => ({
-          dayOfWeek: day.dayOfWeek,
-          timeSlots: day.timeSlots.map((ts) => ({
-            id: ts.id,
-            startTime: ts.startTime,
-            endTime: ts.endTime,
-            capacity: ts.capacity,
-            assignedClients: ts.assignedClients || [],
-          })),
-        }))
-      );
-
-    setIsDirty(hasChanges);
-  }, [name, description, coachIds, days, template]);
-
-  // Unsaved changes warning
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isDirty]);
-
-  const handleDayChange = (dayOfWeek: number, day: DayConfigData) => {
-    const newDays = [...days];
-    const dayIndex = newDays.findIndex(d => d.dayOfWeek === dayOfWeek);
-    if (dayIndex !== -1) {
-      newDays[dayIndex] = day;
-      setDays(newDays);
-    }
-  };
-
-  const handleSave = async () => {
-    // Validation
-    if (!name.trim()) {
-      notifications.show({
-        title: 'Validation Error',
-        message: 'Template name is required',
-        color: 'red',
-        autoClose: 3000,
-      });
-      return;
-    }
-
-    if (coachIds.length === 0) {
-      notifications.show({
-        title: 'Validation Error',
-        message: 'At least one coach is required',
-        color: 'red',
-        autoClose: 3000,
-      });
-      return;
-    }
-
+  const performAutosave = async () => {
     if (!templateId) return;
 
-    try {
-      setSaving(true);
+    if (!name.trim() || coachIds.length === 0 || days.length === 0) {
+      setSaveStatus('blocked');
+      return;
+    }
 
+    if (inFlightRef.current) {
+      // A save is already in flight; run once more when it settles instead
+      // of firing an overlapping second request.
+      pendingRef.current = true;
+      return;
+    }
+
+    const snapshot: FormSnapshot = { name, description, coachIds, days };
+    inFlightRef.current = true;
+    setSaveStatus('saving');
+
+    try {
       const updateData: UpdateScheduleTemplateRequest = {
-        name: name.trim(),
-        description: description.trim() || undefined,
-        coachIds,
-        days: days.map((day) => ({
+        name: snapshot.name.trim(),
+        description: snapshot.description.trim() || undefined,
+        coachIds: snapshot.coachIds,
+        days: snapshot.days.map((day) => ({
           dayOfWeek: day.dayOfWeek,
           timeSlots: day.timeSlots.map((ts) => ({
             id: ts.id,
@@ -195,35 +213,53 @@ export function ScheduleTemplateEditPage() {
 
       await scheduleApi.updateTemplate(templateId, updateData);
 
-      notifications.show({
-        title: 'Success',
-        message: 'Template updated successfully',
-        color: 'green',
-        autoClose: 3000,
-      });
-
-      setIsDirty(false);
-      navigate('/schedules');
+      lastSavedRef.current = snapshot;
+      setSaveError(null);
+      setSaveStatus('saved');
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update template';
-      notifications.show({
-        title: 'Error',
-        message: errorMessage,
-        color: 'red',
-        autoClose: 5000,
-      });
+      setSaveError(error instanceof Error ? error.message : 'Failed to save changes');
+      setSaveStatus('error');
     } finally {
-      setSaving(false);
+      inFlightRef.current = false;
+      if (pendingRef.current) {
+        pendingRef.current = false;
+        debouncedAutosave();
+      }
     }
   };
 
-  const handleCancel = () => {
-    if (isDirty) {
-      const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?');
-      if (!confirmed) return;
+  // Trigger a debounced autosave whenever the form state changes
+  useEffect(() => {
+    if (!lastSavedRef.current) return; // template hasn't loaded yet
+
+    const current: FormSnapshot = { name, description, coachIds, days };
+    if (JSON.stringify(current) === JSON.stringify(lastSavedRef.current)) return;
+
+    if (!name.trim() || coachIds.length === 0 || days.length === 0) {
+      setSaveStatus('blocked');
+      return;
     }
-    navigate('/schedules');
+
+    setSaveStatus('pending');
+    debouncedAutosave();
+  }, [name, description, coachIds, days]);
+
+  const blockedReason = !name.trim()
+    ? 'Add a template name to save'
+    : coachIds.length === 0
+    ? 'Add at least one coach to save'
+    : 'Add at least one day to save';
+
+  const handleDayChange = (dayOfWeek: number, day: DayConfigData) => {
+    const newDays = [...days];
+    const dayIndex = newDays.findIndex(d => d.dayOfWeek === dayOfWeek);
+    if (dayIndex !== -1) {
+      newDays[dayIndex] = day;
+      setDays(newDays);
+    }
   };
+
+  const handleBack = () => navigate('/schedules');
 
   if (loading) {
     return (
@@ -251,16 +287,9 @@ export function ScheduleTemplateEditPage() {
             </div>
           </Group>
           <Group gap="sm">
-            <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button
-              leftSection={<IconDeviceFloppy size={16} />}
-              onClick={handleSave}
-              loading={saving}
-              disabled={!isDirty}
-            >
-              Save Changes
+            {renderSaveStatus(saveStatus, saveError, blockedReason, () => void performAutosave())}
+            <Button variant="subtle" leftSection={<IconArrowLeft size={16} />} onClick={handleBack}>
+              Back to Schedules
             </Button>
           </Group>
         </Group>
