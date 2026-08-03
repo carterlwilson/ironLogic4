@@ -1,9 +1,6 @@
 import { useState, useCallback } from 'react';
 import { notifications } from '@mantine/notifications';
-import type {
-  IActiveSchedule,
-  CreateActiveScheduleRequest,
-} from '@ironlogic4/shared';
+import type { IActiveSchedule } from '@ironlogic4/shared';
 import { scheduleApi } from '../services/scheduleApi';
 
 interface UseActiveScheduleState {
@@ -12,20 +9,18 @@ interface UseActiveScheduleState {
   error: string | null;
   isCreateModalOpen: boolean;
   isDetailsModalOpen: boolean;
-  isEditCoachesModalOpen: boolean;
   isResetModalOpen: boolean;
   isDeleteModalOpen: boolean;
 }
 
 interface UseActiveScheduleReturn extends UseActiveScheduleState {
   loadActiveSchedule: () => Promise<void>;
-  createActiveSchedule: (data: CreateActiveScheduleRequest) => Promise<void>;
-  updateCoaches: (coachIds: string[]) => Promise<void>;
+  createActiveSchedule: () => Promise<void>;
+  updateTimeslot: (timeslotId: string, data: { coachIds: string[]; location: string }) => Promise<void>;
   resetSchedule: () => Promise<void>;
   deleteActiveSchedule: () => Promise<void>;
   openCreateModal: () => void;
   openDetailsModal: () => void;
-  openEditCoachesModal: () => void;
   openResetModal: () => void;
   openDeleteModal: () => void;
   closeModals: () => void;
@@ -38,7 +33,6 @@ const initialState: UseActiveScheduleState = {
   error: null,
   isCreateModalOpen: false,
   isDetailsModalOpen: false,
-  isEditCoachesModalOpen: false,
   isResetModalOpen: false,
   isDeleteModalOpen: false,
 };
@@ -77,11 +71,11 @@ export const useActiveSchedule = (): UseActiveScheduleReturn => {
     }
   }, []);
 
-  const createActiveSchedule = useCallback(async (data: CreateActiveScheduleRequest) => {
+  const createActiveSchedule = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, loading: true }));
 
-      await scheduleApi.createActiveSchedule(data);
+      await scheduleApi.createActiveSchedule();
 
       setState(prev => ({
         ...prev,
@@ -110,29 +104,26 @@ export const useActiveSchedule = (): UseActiveScheduleReturn => {
     }
   }, [loadActiveSchedule]);
 
-  const updateCoaches = useCallback(async (coachIds: string[]) => {
-    try {
-      setState(prev => ({ ...prev, loading: true }));
+  const updateTimeslot = useCallback(async (timeslotId: string, data: { coachIds: string[]; location: string }) => {
+    const scheduleId = state.activeSchedule?.id;
+    if (!scheduleId) return;
 
-      await scheduleApi.updateActiveScheduleCoaches(coachIds);
+    try {
+      const response = await scheduleApi.updateTimeslot(scheduleId, timeslotId, data);
 
       setState(prev => ({
         ...prev,
-        isEditCoachesModalOpen: false,
-        loading: false,
+        activeSchedule: response.data || prev.activeSchedule,
       }));
 
       notifications.show({
         title: 'Success',
-        message: 'Coaches updated successfully',
+        message: 'Timeslot updated successfully',
         color: 'green',
         autoClose: 3000,
       });
-
-      await loadActiveSchedule();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to update coaches';
-      setState(prev => ({ ...prev, loading: false }));
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update timeslot';
 
       notifications.show({
         title: 'Error',
@@ -141,7 +132,7 @@ export const useActiveSchedule = (): UseActiveScheduleReturn => {
         autoClose: 5000,
       });
     }
-  }, [loadActiveSchedule]);
+  }, [state.activeSchedule?.id]);
 
   const resetSchedule = useCallback(async () => {
     try {
@@ -216,10 +207,6 @@ export const useActiveSchedule = (): UseActiveScheduleReturn => {
     setState(prev => ({ ...prev, isDetailsModalOpen: true }));
   }, []);
 
-  const openEditCoachesModal = useCallback(() => {
-    setState(prev => ({ ...prev, isEditCoachesModalOpen: true }));
-  }, []);
-
   const openResetModal = useCallback(() => {
     setState(prev => ({ ...prev, isResetModalOpen: true }));
   }, []);
@@ -233,7 +220,6 @@ export const useActiveSchedule = (): UseActiveScheduleReturn => {
       ...prev,
       isCreateModalOpen: false,
       isDetailsModalOpen: false,
-      isEditCoachesModalOpen: false,
       isResetModalOpen: false,
       isDeleteModalOpen: false,
     }));
@@ -247,12 +233,11 @@ export const useActiveSchedule = (): UseActiveScheduleReturn => {
     ...state,
     loadActiveSchedule,
     createActiveSchedule,
-    updateCoaches,
+    updateTimeslot,
     resetSchedule,
     deleteActiveSchedule,
     openCreateModal,
     openDetailsModal,
-    openEditCoachesModal,
     openResetModal,
     openDeleteModal,
     closeModals,

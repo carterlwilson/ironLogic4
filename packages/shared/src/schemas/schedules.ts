@@ -9,6 +9,8 @@ export const TimeSlotSchema = z.object({
   startTime: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format (e.g., 09:00, 14:30)'),
   endTime: z.string().regex(timeFormatRegex, 'Time must be in HH:mm format (e.g., 09:00, 14:30)'),
   capacity: z.number().int().min(1, 'Capacity must be at least 1'),
+  coachIds: z.array(z.string().min(1)).min(1, 'At least one coach is required'),
+  location: z.string().min(1, 'Location is required').max(200).trim(),
   assignedClients: z.array(z.string()).default([]),
 }).refine((data) => {
   // Validate that endTime is after startTime
@@ -30,23 +32,20 @@ export const ScheduleDaySchema = z.object({
 export const CreateScheduleTemplateSchema = z.object({
   name: z.string().min(1).max(100).trim(),
   description: z.string().max(500).trim().optional(),
-  coachIds: z.array(z.string().min(1)).min(1, 'At least one coach is required'),
   days: z.array(ScheduleDaySchema).optional().default([]),
 });
 
 export const UpdateScheduleTemplateSchema = z.object({
   name: z.string().min(1).max(100).trim().optional(),
   description: z.string().max(500).trim().optional(),
-  coachIds: z.array(z.string().min(1)).min(1, 'At least one coach is required').optional(),
   days: z.array(ScheduleDaySchema).min(1, 'At least one day is required').optional(),
 });
 
-export const CreateActiveScheduleSchema = z.object({
-  templateId: z.string().min(1),
-});
+export const CreateActiveScheduleSchema = z.object({});
 
-export const AssignStaffSchema = z.object({
-  coachId: z.string().min(1),
+export const UpdateTimeslotAssignmentSchema = z.object({
+  coachIds: z.array(z.string().min(1)).min(1, 'At least one coach is required'),
+  location: z.string().min(1, 'Location is required').max(200).trim(),
 });
 
 export const JoinTimeslotSchema = z.object({

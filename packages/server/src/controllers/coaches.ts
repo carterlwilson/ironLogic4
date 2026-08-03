@@ -399,7 +399,7 @@ export const deleteCoach = async (
 
     // 1. Check for active schedules
     const activeSchedules = await ActiveSchedule.findOne({
-      coachIds: id,
+      'days.timeSlots.coachIds': id,
     });
 
     if (activeSchedules) {

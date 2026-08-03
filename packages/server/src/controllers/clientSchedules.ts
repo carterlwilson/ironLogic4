@@ -77,10 +77,14 @@ export const getAvailableSchedules = async (
       .populate('templateId', 'name')
       .sort({ createdAt: -1 });
 
-    // Collect all unique coach IDs from schedules
+    // Collect all unique coach IDs from every timeslot across all schedules
     const allCoachIds = new Set<string>();
     schedules.forEach(schedule => {
-      schedule.coachIds.forEach(coachId => allCoachIds.add(coachId));
+      schedule.days.forEach(day => {
+        day.timeSlots.forEach(slot => {
+          slot.coachIds.forEach(coachId => allCoachIds.add(coachId));
+        });
+      });
     });
 
     // Fetch all coaches in one query
@@ -115,13 +119,12 @@ export const getAvailableSchedules = async (
           ...slot,
           availableSpots: slot.capacity - slot.assignedClients.length,
           isUserAssigned: slot.assignedClients.includes(userId),
+          // Add coaches array alongside coachIds for this timeslot
+          coaches: slot.coachIds
+            .map((coachId: string) => coachMap.get(coachId))
+            .filter((coach: any) => coach !== undefined), // Filter out deleted coaches
         })),
       }));
-
-      // Add coaches array alongside coachIds for backward compatibility
-      scheduleObj.coaches = scheduleObj.coachIds
-        .map((coachId: string) => coachMap.get(coachId))
-        .filter((coach: any) => coach !== undefined); // Filter out deleted coaches
 
       return scheduleObj;
     });

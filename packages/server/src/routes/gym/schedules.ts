@@ -17,8 +17,7 @@ import {
   createActiveSchedule,
   deleteActiveSchedule,
   resetActiveSchedule,
-  assignStaff,
-  unassignStaff,
+  updateTimeslotAssignment,
 } from '../../controllers/activeSchedules.js';
 import {
   getAvailableSchedules,
@@ -124,26 +123,6 @@ router.post(
   resetActiveSchedule
 );
 
-// ===== Staff Assignment Routes =====
-
-// POST /api/gym/schedules/active/:id/assign - Assign coach to active schedule
-// Admin/Owner/Coach only
-router.post(
-  '/active/:id/assign',
-  verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  assignStaff
-);
-
-// DELETE /api/gym/schedules/active/:id/unassign/:coachId - Unassign coach from active schedule
-// Admin/Owner/Coach only
-router.delete(
-  '/active/:id/unassign/:coachId',
-  verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  unassignStaff
-);
-
 // ===== Client Self-Service Routes =====
 
 // GET /api/gym/schedules/available - Get available schedules for client self-scheduling
@@ -153,6 +132,15 @@ router.get('/available', verifyToken, getAvailableSchedules);
 // GET /api/gym/schedules/my-schedule - Get authenticated client's schedule
 // All authenticated users
 router.get('/my-schedule', verifyToken, getMySchedule);
+
+// PUT /api/gym/schedules/active/:id/timeslots/:timeslotId - Update coaches + location for a timeslot
+// Admin/Owner/Coach only
+router.put(
+  '/active/:id/timeslots/:timeslotId',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  updateTimeslotAssignment
+);
 
 // POST /api/gym/schedules/active/:id/timeslots/:timeslotId/join - Join a timeslot
 // All authenticated users (with gym validation)

@@ -2,7 +2,6 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
 import { ActiveSchedule } from '../models/ActiveSchedule.js';
-import { User } from '../models/User.js';
 import {
   ApiResponse,
   CreateScheduleTemplateSchema,
@@ -11,34 +10,19 @@ import {
 } from '@ironlogic4/shared';
 import { IdParamSchema } from '@ironlogic4/shared/schemas/api';
 import { buildGymScope } from '../utils/gymScope.js';
+import { validateCoachIds } from '../utils/validateCoachIds.js';
 
 /**
- * Validate that coach IDs exist, belong to the gym, and have appropriate roles
+ * Collect the union of all coachIds across every timeslot in every day
  */
-async function validateCoachIds(coachIds: string[], gymId: string): Promise<{ valid: boolean; error?: string }> {
-  const coaches = await User.find({
-    _id: { $in: coachIds },
-  });
-
-  if (coaches.length !== coachIds.length) {
-    return { valid: false, error: 'One or more coach IDs not found' };
+function collectCoachIdsFromDays(days: { timeSlots: { coachIds: string[] }[] }[]): string[] {
+  const coachIds = new Set<string>();
+  for (const day of days) {
+    for (const slot of day.timeSlots) {
+      slot.coachIds.forEach(id => coachIds.add(id));
+    }
   }
-
-  // Check that all users belong to the gym
-  const invalidGym = coaches.find(coach => coach.gymId !== gymId);
-  if (invalidGym) {
-    return { valid: false, error: 'All coaches must belong to the same gym' };
-  }
-
-  // Check that all users have appropriate roles
-  const invalidRole = coaches.find(
-    coach => !['coach', 'admin', 'owner'].includes(coach.userType)
-  );
-  if (invalidRole) {
-    return { valid: false, error: 'Coach IDs must refer to users with coach, admin, or owner roles' };
-  }
-
-  return { valid: true };
+  return Array.from(coachIds);
 }
 
 /**
@@ -59,7 +43,7 @@ export const getScheduleTemplates = async (
     // Coach filtering - coaches can only see schedules they're assigned to
     if (req.user?.userType === UserType.COACH || coachId) {
       const filterCoachId = coachId || req.user?.id;
-      query.coachIds = filterCoachId;
+      query['days.timeSlots.coachIds'] = filterCoachId;
     }
 
     const templates = await ScheduleTemplate.find(query)
@@ -123,7 +107,9 @@ export const getScheduleTemplateById = async (
 
     // Coaches can only view schedules they're assigned to
     if (req.user?.userType === UserType.COACH) {
-      const isAssigned = template.coachIds.includes(req.user.id);
+      const isAssigned = template.days.some(day =>
+        day.timeSlots.some(slot => slot.coachIds.includes(req.user!.id))
+      );
       if (!isAssigned) {
         res.status(403).json({
           success: false,
@@ -211,20 +197,32 @@ export const createScheduleTemplate = async (
       }
     }
 
-    // Validate coach IDs
-    const coachValidation = await validateCoachIds(templateData.coachIds, gymId);
-    if (!coachValidation.valid) {
-      res.status(400).json({
+    // Enforce one schedule template per gym
+    const existingTemplate = await ScheduleTemplate.findOne({ gymId });
+    if (existingTemplate) {
+      res.status(409).json({
         success: false,
-        error: coachValidation.error,
+        error: 'A schedule template already exists for this gym. Edit the existing template instead.',
       });
       return;
+    }
+
+    // Validate coach IDs referenced by any timeslot
+    const coachIds = collectCoachIdsFromDays(days);
+    if (coachIds.length > 0) {
+      const coachValidation = await validateCoachIds(coachIds, gymId);
+      if (!coachValidation.valid) {
+        res.status(400).json({
+          success: false,
+          error: coachValidation.error,
+        });
+        return;
+      }
     }
 
     const newTemplate = new ScheduleTemplate({
       name: templateData.name,
       description: templateData.description,
-      coachIds: templateData.coachIds,
       days,
       gymId,
       createdBy: req.user!.id,
@@ -244,11 +242,11 @@ export const createScheduleTemplate = async (
   } catch (error: any) {
     console.error('Error creating schedule template:', error);
 
-    // Handle duplicate name error
+    // Handle duplicate gym error
     if (error.code === 11000) {
-      res.status(400).json({
+      res.status(409).json({
         success: false,
-        error: 'A schedule template with this name already exists for this gym',
+        error: 'A schedule template already exists for this gym',
       });
       return;
     }
@@ -302,15 +300,18 @@ export const updateScheduleTemplate = async (
       return;
     }
 
-    // If updating coach IDs, validate them
-    if (updateData.coachIds) {
-      const coachValidation = await validateCoachIds(updateData.coachIds, template.gymId);
-      if (!coachValidation.valid) {
-        res.status(400).json({
-          success: false,
-          error: coachValidation.error,
-        });
-        return;
+    // If updating days, validate all coach IDs referenced by any timeslot
+    if (updateData.days) {
+      const coachIds = collectCoachIdsFromDays(updateData.days);
+      if (coachIds.length > 0) {
+        const coachValidation = await validateCoachIds(coachIds, template.gymId);
+        if (!coachValidation.valid) {
+          res.status(400).json({
+            success: false,
+            error: coachValidation.error,
+          });
+          return;
+        }
       }
     }
 
@@ -332,11 +333,11 @@ export const updateScheduleTemplate = async (
   } catch (error: any) {
     console.error('Error updating schedule template:', error);
 
-    // Handle duplicate name error
+    // Handle duplicate gym error
     if (error.code === 11000) {
-      res.status(400).json({
+      res.status(409).json({
         success: false,
-        error: 'A schedule template with this name already exists for this gym',
+        error: 'A schedule template already exists for this gym',
       });
       return;
     }

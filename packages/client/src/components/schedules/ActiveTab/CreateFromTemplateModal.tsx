@@ -1,108 +1,61 @@
-import { Modal, Stack, Text, Button, Group, Select, Paper, Badge } from '@mantine/core';
-import { useState } from 'react';
-import { IconTemplate, IconUsers } from '@tabler/icons-react';
+import { Modal, Stack, Text, Button, Group, Paper, Badge } from '@mantine/core';
+import { IconTemplate } from '@tabler/icons-react';
 import type { IScheduleTemplate } from '@ironlogic4/shared';
 import { getDayName } from '../../../utils/scheduleUtils';
 
 interface CreateFromTemplateModalProps {
   opened: boolean;
   onClose: () => void;
-  templates: IScheduleTemplate[];
-  onConfirm: (templateId: string) => Promise<void>;
+  template: IScheduleTemplate | null;
+  onConfirm: () => Promise<void>;
   loading?: boolean;
-  coaches: Array<{ id: string; firstName?: string; lastName?: string; email: string }>;
 }
 
 /**
- * Modal for creating an active schedule from a template
+ * Modal for activating the gym's schedule template
  */
 export function CreateFromTemplateModal({
   opened,
   onClose,
-  templates,
+  template,
   onConfirm,
   loading = false,
-  coaches,
 }: CreateFromTemplateModalProps) {
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
-
-  const templateOptions = templates.map((template) => ({
-    value: template.id,
-    label: template.name,
-  }));
-
-  const selectedTemplate = templates.find((t) => t.id === selectedTemplateId);
-
-  const getCoachName = (coachId: string) => {
-    const coach = coaches.find((c) => c.id === coachId);
-    if (!coach) return 'Unknown';
-    return `${coach.firstName} ${coach.lastName}`.trim() || coach.email;
-  };
-
   const handleConfirm = async () => {
-    if (!selectedTemplateId) return;
-    await onConfirm(selectedTemplateId);
-    setSelectedTemplateId('');
-    onClose();
-  };
-
-  const handleClose = () => {
-    setSelectedTemplateId('');
+    await onConfirm();
     onClose();
   };
 
   return (
     <Modal
       opened={opened}
-      onClose={handleClose}
+      onClose={onClose}
       title={
         <Group gap="sm">
           <IconTemplate size={24} />
           <Text size="lg" fw={600}>
-            Create Schedule from Template
+            Activate Schedule
           </Text>
         </Group>
       }
       size="lg"
     >
       <Stack gap="md">
-        <Select
-          label="Select Template"
-          placeholder="Choose a schedule template"
-          data={templateOptions}
-          value={selectedTemplateId}
-          onChange={(value) => setSelectedTemplateId(value || '')}
-          required
-          searchable
-        />
-
-        {selectedTemplate && (
+        {template && (
           <Paper withBorder p="md">
             <Stack gap="sm">
-              <Text fw={600}>{selectedTemplate.name}</Text>
-              {selectedTemplate.description && (
+              <Text fw={600}>{template.name}</Text>
+              {template.description && (
                 <Text size="sm" c="dimmed">
-                  {selectedTemplate.description}
+                  {template.description}
                 </Text>
               )}
-
-              <Group gap="xs">
-                <IconUsers size={16} />
-                <Text size="sm" fw={500}>
-                  Coaches:
-                </Text>
-                {selectedTemplate.coachIds.map((coachId) => (
-                  <Badge key={coachId} size="sm" variant="light">
-                    {getCoachName(coachId)}
-                  </Badge>
-                ))}
-              </Group>
 
               <Group gap="xs">
                 <Text size="sm" fw={500}>
                   Days:
                 </Text>
-                {selectedTemplate.days.map((day) => (
+                {template.days.map((day) => (
                   <Badge key={day.dayOfWeek} size="sm" variant="light" color="forestGreen">
                     {getDayName(day.dayOfWeek)} ({day.timeSlots.length} slots)
                   </Badge>
@@ -113,19 +66,15 @@ export function CreateFromTemplateModal({
         )}
 
         <Text size="sm" c="dimmed">
-          This will create a new active schedule based on the selected template.
+          This will create the active, client-bookable schedule based on this template.
           All timeslots will start with empty client assignments.
         </Text>
 
         <Group justify="flex-end" mt="md">
-          <Button variant="subtle" onClick={handleClose}>
+          <Button variant="subtle" onClick={onClose}>
             Cancel
           </Button>
-          <Button
-            onClick={handleConfirm}
-            loading={loading}
-            disabled={!selectedTemplateId}
-          >
+          <Button onClick={handleConfirm} loading={loading} disabled={!template}>
             Create Schedule
           </Button>
         </Group>

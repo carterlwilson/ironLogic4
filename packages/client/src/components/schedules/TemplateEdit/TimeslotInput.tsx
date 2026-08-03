@@ -1,14 +1,18 @@
-import { Group, NumberInput, ActionIcon, Stack } from '@mantine/core';
+import { Group, NumberInput, ActionIcon, Stack, TextInput } from '@mantine/core';
 import { TimeInput } from '@mantine/dates';
-import { IconTrash, IconClock } from '@tabler/icons-react';
+import { IconTrash, IconClock, IconMapPin } from '@tabler/icons-react';
 import { isValidTimeFormat, isEndTimeAfterStartTime } from '../../../utils/scheduleUtils';
 import { ClientAssignmentInput } from './ClientAssignmentInput';
+import { CoachAssignmentInput } from './CoachAssignmentInput';
+import type { Coach } from '../../../hooks/useCoaches';
 
 export interface TimeslotData {
   id: string;
   startTime: string;
   endTime: string;
   capacity: number;
+  coachIds: string[];
+  location: string;
   assignedClients: string[];
 }
 
@@ -17,6 +21,7 @@ interface TimeslotInputProps {
   onChange: (timeslot: TimeslotData) => void;
   onDelete: () => void;
   gymId: string;
+  coaches: Coach[];
   disabled?: boolean;
 }
 
@@ -29,6 +34,7 @@ export function TimeslotInput({
   onChange,
   onDelete,
   gymId,
+  coaches,
   disabled = false,
 }: TimeslotInputProps) {
   const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,6 +53,14 @@ export function TimeslotInput({
     onChange({ ...timeslot, assignedClients: clientIds });
   };
 
+  const handleCoachIdsChange = (coachIds: string[]) => {
+    onChange({ ...timeslot, coachIds });
+  };
+
+  const handleLocationChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange({ ...timeslot, location: event.currentTarget.value });
+  };
+
   // Validation
   const startTimeError = timeslot.startTime && !isValidTimeFormat(timeslot.startTime)
     ? 'Invalid format (use HH:mm)'
@@ -59,6 +73,10 @@ export function TimeslotInput({
     : null;
 
   const capacityError = timeslot.capacity < 1 ? 'Capacity must be at least 1' : null;
+
+  const coachError = timeslot.coachIds.length === 0 ? 'At least one coach is required' : null;
+
+  const locationError = !timeslot.location.trim() ? 'Location is required' : null;
 
   return (
     <Stack gap="md">
@@ -91,6 +109,16 @@ export function TimeslotInput({
           disabled={disabled}
           required
         />
+        <TextInput
+          label="Location"
+          placeholder="e.g., Main Floor, Studio A"
+          value={timeslot.location}
+          onChange={handleLocationChange}
+          error={locationError}
+          disabled={disabled}
+          required
+          leftSection={<IconMapPin size={16} />}
+        />
         <div style={{ paddingTop: 24 }}>
           <ActionIcon
             color="red"
@@ -102,6 +130,14 @@ export function TimeslotInput({
           </ActionIcon>
         </div>
       </Group>
+
+      <CoachAssignmentInput
+        coachIds={timeslot.coachIds}
+        coaches={coaches}
+        onChange={handleCoachIdsChange}
+        disabled={disabled}
+        error={coachError}
+      />
 
       <ClientAssignmentInput
         assignedClientIds={timeslot.assignedClients}
