@@ -13,7 +13,7 @@ const router = Router();
 const forgotPasswordLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 3, // Limit each IP to 3 requests per windowMs
-  message: 'Too many password reset requests from this IP, please try again after 15 minutes.',
+  message: { success: false, error: 'Too many password reset requests from this IP, please try again after 15 minutes.' },
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   // Use skipFailedRequests to not count failed requests

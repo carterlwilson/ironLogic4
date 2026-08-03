@@ -63,6 +63,21 @@ function getAuthToken(): string {
 }
 
 /**
+ * Extract an error message from a non-ok response, falling back to raw text
+ * when the body isn't JSON (e.g. a rate-limiter or proxy plain-text response).
+ */
+async function extractErrorMessage(response: Response, fallback: string): Promise<string> {
+  const text = await response.text();
+  let message = text || fallback;
+  try {
+    message = JSON.parse(text).error || message;
+  } catch {
+    // body wasn't JSON — use the raw text as the message
+  }
+  return message;
+}
+
+/**
  * Fetch all benchmarks for the current user
  */
 export async function getBenchmarks(): Promise<GetBenchmarksResponse> {
@@ -77,8 +92,7 @@ export async function getBenchmarks(): Promise<GetBenchmarksResponse> {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch benchmarks');
+    throw new Error(await extractErrorMessage(response, 'Failed to fetch benchmarks'));
   }
 
   return response.json();
@@ -102,8 +116,7 @@ export async function createBenchmark(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to create benchmark');
+    throw new Error(await extractErrorMessage(response, 'Failed to create benchmark'));
   }
 
   return response.json();
@@ -128,8 +141,7 @@ export async function updateBenchmark(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to update benchmark');
+    throw new Error(await extractErrorMessage(response, 'Failed to update benchmark'));
   }
 
   return response.json();
@@ -151,8 +163,7 @@ export async function getBenchmarkTemplates(): Promise<GetTemplatesResponse> {
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch benchmark templates');
+    throw new Error(await extractErrorMessage(response, 'Failed to fetch benchmark templates'));
   }
 
   return response.json();
@@ -173,8 +184,7 @@ export async function getBenchmarkTemplate(templateId: string): Promise<{ succes
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch benchmark template');
+    throw new Error(await extractErrorMessage(response, 'Failed to fetch benchmark template'));
   }
 
   return response.json();
@@ -218,8 +228,7 @@ export async function getBenchmarkProgress(
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to fetch benchmark progress');
+    throw new Error(await extractErrorMessage(response, 'Failed to fetch benchmark progress'));
   }
 
   const result: GetBenchmarkProgressResponse = await response.json();

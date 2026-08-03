@@ -12,7 +12,12 @@ export async function forgotPassword(email: string): Promise<ApiResponse<void>> 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email }),
   });
-  return response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(text || 'Failed to send password reset email');
+  }
 }
 
 /**
@@ -25,7 +30,12 @@ export async function resetPassword(token: string, newPassword: string): Promise
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ token, newPassword }),
   });
-  return response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(text || 'Failed to reset password');
+  }
 }
 
 /**
@@ -36,5 +46,10 @@ export async function validateResetToken(token: string): Promise<{ success: bool
   const response = await fetch(`${API_BASE}/api/auth/validate-reset-token?token=${encodeURIComponent(token)}`, {
     method: 'GET',
   });
-  return response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(text || 'Failed to validate reset token');
+  }
 }
