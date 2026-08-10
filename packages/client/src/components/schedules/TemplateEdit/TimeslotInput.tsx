@@ -1,7 +1,7 @@
-import { Group, NumberInput, ActionIcon, Stack, TextInput } from '@mantine/core';
+import { Group, NumberInput, ActionIcon, Stack, TextInput, Card, Text, Divider } from '@mantine/core';
 import { TimeInput } from '@mantine/dates';
 import { IconTrash, IconClock, IconMapPin } from '@tabler/icons-react';
-import { isValidTimeFormat, isEndTimeAfterStartTime } from '../../../utils/scheduleUtils';
+import { isValidTimeFormat, isEndTimeAfterStartTime, formatTimeRange } from '../../../utils/scheduleUtils';
 import { ClientAssignmentInput } from './ClientAssignmentInput';
 import { CoachAssignmentInput } from './CoachAssignmentInput';
 import type { Coach } from '../../../hooks/useCoaches';
@@ -79,47 +79,15 @@ export function TimeslotInput({
   const locationError = !timeslot.location.trim() ? 'Location is required' : null;
 
   return (
-    <Stack gap="md">
-      <Group grow align="flex-start" wrap="nowrap">
-        <TimeInput
-          label="Start Time"
-          value={timeslot.startTime}
-          onChange={handleStartTimeChange}
-          error={startTimeError}
-          disabled={disabled}
-          required
-          leftSection={<IconClock size={16} />}
-        />
-        <TimeInput
-          label="End Time"
-          value={timeslot.endTime}
-          onChange={handleEndTimeChange}
-          error={endTimeError}
-          disabled={disabled}
-          required
-          leftSection={<IconClock size={16} />}
-        />
-        <NumberInput
-          label="Capacity"
-          placeholder="10"
-          min={1}
-          value={timeslot.capacity}
-          onChange={handleCapacityChange}
-          error={capacityError}
-          disabled={disabled}
-          required
-        />
-        <TextInput
-          label="Location"
-          placeholder="e.g., Main Floor, Studio A"
-          value={timeslot.location}
-          onChange={handleLocationChange}
-          error={locationError}
-          disabled={disabled}
-          required
-          leftSection={<IconMapPin size={16} />}
-        />
-        <div style={{ paddingTop: 24 }}>
+    <Card withBorder radius="md" padding="md" bg="var(--mantine-color-gray-0)">
+      <Stack gap="md">
+        <Group justify="space-between" align="center">
+          <Group gap="xs">
+            <IconClock size={16} />
+            <Text fw={600} size="sm">
+              {formatTimeRange(timeslot.startTime, timeslot.endTime)}
+            </Text>
+          </Group>
           <ActionIcon
             color="red"
             variant="light"
@@ -128,24 +96,69 @@ export function TimeslotInput({
           >
             <IconTrash size={16} />
           </ActionIcon>
-        </div>
-      </Group>
+        </Group>
 
-      <CoachAssignmentInput
-        coachIds={timeslot.coachIds}
-        coaches={coaches}
-        onChange={handleCoachIdsChange}
-        disabled={disabled}
-        error={coachError}
-      />
+        <Group grow align="flex-start" wrap="nowrap">
+          <TimeInput
+            label="Start Time"
+            value={timeslot.startTime}
+            onChange={handleStartTimeChange}
+            error={startTimeError}
+            disabled={disabled}
+            required
+            leftSection={<IconClock size={16} />}
+          />
+          <TimeInput
+            label="End Time"
+            value={timeslot.endTime}
+            onChange={handleEndTimeChange}
+            error={endTimeError}
+            disabled={disabled}
+            required
+            leftSection={<IconClock size={16} />}
+          />
+          <NumberInput
+            label="Capacity"
+            placeholder="10"
+            min={1}
+            value={timeslot.capacity}
+            onChange={handleCapacityChange}
+            error={capacityError}
+            disabled={disabled}
+            required
+          />
+          <TextInput
+            label="Location"
+            placeholder="e.g., Main Floor, Studio A"
+            value={timeslot.location}
+            onChange={handleLocationChange}
+            error={locationError}
+            disabled={disabled}
+            required
+            leftSection={<IconMapPin size={16} />}
+          />
+        </Group>
 
-      <ClientAssignmentInput
-        assignedClientIds={timeslot.assignedClients}
-        capacity={timeslot.capacity}
-        gymId={gymId}
-        onChange={handleClientAssignmentChange}
-        disabled={disabled}
-      />
-    </Stack>
+        <Divider />
+
+        <CoachAssignmentInput
+          coachIds={timeslot.coachIds}
+          coaches={coaches}
+          onChange={handleCoachIdsChange}
+          disabled={disabled}
+          error={coachError}
+        />
+
+        <Divider />
+
+        <ClientAssignmentInput
+          assignedClientIds={timeslot.assignedClients}
+          capacity={timeslot.capacity}
+          gymId={gymId}
+          onChange={handleClientAssignmentChange}
+          disabled={disabled}
+        />
+      </Stack>
+    </Card>
   );
 }

@@ -86,7 +86,7 @@ export function DayConfigCard({ day, gymId, coaches, onChange }: DayConfigCardPr
                 No timeslots added yet. Click "Add Timeslot" to get started.
               </Text>
             ) : (
-              <Stack gap="sm">
+              <Stack gap="md">
                 {day.timeSlots.map((timeslot, index) => (
                   <TimeslotInput
                     key={timeslot.id}
