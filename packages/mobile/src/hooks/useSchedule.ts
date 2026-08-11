@@ -15,24 +15,24 @@ export interface FlatTimeslot {
   startTime: string;
   endTime: string;
   capacity: number;
+  location: string;
   availableSpots: number;
   isUserAssigned: boolean;
   coaches: { id: string; firstName: string; lastName: string }[];
 }
 
-// The shared IActiveSchedule type only has `coachIds`, but this endpoint also
-// attaches a `coaches` array (id/firstName/lastName) to each schedule at runtime.
-type ScheduleWithCoaches = IActiveScheduleWithAvailability & {
+// The shared ITimeSlot type only has `coachIds`, but this endpoint also
+// attaches a `coaches` array (id/firstName/lastName) to each timeslot at runtime.
+type TimeslotWithCoaches = IActiveScheduleWithAvailability['days'][number]['timeSlots'][number] & {
   coaches: { id: string; firstName: string; lastName: string }[];
 };
 
 function flattenSchedules(schedules: IActiveScheduleWithAvailability[]): FlatTimeslot[] {
   const flat: FlatTimeslot[] = [];
 
-  for (const schedule of schedules as ScheduleWithCoaches[]) {
-    const coaches = schedule.coaches ?? [];
+  for (const schedule of schedules) {
     for (const day of schedule.days) {
-      for (const timeSlot of day.timeSlots) {
+      for (const timeSlot of day.timeSlots as TimeslotWithCoaches[]) {
         flat.push({
           timeslotId: timeSlot.id,
           scheduleId: schedule.id,
@@ -40,9 +40,10 @@ function flattenSchedules(schedules: IActiveScheduleWithAvailability[]): FlatTim
           startTime: timeSlot.startTime,
           endTime: timeSlot.endTime,
           capacity: timeSlot.capacity,
+          location: timeSlot.location,
           availableSpots: timeSlot.availableSpots,
           isUserAssigned: timeSlot.isUserAssigned,
-          coaches,
+          coaches: timeSlot.coaches ?? [],
         });
       }
     }

@@ -66,7 +66,8 @@ export function ClientAssignmentInput({
         data={clientOptions}
         value={assignedClientIds}
         onChange={onChange}
-        disabled={disabled || loading || isAtCapacity}
+        disabled={disabled || loading}
+        maxValues={capacity}
         searchable
         clearable
         maxDropdownHeight={200}

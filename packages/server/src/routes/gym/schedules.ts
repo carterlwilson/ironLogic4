@@ -10,6 +10,8 @@ import {
   createScheduleTemplate,
   updateScheduleTemplate,
   deleteScheduleTemplate,
+  addTemplateTimeslotClient,
+  removeTemplateTimeslotClient,
 } from '../../controllers/scheduleTemplates.js';
 import {
   getActiveSchedules,
@@ -17,8 +19,9 @@ import {
   createActiveSchedule,
   deleteActiveSchedule,
   resetActiveSchedule,
-  assignStaff,
-  unassignStaff,
+  updateTimeslotAssignment,
+  addActiveTimeslotClient,
+  removeActiveTimeslotClient,
 } from '../../controllers/activeSchedules.js';
 import {
   getAvailableSchedules,
@@ -77,6 +80,24 @@ router.delete(
   deleteScheduleTemplate
 );
 
+// POST /api/gym/schedules/templates/:id/timeslots/:timeslotId/clients - Add a client to a template timeslot
+// Admin/Owner/Coach only (coaches restricted to timeslots they coach)
+router.post(
+  '/templates/:id/timeslots/:timeslotId/clients',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  addTemplateTimeslotClient
+);
+
+// DELETE /api/gym/schedules/templates/:id/timeslots/:timeslotId/clients/:clientId - Remove a client from a template timeslot
+// Admin/Owner/Coach only (coaches restricted to timeslots they coach)
+router.delete(
+  '/templates/:id/timeslots/:timeslotId/clients/:clientId',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  removeTemplateTimeslotClient
+);
+
 // ===== Active Schedule Routes =====
 
 // GET /api/gym/schedules/active - List all active schedules
@@ -124,26 +145,6 @@ router.post(
   resetActiveSchedule
 );
 
-// ===== Staff Assignment Routes =====
-
-// POST /api/gym/schedules/active/:id/assign - Assign coach to active schedule
-// Admin/Owner/Coach only
-router.post(
-  '/active/:id/assign',
-  verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  assignStaff
-);
-
-// DELETE /api/gym/schedules/active/:id/unassign/:coachId - Unassign coach from active schedule
-// Admin/Owner/Coach only
-router.delete(
-  '/active/:id/unassign/:coachId',
-  verifyToken,
-  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
-  unassignStaff
-);
-
 // ===== Client Self-Service Routes =====
 
 // GET /api/gym/schedules/available - Get available schedules for client self-scheduling
@@ -153,6 +154,33 @@ router.get('/available', verifyToken, getAvailableSchedules);
 // GET /api/gym/schedules/my-schedule - Get authenticated client's schedule
 // All authenticated users
 router.get('/my-schedule', verifyToken, getMySchedule);
+
+// PUT /api/gym/schedules/active/:id/timeslots/:timeslotId - Update coaches + location for a timeslot
+// Admin/Owner/Coach only
+router.put(
+  '/active/:id/timeslots/:timeslotId',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  updateTimeslotAssignment
+);
+
+// POST /api/gym/schedules/active/:id/timeslots/:timeslotId/clients - Add a client to an active schedule timeslot
+// Admin/Owner/Coach only (coaches restricted to timeslots they coach)
+router.post(
+  '/active/:id/timeslots/:timeslotId/clients',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  addActiveTimeslotClient
+);
+
+// DELETE /api/gym/schedules/active/:id/timeslots/:timeslotId/clients/:clientId - Remove a client from an active schedule timeslot
+// Admin/Owner/Coach only (coaches restricted to timeslots they coach)
+router.delete(
+  '/active/:id/timeslots/:timeslotId/clients/:clientId',
+  verifyToken,
+  requireRole([UserType.ADMIN, UserType.OWNER, UserType.COACH]),
+  removeActiveTimeslotClient
+);
 
 // POST /api/gym/schedules/active/:id/timeslots/:timeslotId/join - Join a timeslot
 // All authenticated users (with gym validation)

@@ -35,6 +35,23 @@ const timeSlotSchema = new Schema<TimeSlotDocument>(
       required: true,
       min: 1,
     },
+    coachIds: {
+      type: [String],
+      ref: 'User',
+      required: true,
+      validate: {
+        validator: function(v: string[]) {
+          return v && v.length > 0;
+        },
+        message: 'At least one coach is required',
+      },
+    },
+    location: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 200,
+    },
     assignedClients: {
       type: [String],
       ref: 'User',
@@ -91,17 +108,6 @@ const scheduleTemplateSchema = new Schema<ScheduleTemplateDocument>(
       trim: true,
       maxlength: 500,
     },
-    coachIds: {
-      type: [String],
-      ref: 'User',
-      required: true,
-      validate: {
-        validator: function(v: string[]) {
-          return v && v.length > 0;
-        },
-        message: 'At least one coach is required',
-      },
-    },
     days: {
       type: [scheduleDaySchema],
       required: true,
@@ -132,16 +138,8 @@ const scheduleTemplateSchema = new Schema<ScheduleTemplateDocument>(
 );
 
 // Indexes for efficient queries
-scheduleTemplateSchema.index({ gymId: 1 });
-scheduleTemplateSchema.index({ coachIds: 1 });
-scheduleTemplateSchema.index({ gymId: 1, name: 1 }, { unique: true });
-
-// Virtual populate for coach details (optional, for future use)
-scheduleTemplateSchema.virtual('coaches', {
-  ref: 'User',
-  localField: 'coachIds',
-  foreignField: '_id',
-});
+scheduleTemplateSchema.index({ gymId: 1 }, { unique: true });
+scheduleTemplateSchema.index({ 'days.timeSlots.coachIds': 1 });
 
 export const ScheduleTemplate = mongoose.model<ScheduleTemplateDocument>(
   'ScheduleTemplate',

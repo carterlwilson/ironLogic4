@@ -40,8 +40,9 @@ export function ResetScheduleModal({
           Are you sure you want to reset the active schedule?
         </Text>
         <Text size="sm" c="dimmed">
-          This will clear all client assignments from all timeslots. The schedule
-          structure and coaches will remain unchanged. This action cannot be undone.
+          This will reset the active schedule to exactly match the current template —
+          including capacity, coaches, location, and client assignments on every
+          timeslot. This action cannot be undone.
         </Text>
 
         <Group justify="flex-end" mt="md">

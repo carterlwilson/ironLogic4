@@ -36,13 +36,24 @@ export function useClients(gymId: string | undefined) {
       try {
         // Fetch clients using the gym-scoped endpoint
         // Server automatically filters by user's gym
-        const response = await clientApi.getClients({
-          limit: 100, // Get up to 100 clients (most gyms have <100)
+        const firstPage = await clientApi.getClients({
+          limit: 100, // Server-enforced max page size
           page: 1,
         });
 
+        const totalPages = firstPage.pagination?.totalPages ?? 1;
+        const remainingPages = await Promise.all(
+          Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) =>
+            clientApi.getClients({ limit: 100, page: i + 2 })
+          )
+        );
+
+        const allUsers: User[] = [firstPage, ...remainingPages].flatMap(
+          (response) => response.data || []
+        );
+
         // Filter for CLIENT user type and transform to Client interface
-        const clientList: Client[] = (response.data || [])
+        const clientList: Client[] = allUsers
           .filter((user: User) => user.userType === UserType.CLIENT)
           .map((user: User) => ({
             id: user.id,

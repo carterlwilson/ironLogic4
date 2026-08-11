@@ -5,8 +5,12 @@ import { WorkoutPage } from './pages/WorkoutPage';
 import { BenchmarksPage } from './pages/BenchmarksPage';
 import { SchedulePage } from './pages/SchedulePage';
 import { ProfilePage } from './pages/ProfilePage';
+import { useAuth } from './providers/AuthProvider';
 
 function App() {
+  const { user } = useAuth();
+  const isCoach = user?.role === 'coach';
+
   return (
     <>
       <AppShell
@@ -21,9 +25,9 @@ function App() {
 
         <AppShell.Main style={{ paddingBottom: '70px' }}>
           <Routes>
-            <Route path="/" element={<Navigate to="/workout" replace />} />
-            <Route path="/workout" element={<WorkoutPage />} />
-            <Route path="/benchmarks" element={<BenchmarksPage />} />
+            <Route path="/" element={<Navigate to={isCoach ? '/schedule' : '/workout'} replace />} />
+            <Route path="/workout" element={isCoach ? <Navigate to="/schedule" replace /> : <WorkoutPage />} />
+            <Route path="/benchmarks" element={isCoach ? <Navigate to="/schedule" replace /> : <BenchmarksPage />} />
             <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Routes>

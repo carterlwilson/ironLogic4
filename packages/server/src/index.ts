@@ -59,8 +59,8 @@ app.use(cors(corsOptions));
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'production' ? 100 : 1000,
-  message: 'Too many requests from this IP, please try again later.',
+  max: process.env.NODE_ENV === 'production' ? 500 : 1000,
+  message: { success: false, error: 'Too many requests from this IP, please try again later.' },
   validate: { trustProxy: false },
 });
 if (process.env.DISABLE_RATE_LIMIT !== 'true') {

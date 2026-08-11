@@ -1,28 +1,24 @@
-import { Modal, Stack, TextInput, Textarea, Button, Group, MultiSelect, Text } from '@mantine/core';
+import { Modal, Stack, TextInput, Textarea, Button, Group, Text } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconCalendar } from '@tabler/icons-react';
 import type {
   CreateScheduleTemplateRequest,
 } from '@ironlogic4/shared';
-import type { Coach } from '../../../hooks/useCoaches';
 
 interface TemplateFormModalProps {
   opened: boolean;
   onClose: () => void;
   onSubmit: (data: CreateScheduleTemplateRequest) => Promise<void>;
   loading?: boolean;
-  coaches: Coach[];
-  coachesLoading: boolean;
 }
 
 interface FormValues {
   name: string;
   description: string;
-  coachIds: string[];
 }
 
 /**
- * Modal for creating schedule templates
+ * Modal for creating the gym's schedule template
  * Only handles basic info - days/timeslots configured in edit page
  */
 export function TemplateFormModal({
@@ -30,19 +26,11 @@ export function TemplateFormModal({
   onClose,
   onSubmit,
   loading = false,
-  coaches,
-  coachesLoading,
 }: TemplateFormModalProps) {
-  const coachOptions = coaches.map((coach) => ({
-    value: coach.id,
-    label: `${coach.firstName} ${coach.lastName}`.trim() || coach.email,
-  }));
-
   const form = useForm<FormValues>({
     initialValues: {
       name: '',
       description: '',
-      coachIds: [],
     },
     validate: {
       name: (value) => {
@@ -54,10 +42,6 @@ export function TemplateFormModal({
         if (value && value.length > 500) return 'Description must be less than 500 characters';
         return null;
       },
-      coachIds: (value) => {
-        if (!value || value.length === 0) return 'At least one coach is required';
-        return null;
-      },
     },
   });
 
@@ -66,7 +50,6 @@ export function TemplateFormModal({
       const submitData: CreateScheduleTemplateRequest = {
         name: values.name.trim(),
         description: values.description?.trim() || undefined,
-        coachIds: values.coachIds,
         days: [], // Empty - will be configured in edit page
       };
 
@@ -112,16 +95,6 @@ export function TemplateFormModal({
             placeholder="Describe this schedule template..."
             rows={3}
             {...form.getInputProps('description')}
-          />
-
-          <MultiSelect
-            label="Coaches"
-            placeholder="Select coaches"
-            data={coachOptions}
-            required
-            disabled={coachesLoading}
-            searchable
-            {...form.getInputProps('coachIds')}
           />
 
           <Text size="sm" c="dimmed">
