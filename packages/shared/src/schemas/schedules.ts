@@ -48,6 +48,10 @@ export const UpdateTimeslotAssignmentSchema = z.object({
   location: z.string().min(1, 'Location is required').max(200).trim(),
 });
 
+export const AddTimeslotClientSchema = z.object({
+  clientId: z.string().min(1, 'Client ID is required'),
+});
+
 export const JoinTimeslotSchema = z.object({
   // Empty - user ID comes from auth
 });

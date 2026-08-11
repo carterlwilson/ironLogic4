@@ -1,5 +1,4 @@
 import { DayOfWeek } from '@ironlogic4/shared';
-import type { FlatTimeslot } from '../hooks/useSchedule';
 
 /**
  * Convert 24-hour time format to 12-hour with AM/PM
@@ -71,14 +70,16 @@ export function getCapacityColor(availableSpots: number, capacity: number): stri
 
 /**
  * Group flat timeslots by day of week, splitting each day into AM/PM sections
+ * Generic over any slot shape with dayOfWeek/startTime, so it can be reused for
+ * both client-facing (FlatTimeslot) and coach-facing (FlatCoachTimeslot) slots.
  * @param slots - Flat list of timeslots
  * @returns Map of dayOfWeek to { am, pm } slot arrays, sorted by startTime ascending.
  *          Days with no slots are omitted.
  */
-export function groupSlotsByDay(
-  slots: FlatTimeslot[]
-): Map<number, { am: FlatTimeslot[]; pm: FlatTimeslot[] }> {
-  const grouped = new Map<number, { am: FlatTimeslot[]; pm: FlatTimeslot[] }>();
+export function groupSlotsByDay<T extends { dayOfWeek: number; startTime: string }>(
+  slots: T[]
+): Map<number, { am: T[]; pm: T[] }> {
+  const grouped = new Map<number, { am: T[]; pm: T[] }>();
 
   for (const slot of slots) {
     if (!grouped.has(slot.dayOfWeek)) {

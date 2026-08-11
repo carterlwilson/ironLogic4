@@ -71,6 +71,10 @@ export interface UpdateTimeslotAssignmentRequest {
   location: string;
 }
 
+export interface AddTimeslotClientRequest {
+  clientId: string;
+}
+
 export interface JoinTimeslotRequest {
   // Empty - user ID comes from auth
 }
