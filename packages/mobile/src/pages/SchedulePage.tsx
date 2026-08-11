@@ -1,16 +1,22 @@
 import { useState } from 'react';
 import { Container, Title, Stack, Tabs, Center, Loader, Alert } from '@mantine/core';
+import { useAuth } from '../providers/AuthProvider';
 import { useSchedule, FlatTimeslot } from '../hooks/useSchedule';
 import { SlotList } from '../components/schedule/SlotList';
 import { ConfirmLeaveModal } from '../components/schedule/ConfirmLeaveModal';
+import { CoachScheduleView } from '../components/schedule/CoachScheduleView';
 
 export const SchedulePage = () => {
+  const { user } = useAuth();
   const { mySlots, availableSlots, loading, error, joinTimeslot, leaveTimeslot, actionLoading } = useSchedule();
-
   const [leaveModal, setLeaveModal] = useState<{ opened: boolean; slot: FlatTimeslot | null }>({
     opened: false,
     slot: null,
   });
+
+  if (user?.role === 'coach') {
+    return <CoachScheduleView />;
+  }
 
   const openLeaveModal = (slot: FlatTimeslot) => {
     setLeaveModal({ opened: true, slot });

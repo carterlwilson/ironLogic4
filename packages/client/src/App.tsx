@@ -17,7 +17,6 @@ import { MyBenchmarksPage } from './pages/MyBenchmarksPage';
 import { ProgramListPage } from './pages/Programs/ProgramListPage';
 import { ProgramDetailPage } from './pages/Programs/ProgramDetailPage';
 import { SchedulesPage } from './pages/SchedulesPage';
-import { ScheduleTemplateEditPage } from './pages/ScheduleTemplateEditPage';
 import { useAppTitle } from './hooks/useAppTitle';
 
 function App() {
@@ -68,7 +67,6 @@ function App() {
                   <Route path="/programs" element={<ProgramListPage />} />
                   <Route path="/programs/:programId" element={<ProgramDetailPage />} />
                   <Route path="/schedules" element={<SchedulesPage />} />
-                  <Route path="/schedules/templates/:templateId/edit" element={<ScheduleTemplateEditPage />} />
                 </Routes>
               </AppShell.Main>
             </AppShell>

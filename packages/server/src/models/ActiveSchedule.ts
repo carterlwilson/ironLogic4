@@ -35,6 +35,23 @@ const timeSlotSchema = new Schema<TimeSlotDocument>(
       required: true,
       min: 1,
     },
+    coachIds: {
+      type: [String],
+      ref: 'User',
+      required: true,
+      validate: {
+        validator: function(v: string[]) {
+          return v && v.length > 0;
+        },
+        message: 'At least one coach is required',
+      },
+    },
+    location: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 200,
+    },
     assignedClients: {
       type: [String],
       ref: 'User',
@@ -86,17 +103,6 @@ const activeScheduleSchema = new Schema<ActiveScheduleDocument>(
       required: true,
       unique: true, // Ensures 1:1 relationship - only one active schedule per template
     },
-    coachIds: {
-      type: [String],
-      ref: 'User',
-      required: true,
-      validate: {
-        validator: function(v: string[]) {
-          return v && v.length > 0;
-        },
-        message: 'At least one coach is required',
-      },
-    },
     days: {
       type: [scheduleDaySchema],
       required: true,
@@ -128,16 +134,9 @@ const activeScheduleSchema = new Schema<ActiveScheduleDocument>(
 
 // Indexes for efficient queries
 activeScheduleSchema.index({ gymId: 1 });
-activeScheduleSchema.index({ coachIds: 1 });
 activeScheduleSchema.index({ templateId: 1 }, { unique: true }); // Enforce 1:1 relationship
 activeScheduleSchema.index({ 'days.timeSlots.assignedClients': 1 }); // For client schedule lookups
-
-// Virtual populate for coach details (optional, for future use)
-activeScheduleSchema.virtual('coaches', {
-  ref: 'User',
-  localField: 'coachIds',
-  foreignField: '_id',
-});
+activeScheduleSchema.index({ 'days.timeSlots.coachIds': 1 });
 
 export const ActiveSchedule = mongoose.model<ActiveScheduleDocument>(
   'ActiveSchedule',

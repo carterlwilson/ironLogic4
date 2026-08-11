@@ -3,7 +3,6 @@ import type {
   IActiveSchedule,
   CreateScheduleTemplateRequest,
   UpdateScheduleTemplateRequest,
-  CreateActiveScheduleRequest,
   ResetScheduleResponse,
   ApiResponse,
 } from '@ironlogic4/shared';
@@ -189,13 +188,13 @@ class ScheduleApiService {
   }
 
   /**
-   * Create an active schedule from a template
+   * Create an active schedule from the gym's schedule template
    */
-  async createActiveSchedule(data: CreateActiveScheduleRequest): Promise<ApiResponse<IActiveSchedule>> {
+  async createActiveSchedule(): Promise<ApiResponse<IActiveSchedule>> {
     const response = await fetch(`${this.baseUrl}/active`, {
       method: 'POST',
       headers: await this.getAuthHeaders(),
-      body: JSON.stringify(data),
+      body: JSON.stringify({}),
     });
 
     if (!response.ok) {
@@ -260,105 +259,28 @@ class ScheduleApiService {
     return response.json();
   }
 
-  /**
-   * Update coaches for the active schedule
-   * Replaces all coaches by removing old ones and adding new ones
-   */
-  async updateActiveScheduleCoaches(coachIds: string[]): Promise<ApiResponse<IActiveSchedule>> {
-    // First, get the active schedule to obtain its ID and current coaches
-    const activeScheduleResponse = await this.getActiveSchedule();
-
-    if (!activeScheduleResponse.data) {
-      throw new Error('No active schedule to update');
-    }
-
-    const schedule = activeScheduleResponse.data;
-    const scheduleId = schedule.id;
-    const currentCoachIds = schedule.coachIds;
-
-    // Determine which coaches to add and remove
-    const coachesToAdd = coachIds.filter(id => !currentCoachIds.includes(id));
-    const coachesToRemove = currentCoachIds.filter(id => !coachIds.includes(id));
-
-    // Remove coaches that are no longer in the list
-    for (const coachId of coachesToRemove) {
-      const response = await fetch(`${this.baseUrl}/active/${scheduleId}/unassign/${coachId}`, {
-        method: 'DELETE',
-        headers: await this.getAuthHeaders(),
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: 'Network error' }));
-        throw new Error(error.message || `Failed to unassign coach ${coachId}`);
-      }
-    }
-
-    // Add new coaches
-    for (const coachId of coachesToAdd) {
-      const response = await fetch(`${this.baseUrl}/active/${scheduleId}/assign`, {
-        method: 'POST',
-        headers: await this.getAuthHeaders(),
-        body: JSON.stringify({ coachId }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: 'Network error' }));
-        throw new Error(error.message || `Failed to assign coach ${coachId}`);
-      }
-    }
-
-    // Fetch and return the updated schedule
-    const updatedSchedule = await this.getActiveSchedule();
-    return updatedSchedule as ApiResponse<IActiveSchedule>;
-  }
-
   // ==================== TIMESLOT MANAGEMENT ====================
 
   /**
-   * Assign a coach to a specific timeslot
+   * Update the coaches and location assigned to a specific timeslot
    */
-  async assignCoachToTimeslot(
-    dayOfWeek: number,
+  async updateTimeslot(
+    scheduleId: string,
     timeslotId: string,
-    coachId: string
+    data: { coachIds: string[]; location: string }
   ): Promise<ApiResponse<IActiveSchedule>> {
     const response = await fetch(
-      `${this.baseUrl}/active/days/${dayOfWeek}/timeslots/${timeslotId}/assign`,
+      `${this.baseUrl}/active/${scheduleId}/timeslots/${timeslotId}`,
       {
-        method: 'POST',
+        method: 'PUT',
         headers: await this.getAuthHeaders(),
-        body: JSON.stringify({ coachId }),
+        body: JSON.stringify(data),
       }
     );
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to assign coach to timeslot');
-    }
-
-    return response.json();
-  }
-
-  /**
-   * Unassign a coach from a specific timeslot
-   */
-  async unassignCoachFromTimeslot(
-    dayOfWeek: number,
-    timeslotId: string,
-    coachId: string
-  ): Promise<ApiResponse<IActiveSchedule>> {
-    const response = await fetch(
-      `${this.baseUrl}/active/days/${dayOfWeek}/timeslots/${timeslotId}/unassign`,
-      {
-        method: 'POST',
-        headers: await this.getAuthHeaders(),
-        body: JSON.stringify({ coachId }),
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Network error' }));
-      throw new Error(error.message || 'Failed to unassign coach from timeslot');
+      throw new Error(error.message || 'Failed to update timeslot assignment');
     }
 
     return response.json();
@@ -367,9 +289,9 @@ class ScheduleApiService {
   /**
    * Join a timeslot (for clients)
    */
-  async joinTimeslot(dayOfWeek: number, timeslotId: string): Promise<ApiResponse<IActiveSchedule>> {
+  async joinTimeslot(scheduleId: string, timeslotId: string): Promise<ApiResponse<IActiveSchedule>> {
     const response = await fetch(
-      `${this.baseUrl}/active/days/${dayOfWeek}/timeslots/${timeslotId}/join`,
+      `${this.baseUrl}/active/${scheduleId}/timeslots/${timeslotId}/join`,
       {
         method: 'POST',
         headers: await this.getAuthHeaders(),
@@ -387,11 +309,11 @@ class ScheduleApiService {
   /**
    * Leave a timeslot (for clients)
    */
-  async leaveTimeslot(dayOfWeek: number, timeslotId: string): Promise<ApiResponse<IActiveSchedule>> {
+  async leaveTimeslot(scheduleId: string, timeslotId: string): Promise<ApiResponse<IActiveSchedule>> {
     const response = await fetch(
-      `${this.baseUrl}/active/days/${dayOfWeek}/timeslots/${timeslotId}/leave`,
+      `${this.baseUrl}/active/${scheduleId}/timeslots/${timeslotId}/leave`,
       {
-        method: 'POST',
+        method: 'DELETE',
         headers: await this.getAuthHeaders(),
       }
     );

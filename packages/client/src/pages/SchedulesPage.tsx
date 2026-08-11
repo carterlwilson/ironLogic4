@@ -1,7 +1,7 @@
 import { Container, Title, Text, Stack, Group, Tabs } from '@mantine/core';
 import { IconCalendar, IconTemplate, IconCalendarEvent } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useScheduleTemplates } from '../hooks/useScheduleTemplates';
 import { useActiveSchedule } from '../hooks/useActiveSchedule';
@@ -10,34 +10,30 @@ import { EmptyState } from '../components/schedules/shared/EmptyState';
 
 // Template Tab Components
 import {
-  TemplateToolbar,
-  TemplateTable,
   TemplateFormModal,
   DeleteTemplateModal,
 } from '../components/schedules/TemplateTab';
+import { ScheduleTemplateEditor } from '../components/schedules/TemplateEdit';
 
 // Active Tab Components
 import {
   ActiveToolbar,
   ActiveScheduleDisplay,
   CreateFromTemplateModal,
-  EditCoachesModal,
   ResetScheduleModal,
   DeleteScheduleModal,
 } from '../components/schedules/ActiveTab';
 
 /**
- * Schedules Page - Manage schedule templates and active schedules
+ * Schedules Page - Manage the gym's schedule template and active schedule
  *
  * Two tabs:
- * 1. Templates - Create and manage schedule templates
+ * 1. Template - Create and manage the gym's single schedule template
  * 2. Active Schedule - View and manage the current active schedule
  */
 export function SchedulesPage() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string | null>('templates');
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Redirect users who are not admin or owner
   if (!user || (user.role !== 'admin' && user.role !== 'owner')) {
@@ -48,16 +44,15 @@ export function SchedulesPage() {
   const gymId = user.gymId || '';
 
   // Fetch coaches
-  const { coaches, loading: coachesLoading } = useCoaches(gymId);
+  const { coaches } = useCoaches(gymId);
 
-  // Schedule Templates Management
+  // Schedule Template Management
   const {
-    templates,
-    loading: templatesLoading,
+    template,
+    loading: templateLoading,
     isAddModalOpen,
     isDeleteModalOpen,
-    selectedTemplate,
-    loadTemplates,
+    loadTemplate,
     createTemplate,
     deleteTemplate,
     openAddModal,
@@ -70,16 +65,14 @@ export function SchedulesPage() {
     activeSchedule,
     loading: activeLoading,
     isCreateModalOpen,
-    isEditCoachesModalOpen,
     isResetModalOpen,
     isDeleteModalOpen: isDeleteActiveModalOpen,
     loadActiveSchedule,
     createActiveSchedule,
-    updateCoaches,
+    updateTimeslot,
     resetSchedule,
     deleteActiveSchedule,
     openCreateModal,
-    openEditCoachesModal,
     openResetModal,
     openDeleteModal: openDeleteActiveModal,
     closeModals: closeActiveModals,
@@ -88,32 +81,20 @@ export function SchedulesPage() {
   // Load data on mount and when gymId changes
   useEffect(() => {
     if (gymId) {
-      loadTemplates();
+      loadTemplate();
       loadActiveSchedule();
     }
   }, [gymId]);
-
-  // Filter templates by search query
-  const filteredTemplates = templates.filter((template) =>
-    template.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   // Handlers for template operations
   const handleCreateTemplate = async (data: any) => {
     await createTemplate(data);
   };
 
-  const handleEditTemplate = (template: any) => {
-    navigate(`/schedules/templates/${template.id}/edit`);
-  };
-
-  const handleDeleteTemplate = async (template: any) => {
-    await deleteTemplate(template.id);
-  };
-
-  // Handlers for active schedule operations
-  const handleCreateActiveSchedule = async (templateId: string) => {
-    await createActiveSchedule({ templateId });
+  const handleDeleteTemplate = async () => {
+    if (template) {
+      await deleteTemplate(template.id);
+    }
   };
 
   return (
@@ -126,37 +107,37 @@ export function SchedulesPage() {
         </Group>
 
         <Text size="lg" c="dimmed">
-          Manage schedule templates and active schedules for your gym.
+          Manage your gym's schedule template and active schedule.
         </Text>
 
         {/* Tabbed Interface */}
         <Tabs value={activeTab} onChange={setActiveTab}>
           <Tabs.List>
             <Tabs.Tab value="templates" leftSection={<IconTemplate size={16} />}>
-              Schedule Templates
+              Schedule Template
             </Tabs.Tab>
             <Tabs.Tab value="active" leftSection={<IconCalendarEvent size={16} />}>
               Active Schedule
             </Tabs.Tab>
           </Tabs.List>
 
-          {/* Schedule Templates Tab */}
+          {/* Schedule Template Tab */}
           <Tabs.Panel value="templates" pt="xl">
-            <Stack gap="md">
-              <TemplateToolbar
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                onAddTemplate={openAddModal}
+            {template ? (
+              <ScheduleTemplateEditor
+                template={template}
+                gymId={gymId}
+                coaches={coaches}
+                onDeleteRequest={openDeleteModal}
               />
-
-              <TemplateTable
-                templates={filteredTemplates}
-                loading={templatesLoading}
-                onEdit={handleEditTemplate}
-                onDelete={openDeleteModal}
-                onAddTemplate={openAddModal}
+            ) : (
+              <EmptyState
+                title="No Schedule Template"
+                message="Create your gym's schedule template to get started."
+                actionLabel="Create Template"
+                onAction={openAddModal}
               />
-            </Stack>
+            )}
           </Tabs.Panel>
 
           {/* Active Schedule Tab */}
@@ -165,7 +146,6 @@ export function SchedulesPage() {
               <ActiveToolbar
                 hasActiveSchedule={!!activeSchedule}
                 onCreateFromTemplate={openCreateModal}
-                onEditCoaches={openEditCoachesModal}
                 onReset={openResetModal}
                 onDelete={openDeleteActiveModal}
               />
@@ -174,11 +154,12 @@ export function SchedulesPage() {
                 <ActiveScheduleDisplay
                   schedule={activeSchedule}
                   coaches={coaches}
+                  onUpdateTimeslot={updateTimeslot}
                 />
               ) : (
                 <EmptyState
                   title="No Active Schedule"
-                  message="Create an active schedule from a template to get started."
+                  message="Create an active schedule from your template to get started."
                   actionLabel="Create from Template"
                   onAction={openCreateModal}
                 />
@@ -192,35 +173,23 @@ export function SchedulesPage() {
           opened={isAddModalOpen}
           onClose={closeTemplateModals}
           onSubmit={handleCreateTemplate}
-          loading={templatesLoading}
-          coaches={coaches}
-          coachesLoading={coachesLoading}
+          loading={templateLoading}
         />
 
         <DeleteTemplateModal
           opened={isDeleteModalOpen}
           onClose={closeTemplateModals}
-          template={selectedTemplate}
+          template={template}
           onConfirm={handleDeleteTemplate}
-          loading={templatesLoading}
+          loading={templateLoading}
         />
 
         {/* Active Schedule Modals */}
         <CreateFromTemplateModal
           opened={isCreateModalOpen}
           onClose={closeActiveModals}
-          templates={templates}
-          onConfirm={handleCreateActiveSchedule}
-          loading={activeLoading}
-          coaches={coaches}
-        />
-
-        <EditCoachesModal
-          opened={isEditCoachesModalOpen}
-          onClose={closeActiveModals}
-          schedule={activeSchedule}
-          coaches={coaches}
-          onConfirm={updateCoaches}
+          template={template}
+          onConfirm={createActiveSchedule}
           loading={activeLoading}
         />
 

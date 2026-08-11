@@ -13,6 +13,8 @@ export interface ITimeSlot {
   startTime: string;  // "HH:mm" format (e.g., "09:00", "14:30")
   endTime: string;    // "HH:mm" format (e.g., "10:00", "15:30")
   capacity: number;
+  coachIds: string[];  // REQUIRED: At least one coach must be assigned
+  location: string;    // REQUIRED: free-text location for this timeslot
   assignedClients: string[];  // User IDs of clients assigned to this timeslot
 }
 
@@ -31,7 +33,6 @@ export interface IScheduleTemplate {
   gymId: string;
   name: string;
   description?: string;
-  coachIds: string[];  // REQUIRED: At least one coach must be assigned
   days: IScheduleDay[];
   createdBy: string;
   createdAt: Date;
@@ -42,7 +43,6 @@ export interface IActiveSchedule {
   id: string;
   gymId: string;
   templateId: string;
-  coachIds: string[];  // REQUIRED: At least one coach must be assigned
   days: IScheduleDay[];
   lastResetAt: Date;
   createdAt: Date;
@@ -54,23 +54,25 @@ export interface IActiveSchedule {
 export interface CreateScheduleTemplateRequest {
   name: string;
   description?: string;
-  coachIds: string[];  // At least one required
   days: IScheduleDay[];
 }
 
 export interface UpdateScheduleTemplateRequest {
   name?: string;
   description?: string;
-  coachIds?: string[];
   days?: IScheduleDay[];
 }
 
 export interface CreateActiveScheduleRequest {
-  templateId: string;
 }
 
-export interface AssignStaffRequest {
-  coachId: string;
+export interface UpdateTimeslotAssignmentRequest {
+  coachIds: string[];  // At least one required
+  location: string;
+}
+
+export interface AddTimeslotClientRequest {
+  clientId: string;
 }
 
 export interface JoinTimeslotRequest {

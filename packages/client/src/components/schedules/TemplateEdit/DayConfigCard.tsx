@@ -4,6 +4,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { DayOfWeek } from '@ironlogic4/shared';
 import { TimeslotInput, type TimeslotData } from './TimeslotInput';
 import { generateTimeslotId, getDayName } from '../../../utils/scheduleUtils';
+import type { Coach } from '../../../hooks/useCoaches';
 
 export interface DayConfigData {
   dayOfWeek: DayOfWeek;
@@ -13,6 +14,7 @@ export interface DayConfigData {
 interface DayConfigCardProps {
   day: DayConfigData;
   gymId: string;
+  coaches: Coach[];
   onChange: (day: DayConfigData) => void;
 }
 
@@ -20,7 +22,7 @@ interface DayConfigCardProps {
  * Card component for configuring a single day
  * Displays day of week as read-only and manages timeslots
  */
-export function DayConfigCard({ day, gymId, onChange }: DayConfigCardProps) {
+export function DayConfigCard({ day, gymId, coaches, onChange }: DayConfigCardProps) {
   const [opened, { toggle, open }] = useDisclosure(false);
   const timeslotCount = day.timeSlots.length;
 
@@ -30,6 +32,8 @@ export function DayConfigCard({ day, gymId, onChange }: DayConfigCardProps) {
       startTime: '09:00',
       endTime: '10:00',
       capacity: 10,
+      coachIds: [],
+      location: '',
       assignedClients: [],
     };
     onChange({ ...day, timeSlots: [...day.timeSlots, newTimeslot] });
@@ -82,12 +86,13 @@ export function DayConfigCard({ day, gymId, onChange }: DayConfigCardProps) {
                 No timeslots added yet. Click "Add Timeslot" to get started.
               </Text>
             ) : (
-              <Stack gap="sm">
+              <Stack gap="md">
                 {day.timeSlots.map((timeslot, index) => (
                   <TimeslotInput
                     key={timeslot.id}
                     timeslot={timeslot}
                     gymId={gymId}
+                    coaches={coaches}
                     onChange={(ts) => handleTimeslotChange(index, ts)}
                     onDelete={() => handleDeleteTimeslot(index)}
                   />

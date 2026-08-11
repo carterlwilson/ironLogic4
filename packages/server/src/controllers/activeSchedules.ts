@@ -2,14 +2,16 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActiveSchedule } from '../models/ActiveSchedule.js';
 import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
-import { User } from '../models/User.js';
 import {
   ApiResponse,
   CreateActiveScheduleSchema,
-  AssignStaffSchema,
+  UpdateTimeslotAssignmentSchema,
+  AddTimeslotClientSchema,
   UserType,
 } from '@ironlogic4/shared';
 import { IdParamSchema } from '@ironlogic4/shared/schemas/api';
+import { validateCoachIds } from '../utils/validateCoachIds.js';
+import { validateClientId } from '../utils/validateClientId.js';
 import { z } from 'zod';
 
 const TimeslotParamSchema = z.object({
@@ -17,11 +19,43 @@ const TimeslotParamSchema = z.object({
   timeslotId: z.string().min(1),
 });
 
-const UnassignStaffParamSchema = z.object({
+const TimeslotClientParamSchema = z.object({
   id: z.string().min(1),
   timeslotId: z.string().min(1),
-  coachId: z.string().min(1),
+  clientId: z.string().min(1),
 });
+
+/**
+ * Find a timeslot within a schedule's days and, for coaches, verify they're
+ * assigned to coach that specific timeslot. Returns the timeslot's capacity
+ * on success, or null with a response already sent on failure.
+ */
+function findTimeslotAndCheckCoachAccess(
+  schedule: { days: { timeSlots: { id?: string; capacity: number; coachIds: string[] }[] }[] },
+  timeslotId: string,
+  req: AuthenticatedRequest,
+  res: Response
+): number | null {
+  for (const day of schedule.days) {
+    const slot = day.timeSlots.find(s => s.id === timeslotId);
+    if (slot) {
+      if (req.user?.userType === UserType.COACH && !slot.coachIds.includes(req.user.id)) {
+        res.status(403).json({
+          success: false,
+          error: 'You can only manage clients for timeslots you coach.',
+        });
+        return null;
+      }
+      return slot.capacity;
+    }
+  }
+
+  res.status(404).json({
+    success: false,
+    error: 'Timeslot not found',
+  });
+  return null;
+}
 
 /**
  * Get all active schedules with filtering
@@ -55,7 +89,7 @@ export const getActiveSchedules = async (
     // Coach filtering - coaches can only see schedules they're assigned to
     if (req.user?.userType === UserType.COACH || coachId) {
       const filterCoachId = coachId || req.user?.id;
-      query.coachIds = filterCoachId;
+      query['days.timeSlots.coachIds'] = filterCoachId;
     }
 
     const schedules = await ActiveSchedule.find(query)
@@ -138,7 +172,9 @@ export const getActiveScheduleById = async (
 
     // Coaches can only view schedules they're assigned to
     if (req.user?.userType === UserType.COACH) {
-      const isAssigned = schedule.coachIds.includes(req.user.id);
+      const isAssigned = schedule.days.some(day =>
+        day.timeSlots.some(slot => slot.coachIds.includes(req.user!.id))
+      );
       if (!isAssigned) {
         res.status(403).json({
           success: false,
@@ -211,33 +247,46 @@ export const createActiveSchedule = async (
       return;
     }
 
-    const { templateId } = validation.data;
+    // Determine gymId based on user type
+    // For OWNER/COACH/CLIENT, always use their gym. For ADMIN, allow specifying gymId
+    let gymId: string | undefined;
+    if (req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH || req.user?.userType === UserType.CLIENT) {
+      if (!req.user.gymId) {
+        res.status(400).json({
+          success: false,
+          error: 'You must be assigned to a gym to create an active schedule',
+        });
+        return;
+      }
+      gymId = req.user.gymId;
+    } else {
+      // Admin can specify gymId in request body
+      gymId = req.body.gymId;
+      if (!gymId) {
+        res.status(400).json({
+          success: false,
+          error: 'Gym ID is required',
+        });
+        return;
+      }
+    }
 
-    // Check if active schedule already exists for this template
-    const existingSchedule = await ActiveSchedule.findOne({ templateId });
+    // Check if an active schedule already exists for this gym
+    const existingSchedule = await ActiveSchedule.findOne({ gymId });
     if (existingSchedule) {
       res.status(400).json({
         success: false,
-        error: 'An active schedule already exists for this template',
+        error: 'An active schedule already exists for this gym',
       });
       return;
     }
 
-    // Fetch the template
-    const template = await ScheduleTemplate.findById(templateId);
+    // Fetch the gym's schedule template
+    const template = await ScheduleTemplate.findOne({ gymId });
     if (!template) {
       res.status(404).json({
         success: false,
-        error: 'Schedule template not found',
-      });
-      return;
-    }
-
-    // Check access permissions
-    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && template.gymId.toString() !== req.user.gymId) {
-      res.status(403).json({
-        success: false,
-        error: 'Access denied. You can only create schedules for your own gym.',
+        error: 'No schedule template exists for this gym yet. Create one first.',
       });
       return;
     }
@@ -246,7 +295,6 @@ export const createActiveSchedule = async (
     const newSchedule = new ActiveSchedule({
       gymId: template.gymId,
       templateId: template.id,
-      coachIds: template.coachIds, // Copy coach IDs from template
       days: template.days,
       lastResetAt: new Date(),
     });
@@ -376,28 +424,13 @@ export const resetActiveSchedule = async (
       return;
     }
 
-    // Reset schedule with template data while preserving client assignments
+    // Reset the active schedule to exactly match the template — structure,
+    // capacity, coaches, location, and client assignments all come fresh from
+    // the template, discarding anything active-schedule-specific.
     // Note: Using toObject() here because we're assigning to Mongoose document fields
     // The final toJSON() call will transform _id to id when returning to client
-    schedule.days = template.days.map((templateDay, dayIndex) => {
-      const existingDay = schedule.days[dayIndex];
-      return {
-        ...templateDay.toObject(),
-        timeSlots: templateDay.timeSlots.map((templateSlot) => {
-          // Find matching existing slot by start time
-          const existingSlot = existingDay?.timeSlots?.find(
-            s => s.startTime === templateSlot.startTime
-          );
-          return {
-            ...templateSlot.toObject(),
-            // Preserve existing client assignments if slot exists
-            assignedClients: existingSlot?.assignedClients || [],
-          };
-        }),
-      };
-    });
+    schedule.days = template.days.map((templateDay) => templateDay.toObject());
     schedule.lastResetAt = new Date();
-    // Preserve coachIds from active schedule (don't reset them)
 
     const updatedSchedule = await schedule.save();
     await updatedSchedule.populate('gymId', 'name');
@@ -420,26 +453,27 @@ export const resetActiveSchedule = async (
 };
 
 /**
- * Assign staff (coach) to active schedule
+ * Update coach and location assignment for a specific timeslot on the active schedule
  */
-export const assignStaff = async (
+export const updateTimeslotAssignment = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const paramsValidation = IdParamSchema.safeParse(req.params);
-    const bodyValidation = AssignStaffSchema.safeParse(req.body);
+    const paramsValidation = TimeslotParamSchema.safeParse(req.params);
+    const bodyValidation = UpdateTimeslotAssignmentSchema.safeParse(req.body);
 
     if (!paramsValidation.success || !bodyValidation.success) {
       res.status(400).json({
         success: false,
         error: 'Invalid request data',
+        details: [...(paramsValidation.error?.errors || []), ...(bodyValidation.error?.errors || [])],
       });
       return;
     }
 
-    const { id } = paramsValidation.data;
-    const { coachId } = bodyValidation.data;
+    const { id, timeslotId } = paramsValidation.data;
+    const { coachIds, location } = bodyValidation.data;
 
     const schedule = await ActiveSchedule.findById(id);
 
@@ -460,72 +494,199 @@ export const assignStaff = async (
       return;
     }
 
-    // Check if coach already assigned
-    if (schedule.coachIds.includes(coachId)) {
+    // Validate coaches
+    const coachValidation = await validateCoachIds(coachIds, schedule.gymId.toString());
+    if (!coachValidation.valid) {
       res.status(400).json({
         success: false,
-        error: 'Coach is already assigned to this schedule',
+        error: coachValidation.error,
       });
       return;
     }
 
-    // Validate coach
-    const coach = await User.findById(coachId);
-    if (!coach) {
+    // Atomically update just the matching timeslot subdocument, leaving
+    // sibling timeslots (and their assignedClients) untouched
+    const updatedSchedule = await ActiveSchedule.findOneAndUpdate(
+      { _id: id, 'days.timeSlots._id': timeslotId },
+      {
+        $set: {
+          'days.$[].timeSlots.$[slot].coachIds': coachIds,
+          'days.$[].timeSlots.$[slot].location': location,
+        },
+      },
+      {
+        arrayFilters: [{ 'slot._id': timeslotId }],
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedSchedule) {
       res.status(404).json({
         success: false,
-        error: 'Coach not found',
+        error: 'Timeslot not found',
       });
       return;
     }
 
-    if (coach.gymId !== schedule.gymId.toString()) {
-      res.status(400).json({
-        success: false,
-        error: 'Coach must belong to the same gym',
-      });
-      return;
-    }
-
-    if (!['coach', 'admin', 'owner'].includes(coach.userType)) {
-      res.status(400).json({
-        success: false,
-        error: 'User must have coach, admin, or owner role',
-      });
-      return;
-    }
-
-    // Add coach to schedule
-    schedule.coachIds.push(coachId);
-    const updatedSchedule = await schedule.save();
     await updatedSchedule.populate('gymId', 'name');
     await updatedSchedule.populate('templateId', 'name');
 
     const response: ApiResponse<any> = {
       success: true,
       data: updatedSchedule.toJSON(),
-      message: 'Coach assigned successfully',
+      message: 'Timeslot assignment updated successfully',
     };
 
     res.json(response);
   } catch (error) {
-    console.error('Error assigning staff:', error);
+    console.error('Error updating timeslot assignment:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to assign staff',
+      error: 'Failed to update timeslot assignment',
     });
   }
 };
 
 /**
- * Unassign staff (coach) from active schedule
+ * Add a client to a specific timeslot on the active schedule
  */
-export const unassignStaff = async (
+export const addActiveTimeslotClient = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   try {
-    const validation = UnassignStaffParamSchema.safeParse(req.params);
+    const paramsValidation = TimeslotParamSchema.safeParse(req.params);
+    const bodyValidation = AddTimeslotClientSchema.safeParse(req.body);
+
+    if (!paramsValidation.success || !bodyValidation.success) {
+      res.status(400).json({
+        success: false,
+        error: 'Invalid request data',
+        details: [...(paramsValidation.error?.errors || []), ...(bodyValidation.error?.errors || [])],
+      });
+      return;
+    }
+
+    const { id, timeslotId } = paramsValidation.data;
+    const { clientId } = bodyValidation.data;
+
+    const schedule = await ActiveSchedule.findById(id);
+
+    if (!schedule) {
+      res.status(404).json({
+        success: false,
+        error: 'Active schedule not found',
+      });
+      return;
+    }
+
+    // Check access permissions
+    if ((req.user?.userType === UserType.OWNER || req.user?.userType === UserType.COACH) && schedule.gymId.toString() !== req.user.gymId) {
+      res.status(403).json({
+        success: false,
+        error: 'Access denied.',
+      });
+      return;
+    }
+
+    // Find the timeslot, get its capacity, and (for coaches) verify assignment
+    const targetCapacity = findTimeslotAndCheckCoachAccess(schedule, timeslotId, req, res);
+    if (targetCapacity === null) return;
+
+    // Validate the client belongs to the same gym and has the client role
+    const clientValidation = await validateClientId(clientId, schedule.gymId.toString());
+    if (!clientValidation.valid) {
+      res.status(400).json({
+        success: false,
+        error: clientValidation.error,
+      });
+      return;
+    }
+
+    // Atomic, capacity-safe update — mirrors the client self-service joinTimeslot pattern
+    const updatedSchedule = await ActiveSchedule.findOneAndUpdate(
+      {
+        _id: id,
+        'days.timeSlots': {
+          $elemMatch: {
+            _id: timeslotId,
+            assignedClients: { $ne: clientId },
+            [`assignedClients.${targetCapacity - 1}`]: { $exists: false },
+          },
+        },
+      },
+      {
+        $addToSet: {
+          'days.$[].timeSlots.$[slot].assignedClients': clientId,
+        },
+      },
+      {
+        arrayFilters: [{ 'slot._id': timeslotId }],
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!updatedSchedule) {
+      const recheckSchedule = await ActiveSchedule.findById(id);
+      if (recheckSchedule) {
+        for (const day of recheckSchedule.days) {
+          const slot = day.timeSlots.find(s => s.id === timeslotId);
+          if (slot) {
+            if (slot.assignedClients.includes(clientId)) {
+              res.status(400).json({
+                success: false,
+                error: 'Client is already assigned to this timeslot',
+              });
+              return;
+            }
+            if (slot.assignedClients.length >= slot.capacity) {
+              res.status(400).json({
+                success: false,
+                error: 'This timeslot is at full capacity',
+              });
+              return;
+            }
+          }
+        }
+      }
+
+      res.status(400).json({
+        success: false,
+        error: 'Failed to add client to timeslot',
+      });
+      return;
+    }
+
+    await updatedSchedule.populate('gymId', 'name');
+    await updatedSchedule.populate('templateId', 'name');
+
+    const response: ApiResponse<any> = {
+      success: true,
+      data: updatedSchedule.toJSON(),
+      message: 'Client added to timeslot successfully',
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('Error adding client to timeslot:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to add client to timeslot',
+    });
+  }
+};
+
+/**
+ * Remove a client from a specific timeslot on the active schedule
+ */
+export const removeActiveTimeslotClient = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const validation = TimeslotClientParamSchema.safeParse(req.params);
 
     if (!validation.success) {
       res.status(400).json({
@@ -535,7 +696,7 @@ export const unassignStaff = async (
       return;
     }
 
-    const { id, coachId } = validation.data;
+    const { id, timeslotId, clientId } = validation.data;
 
     const schedule = await ActiveSchedule.findById(id);
 
@@ -556,43 +717,41 @@ export const unassignStaff = async (
       return;
     }
 
-    // Prevent removing the last coach
-    if (schedule.coachIds.length === 1) {
+    // For coaches, verify they're assigned to coach this specific timeslot
+    if (findTimeslotAndCheckCoachAccess(schedule, timeslotId, req, res) === null) return;
+
+    const updatedSchedule = await ActiveSchedule.findOneAndUpdate(
+      {
+        _id: id,
+        'days.timeSlots': { $elemMatch: { _id: timeslotId, assignedClients: clientId } },
+      },
+      { $pull: { 'days.$[].timeSlots.$[slot].assignedClients': clientId } },
+      { arrayFilters: [{ 'slot._id': timeslotId }], new: true, runValidators: true }
+    );
+
+    if (!updatedSchedule) {
       res.status(400).json({
         success: false,
-        error: 'Cannot remove the last coach from the schedule',
+        error: 'Client is not assigned to this timeslot',
       });
       return;
     }
 
-    // Check if coach is assigned
-    const coachIndex = schedule.coachIds.indexOf(coachId);
-    if (coachIndex === -1) {
-      res.status(400).json({
-        success: false,
-        error: 'Coach is not assigned to this schedule',
-      });
-      return;
-    }
-
-    // Remove coach from schedule
-    schedule.coachIds.splice(coachIndex, 1);
-    const updatedSchedule = await schedule.save();
     await updatedSchedule.populate('gymId', 'name');
     await updatedSchedule.populate('templateId', 'name');
 
     const response: ApiResponse<any> = {
       success: true,
       data: updatedSchedule.toJSON(),
-      message: 'Coach unassigned successfully',
+      message: 'Client removed from timeslot successfully',
     };
 
     res.json(response);
   } catch (error) {
-    console.error('Error unassigning staff:', error);
+    console.error('Error removing client from timeslot:', error);
     res.status(500).json({
       success: false,
-      error: 'Failed to unassign staff',
+      error: 'Failed to remove client from timeslot',
     });
   }
 };

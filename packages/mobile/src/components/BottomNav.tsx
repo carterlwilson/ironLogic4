@@ -6,6 +6,7 @@ import {
   IconCalendar,
   IconUser,
 } from '@tabler/icons-react';
+import { useAuth } from '../providers/AuthProvider';
 
 interface NavItem {
   label: string;
@@ -13,7 +14,7 @@ interface NavItem {
   icon: typeof IconBarbell;
 }
 
-const NAV_ITEMS: NavItem[] = [
+const CLIENT_NAV_ITEMS: NavItem[] = [
   {
     label: 'Workout',
     path: '/workout',
@@ -36,9 +37,25 @@ const NAV_ITEMS: NavItem[] = [
   },
 ];
 
+// Coaches only manage their schedule and profile on mobile — no workout/benchmark tracking
+const COACH_NAV_ITEMS: NavItem[] = [
+  {
+    label: 'Schedule',
+    path: '/schedule',
+    icon: IconCalendar,
+  },
+  {
+    label: 'Profile',
+    path: '/profile',
+    icon: IconUser,
+  },
+];
+
 export const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
+  const NAV_ITEMS = user?.role === 'coach' ? COACH_NAV_ITEMS : CLIENT_NAV_ITEMS;
 
   return (
     <Group

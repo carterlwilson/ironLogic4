@@ -26,6 +26,9 @@ export function TimeslotCard({ slot, mode, loading, onJoin, onLeave }: TimeslotC
           <Text size="xs" c="dimmed">
             {coachLabel}
           </Text>
+          <Text size="xs" c="dimmed">
+            {slot.location}
+          </Text>
           <Badge size="sm" color={getCapacityColor(slot.availableSpots, slot.capacity)} variant="light">
             {formatCapacity(slot.availableSpots, slot.capacity)}
           </Badge>

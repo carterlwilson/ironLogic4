@@ -1,10 +1,9 @@
 import { Group, Button } from '@mantine/core';
-import { IconPlus, IconEdit, IconRefresh, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconRefresh, IconTrash } from '@tabler/icons-react';
 
 interface ActiveToolbarProps {
   hasActiveSchedule: boolean;
   onCreateFromTemplate: () => void;
-  onEditCoaches: () => void;
   onReset: () => void;
   onDelete: () => void;
 }
@@ -15,7 +14,6 @@ interface ActiveToolbarProps {
 export function ActiveToolbar({
   hasActiveSchedule,
   onCreateFromTemplate,
-  onEditCoaches,
   onReset,
   onDelete,
 }: ActiveToolbarProps) {
@@ -31,13 +29,6 @@ export function ActiveToolbar({
 
   return (
     <Group justify="flex-end">
-      <Button
-        variant="light"
-        leftSection={<IconEdit size={16} />}
-        onClick={onEditCoaches}
-      >
-        Edit Coaches
-      </Button>
       <Button
         variant="light"
         color="orange"

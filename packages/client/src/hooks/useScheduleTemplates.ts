@@ -8,56 +8,51 @@ import type {
 import { scheduleApi } from '../services/scheduleApi';
 
 interface UseScheduleTemplatesState {
-  templates: IScheduleTemplate[];
+  template: IScheduleTemplate | null;
   loading: boolean;
   error: string | null;
   isAddModalOpen: boolean;
-  isEditModalOpen: boolean;
   isDeleteModalOpen: boolean;
-  selectedTemplate: IScheduleTemplate | null;
 }
 
 interface UseScheduleTemplatesReturn extends UseScheduleTemplatesState {
-  loadTemplates: () => Promise<void>;
+  loadTemplate: () => Promise<void>;
   createTemplate: (data: CreateScheduleTemplateRequest) => Promise<void>;
   updateTemplate: (id: string, data: UpdateScheduleTemplateRequest) => Promise<void>;
   deleteTemplate: (id: string) => Promise<void>;
   openAddModal: () => void;
-  openEditModal: (template: IScheduleTemplate) => void;
-  openDeleteModal: (template: IScheduleTemplate) => void;
+  openDeleteModal: () => void;
   closeModals: () => void;
-  refreshTemplates: () => Promise<void>;
+  refreshTemplate: () => Promise<void>;
 }
 
 const initialState: UseScheduleTemplatesState = {
-  templates: [],
+  template: null,
   loading: false,
   error: null,
   isAddModalOpen: false,
-  isEditModalOpen: false,
   isDeleteModalOpen: false,
-  selectedTemplate: null,
 };
 
 /**
- * Hook for managing schedule templates
- * Handles CRUD operations and modal state for schedule templates
+ * Hook for managing the gym's single schedule template
+ * Handles CRUD operations and modal state for the schedule template
  */
 export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
   const [state, setState] = useState<UseScheduleTemplatesState>(initialState);
 
-  const loadTemplates = useCallback(async () => {
+  const loadTemplate = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
     try {
       const response = await scheduleApi.getTemplates();
       setState(prev => ({
         ...prev,
-        templates: response.data || [],
+        template: response.data?.[0] ?? null,
         loading: false,
       }));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load schedule templates';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load schedule template';
       setState(prev => ({
         ...prev,
         loading: false,
@@ -92,7 +87,7 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
         autoClose: 3000,
       });
 
-      await loadTemplates();
+      await loadTemplate();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create schedule template';
       setState(prev => ({ ...prev, loading: false }));
@@ -104,7 +99,7 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
         autoClose: 5000,
       });
     }
-  }, [loadTemplates]);
+  }, [loadTemplate]);
 
   const updateTemplate = useCallback(async (id: string, data: UpdateScheduleTemplateRequest) => {
     try {
@@ -112,12 +107,7 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
 
       await scheduleApi.updateTemplate(id, data);
 
-      setState(prev => ({
-        ...prev,
-        isEditModalOpen: false,
-        selectedTemplate: null,
-        loading: false,
-      }));
+      setState(prev => ({ ...prev, loading: false }));
 
       notifications.show({
         title: 'Success',
@@ -126,7 +116,7 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
         autoClose: 3000,
       });
 
-      await loadTemplates();
+      await loadTemplate();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update schedule template';
       setState(prev => ({ ...prev, loading: false }));
@@ -138,7 +128,7 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
         autoClose: 5000,
       });
     }
-  }, [loadTemplates]);
+  }, [loadTemplate]);
 
   const deleteTemplate = useCallback(async (id: string) => {
     try {
@@ -149,7 +139,7 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
       setState(prev => ({
         ...prev,
         isDeleteModalOpen: false,
-        selectedTemplate: null,
+        template: null,
         loading: false,
       }));
 
@@ -160,7 +150,7 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
         autoClose: 3000,
       });
 
-      await loadTemplates();
+      await loadTemplate();
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete schedule template';
       setState(prev => ({ ...prev, loading: false }));
@@ -172,52 +162,37 @@ export const useScheduleTemplates = (): UseScheduleTemplatesReturn => {
         autoClose: 5000,
       });
     }
-  }, [loadTemplates]);
+  }, [loadTemplate]);
 
   const openAddModal = useCallback(() => {
     setState(prev => ({ ...prev, isAddModalOpen: true }));
   }, []);
 
-  const openEditModal = useCallback((template: IScheduleTemplate) => {
-    setState(prev => ({
-      ...prev,
-      isEditModalOpen: true,
-      selectedTemplate: template,
-    }));
-  }, []);
-
-  const openDeleteModal = useCallback((template: IScheduleTemplate) => {
-    setState(prev => ({
-      ...prev,
-      isDeleteModalOpen: true,
-      selectedTemplate: template,
-    }));
+  const openDeleteModal = useCallback(() => {
+    setState(prev => ({ ...prev, isDeleteModalOpen: true }));
   }, []);
 
   const closeModals = useCallback(() => {
     setState(prev => ({
       ...prev,
       isAddModalOpen: false,
-      isEditModalOpen: false,
       isDeleteModalOpen: false,
-      selectedTemplate: null,
     }));
   }, []);
 
-  const refreshTemplates = useCallback(() => {
-    return loadTemplates();
-  }, [loadTemplates]);
+  const refreshTemplate = useCallback(() => {
+    return loadTemplate();
+  }, [loadTemplate]);
 
   return {
     ...state,
-    loadTemplates,
+    loadTemplate,
     createTemplate,
     updateTemplate,
     deleteTemplate,
     openAddModal,
-    openEditModal,
     openDeleteModal,
     closeModals,
-    refreshTemplates,
+    refreshTemplate,
   };
 };
