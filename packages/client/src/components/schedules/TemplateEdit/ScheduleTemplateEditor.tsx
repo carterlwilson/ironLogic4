@@ -15,6 +15,7 @@ import { IconCheck, IconAlertCircle, IconAlertTriangle, IconTrash } from '@table
 import type { IScheduleTemplate, UpdateScheduleTemplateRequest } from '@ironlogic4/shared';
 import { scheduleApi } from '../../../services/scheduleApi';
 import type { Coach } from '../../../hooks/useCoaches';
+import type { Client } from '../../../hooks/useClients';
 import { DayConfigCard, type DayConfigData } from './DayConfigCard';
 
 type SaveStatus = 'saved' | 'pending' | 'saving' | 'blocked' | 'error';
@@ -29,6 +30,7 @@ interface ScheduleTemplateEditorProps {
   template: IScheduleTemplate;
   gymId: string;
   coaches: Coach[];
+  clients: Client[];
   onDeleteRequest: () => void;
 }
 
@@ -87,8 +89,8 @@ function renderSaveStatus(
  */
 export function ScheduleTemplateEditor({
   template,
-  gymId,
   coaches,
+  clients,
   onDeleteRequest,
 }: ScheduleTemplateEditorProps) {
   // Form state
@@ -275,8 +277,8 @@ export function ScheduleTemplateEditor({
               <DayConfigCard
                 key={day.dayOfWeek}
                 day={day}
-                gymId={gymId}
                 coaches={coaches}
+                clients={clients}
                 onChange={(updatedDay) => handleDayChange(day.dayOfWeek, updatedDay)}
               />
             ))}

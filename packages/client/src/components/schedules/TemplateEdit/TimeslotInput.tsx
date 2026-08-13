@@ -5,6 +5,7 @@ import { isValidTimeFormat, isEndTimeAfterStartTime, formatTimeRange } from '../
 import { ClientAssignmentInput } from './ClientAssignmentInput';
 import { CoachAssignmentInput } from './CoachAssignmentInput';
 import type { Coach } from '../../../hooks/useCoaches';
+import type { Client } from '../../../hooks/useClients';
 
 export interface TimeslotData {
   id: string;
@@ -20,8 +21,8 @@ interface TimeslotInputProps {
   timeslot: TimeslotData;
   onChange: (timeslot: TimeslotData) => void;
   onDelete: () => void;
-  gymId: string;
   coaches: Coach[];
+  clients: Client[];
   disabled?: boolean;
 }
 
@@ -33,8 +34,8 @@ export function TimeslotInput({
   timeslot,
   onChange,
   onDelete,
-  gymId,
   coaches,
+  clients,
   disabled = false,
 }: TimeslotInputProps) {
   const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,7 +155,7 @@ export function TimeslotInput({
         <ClientAssignmentInput
           assignedClientIds={timeslot.assignedClients}
           capacity={timeslot.capacity}
-          gymId={gymId}
+          clients={clients}
           onChange={handleClientAssignmentChange}
           disabled={disabled}
         />
