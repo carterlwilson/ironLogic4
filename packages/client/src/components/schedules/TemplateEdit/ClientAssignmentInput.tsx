@@ -1,11 +1,11 @@
 import { Stack, MultiSelect, Group, Badge, Text } from '@mantine/core';
 import { IconUsers } from '@tabler/icons-react';
-import { useClients } from '../../../hooks/useClients';
+import type { Client } from '../../../hooks/useClients';
 
 interface ClientAssignmentInputProps {
   assignedClientIds: string[];
   capacity: number;
-  gymId: string;
+  clients: Client[];
   onChange: (clientIds: string[]) => void;
   disabled?: boolean;
 }
@@ -17,12 +17,10 @@ interface ClientAssignmentInputProps {
 export function ClientAssignmentInput({
   assignedClientIds,
   capacity,
-  gymId,
+  clients,
   onChange,
   disabled = false,
 }: ClientAssignmentInputProps) {
-  const { clients, loading } = useClients(gymId);
-
   // Create options for MultiSelect, filtering out already assigned clients from dropdown
   const clientOptions = clients.map((client) => ({
     value: client.id,
@@ -66,7 +64,7 @@ export function ClientAssignmentInput({
         data={clientOptions}
         value={assignedClientIds}
         onChange={onChange}
-        disabled={disabled || loading}
+        disabled={disabled}
         maxValues={capacity}
         searchable
         clearable
