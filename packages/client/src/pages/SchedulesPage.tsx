@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { useScheduleTemplates } from '../hooks/useScheduleTemplates';
 import { useActiveSchedule } from '../hooks/useActiveSchedule';
 import { useCoaches } from '../hooks/useCoaches';
+import { useClients } from '../hooks/useClients';
 import { EmptyState } from '../components/schedules/shared/EmptyState';
 
 // Template Tab Components
@@ -45,6 +46,9 @@ export function SchedulesPage() {
 
   // Fetch coaches
   const { coaches } = useCoaches(gymId);
+
+  // Fetch clients once here (not per-timeslot) for use in the template editor
+  const { clients } = useClients(gymId);
 
   // Schedule Template Management
   const {
@@ -128,6 +132,7 @@ export function SchedulesPage() {
                 template={template}
                 gymId={gymId}
                 coaches={coaches}
+                clients={clients}
                 onDeleteRequest={openDeleteModal}
               />
             ) : (

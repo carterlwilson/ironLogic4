@@ -5,6 +5,7 @@ import { DayOfWeek } from '@ironlogic4/shared';
 import { TimeslotInput, type TimeslotData } from './TimeslotInput';
 import { generateTimeslotId, getDayName } from '../../../utils/scheduleUtils';
 import type { Coach } from '../../../hooks/useCoaches';
+import type { Client } from '../../../hooks/useClients';
 
 export interface DayConfigData {
   dayOfWeek: DayOfWeek;
@@ -13,8 +14,8 @@ export interface DayConfigData {
 
 interface DayConfigCardProps {
   day: DayConfigData;
-  gymId: string;
   coaches: Coach[];
+  clients: Client[];
   onChange: (day: DayConfigData) => void;
 }
 
@@ -22,7 +23,7 @@ interface DayConfigCardProps {
  * Card component for configuring a single day
  * Displays day of week as read-only and manages timeslots
  */
-export function DayConfigCard({ day, gymId, coaches, onChange }: DayConfigCardProps) {
+export function DayConfigCard({ day, coaches, clients, onChange }: DayConfigCardProps) {
   const [opened, { toggle, open }] = useDisclosure(false);
   const timeslotCount = day.timeSlots.length;
 
@@ -91,8 +92,8 @@ export function DayConfigCard({ day, gymId, coaches, onChange }: DayConfigCardPr
                   <TimeslotInput
                     key={timeslot.id}
                     timeslot={timeslot}
-                    gymId={gymId}
                     coaches={coaches}
+                    clients={clients}
                     onChange={(ts) => handleTimeslotChange(index, ts)}
                     onDelete={() => handleDeleteTimeslot(index)}
                   />
