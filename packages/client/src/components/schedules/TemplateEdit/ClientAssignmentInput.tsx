@@ -1,4 +1,4 @@
-import { Stack, MultiSelect, Group, Badge, Text } from '@mantine/core';
+import { Stack, MultiSelect, Group, Badge, Text, Skeleton } from '@mantine/core';
 import { IconUsers } from '@tabler/icons-react';
 import type { Client } from '../../../hooks/useClients';
 
@@ -6,6 +6,7 @@ interface ClientAssignmentInputProps {
   assignedClientIds: string[];
   capacity: number;
   clients: Client[];
+  loading: boolean;
   onChange: (clientIds: string[]) => void;
   disabled?: boolean;
 }
@@ -18,9 +19,28 @@ export function ClientAssignmentInput({
   assignedClientIds,
   capacity,
   clients,
+  loading,
   onChange,
   disabled = false,
 }: ClientAssignmentInputProps) {
+  // While the client list is still loading, assignedClientIds can't be resolved to
+  // names yet — show a placeholder instead of a MultiSelect that would render raw IDs.
+  if (loading) {
+    return (
+      <Stack gap="xs">
+        <Group gap="xs">
+          <Text size="sm" fw={500}>
+            Assigned Clients
+          </Text>
+          <Badge size="sm" color="gray" leftSection={<IconUsers size={12} />}>
+            {assignedClientIds.length} / {capacity}
+          </Badge>
+        </Group>
+        <Skeleton height={36} radius="sm" />
+      </Stack>
+    );
+  }
+
   // Create options for MultiSelect, filtering out already assigned clients from dropdown
   const clientOptions = clients.map((client) => ({
     value: client.id,
