@@ -1,0 +1,77 @@
+[
+  {
+    "_id": "6a53d3fa507f0336f23d0fbf",
+    "email": "chasehaden@gmail.com",
+    "firstName": "Chase",
+    "lastName": "Christensen",
+    "deletedBy": {
+      "id": "691261644d2e5e9cc486e32f",
+      "email": "joey@cullystrength.com",
+      "userType": "owner"
+    },
+    "deletedVia": "clients.deleteClient",
+    "createdAt": "2026-07-12T17:50:50.975Z",
+    "updatedAt": "2026-07-12T17:50:50.975Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a53d497507f0336f23d3776",
+    "email": "mustainkyle@gmail.com",
+    "firstName": "Kyle",
+    "lastName": "Mustain",
+    "deletedBy": {
+      "id": "691261644d2e5e9cc486e32f",
+      "email": "joey@cullystrength.com",
+      "userType": "owner"
+    },
+    "deletedVia": "clients.deleteClient",
+    "createdAt": "2026-07-12T17:53:27.367Z",
+    "updatedAt": "2026-07-12T17:53:27.367Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a53e4ef507f0336f23d50f1",
+    "email": "melodyanne22@gmail.com",
+    "firstName": "Pending",
+    "lastName": "User",
+    "deletedBy": {
+      "id": "691261644d2e5e9cc486e32f",
+      "email": "joey@cullystrength.com",
+      "userType": "owner"
+    },
+    "deletedVia": "clients.deleteClient",
+    "createdAt": "2026-07-12T19:03:11.371Z",
+    "updatedAt": "2026-07-12T19:03:11.371Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a53ebaa507f0336f23d5fa1",
+    "email": "stevecalleia@yahoo.com",
+    "firstName": "Pending",
+    "lastName": "User",
+    "deletedBy": {
+      "id": "691261644d2e5e9cc486e32f",
+      "email": "joey@cullystrength.com",
+      "userType": "owner"
+    },
+    "deletedVia": "clients.deleteClient",
+    "createdAt": "2026-07-12T19:31:54.965Z",
+    "updatedAt": "2026-07-12T19:31:54.965Z",
+    "__v": 0
+  },
+  {
+    "_id": "6a544848507f0336f23da63f",
+    "email": "mooret9802@gmail.com",
+    "firstName": "Pending",
+    "lastName": "User",
+    "deletedBy": {
+      "id": "691261644d2e5e9cc486e32f",
+      "email": "joey@cullystrength.com",
+      "userType": "owner"
+    },
+    "deletedVia": "clients.deleteClient",
+    "createdAt": "2026-07-13T02:07:04.720Z",
+    "updatedAt": "2026-07-13T02:07:04.720Z",
+    "__v": 0
+  }
+]

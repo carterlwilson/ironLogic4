@@ -16,6 +16,7 @@ interface DayConfigCardProps {
   day: DayConfigData;
   coaches: Coach[];
   clients: Client[];
+  clientsLoading: boolean;
   onChange: (day: DayConfigData) => void;
 }
 
@@ -23,7 +24,7 @@ interface DayConfigCardProps {
  * Card component for configuring a single day
  * Displays day of week as read-only and manages timeslots
  */
-export function DayConfigCard({ day, coaches, clients, onChange }: DayConfigCardProps) {
+export function DayConfigCard({ day, coaches, clients, clientsLoading, onChange }: DayConfigCardProps) {
   const [opened, { toggle, open }] = useDisclosure(false);
   const timeslotCount = day.timeSlots.length;
 
@@ -94,6 +95,7 @@ export function DayConfigCard({ day, coaches, clients, onChange }: DayConfigCard
                     timeslot={timeslot}
                     coaches={coaches}
                     clients={clients}
+                    clientsLoading={clientsLoading}
                     onChange={(ts) => handleTimeslotChange(index, ts)}
                     onDelete={() => handleDeleteTimeslot(index)}
                   />

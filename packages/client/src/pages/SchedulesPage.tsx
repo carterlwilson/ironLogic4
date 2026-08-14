@@ -48,7 +48,7 @@ export function SchedulesPage() {
   const { coaches } = useCoaches(gymId);
 
   // Fetch clients once here (not per-timeslot) for use in the template editor
-  const { clients } = useClients(gymId);
+  const { clients, loading: clientsLoading } = useClients(gymId);
 
   // Schedule Template Management
   const {
@@ -133,6 +133,7 @@ export function SchedulesPage() {
                 gymId={gymId}
                 coaches={coaches}
                 clients={clients}
+                clientsLoading={clientsLoading}
                 onDeleteRequest={openDeleteModal}
               />
             ) : (
