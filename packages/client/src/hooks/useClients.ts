@@ -52,17 +52,22 @@ export function useClients(gymId: string | undefined) {
           (response) => response.data || []
         );
 
-        // Filter for CLIENT user type and transform to Client interface
-        const clientList: Client[] = allUsers
-          .filter((user: User) => user.userType === UserType.CLIENT)
-          .map((user: User) => ({
+        // Filter for CLIENT user type and transform to Client interface.
+        // Dedupe by id as a safeguard against page-boundary overlap from the
+        // paginated fetch above (e.g. tied sort keys across separate page
+        // requests) — a duplicate id reaching a MultiSelect crashes it.
+        const clientById = new Map<string, Client>();
+        for (const user of allUsers) {
+          if (user.userType !== UserType.CLIENT) continue;
+          clientById.set(user.id, {
             id: user.id,
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-          }));
+          });
+        }
 
-        setClients(clientList);
+        setClients([...clientById.values()]);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch clients';
         console.error('Failed to fetch clients:', errorMessage);

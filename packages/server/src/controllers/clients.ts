@@ -87,7 +87,7 @@ export const getAllClients = async (
     const [clients, total] = await Promise.all([
       User.find(query)
         .select('-password')
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1, _id: 1 })
         .skip(skip)
         .limit(limit),
       User.countDocuments(query),

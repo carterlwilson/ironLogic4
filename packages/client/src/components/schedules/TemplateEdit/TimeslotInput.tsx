@@ -23,6 +23,7 @@ interface TimeslotInputProps {
   onDelete: () => void;
   coaches: Coach[];
   clients: Client[];
+  clientsLoading: boolean;
   disabled?: boolean;
 }
 
@@ -36,6 +37,7 @@ export function TimeslotInput({
   onDelete,
   coaches,
   clients,
+  clientsLoading,
   disabled = false,
 }: TimeslotInputProps) {
   const handleStartTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,6 +158,7 @@ export function TimeslotInput({
           assignedClientIds={timeslot.assignedClients}
           capacity={timeslot.capacity}
           clients={clients}
+          loading={clientsLoading}
           onChange={handleClientAssignmentChange}
           disabled={disabled}
         />

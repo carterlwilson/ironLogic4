@@ -31,6 +31,7 @@ interface ScheduleTemplateEditorProps {
   gymId: string;
   coaches: Coach[];
   clients: Client[];
+  clientsLoading: boolean;
   onDeleteRequest: () => void;
 }
 
@@ -91,6 +92,7 @@ export function ScheduleTemplateEditor({
   template,
   coaches,
   clients,
+  clientsLoading,
   onDeleteRequest,
 }: ScheduleTemplateEditorProps) {
   // Form state
@@ -279,6 +281,7 @@ export function ScheduleTemplateEditor({
                 day={day}
                 coaches={coaches}
                 clients={clients}
+                clientsLoading={clientsLoading}
                 onChange={(updatedDay) => handleDayChange(day.dayOfWeek, updatedDay)}
               />
             ))}
