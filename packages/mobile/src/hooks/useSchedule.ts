@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { notifications } from '@mantine/notifications';
+import { MAX_CLASSES_PER_WEEK, isDayInPast } from '@ironlogic4/shared';
 import { useAuth } from '../providers/AuthProvider';
 import {
   getAvailableSchedules,
@@ -18,6 +19,7 @@ export interface FlatTimeslot {
   location: string;
   availableSpots: number;
   isUserAssigned: boolean;
+  isPast: boolean;
   coaches: { id: string; firstName: string; lastName: string }[];
 }
 
@@ -43,6 +45,7 @@ function flattenSchedules(schedules: IActiveScheduleWithAvailability[]): FlatTim
           location: timeSlot.location,
           availableSpots: timeSlot.availableSpots,
           isUserAssigned: timeSlot.isUserAssigned,
+          isPast: isDayInPast(day.dayOfWeek),
           coaches: timeSlot.coaches ?? [],
         });
       }
@@ -75,6 +78,16 @@ export function useSchedule() {
 
   const joinTimeslot = useCallback(async (slot: FlatTimeslot) => {
     if (!user) return;
+    const assignedCount = flatSlots.filter((s) => s.isUserAssigned).length;
+    if (assignedCount >= MAX_CLASSES_PER_WEEK) {
+      notifications.show({
+        title: 'Error',
+        message: `You already have ${MAX_CLASSES_PER_WEEK} classes scheduled this week. Unassign from a class first before joining another.`,
+        color: 'red',
+        autoClose: 5000,
+      });
+      return;
+    }
     setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: true }));
     try {
       await joinTimeslotApi(slot.scheduleId, slot.timeslotId);
@@ -90,7 +103,7 @@ export function useSchedule() {
     } finally {
       setActionLoading((prev) => ({ ...prev, [slot.timeslotId]: false }));
     }
-  }, [refresh, user]);
+  }, [refresh, user, flatSlots]);
 
   const leaveTimeslot = useCallback(async (slot: FlatTimeslot) => {
     if (!user) return;

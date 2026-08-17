@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActiveSchedule } from '../models/ActiveSchedule.js';
 import { User } from '../models/User.js';
-import { ApiResponse, AvailableSchedulesQuerySchema, UserType } from '@ironlogic4/shared';
+import { ApiResponse, AvailableSchedulesQuerySchema, UserType, MAX_CLASSES_PER_WEEK, isDayInPast } from '@ironlogic4/shared';
 import { z } from 'zod';
 
 const TimeslotParamSchema = z.object({
@@ -261,20 +261,43 @@ export const joinTimeslot = async (
       return;
     }
 
-    // Find the specific timeslot to get its capacity
+    // Find the specific timeslot to get its capacity and containing day
     let targetCapacity: number | null = null;
+    let targetDayOfWeek: number | null = null;
     for (const day of scheduleCheck.days) {
       const slot = day.timeSlots.find(s => s.id === timeslotId);
       if (slot) {
         targetCapacity = slot.capacity;
+        targetDayOfWeek = day.dayOfWeek;
         break;
       }
     }
 
-    if (targetCapacity === null) {
+    if (targetCapacity === null || targetDayOfWeek === null) {
       res.status(404).json({
         success: false,
         error: 'Timeslot not found',
+      });
+      return;
+    }
+
+    if (isDayInPast(targetDayOfWeek)) {
+      res.status(400).json({
+        success: false,
+        error: "You can't join a class from earlier this week.",
+      });
+      return;
+    }
+
+    // Enforce the max classes/week cap before attempting the join
+    const currentAssignedCount = scheduleCheck.days.reduce(
+      (count, day) => count + day.timeSlots.filter(s => s.assignedClients.includes(clientId)).length,
+      0
+    );
+    if (currentAssignedCount >= MAX_CLASSES_PER_WEEK) {
+      res.status(400).json({
+        success: false,
+        error: `You already have ${MAX_CLASSES_PER_WEEK} classes scheduled this week. Unassign from a class first before joining another.`,
       });
       return;
     }
@@ -394,6 +417,25 @@ export const leaveTimeslot = async (
       res.status(400).json({
         success: false,
         error: 'You must be assigned to a gym to leave timeslots',
+      });
+      return;
+    }
+
+    // Find the containing day to check whether the class is from earlier this week
+    const scheduleCheck = await ActiveSchedule.findOne({ _id: id, gymId: req.user.gymId });
+    if (!scheduleCheck) {
+      res.status(404).json({ success: false, error: 'Active schedule not found' });
+      return;
+    }
+    const targetDay = scheduleCheck.days.find(d => d.timeSlots.some(s => s.id === timeslotId));
+    if (!targetDay) {
+      res.status(404).json({ success: false, error: 'Timeslot not found' });
+      return;
+    }
+    if (isDayInPast(targetDay.dayOfWeek)) {
+      res.status(400).json({
+        success: false,
+        error: "You can't unassign from a class from earlier this week.",
       });
       return;
     }

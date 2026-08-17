@@ -32,9 +32,14 @@ export function TimeslotCard({ slot, mode, loading, onJoin, onLeave }: TimeslotC
           <Badge size="sm" color={getCapacityColor(slot.availableSpots, slot.capacity)} variant="light">
             {formatCapacity(slot.availableSpots, slot.capacity)}
           </Badge>
+          {slot.isPast && (
+            <Badge size="sm" color="gray" variant="light">
+              Past
+            </Badge>
+          )}
         </Stack>
         {mode === 'my' ? (
-          <Button variant="subtle" color="red" size="xs" onClick={onLeave}>
+          <Button variant="subtle" color="red" size="xs" disabled={slot.isPast} onClick={onLeave}>
             Leave
           </Button>
         ) : (
@@ -43,7 +48,7 @@ export function TimeslotCard({ slot, mode, loading, onJoin, onLeave }: TimeslotC
             color="forestGreen"
             size="xs"
             loading={loading}
-            disabled={loading}
+            disabled={loading || slot.isPast}
             onClick={onJoin}
           >
             Join

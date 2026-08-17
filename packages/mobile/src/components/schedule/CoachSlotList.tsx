@@ -11,8 +11,8 @@ interface CoachSlotListProps {
   emptyMessage: string;
 }
 
-// Monday(1) ... Saturday(6), Sunday(0) last
-const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+// Sunday(0) ... Saturday(6)
+const DAY_ORDER = [0, 1, 2, 3, 4, 5, 6];
 
 export function CoachSlotList({ slots, actionLoading, onAddClient, onRemoveClient, emptyMessage }: CoachSlotListProps) {
   const grouped = groupSlotsByDay(slots);
