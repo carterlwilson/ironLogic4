@@ -8,6 +8,19 @@ export enum DayOfWeek {
   SATURDAY = 6,
 }
 
+/** Maximum number of classes a client may be signed up for at once in the active schedule. */
+export const MAX_CLASSES_PER_WEEK = 3;
+
+/**
+ * Determine whether a given day-of-week is earlier in the current (Sunday-start) week than today.
+ * Day-granularity only — a class later today is never considered "past".
+ * @param dayOfWeek - Day to check (0-6, Sunday-Saturday)
+ * @param now - Reference date, defaults to the current time
+ */
+export function isDayInPast(dayOfWeek: DayOfWeek, now: Date = new Date()): boolean {
+  return dayOfWeek < now.getDay();
+}
+
 export interface ITimeSlot {
   id: string;
   startTime: string;  // "HH:mm" format (e.g., "09:00", "14:30")
