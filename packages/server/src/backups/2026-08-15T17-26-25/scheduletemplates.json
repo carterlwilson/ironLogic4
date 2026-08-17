@@ -1,0 +1,44 @@
+[
+  {
+    "_id": "6a5d8f48154444cd28364486",
+    "gymId": "6912617d4d2e5e9cc486e33f",
+    "name": "Mike Haller schedule",
+    "coachIds": [
+      "69149d2290e2b21e1e0bce9b"
+    ],
+    "days": [
+      {
+        "dayOfWeek": 0,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 1,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 2,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 3,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 4,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 5,
+        "timeSlots": []
+      },
+      {
+        "dayOfWeek": 6,
+        "timeSlots": []
+      }
+    ],
+    "createdBy": "69120f8344134fbe46a6ba84",
+    "createdAt": "2026-07-20T03:00:24.351Z",
+    "updatedAt": "2026-07-20T03:00:24.351Z",
+    "__v": 0
+  }
+]

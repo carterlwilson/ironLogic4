@@ -11,8 +11,8 @@ interface SlotListProps {
   onLeave: (slot: FlatTimeslot) => void;
 }
 
-// Monday(1) ... Saturday(6), Sunday(0) last
-const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
+// Sunday(0) ... Saturday(6)
+const DAY_ORDER = [0, 1, 2, 3, 4, 5, 6];
 
 export function SlotList({ slots, mode, actionLoading, onJoin, onLeave }: SlotListProps) {
   const grouped = groupSlotsByDay(slots);

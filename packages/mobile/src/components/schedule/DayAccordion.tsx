@@ -1,4 +1,4 @@
-import { Accordion, Group, Stack, Text } from '@mantine/core';
+import { Accordion, Group, Text } from '@mantine/core';
 import { FlatTimeslot } from '../../hooks/useSchedule';
 import { getDayName } from '../../utils/scheduleUtils';
 import { AmPmSection } from './AmPmSection';
@@ -27,28 +27,50 @@ export function DayAccordion({ dayOfWeek, am, pm, mode, actionLoading, onJoin, o
         </Group>
       </Accordion.Control>
       <Accordion.Panel>
-        <Stack gap="md">
+        <Accordion multiple>
           {am.length > 0 && (
-            <AmPmSection
-              label="AM"
-              slots={am}
-              mode={mode}
-              actionLoading={actionLoading}
-              onJoin={onJoin}
-              onLeave={onLeave}
-            />
+            <Accordion.Item value="am">
+              <Accordion.Control>
+                <Group gap="xs">
+                  <Text fw={600}>AM</Text>
+                  <Text size="sm" c="dimmed">
+                    ({am.length})
+                  </Text>
+                </Group>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <AmPmSection
+                  slots={am}
+                  mode={mode}
+                  actionLoading={actionLoading}
+                  onJoin={onJoin}
+                  onLeave={onLeave}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
           )}
           {pm.length > 0 && (
-            <AmPmSection
-              label="PM"
-              slots={pm}
-              mode={mode}
-              actionLoading={actionLoading}
-              onJoin={onJoin}
-              onLeave={onLeave}
-            />
+            <Accordion.Item value="pm">
+              <Accordion.Control>
+                <Group gap="xs">
+                  <Text fw={600}>PM</Text>
+                  <Text size="sm" c="dimmed">
+                    ({pm.length})
+                  </Text>
+                </Group>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <AmPmSection
+                  slots={pm}
+                  mode={mode}
+                  actionLoading={actionLoading}
+                  onJoin={onJoin}
+                  onLeave={onLeave}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
           )}
-        </Stack>
+        </Accordion>
       </Accordion.Panel>
     </Accordion.Item>
   );

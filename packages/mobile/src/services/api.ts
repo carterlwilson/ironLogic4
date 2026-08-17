@@ -122,7 +122,7 @@ export async function apiRequest<T>(
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Request failed');
+      throw new Error(error.error || error.message || 'Request failed');
     }
 
     return await response.json();
