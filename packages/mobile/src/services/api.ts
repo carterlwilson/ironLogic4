@@ -121,8 +121,15 @@ export async function apiRequest<T>(
     }
 
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || error.message || 'Request failed');
+      const text = await response.text();
+      let message = text || 'Request failed';
+      try {
+        const parsed = JSON.parse(text);
+        message = parsed.message || parsed.error || message;
+      } catch {
+        // body wasn't JSON — use the raw text as the message
+      }
+      throw new Error(message);
     }
 
     return await response.json();

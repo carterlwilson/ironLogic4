@@ -37,7 +37,12 @@ export interface AcceptInviteResponse {
  */
 export async function validateInviteToken(token: string): Promise<ValidateInviteTokenResponse> {
   const response = await fetch(`${API_BASE}/auth/validate-invite-token?token=${encodeURIComponent(token)}`);
-  return response.json();
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(text || 'Failed to validate invite token');
+  }
 }
 
 /**
@@ -53,8 +58,14 @@ export async function acceptInvite(data: AcceptInviteRequest): Promise<AcceptInv
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to create account');
+    const text = await response.text();
+    let message = text || 'Failed to create account';
+    try {
+      message = JSON.parse(text).message || message;
+    } catch {
+      // body wasn't JSON — use the raw text as the message
+    }
+    throw new Error(message);
   }
 
   return response.json();
@@ -73,8 +84,14 @@ export async function forgotPassword(email: string): Promise<ApiResponse<void>> 
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.error || 'Failed to send password reset email');
+    const text = await response.text();
+    let message = text || 'Failed to send password reset email';
+    try {
+      message = JSON.parse(text).error || message;
+    } catch {
+      // body wasn't JSON — use the raw text as the message
+    }
+    throw new Error(message);
   }
 
   return response.json();
