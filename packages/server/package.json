@@ -20,6 +20,7 @@
   "dependencies": {
     "@ironlogic4/shared": "file:../shared",
     "@sendgrid/mail": "^8.1.6",
+    "@types/node-cron": "^3.0.11",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
@@ -28,6 +29,7 @@
     "helmet": "^7.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^8.0.0",
+    "node-cron": "^4.6.0",
     "zod": "^3.22.0"
   },
   "devDependencies": {
