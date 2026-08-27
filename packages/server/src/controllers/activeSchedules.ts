@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActiveSchedule } from '../models/ActiveSchedule.js';
 import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
+import { resetScheduleFromTemplate } from '../services/scheduleReset.js';
 import {
   ApiResponse,
   CreateActiveScheduleSchema,
@@ -414,31 +415,28 @@ export const resetActiveSchedule = async (
       return;
     }
 
-    // Fetch the template
-    const template = await ScheduleTemplate.findById(schedule.templateId);
-    if (!template) {
-      res.status(404).json({
-        success: false,
-        error: 'Schedule template not found',
-      });
-      return;
-    }
-
     // Reset the active schedule to exactly match the template — structure,
     // capacity, coaches, location, and client assignments all come fresh from
     // the template, discarding anything active-schedule-specific.
-    // Note: Using toObject() here because we're assigning to Mongoose document fields
-    // The final toJSON() call will transform _id to id when returning to client
-    schedule.days = template.days.map((templateDay) => templateDay.toObject());
-    schedule.lastResetAt = new Date();
+    try {
+      await resetScheduleFromTemplate(schedule);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'Schedule template not found') {
+        res.status(404).json({
+          success: false,
+          error: 'Schedule template not found',
+        });
+        return;
+      }
+      throw err;
+    }
 
-    const updatedSchedule = await schedule.save();
-    await updatedSchedule.populate('gymId', 'name');
-    await updatedSchedule.populate('templateId', 'name');
+    await schedule.populate('gymId', 'name');
+    await schedule.populate('templateId', 'name');
 
     const response: ApiResponse<any> = {
       success: true,
-      data: updatedSchedule.toJSON(),
+      data: schedule.toJSON(),
       message: 'Active schedule reset successfully',
     };
 
