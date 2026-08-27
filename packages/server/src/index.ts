@@ -4,6 +4,8 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cron from 'node-cron';
+import { resetAllActiveSchedules } from './services/scheduleReset.js';
 import authRoutes from './routes/auth.js';
 import passwordResetRoutes from './routes/passwordReset.js';
 import inviteRoutes from './routes/invite.js';
@@ -140,6 +142,19 @@ const connectDB = async () => {
   }
 };
 
+// Weekly reset of every gym's active schedule back to its template,
+// Saturdays at 11:59 PM Eastern.
+const scheduleWeeklyActiveScheduleReset = () => {
+  cron.schedule('59 23 * * 6', async () => {
+    console.log('[SCHEDULE-RESET] Starting weekly active schedule reset...');
+    const summary = await resetAllActiveSchedules();
+    console.log(`[SCHEDULE-RESET] Done. Reset: ${summary.resetCount}, Failed: ${summary.failedCount}`);
+    if (summary.errors.length) {
+      console.error('[SCHEDULE-RESET] Errors:', summary.errors);
+    }
+  }, { timezone: 'America/New_York' });
+};
+
 const startServer = async () => {
   console.log('[STARTUP] Starting server initialization...');
   console.log('[STARTUP] Node environment:', process.env.NODE_ENV || 'not set');
@@ -148,6 +163,8 @@ const startServer = async () => {
   try {
     await connectDB();
     console.log('[STARTUP] Database connection complete, starting HTTP server...');
+
+    scheduleWeeklyActiveScheduleReset();
 
     const server = app.listen(PORT, () => {
       console.log('[STARTUP] ✓ Server successfully running on port', PORT);

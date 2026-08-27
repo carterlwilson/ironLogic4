@@ -446,7 +446,7 @@ export function copyWeek(program: IProgram, weekId: string): IProgram {
   const clonedWeek = JSON.parse(JSON.stringify(sourceWeek));
   const copiedWeek = regenerateWeekIds(clonedWeek);
   copiedWeek.order = sourceIndex + 1;
-  copiedWeek.name = `Week ${program.blocks[blockIndex].weeks.length + 1}`;
+  copiedWeek.name = `${sourceWeek.name} (COPY)`;
 
   return produce(program, draft => {
     // Insert after source
