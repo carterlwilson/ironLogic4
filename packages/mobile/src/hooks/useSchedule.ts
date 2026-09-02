@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { notifications } from '@mantine/notifications';
 import { MAX_CLASSES_PER_WEEK, isDayInPast } from '@ironlogic4/shared';
 import { useAuth } from '../providers/AuthProvider';
+import { isBlockedDate } from '../utils/scheduleUtils';
 import {
   getAvailableSchedules,
   joinTimeslot as joinTimeslotApi,
@@ -20,6 +21,7 @@ export interface FlatTimeslot {
   availableSpots: number;
   isUserAssigned: boolean;
   isPast: boolean;
+  isBlocked: boolean;
   coaches: { id: string; firstName: string; lastName: string }[];
 }
 
@@ -46,6 +48,7 @@ function flattenSchedules(schedules: IActiveScheduleWithAvailability[]): FlatTim
           availableSpots: timeSlot.availableSpots,
           isUserAssigned: timeSlot.isUserAssigned,
           isPast: isDayInPast(day.dayOfWeek),
+          isBlocked: isBlockedDate(day.dayOfWeek),
           coaches: timeSlot.coaches ?? [],
         });
       }
@@ -78,6 +81,15 @@ export function useSchedule() {
 
   const joinTimeslot = useCallback(async (slot: FlatTimeslot) => {
     if (!user) return;
+    if (slot.isBlocked) {
+      notifications.show({
+        title: 'Error',
+        message: 'This class is closed for Labor Day.',
+        color: 'red',
+        autoClose: 5000,
+      });
+      return;
+    }
     const assignedCount = flatSlots.filter((s) => s.isUserAssigned).length;
     if (assignedCount >= MAX_CLASSES_PER_WEEK) {
       notifications.show({
