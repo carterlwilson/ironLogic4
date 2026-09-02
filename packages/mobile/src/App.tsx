@@ -1,6 +1,7 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
 import { AppShell, Stack } from '@mantine/core';
 import { BottomNav } from './components/BottomNav';
+import { ClosureBanner } from './components/ClosureBanner';
 import { WorkoutPage } from './pages/WorkoutPage';
 import { BenchmarksPage } from './pages/BenchmarksPage';
 import { SchedulePage } from './pages/SchedulePage';
@@ -20,6 +21,7 @@ function App() {
         </AppShell.Header>
 
         <AppShell.Main style={{ paddingBottom: '70px' }}>
+          <ClosureBanner />
           <Routes>
             <Route path="/" element={<Navigate to="/workout" replace />} />
             <Route path="/workout" element={<WorkoutPage />} />

@@ -43,6 +43,35 @@ export function getShortDayName(dayOfWeek: DayOfWeek | number): string {
 }
 
 /**
+ * Calendar dates (YYYY-MM-DD, local time) on which classes are closed, even though
+ * timeslots are otherwise modeled by weekday only.
+ */
+const BLOCKED_DATES = ['2026-09-07']; // Labor Day 2026
+
+/**
+ * Get the actual calendar date (YYYY-MM-DD, local time) for a given day-of-week within
+ * the current (Sunday-start) week.
+ */
+function getDateForDayOfWeek(dayOfWeek: number, now: Date): string {
+  const date = new Date(now);
+  date.setDate(date.getDate() - date.getDay() + dayOfWeek);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Whether a day-of-week's occurrence in the current week falls on a closed date
+ * (e.g. Labor Day) and should not be joinable.
+ * @param dayOfWeek - Day to check (0-6, Sunday-Saturday)
+ * @param now - Reference date, defaults to the current time
+ */
+export function isBlockedDate(dayOfWeek: DayOfWeek | number, now: Date = new Date()): boolean {
+  return BLOCKED_DATES.includes(getDateForDayOfWeek(dayOfWeek, now));
+}
+
+/**
  * Format capacity display
  * @param availableSpots - Number of available spots
  * @param capacity - Total capacity
