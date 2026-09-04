@@ -15,7 +15,8 @@ export function ClosureBanner() {
 
   return (
     <Alert icon={<IconInfoCircle size={16} />} color="yellow" variant="light" mb="md">
-      Cully Strength will be closed on {CLOSURE_LABEL} for Labor Day — no classes will be held.
+      Cully Strength will be closed on {CLOSURE_LABEL} for Labor Day — no classes will be held. Open
+      gym will be held on Monday, ask your coach about times.
     </Alert>
   );
 }
