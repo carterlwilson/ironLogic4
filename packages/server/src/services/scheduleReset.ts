@@ -15,8 +15,7 @@ export type ScheduleResetTrigger = 'cron' | 'manual';
  */
 export async function resetScheduleFromTemplate(
   schedule: ActiveScheduleDocument,
-  triggeredBy: ScheduleResetTrigger,
-  triggeredByUserId?: string
+  triggeredBy: ScheduleResetTrigger
 ): Promise<void> {
   try {
     const template = await ScheduleTemplate.findById(schedule.templateId);
@@ -35,7 +34,6 @@ export async function resetScheduleFromTemplate(
       activeScheduleId: schedule.id,
       templateId: schedule.templateId,
       triggeredBy,
-      triggeredByUserId,
       success: true,
     });
   } catch (err) {
@@ -44,7 +42,6 @@ export async function resetScheduleFromTemplate(
       activeScheduleId: schedule.id,
       templateId: schedule.templateId,
       triggeredBy,
-      triggeredByUserId,
       success: false,
       error: err instanceof Error ? err.message : String(err),
     });

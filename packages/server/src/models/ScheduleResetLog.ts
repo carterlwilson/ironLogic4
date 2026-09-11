@@ -5,7 +5,6 @@ export interface ScheduleResetLogDocument extends Document {
   activeScheduleId: string;
   templateId?: string;
   triggeredBy: 'cron' | 'manual';
-  triggeredByUserId?: string;
   success: boolean;
   error?: string;
 }
@@ -16,7 +15,6 @@ const scheduleResetLogSchema = new Schema<ScheduleResetLogDocument>(
     activeScheduleId: { type: String, required: true },
     templateId: { type: String },
     triggeredBy: { type: String, required: true, enum: ['cron', 'manual'] },
-    triggeredByUserId: { type: String },
     success: { type: Boolean, required: true },
     error: { type: String },
   },

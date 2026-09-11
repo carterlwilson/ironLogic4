@@ -8,7 +8,6 @@ export async function logScheduleReset(params: {
   activeScheduleId: string;
   templateId?: string;
   triggeredBy: 'cron' | 'manual';
-  triggeredByUserId?: string;
   success: boolean;
   error?: string;
 }): Promise<void> {
