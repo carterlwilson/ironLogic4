@@ -419,7 +419,7 @@ export const resetActiveSchedule = async (
     // capacity, coaches, location, and client assignments all come fresh from
     // the template, discarding anything active-schedule-specific.
     try {
-      await resetScheduleFromTemplate(schedule);
+      await resetScheduleFromTemplate(schedule, 'manual', req.user?.id);
     } catch (err) {
       if (err instanceof Error && err.message === 'Schedule template not found') {
         res.status(404).json({
