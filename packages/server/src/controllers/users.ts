@@ -7,6 +7,7 @@ import { UserType } from '@ironlogic4/shared/types/users';
 import { z } from 'zod';
 import { generateRandomPassword } from '../utils/auth.js';
 import { logUserDeletion } from '../utils/deletedUserLog.js';
+import { removeClientScheduleAssignments } from '../utils/removeClientScheduleAssignments.js';
 
 // Update user schema for validation
 const UpdateUserSchema = z.object({
@@ -273,6 +274,7 @@ export const deleteUser = async (
       return;
     }
 
+    await removeClientScheduleAssignments(id);
     void logUserDeletion(user, req.user, 'users.deleteUser');
 
     res.json({

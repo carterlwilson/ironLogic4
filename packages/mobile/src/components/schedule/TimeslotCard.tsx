@@ -37,11 +37,6 @@ export function TimeslotCard({ slot, mode, loading, onJoin, onLeave }: TimeslotC
               Past
             </Badge>
           )}
-          {slot.isBlocked && (
-            <Badge size="sm" color="gray" variant="light">
-              Closed — Labor Day
-            </Badge>
-          )}
         </Stack>
         {mode === 'my' ? (
           <Button variant="subtle" color="red" size="xs" disabled={slot.isPast} onClick={onLeave}>
@@ -53,7 +48,7 @@ export function TimeslotCard({ slot, mode, loading, onJoin, onLeave }: TimeslotC
             color="forestGreen"
             size="xs"
             loading={loading}
-            disabled={loading || slot.isPast || slot.isBlocked}
+            disabled={loading || slot.isPast}
             onClick={onJoin}
           >
             Join
