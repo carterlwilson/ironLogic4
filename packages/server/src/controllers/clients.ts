@@ -18,6 +18,7 @@ import { generateResetToken, hashResetToken } from '../utils/tokenGenerator.js';
 import { sendInviteEmail } from '../utils/emailService.js';
 import { buildGymScope } from '../utils/gymScope.js';
 import { logUserDeletion } from '../utils/deletedUserLog.js';
+import { removeClientScheduleAssignments } from '../utils/removeClientScheduleAssignments.js';
 
 async function applyProgramAssignment(
   client: UserDocument,
@@ -459,6 +460,7 @@ export const deleteClient = async (
     }
 
     await User.findByIdAndDelete(id);
+    await removeClientScheduleAssignments(id);
     void logUserDeletion(client, req.user, 'clients.deleteClient');
 
     const response: ApiResponse<null> = {
