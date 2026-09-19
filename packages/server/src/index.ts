@@ -5,7 +5,8 @@ import rateLimit from 'express-rate-limit';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cron from 'node-cron';
-import { resetAllActiveSchedules } from './services/scheduleReset.js';
+import { runScheduleResetJob } from './services/scheduleReset.js';
+import { ScheduleResetLog } from './models/ScheduleResetLog.js';
 import authRoutes from './routes/auth.js';
 import passwordResetRoutes from './routes/passwordReset.js';
 import inviteRoutes from './routes/invite.js';
@@ -145,14 +146,36 @@ const connectDB = async () => {
 // Weekly reset of every gym's active schedule back to its template,
 // Saturdays at 11:59 PM Eastern.
 const scheduleWeeklyActiveScheduleReset = () => {
-  cron.schedule('59 23 * * 6', async () => {
-    console.log('[SCHEDULE-RESET] Starting weekly active schedule reset...');
-    const summary = await resetAllActiveSchedules();
-    console.log(`[SCHEDULE-RESET] Done. Reset: ${summary.resetCount}, Failed: ${summary.failedCount}`);
-    if (summary.errors.length) {
-      console.error('[SCHEDULE-RESET] Errors:', summary.errors);
-    }
-  }, { timezone: 'America/New_York' });
+  const task = cron.schedule('59 23 * * 6', () => runScheduleResetJob('cron'), { timezone: 'America/New_York' });
+
+  // node-cron swallows a failed execution internally (it only records
+  // lastRun()) unless a listener is attached, so without this an error
+  // thrown before runScheduleResetJob's own try/catch would vanish silently.
+  task.on('execution:failed', (context) => {
+    console.error('[SCHEDULE-RESET] node-cron reported a failed execution:', context.execution?.error ?? context.error);
+  });
+
+  console.log('[SCHEDULE-RESET] Weekly reset cron job registered. Next run:', task.getNextRun());
+};
+
+// If the most recent logged reset is older than a week, the cron likely
+// didn't fire (e.g. the server was down/restarting at the scheduled time) -
+// surface that loudly on startup instead of leaving it to go unnoticed.
+const checkForMissedScheduleReset = async () => {
+  const mostRecent = await ScheduleResetLog.findOne().sort({ startedAt: -1 });
+  const eightDaysMs = 8 * 24 * 60 * 60 * 1000;
+
+  if (!mostRecent) {
+    console.warn('[SCHEDULE-RESET] No reset log found yet - cannot confirm the weekly cron has ever run.');
+    return;
+  }
+
+  const ageMs = Date.now() - mostRecent.startedAt.getTime();
+  if (ageMs > eightDaysMs) {
+    console.warn(
+      `[SCHEDULE-RESET] Last reset log is from ${mostRecent.startedAt.toISOString()} (status: ${mostRecent.status}), more than 8 days ago - the weekly cron may have been missed.`
+    );
+  }
 };
 
 const startServer = async () => {
@@ -165,6 +188,7 @@ const startServer = async () => {
     console.log('[STARTUP] Database connection complete, starting HTTP server...');
 
     scheduleWeeklyActiveScheduleReset();
+    await checkForMissedScheduleReset();
 
     const server = app.listen(PORT, () => {
       console.log('[STARTUP] ✓ Server successfully running on port', PORT);

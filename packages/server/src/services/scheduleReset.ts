@@ -1,5 +1,6 @@
 import { ActiveSchedule, ActiveScheduleDocument } from '../models/ActiveSchedule.js';
 import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
+import { ScheduleResetLog, ScheduleResetTrigger } from '../models/ScheduleResetLog.js';
 
 /**
  * Reset a single active schedule to exactly match its template — structure,
@@ -46,4 +47,60 @@ export async function resetAllActiveSchedules(): Promise<ResetAllSummary> {
   }
 
   return { resetCount, failedCount: errors.length, errors };
+}
+
+/**
+ * Runs the active-schedule reset and persists a ScheduleResetLog record of
+ * the outcome, so resets, failures, and successes survive past the
+ * ephemeral console logs on hosts (e.g. Railway) that recycle processes.
+ *
+ * resetAllActiveSchedules() only catches per-schedule errors; this wrapper
+ * also catches a total failure of the job itself (e.g. the initial
+ * ActiveSchedule.find() rejecting), which previously went completely
+ * unlogged - node-cron swallows an unhandled rejection from a scheduled
+ * task unless a caller attaches its own try/catch.
+ */
+export async function runScheduleResetJob(trigger: ScheduleResetTrigger): Promise<ResetAllSummary> {
+  const startedAt = new Date();
+  console.log(`[SCHEDULE-RESET] Starting active schedule reset (trigger: ${trigger})...`);
+
+  let summary: ResetAllSummary;
+  try {
+    summary = await resetAllActiveSchedules();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[SCHEDULE-RESET] Job failed before completing:', err);
+    await persistResetLog(trigger, startedAt, { resetCount: 0, failedCount: 0, errors: [message] }, 'failure');
+    throw err;
+  }
+
+  const status = summary.failedCount === 0 ? 'success' : summary.resetCount === 0 ? 'failure' : 'partial_failure';
+  console.log(`[SCHEDULE-RESET] Done. Reset: ${summary.resetCount}, Failed: ${summary.failedCount}`);
+  if (summary.errors.length) {
+    console.error('[SCHEDULE-RESET] Errors:', summary.errors);
+  }
+
+  await persistResetLog(trigger, startedAt, summary, status);
+  return summary;
+}
+
+async function persistResetLog(
+  trigger: ScheduleResetTrigger,
+  startedAt: Date,
+  summary: ResetAllSummary,
+  status: 'success' | 'partial_failure' | 'failure'
+): Promise<void> {
+  try {
+    await ScheduleResetLog.create({
+      trigger,
+      status,
+      resetCount: summary.resetCount,
+      failedCount: summary.failedCount,
+      errorMessages: summary.errors,
+      durationMs: Date.now() - startedAt.getTime(),
+      startedAt,
+    });
+  } catch (logErr) {
+    console.error('[SCHEDULE-RESET] Failed to persist reset log:', logErr);
+  }
 }
