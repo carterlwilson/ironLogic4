@@ -281,7 +281,7 @@ export const joinTimeslot = async (
       return;
     }
 
-    if (isDayInPast(targetDayOfWeek)) {
+    if (isDayInPast(targetDayOfWeek, scheduleCheck.lastResetAt)) {
       res.status(400).json({
         success: false,
         error: "You can't join a class from earlier this week.",
@@ -432,7 +432,7 @@ export const leaveTimeslot = async (
       res.status(404).json({ success: false, error: 'Timeslot not found' });
       return;
     }
-    if (isDayInPast(targetDay.dayOfWeek)) {
+    if (isDayInPast(targetDay.dayOfWeek, scheduleCheck.lastResetAt)) {
       res.status(400).json({
         success: false,
         error: "You can't unassign from a class from earlier this week.",
