@@ -45,7 +45,7 @@ function flattenSchedules(schedules: IActiveScheduleWithAvailability[]): FlatTim
           location: timeSlot.location,
           availableSpots: timeSlot.availableSpots,
           isUserAssigned: timeSlot.isUserAssigned,
-          isPast: isDayInPast(day.dayOfWeek),
+          isPast: isDayInPast(day.dayOfWeek, new Date(schedule.lastResetAt)),
           coaches: timeSlot.coaches ?? [],
         });
       }

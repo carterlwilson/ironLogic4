@@ -14,11 +14,24 @@ export const MAX_CLASSES_PER_WEEK = 3;
 /**
  * Determine whether a given day-of-week is earlier in the current (Sunday-start) week than today.
  * Day-granularity only — a class later today is never considered "past".
+ *
+ * A reset reloads the schedule fresh from its template for the upcoming week. On the calendar
+ * day the reset happens (e.g. a Saturday-night reset), the new week hasn't started yet, so no
+ * day is treated as past until the reset's calendar day has actually elapsed - otherwise days
+ * earlier in the week (Sun-Fri) would wrongly compare as "before" a Saturday reset.
  * @param dayOfWeek - Day to check (0-6, Sunday-Saturday)
+ * @param lastResetAt - When the active schedule was last reset from its template
  * @param now - Reference date, defaults to the current time
  */
-export function isDayInPast(dayOfWeek: DayOfWeek, now: Date = new Date()): boolean {
+export function isDayInPast(dayOfWeek: DayOfWeek, lastResetAt: Date, now: Date = new Date()): boolean {
+  if (isSameCalendarDay(lastResetAt, now)) {
+    return false;
+  }
   return dayOfWeek < now.getDay();
+}
+
+function isSameCalendarDay(a: Date, b: Date): boolean {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
 export interface ITimeSlot {
