@@ -129,7 +129,7 @@ export function useSchedule() {
   }, [refresh]);
 
   const mySlots = flatSlots.filter((slot) => slot.isUserAssigned);
-  const availableSlots = flatSlots.filter((slot) => slot.availableSpots > 0 && !slot.isUserAssigned);
+  const availableSlots = flatSlots.filter((slot) => !slot.isUserAssigned);
 
   return {
     mySlots,
