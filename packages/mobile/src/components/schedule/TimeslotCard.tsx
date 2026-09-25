@@ -15,9 +15,10 @@ export function TimeslotCard({ slot, mode, loading, onJoin, onLeave }: TimeslotC
     slot.coaches.length > 0
       ? `Coaches: ${slot.coaches.map((c) => `${c.firstName} ${c.lastName}`).join(', ')}`
       : 'No coach assigned';
+  const isFull = mode === 'available' && slot.availableSpots <= 0;
 
   return (
-    <Paper withBorder p="sm" radius="md">
+    <Paper withBorder p="sm" radius="md" opacity={isFull ? 0.6 : 1} bg={isFull ? 'gray.1' : undefined}>
       <Group justify="space-between" align="flex-start" wrap="nowrap">
         <Stack gap={4}>
           <Text fw={600} size="sm">
@@ -48,10 +49,10 @@ export function TimeslotCard({ slot, mode, loading, onJoin, onLeave }: TimeslotC
             color="forestGreen"
             size="xs"
             loading={loading}
-            disabled={loading || slot.isPast}
+            disabled={loading || slot.isPast || isFull}
             onClick={onJoin}
           >
-            Join
+            {isFull ? 'Full' : 'Join'}
           </Button>
         )}
       </Group>
