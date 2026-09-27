@@ -128,6 +128,18 @@ export function useSchedule() {
     refresh();
   }, [refresh]);
 
+  // A backgrounded PWA resumes without remounting, so re-fetch on return to
+  // pick up changes made meanwhile (e.g. a weekly schedule reset).
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        refresh();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [refresh]);
+
   const mySlots = flatSlots.filter((slot) => slot.isUserAssigned);
   const availableSlots = flatSlots.filter((slot) => !slot.isUserAssigned);
 
