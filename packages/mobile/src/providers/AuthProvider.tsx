@@ -155,6 +155,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = useCallback(() => {
     localStorage.removeItem('authTokens');
     localStorage.removeItem('user');
+    // The service worker's API cache is keyed by URL, not user - clear it so
+    // the next person to log in on this device can't be served our responses.
+    if ('caches' in window) {
+      caches.delete('api-cache').catch(() => {});
+    }
 
     setAuthState({
       user: null,
