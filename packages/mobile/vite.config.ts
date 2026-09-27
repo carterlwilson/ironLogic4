@@ -35,6 +35,11 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
           {
+            // Schedule data must be current - never fall back to a stale cached copy
+            urlPattern: ({ url }) => url.pathname.startsWith('/api/gym/schedules'),
+            handler: 'NetworkOnly',
+          },
+          {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
             handler: 'NetworkFirst',
             options: {
