@@ -20,8 +20,12 @@ import gymBenchmarkTemplateRoutes from './routes/gym/benchmarkTemplates.js';
 import gymProgramRoutes from './routes/gym/programs.js';
 import gymScheduleRoutes from './routes/gym/schedules.js';
 import meRoutes from './routes/me/index.js';
+import mcpRoutes from './routes/mcp.js';
+import mcpOAuthRoutes from './routes/mcpOAuth.js';
+import { oauthConfig } from './mcp/oauth.js';
 
 dotenv.config();
+oauthConfig();
 
 const app = express();
 
@@ -93,6 +97,8 @@ app.use('/api/gym/benchmark-templates', gymBenchmarkTemplateRoutes);
 app.use('/api/gym/programs', gymProgramRoutes);
 app.use('/api/gym/schedules', gymScheduleRoutes);
 app.use('/api/me', meRoutes);
+app.use('/mcp', mcpRoutes);
+app.use(mcpOAuthRoutes);
 
 // Root path for Railway health checks
 app.get('/', (req, res) => {
