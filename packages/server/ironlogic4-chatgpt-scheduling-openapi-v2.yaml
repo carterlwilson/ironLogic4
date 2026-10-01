@@ -1,0 +1,544 @@
+openapi: 3.1.0
+info:
+  title: IronLogic4 ChatGPT Scheduling API
+  version: 1.2.0
+  description: 'Limited API surface: client lookup, recurring template lookup, active schedule availability,
+    and four client enrollment operations. Resolve IDs from lookup results or explicit user input; never
+    invent IDs. Clarify ambiguous clients, classes, and recurring versus current-week requests before
+    writing. Report success only after a successful API response. Backend authorization remains authoritative.'
+servers:
+- url: https://ironlogic-server.onrender.com
+security:
+- bearerAuth: []
+paths:
+  /api/gym/clients:
+    get:
+      tags:
+      - Clients
+      summary: Search/list clients (scoped to caller's gym for owner/coach)
+      parameters:
+      - name: search
+        in: query
+        schema:
+          type: string
+        description: Matches firstName/lastName/email
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 10
+          maximum: 100
+      responses:
+        '200':
+          $ref: '#/components/responses/PaginatedUsers'
+      operationId: searchClients
+      description: Find client IDs by first name, last name, or email. Use pagination as needed; do not
+        select arbitrarily among multiple matches. This endpoint does not identify which client is the
+        authenticated caller. Access depends on the caller's backend permissions.
+  /api/gym/schedules/templates:
+    get:
+      tags:
+      - Schedule Templates
+      summary: List schedule templates (coaches see only ones they're assigned to)
+      parameters:
+      - name: gymId
+        in: query
+        schema:
+          type: string
+      - name: coachId
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/ApiResponse'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Schedule'
+      operationId: listScheduleTemplates
+      description: Returned schedules contain days and timeSlots with IDs. Use these schedule IDs only
+        for recurring template enrollment.
+  /api/gym/schedules/available:
+    get:
+      tags:
+      - Client Schedule Self-Service
+      summary: List this gym's active schedules with availability + coach info, for self-booking
+      description: Returns success and data, an array of active schedules. Use data[].id for active schedule
+        id and data[].days[].timeSlots[].id for timeslotId. gymId and templateId are populated reference
+        objects. Match dayOfWeek and startTime, and distinguish simultaneous slots by location or coaches;
+        ask for clarification when ambiguous. isUserAssigned refers to the authenticated caller, not necessarily
+        a searched client. No timezone or class date is supplied; do not assume support for future weeks.
+      responses:
+        '200':
+          description: Active schedules with availability and coach details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableSchedulesResponse'
+      operationId: listAvailableSchedules
+  /api/gym/schedules/templates/{id}/timeslots/{timeslotId}/clients:
+    post:
+      tags:
+      - Schedule Templates
+      summary: Add a client to a recurring template timeslot
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: timeslotId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - clientId
+              properties:
+                clientId:
+                  type: string
+      responses:
+        '200':
+          description: Added
+        '400':
+          description: Timeslot full
+          or client already assigned: null
+      operationId: addClientToTemplateTimeslot
+      description: Use a template schedule ID for recurring enrollment. Resolve the client and timeslot
+        IDs using read operations or explicit user-provided IDs. Clarify any ambiguity before changing
+        enrollment.
+  /api/gym/schedules/templates/{id}/timeslots/{timeslotId}/clients/{clientId}:
+    delete:
+      tags:
+      - Schedule Templates
+      summary: Remove a client from a recurring template timeslot
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: timeslotId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: clientId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Removed
+      operationId: removeClientFromTemplateTimeslot
+      description: Use a template schedule ID for recurring enrollment. Resolve the client and timeslot
+        IDs using read operations or explicit user-provided IDs. Clarify any ambiguity before changing
+        enrollment.
+  /api/gym/schedules/active/{id}/timeslots/{timeslotId}/clients:
+    post:
+      tags:
+      - Active Schedules
+      summary: Add a client to this week's live schedule timeslot
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: timeslotId
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - clientId
+              properties:
+                clientId:
+                  type: string
+      responses:
+        '200':
+          description: Added
+        '400':
+          description: Timeslot full
+          or client already assigned: null
+      operationId: addClientToActiveTimeslot
+      description: Use an active schedule ID for this week's enrollment, not a template ID. Resolve the
+        client and timeslot IDs using read operations or explicit user-provided IDs. Clarify any ambiguity
+        before changing enrollment.
+  /api/gym/schedules/active/{id}/timeslots/{timeslotId}/clients/{clientId}:
+    delete:
+      tags:
+      - Active Schedules
+      summary: Remove a client from this week's live schedule timeslot
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: timeslotId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: clientId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Removed
+      operationId: removeClientFromActiveTimeslot
+      description: Use an active schedule ID for this week's enrollment, not a template ID. Resolve the
+        client and timeslot IDs using read operations or explicit user-provided IDs. Clarify any ambiguity
+        before changing enrollment.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Schedule:
+      type: object
+      description: Shape shared by both schedule templates and active schedules.
+      properties:
+        id:
+          type: string
+        gymId:
+          type: string
+        templateId:
+          type: string
+          description: "Active schedules only \u2014 the template it was generated from."
+        days:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduleDay'
+        lastResetAt:
+          type: string
+          format: date-time
+          description: Active schedules only.
+    ScheduleDay:
+      type: object
+      properties:
+        dayOfWeek:
+          type: integer
+          description: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday
+        timeSlots:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeSlot'
+    TimeSlot:
+      type: object
+      properties:
+        id:
+          type: string
+        startTime:
+          type: string
+          description: 24-hour "HH:MM"
+        endTime:
+          type: string
+        location:
+          type: string
+        capacity:
+          type: integer
+        coachIds:
+          type: array
+          items:
+            type: string
+        assignedClients:
+          type: array
+          items:
+            type: string
+    ApiResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data: {}
+        error:
+          type: string
+        message:
+          type: string
+    User:
+      type: object
+      description: Password and token fields are never returned.
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        userType:
+          $ref: '#/components/schemas/UserType'
+        gymId:
+          type: string
+        gymName:
+          type: string
+        programId:
+          type: string
+        status:
+          type: string
+          enum:
+          - invited
+          - active
+        currentBenchmarks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientBenchmark'
+        historicalBenchmarks:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientBenchmark'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ClientBenchmark:
+      type: object
+      description: Embedded on the User document, not a standalone collection.
+      properties:
+        id:
+          type: string
+        templateId:
+          type: string
+        name:
+          type: string
+        notes:
+          type: string
+        type:
+          $ref: '#/components/schemas/BenchmarkType'
+        tags:
+          type: array
+          items:
+            type: string
+        repMaxes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              templateRepMaxId:
+                type: string
+              weightKg:
+                type: number
+              recordedAt:
+                type: string
+                format: date-time
+        timeSubMaxes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              templateSubMaxId:
+                type: string
+              distanceMeters:
+                type: number
+              recordedAt:
+                type: string
+                format: date-time
+        distanceSubMaxes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              templateDistanceSubMaxId:
+                type: string
+              timeSeconds:
+                type: number
+              recordedAt:
+                type: string
+                format: date-time
+        timeSeconds:
+          type: number
+        reps:
+          type: integer
+        otherNotes:
+          type: string
+        recordedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    BenchmarkType:
+      type: string
+      enum:
+      - weight
+      - time
+      - reps
+      - distance
+      - other
+    UserType:
+      type: string
+      enum:
+      - admin
+      - owner
+      - coach
+      - client
+    PaginatedResponse:
+      allOf:
+      - $ref: '#/components/schemas/ApiResponse'
+      - type: object
+        properties:
+          pagination:
+            type: object
+            properties:
+              page:
+                type: integer
+              limit:
+                type: integer
+              total:
+                type: integer
+              totalPages:
+                type: integer
+    AvailableSchedulesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              gymId:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  id:
+                    type: string
+                description: Populated reference object containing id and name. This is not the active
+                  schedule ID.
+              templateId:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  id:
+                    type: string
+                description: Populated reference object containing id and name. This is not the active
+                  schedule ID.
+              days:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    dayOfWeek:
+                      type: integer
+                      description: 0=Sunday, 1=Monday, 2=Tuesday, 3=Wednesday, 4=Thursday, 5=Friday, 6=Saturday.
+                    timeSlots:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          startTime:
+                            type: string
+                            description: 24-hour HH:MM. Response does not specify timezone.
+                          endTime:
+                            type: string
+                          capacity:
+                            type: integer
+                          coachIds:
+                            type: array
+                            items:
+                              type: string
+                          location:
+                            type: string
+                          assignedClients:
+                            type: array
+                            items:
+                              type: string
+                          id:
+                            type: string
+                            description: Use as timeslotId for this active schedule.
+                          availableSpots:
+                            type: integer
+                            description: Remaining capacity at read time; enrollment success depends on
+                              the write response.
+                          isUserAssigned:
+                            type: boolean
+                            description: Refers to the authenticated caller. For a different selected
+                              client, inspect assignedClients.
+                          coaches:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                firstName:
+                                  type: string
+                                lastName:
+                                  type: string
+                                email:
+                                  type: string
+              lastResetAt:
+                type: string
+                format: date-time
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+              id:
+                type: string
+                description: Active schedule ID to use as the id path parameter in active enrollment operations.
+      description: Successful response shape derived from a supplied sample. Presence requirements and
+        other response variants are not inferred from a single sample.
+  responses:
+    PaginatedUsers:
+      description: A page of users
+      content:
+        application/json:
+          schema:
+            allOf:
+            - $ref: '#/components/schemas/PaginatedResponse'
+            - type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/User'
