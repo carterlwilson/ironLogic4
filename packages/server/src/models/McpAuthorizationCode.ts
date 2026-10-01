@@ -7,6 +7,7 @@ const schema = new mongoose.Schema({
   redirectUri: { type: String, required: true },
   challenge: { type: String, required: true },
   resource: { type: String, required: true },
+  scope: { type: String, default: 'scheduling' },
   expiresAt: { type: Date, required: true, expires: 0 },
 });
 

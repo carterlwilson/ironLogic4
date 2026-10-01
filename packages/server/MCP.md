@@ -1,48 +1,57 @@
 # IronLogic4 ChatGPT scheduling integration
 
-The stateless Streamable HTTP endpoint is `/mcp`. It exposes exactly the seven operation IDs in `ironlogic4-chatgpt-scheduling-openapi-v2.yaml`. It has no resource, prompt, generic HTTP, schedule creation, self-join, or user-management tools. The supplied YAML remains unchanged.
+The stateless Streamable HTTP endpoint is `/mcp`. It exposes exactly the seven operation IDs in `ironlogic4-chatgpt-scheduling-openapi-v2.yaml`. No scheduling tools or existing backend enrollment permissions change in this update. Authentication fields are removed from MCP text and structured responses, including refresh tokens exposed by the existing client API serializer.
 
-Authentication fields are removed recursively from both MCP text and structured responses. This protects the integration from the existing client lookup serializer, which can include `refreshTokens`. The underlying client API serializer is unchanged; its broader exposure should be addressed separately.
+## Account linking
 
-The installed SDK's HTTP transport dependency requires Node.js 20 or later. Verification ran on Node.js 23; use a supported Node.js release at least 20 when deploying this integration.
+The linking page at `/oauth/authorize` now accepts the user's normal IronLogic4 email and password. It uses the existing login validation and password comparison method, without invoking application login or creating application refresh tokens. Credentials are sent only to the backend over HTTPS, are not retained on retry, and never enter ChatGPT messages or tool arguments. A required consent checkbox explains scheduling access and, when requested, a connection lasting up to 365 days.
 
-## Authentication changes
+Only existing, non-invited users in the effective allowlist can link. Authentication failures use the same generic message for unknown accounts, bad passwords, and ineligible users. A separate limit permits 10 authorization submissions per IP per 15 minutes, alongside the existing server rate limiter. Each five-minute signed linking transaction is bound to a random browser nonce in a Secure, HttpOnly, SameSite=Lax `__Host-mcp-link` cookie. Submissions reject missing/mismatched cookies and cross-origin requests; successful linking clears the cookie. Local browser testing requires HTTPS because the production cookie settings remain enabled.
 
-The existing `/api/auth/login` and `/api/auth/refresh` issue application JWTs and rotating application refresh tokens. They are not OAuth endpoints. Existing route middleware resolves the user from MongoDB; controllers enforce roles, gym scope, coach assignment, enrollment capacity, and duplicate assignment rules.
+Existing `/api/auth/login`, `/api/auth/refresh`, application JWT validation, application token lifetimes, and `User.refreshTokens` are unchanged. Backend roles, gym scope, coach assignment, and enrollment rules remain authoritative. Adding a CLIENT account to the allowlist does not grant staff-only enrollment permissions.
 
-ChatGPT needs OAuth account linking for this private MCP surface. The added layer uses a predefined confidential OAuth client and authorization codes with S256 PKCE. It adds discovery at `/.well-known/oauth-authorization-server` and `/.well-known/oauth-protected-resource/mcp`, plus `/oauth/authorize` and `/oauth/token`. No existing login or refresh behavior changes.
+## Render configuration
 
-Only `MCP_APPROVED_USER_ID` can link. The linking form asks for that account's existing IronLogic4 JWT as proof and presents the scheduling access being granted. The token stays in the form POST and is not stored. Do not paste it into chat, source, URLs, or tool arguments. Authorization codes are stored hashed in MongoDB, expire after five minutes, and are atomically consumed with client, redirect, resource, and PKCE bindings. The `McpAuthorizationCode` collection needs its unique and TTL indexes provisioned if production disables automatic indexes; expiry is also checked during exchange.
+Keep the existing environment values:
 
-MCP access tokens expire after 30 minutes and use a separate signing secret, issuer, audience, subject, and scheduling scope. They intentionally contain no application `userId` claim and are not usable as application JWTs. Each MCP request checks the approved subject and that the account still exists, then creates a transient application JWT used only for calls to the seven existing local API routes. Application middleware and controllers still make authorization decisions. No shared approved-user token is loaded from an environment variable or forwarded for unrelated callers.
+- `MCP_PUBLIC_ORIGIN`: canonical HTTPS backend origin without trailing slash or path.
+- `MCP_OAUTH_SECRET`: separate random signing secret of at least 32 characters, different from `JWT_SECRET`.
+- `MCP_OAUTH_CLIENT_ID` and `MCP_OAUTH_CLIENT_SECRET`: predefined OAuth client credentials matching the ChatGPT connection.
+- `MCP_OAUTH_REDIRECT_URI`: exact callback shown by ChatGPT for this connection.
+- `MCP_ALLOWED_ORIGINS`: optional browser-origin allowlist, defaulting to the backend origin and `https://chatgpt.com`.
 
-This minimal flow does not issue refresh tokens or request `offline_access`; reconnect/relink when authorization expires. It does not add password login, automatic client registration, or an identity provider. An established OAuth provider can replace this small linking layer later. MCP tokens are stateless: to revoke the one account's connection immediately, change `MCP_APPROVED_USER_ID`, unset configuration, or rotate `MCP_OAUTH_SECRET`.
+Add `MCP_ALLOWED_USER_IDS` in Render's backend environment settings with comma-separated MongoDB user IDs, for example `USER_ID_1,USER_ID_2`. Include your customer's normal account ID, not their email or the OAuth client ID. Accounts must already exist and have a usable password; the older integration-account script assigns a random password and does not supply it for normal login. Use the existing password reset flow if that account needs a known password.
 
-## Configuration and connection
+When `MCP_ALLOWED_USER_IDS` is absent, the existing `MCP_APPROVED_USER_ID` remains the single-user fallback. When the new variable is present, it replaces that fallback entirely, even when blank. A blank effective list disables linking, discovery, and MCP access with 503 responses. Missing OAuth configuration also returns 503; invalid complete configuration fails startup. Adding/removing allowed IDs takes effect after Render applies the new environment configuration. Removing an ID blocks both access and refresh, including legacy MCP tokens.
 
-Set the following in the hosting provider's secret configuration, never in committed source:
+No existing signing/client secrets need rotation for this feature. Never commit production values. The installed SDK HTTP dependency requires Node.js 20 or later. Reverse proxies must preserve the canonical Host, and the existing one-hop trust-proxy configuration must correctly identify client IPs for rate limiting.
 
-- `MCP_PUBLIC_ORIGIN`: canonical HTTPS backend origin, with no trailing slash or path.
-- `MCP_APPROVED_USER_ID`: existing approved user's MongoDB ID. Its existing permissions determine which tools can succeed.
-- `MCP_OAUTH_SECRET`: a separate random secret of at least 32 characters, different from `JWT_SECRET`.
-- `MCP_OAUTH_CLIENT_ID` and `MCP_OAUTH_CLIENT_SECRET`: credentials for this predefined ChatGPT OAuth client.
-- `MCP_OAUTH_REDIRECT_URI`: exact callback displayed by ChatGPT for this connection.
-- `MCP_ALLOWED_ORIGINS`: optional comma-separated explicit browser origins; defaults to the public origin and `https://chatgpt.com`. Requests without an Origin header, such as server-to-server ChatGPT calls, are allowed.
+## Refresh tokens and revocation
 
-All six OAuth configuration fields are required; otherwise MCP and discovery return 503. Invalid complete configuration fails startup. Existing `JWT_SECRET`, MongoDB, port, logging, and rate-limiting conventions continue to apply. The adapter calls the existing API on `127.0.0.1` using `PORT`, never a caller-selected URL. Reverse proxies must preserve the canonical Host. For browser test clients, add their exact origin to both the MCP origin list and existing CORS settings.
+Discovery advertises `authorization_code` and `refresh_token` grants, S256 PKCE, `client_secret_post`, and scopes `scheduling` and `offline_access`. The scheduling scope is mandatory; unsupported scopes are rejected. Scope order/duplicates are normalized. The browser consent covers the requested scopes. Authorization codes persist the granted scope and authenticated user ID; they remain hashed, expire after five minutes, and are atomically consumed with client, resource, callback, and PKCE bindings. Eligibility is checked again during exchange.
 
-After deploying, configure a ChatGPT developer-mode connection to `https://YOUR_BACKEND/mcp` with OAuth and the predefined client ID/secret. Copy its exact redirect URL to the backend configuration. Link using the approved user's current JWT. Deployment and live ChatGPT connection were not performed by this change.
+With `offline_access`, code exchange creates a connection with a fixed expiry exactly 365 days later and returns a 30-minute access token plus a random refresh token. Without `offline_access`, it creates a 30-minute connection and returns no refresh token. Refresh requests use `/oauth/token` with `grant_type=refresh_token`, `client_id`, `client_secret`, `resource`, and `refresh_token`. If `scope` is sent, it must match the connection's granted scopes; scope narrowing is not supported in this update.
 
-## Scheduling behavior
+OAuth connections and hashed refresh tokens use separate `McpConnection` and `McpRefreshToken` collections. Every refresh atomically consumes the previous token and creates a new token while preserving the original connection expiry. Consumed hashes are retained until that expiry to detect reuse. A reused token revokes the entire connection, including its current access token. Concurrent use of the same refresh token can therefore require relinking; clients should serialize refresh requests. Persistence failures return no tokens and revoke partially issued connections where possible. Database errors also prevent MCP connection verification.
 
-Availability remains `{success, data: [...]}`. An active schedule's `id` is the enrollment schedule ID; populated `gymId.id` and `templateId.id` are references. Timeslot IDs, availability, assigned client IDs, coach details, and location remain intact. Tool descriptions instruct ChatGPT to clarify clients, recurring versus current-week requests, and simultaneous slots by coach or location. They do not programmatically infer intent: writes require explicit schedule, timeslot, and client IDs. `isUserAssigned` refers to the linked account; inspect `assignedClients` for a different selected client. The API supplies no timezone or class date, so the adapter does not invent future-week semantics.
+New access tokens contain a connection ID, subject, issuer, resource audience, and granted scopes, and expire at the earlier of 30 minutes or connection expiry. MCP calls and refresh check connection expiry/revocation, account existence, invitation status, and the current allowlist. Tokens never contain the application `userId` claim and cannot authenticate to the application API. The adapter creates an internal transient application JWT for the linked user and delegates only the seven allowed operations to existing local API routes.
 
-Writes are marked as destructive tools for host confirmation. The adapter never retries a write automatically, and reports success only for an HTTP success response whose body has `success: true`. A transport failure may leave a write's outcome unknown; inspect assignments before retrying.
+For immediate revocation of an individual connection, set its `revokedAt` in MongoDB. Removing an account from the Render allowlist blocks all its connections. Rotating `MCP_OAUTH_SECRET` invalidates all MCP access tokens, but does not remove stored refresh authorizations; rotate the OAuth client secret or revoke connections as well if those must be invalidated. OAuth refresh tokens are independent of application password changes and application logout; those behaviors are unchanged in this update.
+
+## Deployment and transition
+
+Provision the unique/TTL indexes on `McpAuthorizationCode`, `McpConnection`, and `McpRefreshToken` if production disables Mongoose automatic indexes. Expiry is explicitly checked even before MongoDB's TTL cleanup. No User migration or existing application refresh-token migration is required.
+
+After deployment, refresh the MCP connection metadata in ChatGPT so it sees refresh-token support and `offline_access`. Relink once using the allowed account's normal email/password and persistent consent. Verify the token response includes a refresh token when `offline_access` was requested. Existing MCP access tokens without a connection ID remain accepted until their original expiry, subject to eligibility and the allowlist, but have no refresh authorization and require relinking.
+
+Verify a client lookup and the linked account's existing enrollment permissions. After the access token expires, confirm ChatGPT refreshes through `/oauth/token` and performs another lookup without prompting for login. Backend access expires after 365 days even with regular use, requiring fresh consent and login. Deployment and live ChatGPT refresh verification are not performed by the local test suite.
+
+Availability stays `{success, data: [...]}`. Active schedule `id` and timeslot `id` are used for active enrollment; populated `gymId` and `templateId` are reference objects. Assigned client IDs, availability, coaches, and locations remain intact. Tool instructions require clarification for ambiguous clients/slots and recurring versus current-week intent. The API supplies no class date or timezone; future-week semantics are not inferred. Writes are never retried automatically and succeed only on an HTTP success with `success: true`.
 
 ## Verification
 
-Run `npm run test:mcp` and `npm run typecheck` from `packages/server`. MCP tests use the SDK client over both in-memory transport and a temporary local HTTP server, mocked backend responses, and mocked database persistence. They verify the seven-operation YAML allowlist, request mapping, untouched availability data, rejected inputs, HTTP failures, PKCE binding, approved-user linking, code replay and expiry, token claim validation, and backend role denial through HTTP MCP. They never use a real token or database.
+Run `npm run test:mcp`, `npm run typecheck`, and `npm run build` from `packages/server`. Tests use the MCP SDK over in-memory and temporary HTTP transports, with mocked MongoDB persistence. They cover allowlist precedence, login eligibility/consent/browser binding/rate limits, code bindings/expiry/replay, rotation/reuse/concurrency, account removal, persistence failure, the fixed yearly expiry, legacy tokens, distinct user identities and backend roles, and the seven-tool contract and secret redaction. Mocked persistence is not a substitute for validating production MongoDB indexes or live ChatGPT automatic refresh.
 
-The existing `npm test` integration suite seeds and removes MongoDB fixtures using the configured database. Run it only against a designated test database and a running backend. It was not used for this integration.
+The existing `npm test` integration suite writes fixtures to the configured database. Run it only with a designated test database and running backend. Repository lint currently has no ESLint configuration.
 
-Official account-linking requirements: https://developers.openai.com/plugins/build/auth
+Official authentication requirements: https://developers.openai.com/plugins/build/auth
