@@ -156,12 +156,15 @@ test('discovery advertises refresh and login form binds the browser without expo
   assert.match(flow.page.headers.get('set-cookie')!, /Secure/);
   assert.match(flow.page.headers.get('set-cookie')!, /SameSite=Lax/);
   assert.equal(flow.page.headers.get('cache-control'), 'no-store');
+  // Browser form POSTs send Origin: null with no-referrer; fetch-based tests do not.
+  assert.equal(flow.page.headers.get('referrer-policy'), 'strict-origin');
   assert.doesNotMatch(flow.html, /name="token"/);
   assert.equal((await f.start('scheduling other')).page.status, 400);
   assert.equal((await f.start('offline_access')).page.status, 400);
   assert.equal((await f.start('scheduling', { redirect_uri: 'https://attacker.example' })).page.status, 400);
   assert.equal((await f.submit(flow, {}, { cookie: '' })).status, 400);
   assert.equal((await f.submit(flow, {}, { Origin: 'https://attacker.example' })).status, 400);
+  assert.equal((await f.submit(flow, {}, { Origin: 'null' })).status, 400);
   assert.equal((await f.submit(flow, {}, { 'sec-fetch-site': 'cross-site' })).status, 400);
   const other = await f.start();
   assert.equal((await f.submit(flow, {}, { cookie: other.cookie })).status, 400);
