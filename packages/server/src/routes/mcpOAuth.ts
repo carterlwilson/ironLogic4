@@ -1,10 +1,11 @@
-import { Router, Response } from 'express';
+import { Router } from 'express';
 import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { LoginSchema } from '@ironlogic4/shared/schemas/auth';
 import { User } from '../models/User.js';
+import { linkingPage } from '../mcp/linkingPage.js';
 import { McpAuthorizationCode } from '../models/McpAuthorizationCode.js';
 import { McpConnection } from '../models/McpConnection.js';
 import { McpRefreshToken } from '../models/McpRefreshToken.js';
@@ -13,19 +14,11 @@ import { activeMcpConnection, authorizationSchema, digest, eligibleMcpUser, issu
 const router = Router();
 const nonceCookie = '__Host-mcp-link';
 const cookieOptions = { secure: true, httpOnly: true, sameSite: 'lax' as const, path: '/' };
-const escapeHtml = (value: string) => value.replace(/[&<>"']/g, character => `&#${character.charCodeAt(0)};`);
 const scopes = [mcpScope, 'offline_access'];
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, limit: 10,
   message: { error: 'Too many linking attempts. Please try again later.' },
 });
-
-function linkingPage(res: Response, transaction: string, persistent: boolean, error = '') {
-  res.setHeader('Cache-Control', 'no-store');
-  res.setHeader('Referrer-Policy', 'strict-origin');
-  res.setHeader('Content-Security-Policy', "default-src 'none'; form-action 'self'; frame-ancestors 'none'");
-  res.type('html').send(`<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Link IronLogic4</title></head><body><h1>Link IronLogic4 to ChatGPT</h1><p>Sign in with your IronLogic4 email and password. ChatGPT will use your existing permissions to look up clients and manage schedule enrollment.</p>${persistent ? '<p>Allow ChatGPT to stay connected for up to 365 days without signing in again.</p>' : ''}${error ? `<p role="alert">${escapeHtml(error)}</p>` : ''}<form method="post" action="/oauth/authorize"><input type="hidden" name="transaction" value="${escapeHtml(transaction)}"><p><label>Email <input type="email" name="email" required autocomplete="username"></label></p><p><label>Password <input type="password" name="password" required autocomplete="current-password"></label></p><p><label><input type="checkbox" name="consent" value="yes" required> I authorize scheduling access${persistent ? ' and a connection lasting up to 365 days' : ''}.</label></p><button type="submit">Sign in and link scheduling</button></form></body></html>`);
-}
 
 router.get('/.well-known/oauth-protected-resource/mcp', (_req, res) => {
   const config = oauthConfig();
