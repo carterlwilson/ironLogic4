@@ -22,7 +22,7 @@ const loginLimiter = rateLimit({
 
 function linkingPage(res: Response, transaction: string, persistent: boolean, error = '') {
   res.setHeader('Cache-Control', 'no-store');
-  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Referrer-Policy', 'strict-origin');
   res.setHeader('Content-Security-Policy', "default-src 'none'; form-action 'self'; frame-ancestors 'none'");
   res.type('html').send(`<!doctype html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"><title>Link IronLogic4</title></head><body><h1>Link IronLogic4 to ChatGPT</h1><p>Sign in with your IronLogic4 email and password. ChatGPT will use your existing permissions to look up clients and manage schedule enrollment.</p>${persistent ? '<p>Allow ChatGPT to stay connected for up to 365 days without signing in again.</p>' : ''}${error ? `<p role="alert">${escapeHtml(error)}</p>` : ''}<form method="post" action="/oauth/authorize"><input type="hidden" name="transaction" value="${escapeHtml(transaction)}"><p><label>Email <input type="email" name="email" required autocomplete="username"></label></p><p><label>Password <input type="password" name="password" required autocomplete="current-password"></label></p><p><label><input type="checkbox" name="consent" value="yes" required> I authorize scheduling access${persistent ? ' and a connection lasting up to 365 days' : ''}.</label></p><button type="submit">Sign in and link scheduling</button></form></body></html>`);
 }
