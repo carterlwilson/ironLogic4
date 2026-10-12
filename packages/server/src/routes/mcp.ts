@@ -1,9 +1,8 @@
 import { Router } from 'express';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createSchedulingServer } from '../mcp/scheduling.js';
-import { oauthConfig, verifyMcpToken } from '../mcp/oauth.js';
+import { activeMcpConnection, eligibleMcpUser, oauthConfig, verifyMcpToken } from '../mcp/oauth.js';
 import { generateToken } from '../utils/auth.js';
-import { User } from '../models/User.js';
 
 const router = Router();
 
@@ -19,14 +18,16 @@ router.post('/', async (req, res, next) => {
     try {
       const header = req.headers.authorization;
       if (!header?.startsWith('Bearer ')) throw new Error('Missing token');
-      userId = verifyMcpToken(header.slice('Bearer '.length), config);
+      const claims = verifyMcpToken(header.slice('Bearer '.length), config);
+      userId = claims.userId;
+      if (!await eligibleMcpUser(userId, config)) throw new Error('User unavailable');
+      if (claims.connectionId) {
+        const connection = await activeMcpConnection(claims.connectionId, config, userId);
+        if (!connection || connection.scope !== claims.scope) throw new Error('Connection unavailable');
+      }
     } catch {
       res.setHeader('WWW-Authenticate', `Bearer resource_metadata="${config.origin}/.well-known/oauth-protected-resource/mcp", scope="scheduling"`);
       res.status(401).json({ success: false, error: 'MCP account linking required' });
-      return;
-    }
-    if (!await User.findById(userId)) {
-      res.status(401).json({ success: false, error: 'Linked user no longer exists' });
       return;
     }
     const server = createSchedulingServer(
