@@ -158,6 +158,10 @@ test('discovery advertises refresh and login form binds the browser without expo
   assert.equal(flow.page.headers.get('cache-control'), 'no-store');
   // Browser form POSTs send Origin: null with no-referrer; fetch-based tests do not.
   assert.equal(flow.page.headers.get('referrer-policy'), 'strict-origin');
+  assert.match(flow.html, /Cully Strength/);
+  assert.doesNotMatch(flow.html, /IronLogic/);
+  const styleNonce = flow.html.match(/<style nonce="([^"]+)"/)![1];
+  assert.ok(flow.page.headers.get('content-security-policy')!.includes(`style-src 'nonce-${styleNonce}'`));
   assert.doesNotMatch(flow.html, /name="token"/);
   assert.equal((await f.start('scheduling other')).page.status, 400);
   assert.equal((await f.start('offline_access')).page.status, 400);
@@ -181,7 +185,7 @@ test('credentials, account eligibility and consent are enforced with retry and n
     assert.equal(response.status, 401);
     const html = await response.text();
     assert.doesNotMatch(html, /WrongPassword|TestPassword123!/);
-    responses.push(html);
+    responses.push(html.match(/role="alert">([^<]+)</)![1]);
   }
   assert.equal(responses[0], responses[1]); assert.equal(responses[1], responses[2]);
   f.users[0].status = 'invited';
