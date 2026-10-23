@@ -40,6 +40,11 @@ export default defineConfig({
             handler: 'NetworkOnly',
           },
           {
+            // Attendance rosters must be current too, so coaches never mark a stale roster
+            urlPattern: ({ url }) => url.pathname.startsWith('/api/gym/attendance'),
+            handler: 'NetworkOnly',
+          },
+          {
             urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
             handler: 'NetworkFirst',
             options: {

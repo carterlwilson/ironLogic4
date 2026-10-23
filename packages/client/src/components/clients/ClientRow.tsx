@@ -1,5 +1,5 @@
 import { Table, Group, ActionIcon, Tooltip, Text, Badge } from '@mantine/core';
-import { IconEdit, IconTrash, IconBarbell } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconBarbell, IconClipboardCheck } from '@tabler/icons-react';
 import type { User } from '@ironlogic4/shared/types/users';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,10 @@ export function ClientRow({ client, onEdit, onDelete, programNameMap }: ClientRo
 
   const handleManageBenchmarks = () => {
     navigate(`/clients/${client.id}/benchmarks`);
+  };
+
+  const handleViewAttendance = () => {
+    navigate(`/clients/${client.id}/attendance`);
   };
 
   return (
@@ -61,6 +65,15 @@ export function ClientRow({ client, onEdit, onDelete, programNameMap }: ClientRo
               onClick={handleManageBenchmarks}
             >
               <IconBarbell size={16} />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label="View Attendance">
+            <ActionIcon
+              variant="light"
+              color="forestGreen"
+              onClick={handleViewAttendance}
+            >
+              <IconClipboardCheck size={16} />
             </ActionIcon>
           </Tooltip>
           <Tooltip label="Edit Client">
