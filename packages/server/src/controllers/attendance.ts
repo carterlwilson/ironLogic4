@@ -15,6 +15,7 @@ import {
   SubmitClassAttendanceSchema,
   ClassAttendanceQuerySchema,
   AttendanceRangeQuerySchema,
+  AttendanceSummaryQuerySchema,
   UserType,
   getAttendancePeriodStart,
   listAttendancePeriods,
@@ -246,7 +247,7 @@ export const getAttendanceSummary = async (
   res: Response
 ): Promise<void> => {
   try {
-    const validation = AttendanceRangeQuerySchema.safeParse(req.query);
+    const validation = AttendanceSummaryQuerySchema.safeParse(req.query);
 
     if (!validation.success) {
       res.status(400).json({
@@ -257,14 +258,41 @@ export const getAttendanceSummary = async (
       return;
     }
 
-    const { from, to, groupBy } = validation.data;
+    const { from, to, groupBy, search, page, limit } = validation.data;
     const gymId = resolveGymId(req, res, validation.data.gymId);
     if (!gymId) return;
 
-    const [clients, records] = await Promise.all([
-      User.find({ gymId, userType: UserType.CLIENT }).select('firstName lastName').sort({ lastName: 1, firstName: 1 }),
-      AttendanceRecord.find({ gymId, date: { $gte: from, $lte: to } }),
+    const clientQuery: any = { gymId, userType: UserType.CLIENT };
+
+    // Search by name or email; every word must match one of the fields, so full names work
+    const words = (search ?? '').trim().split(/\s+/).filter(Boolean);
+    if (words.length > 0) {
+      clientQuery.$and = words.map(word => {
+        const pattern = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return {
+          $or: [
+            { firstName: { $regex: pattern, $options: 'i' } },
+            { lastName: { $regex: pattern, $options: 'i' } },
+            { email: { $regex: pattern, $options: 'i' } },
+          ],
+        };
+      });
+    }
+
+    const [clients, total] = await Promise.all([
+      User.find(clientQuery)
+        .select('firstName lastName')
+        .sort({ lastName: 1, firstName: 1, _id: 1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      User.countDocuments(clientQuery),
     ]);
+
+    // Only this page's clients' records
+    const records = await AttendanceRecord.find({
+      clientId: { $in: clients.map(c => c.id) },
+      date: { $gte: from, $lte: to },
+    });
 
     const recordsByClient = new Map<string, AttendanceRecordDocument[]>();
     for (const record of records) {
@@ -288,6 +316,12 @@ export const getAttendanceSummary = async (
           lastName: client.lastName,
           ...summarize(recordsByClient.get(client.id) ?? [], periods, groupBy),
         })),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
     };
 

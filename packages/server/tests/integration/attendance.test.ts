@@ -315,7 +315,7 @@ describe('attendance reporting', () => {
   it('counts classes per week for every gym client', async () => {
     const res = await apiFetch(
       'GET',
-      `/api/gym/attendance/summary?from=${MONDAY_1}&to=${MONDAY_3}&groupBy=week`,
+      `/api/gym/attendance/summary?from=${MONDAY_1}&to=${MONDAY_3}&groupBy=week&limit=100`,
       undefined,
       ownerToken
     );
@@ -342,7 +342,7 @@ describe('attendance reporting', () => {
   it('counts classes per month', async () => {
     const res = await apiFetch(
       'GET',
-      `/api/gym/attendance/summary?from=${MONDAY_1}&to=${MONDAY_3}&groupBy=month`,
+      `/api/gym/attendance/summary?from=${MONDAY_1}&to=${MONDAY_3}&groupBy=month&search=TEST_Integration`,
       undefined,
       ownerToken
     );
@@ -351,6 +351,40 @@ describe('attendance reporting', () => {
       { periodStart: '2026-09-01', present: 1, absent: 0 },
       { periodStart: '2026-10-01', present: 2, absent: 1 },
     ]);
+  });
+
+  it('paginates clients and reports totals', async () => {
+    const base = `/api/gym/attendance/summary?from=${MONDAY_1}&to=${MONDAY_3}&limit=1`;
+    const first = await apiFetch('GET', `${base}&page=1`, undefined, ownerToken);
+    const second = await apiFetch('GET', `${base}&page=2`, undefined, ownerToken);
+
+    expect(first.status).toBe(200);
+    expect(first.json.data.clients).toHaveLength(1);
+    expect(first.json.data.pagination.total).toBeGreaterThanOrEqual(2);
+    expect(first.json.data.pagination.totalPages).toBe(first.json.data.pagination.total);
+    expect(second.json.data.pagination.page).toBe(2);
+    expect(second.json.data.clients[0].clientId).not.toBe(first.json.data.clients[0].clientId);
+  });
+
+  it('filters clients by search', async () => {
+    const res = await apiFetch(
+      'GET',
+      `/api/gym/attendance/summary?from=${MONDAY_1}&to=${MONDAY_3}&search=test_integration`,
+      undefined,
+      ownerToken
+    );
+    expect(res.json.data.clients.map((c: any) => c.clientId)).toEqual([clientId]);
+    expect(res.json.data.clients[0].present).toBe(3);
+    expect(res.json.data.pagination.total).toBe(1);
+
+    // A full name matches across the first and last name fields
+    const fullName = await apiFetch(
+      'GET',
+      `/api/gym/attendance/summary?from=${MONDAY_1}&to=${MONDAY_3}&search=${encodeURIComponent('Integration Client')}`,
+      undefined,
+      ownerToken
+    );
+    expect(fullName.json.data.clients.map((c: any) => c.clientId)).toEqual([clientId]);
   });
 
   it("returns one client's history, newest first, scoped to the range", async () => {

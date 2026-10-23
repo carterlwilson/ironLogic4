@@ -23,16 +23,28 @@ export const ClassAttendanceQuerySchema = z.object({
   date: dateString,
 });
 
-export const AttendanceRangeQuerySchema = z.object({
+const AttendanceRangeFields = z.object({
   from: dateString,
   to: dateString,
   groupBy: z.enum(['week', 'month']).default('week'),
   gymId: z.string().min(1).optional(),
-}).refine((data) => data.from <= data.to, {
+});
+
+const rangeOrderCheck = {
   message: 'From date must be on or before to date',
   path: ['to'],
-});
+};
+
+export const AttendanceRangeQuerySchema = AttendanceRangeFields
+  .refine((data) => data.from <= data.to, rangeOrderCheck);
+
+export const AttendanceSummaryQuerySchema = AttendanceRangeFields.extend({
+  search: z.string().optional(),
+  page: z.coerce.number().min(1, 'Page must be at least 1').default(1),
+  limit: z.coerce.number().min(1, 'Limit must be at least 1').max(100, 'Limit cannot exceed 100').default(10),
+}).refine((data) => data.from <= data.to, rangeOrderCheck);
 
 export type SubmitClassAttendanceInput = z.infer<typeof SubmitClassAttendanceSchema>;
 export type ClassAttendanceQueryInput = z.infer<typeof ClassAttendanceQuerySchema>;
 export type AttendanceRangeQueryInput = z.infer<typeof AttendanceRangeQuerySchema>;
+export type AttendanceSummaryQueryInput = z.infer<typeof AttendanceSummaryQuerySchema>;

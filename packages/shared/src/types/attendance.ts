@@ -1,6 +1,7 @@
 import {
   SubmitClassAttendanceInput,
   AttendanceRangeQueryInput,
+  AttendanceSummaryQueryInput,
   ClassAttendanceQueryInput,
 } from '../schemas/attendance.js';
 
@@ -55,6 +56,12 @@ export interface IAttendanceSummaryResponse {
   groupBy: AttendanceGroupBy;
   periods: string[];
   clients: IClientAttendanceSummary[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
 }
 
 export interface IClientAttendanceHistory {
@@ -68,6 +75,7 @@ export interface IClientAttendanceHistory {
 
 export type SubmitClassAttendanceRequest = SubmitClassAttendanceInput;
 export type AttendanceRangeQuery = AttendanceRangeQueryInput;
+export type AttendanceSummaryQuery = AttendanceSummaryQueryInput;
 export type ClassAttendanceQuery = ClassAttendanceQueryInput;
 
 /** Format a Date as "YYYY-MM-DD" in local time. */

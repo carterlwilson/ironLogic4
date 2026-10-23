@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { Container, Title, Text, Stack, Group, Table, TextInput, Alert, Loader, Center, Paper, ScrollArea } from '@mantine/core';
+import { Container, Title, Text, Stack, Group, Table, TextInput, Alert, Loader, Center, Paper, ScrollArea, Pagination, Select } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { IconClipboardCheck, IconSearch } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
 import { useAttendanceRange } from '../hooks/useAttendanceRange';
@@ -8,19 +9,32 @@ import { useAttendanceSummary } from '../hooks/useAttendanceSummary';
 import { AttendanceRangeControls } from '../components/attendance/AttendanceRangeControls';
 import { formatPeriodLabel, formatAttendanceRate } from '../components/attendance/attendanceFormat';
 
+const pageSizeOptions = [
+  { value: '10', label: '10 per page' },
+  { value: '25', label: '25 per page' },
+  { value: '50', label: '50 per page' },
+  { value: '100', label: '100 per page' },
+];
+
 export function AttendancePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const range = useAttendanceRange();
-  const { summary, loading, error } = useAttendanceSummary(range);
   const [search, setSearch] = useState('');
+  const [debouncedSearch] = useDebouncedValue(search.trim(), 300);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const { summary, loading, error } = useAttendanceSummary({
+    from: range.from,
+    to: range.to,
+    groupBy: range.groupBy,
+    search: debouncedSearch,
+    page,
+    limit: pageSize,
+  });
 
-  const clients = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    const all = summary?.clients ?? [];
-    if (!query) return all;
-    return all.filter((c) => `${c.firstName ?? ''} ${c.lastName ?? ''}`.toLowerCase().includes(query));
-  }, [summary, search]);
+  const clients = summary?.clients ?? [];
+  const pagination = summary?.pagination;
 
   // Only owners and coaches can access
   if (user?.role !== 'owner' && user?.role !== 'coach') {
@@ -43,15 +57,15 @@ export function AttendancePage() {
             from={range.from}
             to={range.to}
             groupBy={range.groupBy}
-            onFromChange={range.setFrom}
-            onToChange={range.setTo}
-            onGroupByChange={range.setGroupBy}
+            onFromChange={(value) => { range.setFrom(value); setPage(1); }}
+            onToChange={(value) => { range.setTo(value); setPage(1); }}
+            onGroupByChange={(value) => { range.setGroupBy(value); setPage(1); }}
           />
           <TextInput
             placeholder="Search clients..."
             leftSection={<IconSearch size={16} />}
             value={search}
-            onChange={(e) => setSearch(e.currentTarget.value)}
+            onChange={(e) => { setSearch(e.currentTarget.value); setPage(1); }}
           />
         </Group>
 
@@ -112,6 +126,31 @@ export function AttendancePage() {
               </Table>
             </ScrollArea>
           </Paper>
+        )}
+
+        {pagination && pagination.totalPages > 1 && (
+          <Stack gap="md" align="center">
+            <Group justify="space-between" w="100%">
+              <Text size="sm" c="dimmed">
+                Showing {Math.min((pagination.page - 1) * pagination.limit + 1, pagination.total)}-
+                {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} clients
+              </Text>
+
+              <Select
+                value={String(pageSize)}
+                onChange={(value) => { setPageSize(Number(value)); setPage(1); }}
+                data={pageSizeOptions}
+                w={140}
+              />
+            </Group>
+
+            <Pagination
+              total={pagination.totalPages}
+              value={pagination.page}
+              onChange={setPage}
+              size="sm"
+            />
+          </Stack>
         )}
       </Stack>
     </Container>

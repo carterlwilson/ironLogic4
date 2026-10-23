@@ -12,12 +12,21 @@ export interface AttendanceRangeParams {
   groupBy: AttendanceGroupBy;
 }
 
+export interface AttendanceSummaryParams extends AttendanceRangeParams {
+  page: number;
+  limit: number;
+  search?: string;
+}
+
 export const attendanceApi = {
   /**
    * Per-client attendance counts for the gym over a date range
    */
-  async getSummary(params: AttendanceRangeParams): Promise<ApiResponse<IAttendanceSummaryResponse>> {
-    const query = new URLSearchParams({ ...params });
+  async getSummary({ search, page, limit, ...range }: AttendanceSummaryParams): Promise<ApiResponse<IAttendanceSummaryResponse>> {
+    const query = new URLSearchParams({ ...range, page: String(page), limit: String(limit) });
+    if (search) {
+      query.set('search', search);
+    }
     return authenticatedRequest<ApiResponse<IAttendanceSummaryResponse>>(`/api/gym/attendance/summary?${query}`);
   },
 
