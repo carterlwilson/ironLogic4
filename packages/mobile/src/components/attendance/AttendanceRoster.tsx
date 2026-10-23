@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Stack, Group, Text, Button, Paper, SegmentedControl, Badge, ActionIcon, Center, Loader, Alert } from '@mantine/core';
 import { IconArrowLeft, IconPlus, IconX } from '@tabler/icons-react';
-import { AttendanceStatus } from '@ironlogic4/shared';
+import { AttendanceStatus, parseDateString } from '@ironlogic4/shared';
 import { useClassAttendance } from '../../hooks/useClassAttendance';
 import { AddClientModal } from '../schedule/AddClientModal';
 import { FlatCoachTimeslot } from '../../utils/coachScheduleUtils';
@@ -58,7 +58,10 @@ export function AttendanceRoster({ slot, date, clients, clientMap, clientsLoadin
           </ActionIcon>
           <Stack gap={0}>
             <Text fw={600}>{formatTimeRange(slot.startTime, slot.endTime)}</Text>
-            <Text size="xs" c="dimmed">{slot.location}</Text>
+            <Text size="xs" c="dimmed">
+              {parseDateString(date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+              {' · '}{slot.location}
+            </Text>
           </Stack>
           {alreadyRecorded && (
             <Badge size="sm" variant="light" color="forestGreen" ml="auto">
