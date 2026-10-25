@@ -13,6 +13,8 @@ import { BenchmarksPage } from './pages/BenchmarksPage';
 import { CoachesPage } from './pages/CoachesPage';
 import { ClientsPage } from './pages/ClientsPage';
 import { ClientBenchmarksPage } from './pages/ClientBenchmarksPage';
+import { AttendancePage } from './pages/AttendancePage';
+import { ClientAttendancePage } from './pages/ClientAttendancePage';
 import { MyBenchmarksPage } from './pages/MyBenchmarksPage';
 import { ProgramListPage } from './pages/Programs/ProgramListPage';
 import { ProgramDetailPage } from './pages/Programs/ProgramDetailPage';
@@ -63,6 +65,8 @@ function App() {
                   <Route path="/coaches" element={<CoachesPage />} />
                   <Route path="/clients" element={<ClientsPage />} />
                   <Route path="/clients/:clientId/benchmarks" element={<ClientBenchmarksPage />} />
+                  <Route path="/clients/:clientId/attendance" element={<ClientAttendancePage />} />
+                  <Route path="/attendance" element={<AttendancePage />} />
                   <Route path="/my-benchmarks" element={<MyBenchmarksPage />} />
                   <Route path="/programs" element={<ProgramListPage />} />
                   <Route path="/programs/:programId" element={<ProgramDetailPage />} />

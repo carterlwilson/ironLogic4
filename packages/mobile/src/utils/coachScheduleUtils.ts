@@ -1,4 +1,4 @@
-import type { IScheduleDay } from '@ironlogic4/shared';
+import { toDateString, type IScheduleDay } from '@ironlogic4/shared';
 import type { DirectoryClient } from '../hooks/useClientDirectory';
 
 export interface FlatCoachTimeslot {
@@ -56,4 +56,11 @@ export function flattenAndFilterToCoach(
   }
 
   return flat;
+}
+
+/**
+ * The "YYYY-MM-DD" date of a day of week (0-6) in the current Sunday-Saturday week
+ */
+export function getDateForDayOfWeek(dayOfWeek: number, now: Date = new Date()): string {
+  return toDateString(new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay() + dayOfWeek));
 }
