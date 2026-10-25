@@ -5,6 +5,7 @@ import { WorkoutPage } from './pages/WorkoutPage';
 import { BenchmarksPage } from './pages/BenchmarksPage';
 import { SchedulePage } from './pages/SchedulePage';
 import { ProfilePage } from './pages/ProfilePage';
+import { AttendancePage } from './pages/AttendancePage';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/benchmarks" element={<BenchmarksPage />} />
             <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/attendance" element={<AttendancePage />} />
           </Routes>
         </AppShell.Main>
       </AppShell>

@@ -1,5 +1,5 @@
 import { NavLink, Stack, Text, Button, Box } from '@mantine/core';
-import { IconUsers, IconLogout, IconBuilding, IconActivity, IconBarbell, IconUsersGroup, IconClipboardList, IconCalendar, IconUserCog } from '@tabler/icons-react';
+import { IconUsers, IconLogout, IconBuilding, IconActivity, IconBarbell, IconUsersGroup, IconClipboardList, IconCalendar, IconUserCog, IconClipboardCheck } from '@tabler/icons-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../providers/AuthProvider';
 
@@ -30,6 +30,10 @@ export function Navigation() {
 
   const handleClientsClick = () => {
     navigate('/clients');
+  };
+
+  const handleAttendanceClick = () => {
+    navigate('/attendance');
   };
 
   const handleProgramsClick = () => {
@@ -191,6 +195,17 @@ export function Navigation() {
             onClick={(event) => {
               event.preventDefault();
               handleClientsClick();
+            }}
+            style={{ borderRadius: '8px' }}
+          />
+          <NavLink
+            href="/attendance"
+            label="Attendance"
+            leftSection={<IconClipboardCheck size={16} />}
+            active={location.pathname.endsWith('/attendance')}
+            onClick={(event) => {
+              event.preventDefault();
+              handleAttendanceClick();
             }}
             style={{ borderRadius: '8px' }}
           />

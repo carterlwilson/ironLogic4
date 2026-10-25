@@ -5,12 +5,15 @@ import {
   IconChartLine,
   IconCalendar,
   IconUser,
+  IconClipboardCheck,
 } from '@tabler/icons-react';
+import { useAuth } from '../providers/AuthProvider';
 
 interface NavItem {
   label: string;
   path: string;
   icon: typeof IconBarbell;
+  roles?: Array<'admin' | 'owner' | 'coach' | 'client'>;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -30,6 +33,12 @@ const NAV_ITEMS: NavItem[] = [
     icon: IconCalendar,
   },
   {
+    label: 'Attendance',
+    path: '/attendance',
+    icon: IconClipboardCheck,
+    roles: ['coach'],
+  },
+  {
     label: 'Profile',
     path: '/profile',
     icon: IconUser,
@@ -39,6 +48,8 @@ const NAV_ITEMS: NavItem[] = [
 export const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
+  const visibleItems = NAV_ITEMS.filter((item) => !item.roles || (user && item.roles.includes(user.role)));
 
   return (
     <Group
@@ -56,7 +67,7 @@ export const BottomNav = () => {
         paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
-      {NAV_ITEMS.map((item) => {
+      {visibleItems.map((item) => {
         const isActive = location.pathname === item.path;
         const Icon = item.icon;
 
