@@ -1,5 +1,5 @@
 import { Container, Title, Text, Stack, Group, Tabs } from '@mantine/core';
-import { IconCalendar, IconTemplate, IconCalendarEvent } from '@tabler/icons-react';
+import { IconCalendar, IconTemplate, IconCalendarEvent, IconTable } from '@tabler/icons-react';
 import { useAuth } from '../providers/AuthProvider';
 import { Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -25,12 +25,16 @@ import {
   DeleteScheduleModal,
 } from '../components/schedules/ActiveTab';
 
+// Grid Tab Components
+import { ScheduleGridView } from '../components/schedules/GridTab';
+
 /**
  * Schedules Page - Manage the gym's schedule template and active schedule
  *
- * Two tabs:
+ * Three tabs:
  * 1. Template - Create and manage the gym's single schedule template
  * 2. Active Schedule - View and manage the current active schedule
+ * 3. Grid View - Spreadsheet-style overview of the whole week's classes and spots
  */
 export function SchedulesPage() {
   const { user } = useAuth();
@@ -95,6 +99,16 @@ export function SchedulesPage() {
     await createTemplate(data);
   };
 
+  // The grid edits client assignments directly, so reload both schedules when
+  // leaving it so the other tabs don't show (or autosave over) stale data
+  const handleTabChange = (value: string | null) => {
+    if (activeTab === 'grid' && value !== 'grid') {
+      loadTemplate();
+      loadActiveSchedule();
+    }
+    setActiveTab(value);
+  };
+
   const handleDeleteTemplate = async () => {
     if (template) {
       await deleteTemplate(template.id);
@@ -115,7 +129,7 @@ export function SchedulesPage() {
         </Text>
 
         {/* Tabbed Interface */}
-        <Tabs value={activeTab} onChange={setActiveTab}>
+        <Tabs value={activeTab} onChange={handleTabChange}>
           <Tabs.List>
             <Tabs.Tab value="templates" leftSection={<IconTemplate size={16} />}>
               Schedule Template
@@ -123,12 +137,16 @@ export function SchedulesPage() {
             <Tabs.Tab value="active" leftSection={<IconCalendarEvent size={16} />}>
               Active Schedule
             </Tabs.Tab>
+            <Tabs.Tab value="grid" leftSection={<IconTable size={16} />}>
+              Grid View
+            </Tabs.Tab>
           </Tabs.List>
 
           {/* Schedule Template Tab */}
           <Tabs.Panel value="templates" pt="xl">
             {template ? (
               <ScheduleTemplateEditor
+                key={template.updatedAt.getTime()}
                 template={template}
                 gymId={gymId}
                 coaches={coaches}
@@ -171,6 +189,13 @@ export function SchedulesPage() {
                 />
               )}
             </Stack>
+          </Tabs.Panel>
+
+          {/* Grid View Tab - mounted only while active so it refetches fresh data each visit */}
+          <Tabs.Panel value="grid" pt="xl">
+            {activeTab === 'grid' && (
+              <ScheduleGridView coaches={coaches} clients={clients} clientsLoading={clientsLoading} />
+            )}
           </Tabs.Panel>
         </Tabs>
 
