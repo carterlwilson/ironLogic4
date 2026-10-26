@@ -287,6 +287,98 @@ class ScheduleApiService {
   }
 
   /**
+   * Add a client to a timeslot on the schedule template (recurring roster)
+   */
+  async addTemplateTimeslotClient(
+    templateId: string,
+    timeslotId: string,
+    clientId: string
+  ): Promise<ApiResponse<IScheduleTemplate>> {
+    const response = await fetch(`${this.baseUrl}/templates/${templateId}/timeslots/${timeslotId}/clients`, {
+      method: 'POST',
+      headers: await this.getAuthHeaders(),
+      body: JSON.stringify({ clientId }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.error || error.message || 'Failed to add client to timeslot');
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Remove a client from a timeslot on the schedule template (recurring roster)
+   */
+  async removeTemplateTimeslotClient(
+    templateId: string,
+    timeslotId: string,
+    clientId: string
+  ): Promise<ApiResponse<IScheduleTemplate>> {
+    const response = await fetch(
+      `${this.baseUrl}/templates/${templateId}/timeslots/${timeslotId}/clients/${clientId}`,
+      {
+        method: 'DELETE',
+        headers: await this.getAuthHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.error || error.message || 'Failed to remove client from timeslot');
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Add a client to a timeslot on the active schedule (this week only)
+   */
+  async addActiveTimeslotClient(
+    scheduleId: string,
+    timeslotId: string,
+    clientId: string
+  ): Promise<ApiResponse<IActiveSchedule>> {
+    const response = await fetch(`${this.baseUrl}/active/${scheduleId}/timeslots/${timeslotId}/clients`, {
+      method: 'POST',
+      headers: await this.getAuthHeaders(),
+      body: JSON.stringify({ clientId }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.error || error.message || 'Failed to add client to timeslot');
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Remove a client from a timeslot on the active schedule (this week only)
+   */
+  async removeActiveTimeslotClient(
+    scheduleId: string,
+    timeslotId: string,
+    clientId: string
+  ): Promise<ApiResponse<IActiveSchedule>> {
+    const response = await fetch(
+      `${this.baseUrl}/active/${scheduleId}/timeslots/${timeslotId}/clients/${clientId}`,
+      {
+        method: 'DELETE',
+        headers: await this.getAuthHeaders(),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ message: 'Network error' }));
+      throw new Error(error.error || error.message || 'Failed to remove client from timeslot');
+    }
+
+    return response.json();
+  }
+
+  /**
    * Join a timeslot (for clients)
    */
   async joinTimeslot(scheduleId: string, timeslotId: string): Promise<ApiResponse<IActiveSchedule>> {
