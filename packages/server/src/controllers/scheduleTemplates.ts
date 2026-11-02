@@ -1,7 +1,9 @@
 import { Response } from 'express';
+import mongoose from 'mongoose';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ScheduleTemplate } from '../models/ScheduleTemplate.js';
 import { ActiveSchedule } from '../models/ActiveSchedule.js';
+import { User } from '../models/User.js';
 import {
   ApiResponse,
   CreateScheduleTemplateSchema,
@@ -37,6 +39,27 @@ function collectCoachIdsFromDays(days: { timeSlots: { coachIds: string[] }[] }[]
     }
   }
   return Array.from(coachIds);
+}
+
+/**
+ * Remove assignedClients IDs that aren't current clients of the gym. The editor
+ * saves its whole copy of the days, which can still hold a client deleted since
+ * it loaded; keeping that ID would put it back after the delete cleanup removed it.
+ */
+async function dropNonClientAssignments(
+  days: { timeSlots: { assignedClients: string[] }[] }[],
+  gymId: string
+): Promise<void> {
+  const ids = Array.from(new Set(days.flatMap(day => day.timeSlots.flatMap(slot => slot.assignedClients))))
+    .filter(id => mongoose.isValidObjectId(id));
+  const clients = await User.find({ _id: { $in: ids }, gymId, userType: UserType.CLIENT }).select('_id');
+  const clientIds = new Set(clients.map(c => c.id));
+
+  for (const day of days) {
+    for (const slot of day.timeSlots) {
+      slot.assignedClients = slot.assignedClients.filter(id => clientIds.has(id));
+    }
+  }
 }
 
 /**
@@ -359,6 +382,7 @@ export const updateScheduleTemplate = async (
           return;
         }
       }
+      await dropNonClientAssignments(updateData.days, template.gymId);
     }
 
     const updatedTemplate = await ScheduleTemplate.findByIdAndUpdate(
