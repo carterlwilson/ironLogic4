@@ -169,7 +169,8 @@ export const submitClassAttendance = async (
       return;
     }
 
-    const { timeslotId, date, entries } = validation.data;
+    const { timeslotId, date } = validation.data;
+    let { entries } = validation.data;
 
     // Allow one day of slack for the client's local date running ahead of the server's
     const now = new Date();
@@ -188,15 +189,26 @@ export const submitClassAttendance = async (
       return;
     }
 
-    const clientIds = entries.map(e => e.clientId);
-    const allIdsValid = clientIds.every(id => mongoose.isValidObjectId(id));
-    const validClientCount = allIdsValid
-      ? await User.countDocuments({ _id: { $in: clientIds }, gymId, userType: UserType.CLIENT })
-      : 0;
-    if (validClientCount !== clientIds.length) {
+    const allIdsValid = entries.every(e => mongoose.isValidObjectId(e.clientId));
+    const users = allIdsValid
+      ? await User.find({ _id: { $in: entries.map(e => e.clientId) } }).select('gymId userType')
+      : [];
+    const existingIds = new Set(users.map(u => u.id));
+
+    // A deleted client can still be signed up for the class; skip them rather than
+    // rejecting the whole roster
+    entries = entries.filter(e => existingIds.has(e.clientId) || !slot.assignedClients.includes(e.clientId));
+
+    const allGymClients = users.every(u => u.gymId === gymId && u.userType === UserType.CLIENT);
+    if (!allIdsValid || !allGymClients || users.length !== entries.length) {
       res.status(400).json({ success: false, error: 'All clients must be clients of this gym' });
       return;
     }
+    if (entries.length === 0) {
+      res.status(400).json({ success: false, error: 'None of these clients exist anymore' });
+      return;
+    }
+    const clientIds = entries.map(e => e.clientId);
 
     await AttendanceRecord.bulkWrite(entries.map(entry => ({
       updateOne: {
