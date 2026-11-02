@@ -228,6 +228,40 @@ describe('PUT /api/gym/attendance/class', () => {
     expect(res.status).toBe(400);
   });
 
+  it('skips a signed-up client who no longer exists', async () => {
+    const deletedClientId = new mongoose.Types.ObjectId().toString();
+    const ghost = await insertActiveSchedule({
+      gymId,
+      coachIds: [coachId],
+      assignedClients: [[clientId, deletedClientId]],
+    });
+
+    try {
+      const res = await submit(coachToken, {
+        timeslotId: ghost.timeslotIds[0],
+        date: MONDAY_1,
+        entries: [
+          { clientId, status: 'present' },
+          { clientId: deletedClientId, status: 'present' },
+        ],
+      });
+      expect(res.status).toBe(200);
+      expect(res.json.data.map((r: any) => r.clientId)).toEqual([clientId]);
+    } finally {
+      const conn = await connectDb();
+      await conn.collection('activeschedules').deleteOne({ _id: new mongoose.Types.ObjectId(ghost.scheduleId) });
+    }
+  });
+
+  it("rejects a walk-in who doesn't exist", async () => {
+    const res = await submit(coachToken, {
+      timeslotId: timeslotIds[0],
+      date: MONDAY_1,
+      entries: [{ clientId: new mongoose.Types.ObjectId().toString(), status: 'present' }],
+    });
+    expect(res.status).toBe(400);
+  });
+
   it("rejects a date that isn't on the class's day of the week", async () => {
     const res = await submit(coachToken, {
       timeslotId: timeslotIds[0],
