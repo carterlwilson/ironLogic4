@@ -63,6 +63,44 @@ async function dropNonClientAssignments(
 }
 
 /**
+ * Apply coach changes from a template save to the matching classes on the active
+ * schedule, so a swapped-in coach can see those classes before the weekly reset.
+ * Template saves regenerate timeslot IDs, so classes match on day, start time and
+ * location. Only changed classes are touched, which keeps substitutes set directly
+ * on the active schedule.
+ */
+async function syncCoachChangesToActiveSchedule(
+  templateId: string,
+  previousDays: { dayOfWeek: number; timeSlots: { startTime: string; location: string; coachIds: string[] }[] }[],
+  days: { dayOfWeek: number; timeSlots: { startTime: string; location: string; coachIds: string[] }[] }[]
+): Promise<void> {
+  const previousCoaches = new Map<string, string[]>();
+  for (const day of previousDays) {
+    for (const slot of day.timeSlots) {
+      previousCoaches.set(`${day.dayOfWeek}|${slot.startTime}|${slot.location}`, [...slot.coachIds]);
+    }
+  }
+
+  for (const day of days) {
+    for (const slot of day.timeSlots) {
+      const previous = previousCoaches.get(`${day.dayOfWeek}|${slot.startTime}|${slot.location}`);
+      if (!previous || [...previous].sort().join() === [...slot.coachIds].sort().join()) continue;
+
+      await ActiveSchedule.updateOne(
+        { templateId },
+        { $set: { 'days.$[day].timeSlots.$[slot].coachIds': slot.coachIds } },
+        {
+          arrayFilters: [
+            { 'day.dayOfWeek': day.dayOfWeek },
+            { 'slot.startTime': slot.startTime, 'slot.location': slot.location },
+          ],
+        }
+      );
+    }
+  }
+}
+
+/**
  * Find a timeslot within a template's days and, for coaches, verify they're
  * assigned to coach that specific timeslot. Returns the timeslot's capacity
  * on success, or null with a response already sent on failure.
@@ -392,6 +430,10 @@ export const updateScheduleTemplate = async (
     )
       .populate('gymId', 'name')
       .populate('createdBy', 'firstName lastName');
+
+    if (updateData.days) {
+      await syncCoachChangesToActiveSchedule(id, template.days, updateData.days);
+    }
 
     const response: ApiResponse<any> = {
       success: true,
