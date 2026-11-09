@@ -6,6 +6,8 @@ import { ProgramTable } from '../../components/Programs/List/ProgramTable';
 import { ProgramEmptyState } from '../../components/Programs/List/ProgramEmptyState';
 import { CreateProgramModal } from '../../components/Programs/List/CreateProgramModal';
 import { DeleteProgramModal } from '../../components/Programs/List/DeleteProgramModal';
+import { AssignProgramToAllModal } from '../../components/Programs/List/AssignProgramToAllModal';
+import { useAuth } from '../../providers/AuthProvider';
 import type { IProgram, ProgramListParams } from '@ironlogic4/shared/types/programs';
 
 export function ProgramListPage() {
@@ -16,6 +18,9 @@ export function ProgramListPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProgram, setSelectedProgram] = useState<IProgram | null>(null);
+  const [programToAssign, setProgramToAssign] = useState<IProgram | null>(null);
+  const { user } = useAuth();
+  const canAssignToAll = user?.role === 'owner' || user?.role === 'admin';
 
   const { data, isLoading } = useProgramList(params);
 
@@ -49,6 +54,14 @@ export function ProgramListPage() {
     setIsDeleteModalOpen(false);
   };
 
+  const handleOpenAssignModal = (program: IProgram) => {
+    setProgramToAssign(program);
+  };
+
+  const handleCloseAssignModal = () => {
+    setProgramToAssign(null);
+  };
+
   const programs = data?.data || [];
   const pagination = data?.pagination;
 
@@ -74,6 +87,7 @@ export function ProgramListPage() {
             programs={programs}
             loading={isLoading}
             onDeleteProgram={handleOpenDeleteModal}
+            onAssignToAllClients={canAssignToAll ? handleOpenAssignModal : undefined}
             pagination={pagination}
             onPageChange={handlePageChange}
           />
@@ -88,6 +102,12 @@ export function ProgramListPage() {
           opened={isDeleteModalOpen}
           onClose={handleCloseDeleteModal}
           program={selectedProgram}
+        />
+
+        <AssignProgramToAllModal
+          opened={programToAssign !== null}
+          onClose={handleCloseAssignModal}
+          program={programToAssign}
         />
       </Stack>
     </Container>
