@@ -68,6 +68,12 @@ class ProgramApiService {
     });
   }
 
+  async assignProgramToAllClients(id: string): Promise<ApiResponse<{ updatedCount: number }>> {
+    return authenticatedRequest<ApiResponse<{ updatedCount: number }>>(`/api/gym/programs/${id}/assign-all-clients`, {
+      method: 'POST',
+    });
+  }
+
   // Full program update (for nested structure changes)
   async updateProgramStructure(id: string, program: Partial<IProgram>): Promise<ApiResponse<IProgram>> {
     return authenticatedRequest<ApiResponse<IProgram>>(`/api/gym/programs/${id}`, {

@@ -1,13 +1,15 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { Program } from '../models/Program.js';
+import { User } from '../models/User.js';
 import {
   ApiResponse,
   PaginatedResponse,
   CreateProgramSchema,
   UpdateProgramSchema,
   ProgramListParamsSchema,
-  ProgramIdSchema
+  ProgramIdSchema,
+  UserType
 } from '@ironlogic4/shared';
 import { buildGymScope } from '../utils/gymScope.js';
 
@@ -320,6 +322,80 @@ export const deleteProgram = async (
     res.status(500).json({
       success: false,
       error: 'Failed to delete program',
+    });
+  }
+};
+
+/**
+ * Assign a program to every client in the program's gym
+ */
+export const assignProgramToAllClients = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const validation = ProgramIdSchema.safeParse(req.params);
+
+    if (!validation.success) {
+      res.status(400).json({
+        success: false,
+        error: 'Invalid program ID',
+      });
+      return;
+    }
+
+    const { id } = validation.data;
+
+    const query: any = { _id: id };
+    Object.assign(query, buildGymScope(req.user!));
+
+    const program = await Program.findOne(query);
+
+    if (!program) {
+      res.status(404).json({
+        success: false,
+        error: 'Program not found',
+      });
+      return;
+    }
+
+    if (!program.isActive) {
+      res.status(400).json({
+        success: false,
+        error: 'Cannot assign an inactive program',
+      });
+      return;
+    }
+
+    if (program.currentProgress.startedAt === null && program.blocks.length > 0) {
+      program.currentProgress = {
+        blockIndex: 0,
+        weekIndex: 0,
+        startedAt: new Date(),
+        completedAt: null,
+        lastAdvancedAt: null,
+        totalWeeksCompleted: 0,
+      };
+      await program.save();
+    }
+
+    const result = await User.updateMany(
+      { userType: UserType.CLIENT, gymId: program.gymId },
+      { programId: program.id }
+    );
+
+    const response: ApiResponse<{ updatedCount: number }> = {
+      success: true,
+      data: { updatedCount: result.matchedCount },
+      message: `Program assigned to ${result.matchedCount} client${result.matchedCount === 1 ? '' : 's'}`,
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('Error assigning program to all clients:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to assign program to all clients',
     });
   }
 };

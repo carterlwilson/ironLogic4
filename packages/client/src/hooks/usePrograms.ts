@@ -133,3 +133,26 @@ export function useDeleteProgram() {
     },
   });
 }
+
+// Assign program to all of the gym's clients
+export function useAssignProgramToAllClients() {
+  return useMutation({
+    mutationFn: (id: string) => programApi.assignProgramToAllClients(id),
+    onSuccess: (response) => {
+      notifications.show({
+        title: 'Success',
+        message: response.message || 'Program assigned to all clients',
+        color: 'green',
+        autoClose: 5000,
+      });
+    },
+    onError: (error: Error) => {
+      notifications.show({
+        title: 'Error',
+        message: error.message || 'Failed to assign program to all clients',
+        color: 'red',
+        autoClose: 5000,
+      });
+    },
+  });
+}
