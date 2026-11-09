@@ -2,6 +2,7 @@ import express from 'express';
 import {
   verifyToken,
   requireGymStaffAccess,
+  requireAdminOrOwner,
 } from '../../middleware/auth.js';
 import {
   getAllPrograms,
@@ -9,6 +10,7 @@ import {
   createProgram,
   updateProgram,
   deleteProgram,
+  assignProgramToAllClients,
 } from '../../controllers/programs.js';
 import programProgressRoutes from './programProgress.js';
 
@@ -33,6 +35,10 @@ router.put('/:id', verifyToken, updateProgram);
 // DELETE /api/gym/programs/:id - Delete program (soft delete)
 // Owner/Admin access with gym scoping
 router.delete('/:id', verifyToken, deleteProgram);
+
+// POST /api/gym/programs/:id/assign-all-clients - Assign program to every client in the gym
+// Owner/Admin access with gym scoping
+router.post('/:id/assign-all-clients', verifyToken, requireAdminOrOwner, assignProgramToAllClients);
 
 // Progress tracking routes - /api/gym/programs/:id/progress/*
 router.use('/:id/progress', programProgressRoutes);

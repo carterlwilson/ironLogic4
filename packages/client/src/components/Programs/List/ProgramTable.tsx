@@ -1,5 +1,5 @@
-import { Table, Paper, Badge, Group, ActionIcon, Text, Pagination, Skeleton, Stack } from '@mantine/core';
-import { IconEye, IconTrash } from '@tabler/icons-react';
+import { Table, Paper, Badge, Group, ActionIcon, Text, Pagination, Skeleton, Stack, Tooltip } from '@mantine/core';
+import { IconEye, IconTrash, IconUsersGroup } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import type { IProgram } from '@ironlogic4/shared/types/programs';
 
@@ -7,6 +7,7 @@ interface ProgramTableProps {
   programs: IProgram[];
   loading: boolean;
   onDeleteProgram: (program: IProgram) => void;
+  onAssignToAllClients?: (program: IProgram) => void;
   pagination?: {
     page: number;
     limit: number;
@@ -20,6 +21,7 @@ export function ProgramTable({
   programs,
   loading,
   onDeleteProgram,
+  onAssignToAllClients,
   pagination,
   onPageChange,
 }: ProgramTableProps) {
@@ -57,7 +59,7 @@ export function ProgramTable({
               <Table.Th>Description</Table.Th>
               <Table.Th>Status</Table.Th>
               <Table.Th>Created</Table.Th>
-              <Table.Th style={{ width: 120 }}>Actions</Table.Th>
+              <Table.Th style={{ width: 150 }}>Actions</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -90,6 +92,19 @@ export function ProgramTable({
                     >
                       <IconEye size={18} />
                     </ActionIcon>
+                    {onAssignToAllClients && (
+                      <Tooltip label={program.isActive ? 'Assign to all clients' : 'Inactive programs cannot be assigned'}>
+                        <ActionIcon
+                          variant="subtle"
+                          color="orange"
+                          disabled={!program.isActive}
+                          onClick={() => onAssignToAllClients(program)}
+                          aria-label="Assign to all clients"
+                        >
+                          <IconUsersGroup size={18} />
+                        </ActionIcon>
+                      </Tooltip>
+                    )}
                     <ActionIcon
                       variant="subtle"
                       color="red"
