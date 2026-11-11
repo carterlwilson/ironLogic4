@@ -41,6 +41,8 @@ export interface IScheduleDayWithAvailability {
 
 export interface IActiveScheduleWithAvailability extends Omit<IActiveSchedule, 'days'> {
   days: IScheduleDayWithAvailability[];
+  /** The gym's IANA time zone. Only included by getAvailableSchedules. */
+  timezone?: string;
 }
 
 /**
