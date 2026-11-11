@@ -22,16 +22,22 @@ export const MAX_CLASSES_PER_WEEK = 3;
  * @param dayOfWeek - Day to check (0-6, Sunday-Saturday)
  * @param lastResetAt - When the active schedule was last reset from its template
  * @param now - Reference date, defaults to the current time
+ * @param timeZone - IANA zone whose calendar defines "today"; defaults to the runtime's local zone
  */
-export function isDayInPast(dayOfWeek: DayOfWeek, lastResetAt: Date, now: Date = new Date()): boolean {
-  if (isSameCalendarDay(lastResetAt, now)) {
+export function isDayInPast(dayOfWeek: DayOfWeek, lastResetAt: Date, now: Date = new Date(), timeZone?: string): boolean {
+  const today = calendarDate(now, timeZone);
+  if (calendarDate(lastResetAt, timeZone) === today) {
     return false;
   }
-  return dayOfWeek < now.getDay();
+  return dayOfWeek < new Date(`${today}T00:00:00Z`).getUTCDay();
 }
 
-function isSameCalendarDay(a: Date, b: Date): boolean {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+/** Time zone of the gym's schedule. The server runs in UTC, so day-of-week checks must use this. */
+export const GYM_TIME_ZONE = 'America/Los_Angeles';
+
+/** Calendar date of `date` in `timeZone`, as YYYY-MM-DD. */
+function calendarDate(date: Date, timeZone?: string): string {
+  return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
 }
 
 export interface ITimeSlot {
