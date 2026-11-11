@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActiveSchedule } from '../models/ActiveSchedule.js';
 import { User } from '../models/User.js';
-import { ApiResponse, AvailableSchedulesQuerySchema, UserType, MAX_CLASSES_PER_WEEK, isDayInPast } from '@ironlogic4/shared';
+import { ApiResponse, AvailableSchedulesQuerySchema, UserType, MAX_CLASSES_PER_WEEK, isDayInPast, GYM_TIME_ZONE } from '@ironlogic4/shared';
 import { z } from 'zod';
 
 const TimeslotParamSchema = z.object({
@@ -281,7 +281,7 @@ export const joinTimeslot = async (
       return;
     }
 
-    if (isDayInPast(targetDayOfWeek, scheduleCheck.lastResetAt)) {
+    if (isDayInPast(targetDayOfWeek, scheduleCheck.lastResetAt, new Date(), GYM_TIME_ZONE)) {
       res.status(400).json({
         success: false,
         error: "You can't join a class from earlier this week.",
@@ -432,7 +432,7 @@ export const leaveTimeslot = async (
       res.status(404).json({ success: false, error: 'Timeslot not found' });
       return;
     }
-    if (isDayInPast(targetDay.dayOfWeek, scheduleCheck.lastResetAt)) {
+    if (isDayInPast(targetDay.dayOfWeek, scheduleCheck.lastResetAt, new Date(), GYM_TIME_ZONE)) {
       res.status(400).json({
         success: false,
         error: "You can't unassign from a class from earlier this week.",
