@@ -1,9 +1,11 @@
 import { Modal, Stack, Group, TextInput, Select, Button } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconBuilding, IconMapPin, IconPhone, IconUser } from '@tabler/icons-react';
+import { IconBuilding, IconMapPin, IconPhone, IconUser, IconClock } from '@tabler/icons-react';
 import { useState, useEffect } from 'react';
 import type { CreateGymRequest } from '@ironlogic4/shared/types/gyms';
+import { isValidTimeZone } from '@ironlogic4/shared/schemas/gyms';
 import { userApi } from '../../../services/userApi';
+import { TIME_ZONE_OPTIONS } from '../../../utils/timeZones';
 
 interface AddGymModalProps {
   opened: boolean;
@@ -22,6 +24,7 @@ export function AddGymModal({ opened, onClose, onSubmit, loading = false }: AddG
       address: '',
       phoneNumber: '',
       ownerId: '',
+      timezone: 'America/Los_Angeles',
     },
     validate: {
       name: (value) => {
@@ -41,6 +44,11 @@ export function AddGymModal({ opened, onClose, onSubmit, loading = false }: AddG
       },
       ownerId: (value) => {
         if (!value) return 'Owner is required';
+        return null;
+      },
+      timezone: (value) => {
+        if (!value) return 'Time zone is required';
+        if (!isValidTimeZone(value)) return 'Please select a valid time zone';
         return null;
       },
     },
@@ -129,6 +137,17 @@ export function AddGymModal({ opened, onClose, onSubmit, loading = false }: AddG
             disabled={loadingOwners}
             required
             {...form.getInputProps('ownerId')}
+          />
+
+          <Select
+            label="Time Zone"
+            description="Defines the gym's days for scheduling and the Saturday night reset"
+            placeholder="Select time zone"
+            leftSection={<IconClock size={16} />}
+            data={TIME_ZONE_OPTIONS}
+            searchable
+            required
+            {...form.getInputProps('timezone')}
           />
 
           {/* Actions */}

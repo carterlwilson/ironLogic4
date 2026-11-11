@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { Gym as IGym } from '@ironlogic4/shared/types/gyms';
+import { isValidTimeZone } from '@ironlogic4/shared/schemas/gyms';
 
 export interface GymDocument extends Omit<IGym, 'id'>, Document {}
 
@@ -27,6 +28,15 @@ const gymSchema = new Schema<GymDocument>(
       type: String,
       required: true,
       ref: 'User',
+    },
+    timezone: {
+      type: String,
+      required: true,
+      trim: true,
+      validate: {
+        validator: isValidTimeZone,
+        message: 'Time zone must be a valid IANA name, e.g. America/Los_Angeles',
+      },
     },
   },
   {

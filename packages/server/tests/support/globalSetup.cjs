@@ -39,6 +39,7 @@ const gymSchema = new mongoose.Schema(
     address: String,
     phoneNumber: String,
     ownerId: String,
+    timezone: String,
   },
   { timestamps: true }
 );
@@ -91,6 +92,7 @@ module.exports = async function globalSetup() {
     name: TEST_GYM_NAME,
     address: '123 Test St',
     phoneNumber: '555-0100',
+    timezone: 'America/Los_Angeles',
     ownerId: user._id.toString(),
   });
 

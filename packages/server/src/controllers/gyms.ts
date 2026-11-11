@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { Gym } from '../models/Gym.js';
 import { User } from '../models/User.js';
-import { CreateGymSchema } from '@ironlogic4/shared/schemas/gyms';
+import { CreateGymSchema, TimeZoneSchema } from '@ironlogic4/shared/schemas/gyms';
 import { ApiResponse, PaginatedResponse } from '@ironlogic4/shared/types/api';
 import { z } from 'zod';
 
@@ -12,6 +12,7 @@ const UpdateGymSchema = z.object({
   address: z.string().min(1).optional(),
   phoneNumber: z.string().min(1).optional(),
   ownerId: z.string().min(1).optional(),
+  timezone: TimeZoneSchema.optional(),
 }).refine((data) => Object.keys(data).length > 0, {
   message: "At least one field must be provided for update",
 });
@@ -132,7 +133,7 @@ export const createGym = async (
       return;
     }
 
-    const { name, address, phoneNumber, ownerId } = validationResult.data;
+    const { name, address, phoneNumber, ownerId, timezone } = validationResult.data;
 
     // Check if gym with same name already exists
     const existingGym = await Gym.findOne({ name });
@@ -150,6 +151,7 @@ export const createGym = async (
       address,
       phoneNumber,
       ownerId,
+      timezone,
     });
 
     await gym.save();
