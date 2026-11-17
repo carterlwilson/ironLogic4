@@ -39,7 +39,11 @@ export function AttendanceRoster({ slot, date, clients, clientMap, clientsLoadin
   const [walkInModalOpened, setWalkInModalOpened] = useState(false);
 
   const roster = [
-    ...slot.assignedClients.map((client) => ({ id: client.id, name: clientName(client), walkIn: false })),
+    ...slot.assignedClients.map((client) => ({
+      id: client.id,
+      name: clientName(clientMap.get(client.id) ?? client),
+      walkIn: false,
+    })),
     ...walkInIds.map((id) => ({ id, name: clientName(clientMap.get(id)), walkIn: true })),
   ];
 

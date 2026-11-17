@@ -14,7 +14,7 @@ const DAY_ORDER = [0, 1, 2, 3, 4, 5, 6];
 
 export const AttendancePage = () => {
   const { user } = useAuth();
-  const { clients, clientMap, loading: clientsLoading } = useClientDirectory();
+  const { clients, clientMap, loading: clientsLoading, error: clientsError } = useClientDirectory();
   const { slots, loading, error } = useCoachActiveSchedule(clientMap);
   const [selectedSlot, setSelectedSlot] = useState<FlatCoachTimeslot | null>(null);
   const today = new Date().getDay();
@@ -34,9 +34,9 @@ export const AttendancePage = () => {
       <Stack gap="lg">
         <Title order={1}>Attendance</Title>
 
-        {error && (
+        {(error || clientsError) && (
           <Alert color="red" title="Error">
-            {error}
+            {error || clientsError}
           </Alert>
         )}
 
