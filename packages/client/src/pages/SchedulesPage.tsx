@@ -115,8 +115,9 @@ export function SchedulesPage() {
     }
   };
 
+  // The grid view uses the full width so the whole week fits on one row
   return (
-    <Container size="xl" py="xl">
+    <Container size="xl" fluid={activeTab === 'grid'} py="xl">
       <Stack gap="xl">
         {/* Page Header */}
         <Group gap="sm">
