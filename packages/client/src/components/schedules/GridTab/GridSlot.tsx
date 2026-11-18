@@ -13,6 +13,8 @@ interface GridSlotProps {
   clientsLoading: boolean;
   onAdd: (clientId: string) => Promise<void>;
   onRemove: (clientId: string) => Promise<void>;
+  /** Spots at the end of the class held back for weekly flex sign-ups; shown as "Flex", never "Open" */
+  reservedSpots: number;
 }
 
 const getCoachLabel = (coaches: Coach[], coachId: string) => {
@@ -34,14 +36,14 @@ const getShortClientName = (client: Client) => {
  * One class block in the schedule grid: time + coach header, then numbered
  * spots (filled with client names, open spots highlighted) like a sign-up sheet
  */
-export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, onRemove }: GridSlotProps) {
+export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, onRemove, reservedSpots }: GridSlotProps) {
   const [addingIndex, setAddingIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
   // The remove button only shows on hover so names get the full (narrow) column width
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const assigned = timeslot.assignedClients;
-  const openSpots = Math.max(0, timeslot.capacity - assigned.length);
+  const openSpots = Math.max(0, timeslot.capacity - reservedSpots - assigned.length);
   const rowCount = Math.max(timeslot.capacity, assigned.length);
   const columns = rowCount > 8 ? 2 : 1;
   const coachLabel = timeslot.coachIds.map((id) => getCoachLabel(coaches, id)).join(', ');
@@ -86,6 +88,16 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
     }
 
     if (index >= timeslot.capacity) return null;
+
+    if (index >= timeslot.capacity - reservedSpots) {
+      return (
+        <Box w="100%" h="100%" px={3} bg="var(--mantine-color-default-hover)" style={{ display: 'flex', alignItems: 'center' }}>
+          <Text size="xs" c="dimmed" fs="italic">
+            Flex
+          </Text>
+        </Box>
+      );
+    }
 
     if (addingIndex === index) {
       return (

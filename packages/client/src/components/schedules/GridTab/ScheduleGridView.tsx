@@ -24,6 +24,10 @@ interface ScheduleGridViewProps {
 
 const ALL_LOCATIONS = '__all__';
 
+// The last spots in every class are held for clients' weekly flex sign-ups, so the
+// recurring roster never fills them; the active schedule shows them as open
+const FLEX_SPOTS = 2;
+
 // All days stay on one row; below this width per day the grid scrolls sideways
 // rather than squeezing names past readability
 const MIN_DAY_WIDTH = 150;
@@ -127,10 +131,12 @@ export function ScheduleGridView({ coaches, clients, clientsLoading }: ScheduleG
     ),
   ].sort();
 
+  const reservedSpots = source === 'template' ? FLEX_SPOTS : 0;
+
   const openSpotsForDay = (day: IScheduleDay) =>
     day.timeSlots
       .filter((ts) => matchesLocation(ts.location))
-      .reduce((sum, ts) => sum + Math.max(0, ts.capacity - ts.assignedClients.length), 0);
+      .reduce((sum, ts) => sum + Math.max(0, ts.capacity - reservedSpots - ts.assignedClients.length), 0);
 
   if (loading) {
     return (
@@ -215,6 +221,7 @@ export function ScheduleGridView({ coaches, clients, clientsLoading }: ScheduleG
                         clientsLoading={clientsLoading}
                         onAdd={(clientId) => handleAdd(ts.id, clientId)}
                         onRemove={(clientId) => handleRemove(ts.id, clientId)}
+                        reservedSpots={reservedSpots}
                       />
                     ))}
                 </Stack>
