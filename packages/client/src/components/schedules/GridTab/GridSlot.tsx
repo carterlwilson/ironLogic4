@@ -13,6 +13,8 @@ interface GridSlotProps {
   clientsLoading: boolean;
   onAdd: (clientId: string) => Promise<void>;
   onRemove: (clientId: string) => Promise<void>;
+  /** Spots at the end of the class held back for weekly flex sign-ups; shown as "Flex", never "Open" */
+  reservedSpots: number;
 }
 
 const getCoachLabel = (coaches: Coach[], coachId: string) => {
@@ -34,12 +36,14 @@ const getShortClientName = (client: Client) => {
  * One class block in the schedule grid: time + coach header, then numbered
  * spots (filled with client names, open spots highlighted) like a sign-up sheet
  */
-export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, onRemove }: GridSlotProps) {
+export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, onRemove, reservedSpots }: GridSlotProps) {
   const [addingIndex, setAddingIndex] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  // The remove button only shows on hover so names get the full (narrow) column width
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const assigned = timeslot.assignedClients;
-  const openSpots = Math.max(0, timeslot.capacity - assigned.length);
+  const openSpots = Math.max(0, timeslot.capacity - reservedSpots - assigned.length);
   const rowCount = Math.max(timeslot.capacity, assigned.length);
   const columns = rowCount > 8 ? 2 : 1;
   const coachLabel = timeslot.coachIds.map((id) => getCoachLabel(coaches, id)).join(', ');
@@ -63,25 +67,37 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
     if (clientId) {
       const client = clients.find((c) => c.id === clientId);
       return (
-        <Group gap={4} wrap="nowrap" justify="space-between" px={4} style={{ flex: 1, minWidth: 0 }}>
+        <Group gap={2} wrap="nowrap" justify="space-between" px={3} style={{ flex: 1, minWidth: 0 }}>
           <Text size="xs" truncate title={client ? getFullClientName(client) : undefined}>
             {client ? getShortClientName(client) : clientsLoading ? '…' : 'Unknown client'}
           </Text>
-          <ActionIcon
-            size="xs"
-            variant="subtle"
-            color="gray"
-            disabled={saving}
-            aria-label="Remove client"
-            onClick={() => void run(() => onRemove(clientId))}
-          >
-            <IconX size={12} />
-          </ActionIcon>
+          {hoveredIndex === index && (
+            <ActionIcon
+              size="xs"
+              variant="subtle"
+              color="gray"
+              disabled={saving}
+              aria-label="Remove client"
+              onClick={() => void run(() => onRemove(clientId))}
+            >
+              <IconX size={12} />
+            </ActionIcon>
+          )}
         </Group>
       );
     }
 
     if (index >= timeslot.capacity) return null;
+
+    if (index >= timeslot.capacity - reservedSpots) {
+      return (
+        <Box w="100%" h="100%" px={3} bg="var(--mantine-color-default-hover)" style={{ display: 'flex', alignItems: 'center' }}>
+          <Text size="xs" c="dimmed" fs="italic">
+            Flex
+          </Text>
+        </Box>
+      );
+    }
 
     if (addingIndex === index) {
       return (
@@ -95,7 +111,8 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
           data={clientOptions}
           limit={50}
           nothingFoundMessage="No clients found"
-          comboboxProps={{ withinPortal: true }}
+          // Size the dropdown to the longest name rather than the narrow grid column
+          comboboxProps={{ withinPortal: true, width: 'max-content', position: 'bottom-start' }}
           onChange={(value) => {
             setAddingIndex(null);
             if (value) void run(() => onAdd(value));
@@ -109,7 +126,7 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
       <UnstyledButton
         w="100%"
         h="100%"
-        px={4}
+        px={3}
         disabled={saving || clientsLoading}
         onClick={() => setAddingIndex(index)}
         style={{ backgroundColor: 'var(--mantine-color-green-light)' }}
@@ -125,8 +142,8 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
   return (
     <Paper withBorder radius="sm">
       <Stack gap={0}>
-        <Stack gap={2} p={6} bg="var(--mantine-color-default-hover)" style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
-          <Text fw={700} size="sm" ta="center">
+        <Stack gap={2} p={4} bg="var(--mantine-color-default-hover)" style={{ borderBottom: '1px solid var(--mantine-color-default-border)' }}>
+          <Text fw={700} size="xs" ta="center">
             {formatTime(timeslot.startTime)} ({coachLabel || 'No coach'})
           </Text>
           <Group gap={6} justify="center">
@@ -145,7 +162,7 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
           style={{
             display: 'grid',
             gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-            gridTemplateRows: `repeat(${Math.ceil(rowCount / columns)}, 28px)`,
+            gridTemplateRows: `repeat(${Math.ceil(rowCount / columns)}, 24px)`,
             gridAutoFlow: 'column',
           }}
         >
@@ -154,6 +171,8 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
               key={index}
               gap={0}
               wrap="nowrap"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
               style={{
                 borderTop: '1px solid var(--mantine-color-default-border)',
                 borderLeft: columns > 1 && index >= Math.ceil(rowCount / columns)
@@ -162,7 +181,7 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
                 minWidth: 0,
               }}
             >
-              <Text size="xs" c="dimmed" w={20} ta="right" pr={4} style={{ flexShrink: 0 }}>
+              <Text size="xs" c="dimmed" w={16} ta="right" pr={3} style={{ flexShrink: 0 }}>
                 {index + 1}
               </Text>
               <Box style={{ flex: 1, minWidth: 0, height: '100%', display: 'flex', alignItems: 'center' }}>
