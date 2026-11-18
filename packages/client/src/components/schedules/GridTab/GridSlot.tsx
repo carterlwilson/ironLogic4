@@ -99,7 +99,8 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
           data={clientOptions}
           limit={50}
           nothingFoundMessage="No clients found"
-          comboboxProps={{ withinPortal: true }}
+          // Size the dropdown to the longest name rather than the narrow grid column
+          comboboxProps={{ withinPortal: true, width: 'max-content', position: 'bottom-start' }}
           onChange={(value) => {
             setAddingIndex(null);
             if (value) void run(() => onAdd(value));
