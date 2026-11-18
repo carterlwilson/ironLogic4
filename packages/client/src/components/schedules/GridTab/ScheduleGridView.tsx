@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Stack, Group, SegmentedControl, Select, Text, Loader, Center, Paper, Box } from '@mantine/core';
-import { useElementSize } from '@mantine/hooks';
+import { Stack, Group, SegmentedControl, Select, Text, Loader, Center, Paper, Box, ScrollArea } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconMapPin } from '@tabler/icons-react';
 import type { IScheduleDay, ApiResponse } from '@ironlogic4/shared';
@@ -25,8 +24,14 @@ interface ScheduleGridViewProps {
 
 const ALL_LOCATIONS = '__all__';
 
-const MIN_DAY_WIDTH = 240;
-const DAY_GAP = 10; // matches --mantine-spacing-xs
+// The last spots in every class are held for clients' weekly flex sign-ups, so the
+// recurring roster never fills them; the active schedule shows them as open
+const FLEX_SPOTS = 2;
+
+// All days stay on one row; below this width per day the grid scrolls sideways
+// rather than squeezing names past readability
+const MIN_DAY_WIDTH = 150;
+const DAY_GAP = 6;
 
 // Monday-first ordering, matching the gym's sign-up sheet
 const dayOrder = (dayOfWeek: number) => (dayOfWeek + 6) % 7;
@@ -45,8 +50,6 @@ export function ScheduleGridView({ coaches, clients, clientsLoading }: ScheduleG
   const [template, setTemplate] = useState<GridSchedule | null>(null);
   const [active, setActive] = useState<GridSchedule | null>(null);
   const [loading, setLoading] = useState(true);
-  // Available width, used to decide how many days fit side by side
-  const { ref: containerRef, width } = useElementSize();
 
   useEffect(() => {
     const load = async () => {
@@ -128,33 +131,23 @@ export function ScheduleGridView({ coaches, clients, clientsLoading }: ScheduleG
     ),
   ].sort();
 
-  // Wrap days onto multiple rows when they don't fit side by side, balancing the
-  // rows (e.g. 6 days at max 4 across -> 3 + 3). Each row keeps its own time
-  // alignment so classes at the same time still line up across days.
-  const maxPerRow = width > 0
-    ? Math.max(1, Math.floor((width + DAY_GAP) / (MIN_DAY_WIDTH + DAY_GAP)))
-    : days.length;
-  const daysPerRow = Math.max(1, Math.ceil(days.length / Math.ceil(days.length / maxPerRow)));
-  const dayRows: IScheduleDay[][] = [];
-  for (let i = 0; i < days.length; i += daysPerRow) {
-    dayRows.push(days.slice(i, i + daysPerRow));
-  }
+  const reservedSpots = source === 'template' ? FLEX_SPOTS : 0;
 
   const openSpotsForDay = (day: IScheduleDay) =>
     day.timeSlots
       .filter((ts) => matchesLocation(ts.location))
-      .reduce((sum, ts) => sum + Math.max(0, ts.capacity - ts.assignedClients.length), 0);
+      .reduce((sum, ts) => sum + Math.max(0, ts.capacity - reservedSpots - ts.assignedClients.length), 0);
 
   if (loading) {
     return (
-      <Center ref={containerRef} py="xl">
+      <Center py="xl">
         <Loader />
       </Center>
     );
   }
 
   return (
-    <Stack ref={containerRef} gap="md">
+    <Stack gap="md">
       <Group justify="space-between" wrap="wrap">
         <SegmentedControl
           value={source}
@@ -194,56 +187,48 @@ export function ScheduleGridView({ coaches, clients, clientsLoading }: ScheduleG
           </Text>
         </Paper>
       ) : (
-        <Stack gap="lg">
-          {dayRows.map((rowDays) => (
-            <Box
-              key={rowDays.map((day) => day.dayOfWeek).join('-')}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${daysPerRow}, minmax(0, 1fr))`,
-                gap: DAY_GAP,
-                alignItems: 'start',
-              }}
-            >
-              {rowDays.map((day) => (
-                <Paper key={day.dayOfWeek} withBorder p={6} bg="var(--mantine-color-default-hover)">
-                  <Text fw={700} ta="center">
-                    {getDayName(day.dayOfWeek)}
-                  </Text>
-                  <Text size="xs" c="dimmed" ta="center">
-                    {openSpotsForDay(day)} open spots
-                  </Text>
-                </Paper>
-              ))}
+        <ScrollArea type="auto" offsetScrollbars>
+          <Box
+            style={{
+              display: 'grid',
+              gridTemplateColumns: `repeat(${days.length}, minmax(${MIN_DAY_WIDTH}px, 1fr))`,
+              gap: DAY_GAP,
+              alignItems: 'start',
+            }}
+          >
+            {days.map((day) => (
+              <Paper key={day.dayOfWeek} withBorder p={4} bg="var(--mantine-color-default-hover)">
+                <Text fw={700} size="sm" ta="center">
+                  {getDayName(day.dayOfWeek)}
+                </Text>
+                <Text size="xs" c="dimmed" ta="center">
+                  {openSpotsForDay(day)} open spots
+                </Text>
+              </Paper>
+            ))}
 
-              {startTimes
-                .filter((startTime) =>
-                  rowDays.some((day) =>
-                    day.timeSlots.some((ts) => ts.startTime === startTime && matchesLocation(ts.location))
-                  )
-                )
-                .flatMap((startTime) =>
-                  rowDays.map((day) => (
-                    <Stack key={`${startTime}-${day.dayOfWeek}`} gap="xs">
-                      {day.timeSlots
-                        .filter((ts) => ts.startTime === startTime && matchesLocation(ts.location))
-                        .map((ts) => (
-                          <GridSlot
-                            key={ts.id}
-                            timeslot={ts}
-                            coaches={coaches}
-                            clients={clients}
-                            clientsLoading={clientsLoading}
-                            onAdd={(clientId) => handleAdd(ts.id, clientId)}
-                            onRemove={(clientId) => handleRemove(ts.id, clientId)}
-                          />
-                        ))}
-                    </Stack>
-                  ))
-                )}
-            </Box>
-          ))}
-        </Stack>
+            {startTimes.flatMap((startTime) =>
+              days.map((day) => (
+                <Stack key={`${startTime}-${day.dayOfWeek}`} gap={DAY_GAP}>
+                  {day.timeSlots
+                    .filter((ts) => ts.startTime === startTime && matchesLocation(ts.location))
+                    .map((ts) => (
+                      <GridSlot
+                        key={ts.id}
+                        timeslot={ts}
+                        coaches={coaches}
+                        clients={clients}
+                        clientsLoading={clientsLoading}
+                        onAdd={(clientId) => handleAdd(ts.id, clientId)}
+                        onRemove={(clientId) => handleRemove(ts.id, clientId)}
+                        reservedSpots={reservedSpots}
+                      />
+                    ))}
+                </Stack>
+              ))
+            )}
+          </Box>
+        </ScrollArea>
       )}
     </Stack>
   );
