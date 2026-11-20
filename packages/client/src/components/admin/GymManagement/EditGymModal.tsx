@@ -1,9 +1,11 @@
 import { Modal, Tabs, Stack, Group, TextInput, Select, Button, Text, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconBuilding, IconMapPin, IconPhone, IconUser, IconAlertTriangle, IconTrash } from '@tabler/icons-react';
+import { IconBuilding, IconMapPin, IconPhone, IconUser, IconClock, IconAlertTriangle, IconTrash } from '@tabler/icons-react';
 import React, { useState, useEffect } from 'react';
 import type { Gym, UpdateGymRequest } from '@ironlogic4/shared/types/gyms';
+import { isValidTimeZone } from '@ironlogic4/shared/schemas/gyms';
 import { userApi } from '../../../services/userApi';
+import { TIME_ZONE_OPTIONS } from '../../../utils/timeZones';
 
 interface EditGymModalProps {
   opened: boolean;
@@ -25,6 +27,7 @@ export function EditGymModal({ opened, onClose, gym, onSubmit, onDelete, loading
       address: gym?.address || '',
       phoneNumber: gym?.phoneNumber || '',
       ownerId: gym?.ownerId || '',
+      timezone: gym?.timezone || '',
     },
     validate: {
       name: (value) => {
@@ -44,6 +47,11 @@ export function EditGymModal({ opened, onClose, gym, onSubmit, onDelete, loading
       },
       ownerId: (value) => {
         if (!value) return 'Owner is required';
+        return null;
+      },
+      timezone: (value) => {
+        if (!value) return 'Time zone is required';
+        if (!isValidTimeZone(value)) return 'Please select a valid time zone';
         return null;
       },
     },
@@ -81,6 +89,7 @@ export function EditGymModal({ opened, onClose, gym, onSubmit, onDelete, loading
         address: gym.address,
         phoneNumber: gym.phoneNumber,
         ownerId: gym.ownerId,
+        timezone: gym.timezone,
       });
       form.resetDirty();
     }
@@ -163,6 +172,17 @@ export function EditGymModal({ opened, onClose, gym, onSubmit, onDelete, loading
                 disabled={loadingOwners}
                 required
                 {...form.getInputProps('ownerId')}
+              />
+
+              <Select
+                label="Time Zone"
+                description="Defines the gym's days for scheduling and the Saturday night reset"
+                placeholder="Select time zone"
+                leftSection={<IconClock size={16} />}
+                data={TIME_ZONE_OPTIONS}
+                searchable
+                required
+                {...form.getInputProps('timezone')}
               />
 
               {/* Actions */}

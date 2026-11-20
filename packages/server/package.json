@@ -17,6 +17,7 @@
     "seed": "tsx src/scripts/seedData.ts",
     "seed:clear": "tsx src/scripts/seedData.ts --clear",
     "add-10rm": "tsx src/scripts/add10RmToWeightTemplates.ts",
+    "set-gym-timezones": "tsx src/scripts/setGymTimezones.ts",
     "sync-prod": "tsx src/scripts/syncProdData.ts"
   },
   "dependencies": {

@@ -2,13 +2,20 @@ import { Response } from 'express';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { ActiveSchedule } from '../models/ActiveSchedule.js';
 import { User } from '../models/User.js';
-import { ApiResponse, AvailableSchedulesQuerySchema, UserType, MAX_CLASSES_PER_WEEK, isDayInPast, GYM_TIME_ZONE } from '@ironlogic4/shared';
+import { Gym } from '../models/Gym.js';
+import { ApiResponse, AvailableSchedulesQuerySchema, UserType, MAX_CLASSES_PER_WEEK, isDayInPast } from '@ironlogic4/shared';
 import { z } from 'zod';
 
 const TimeslotParamSchema = z.object({
   id: z.string().min(1),
   timeslotId: z.string().min(1),
 });
+
+/** The gym's IANA time zone, which defines "today" for the earlier-this-week check. */
+async function getGymTimeZone(gymId: string): Promise<string | undefined> {
+  const gym = await Gym.findById(gymId).select('timezone');
+  return gym?.timezone;
+}
 
 /**
  * Get available schedules for client self-scheduling
@@ -73,7 +80,7 @@ export const getAvailableSchedules = async (
 
     // Find all active schedules
     const schedules = await ActiveSchedule.find(query)
-      .populate('gymId', 'name')
+      .populate('gymId', 'name timezone')
       .populate('templateId', 'name')
       .sort({ createdAt: -1 });
 
@@ -112,6 +119,8 @@ export const getAvailableSchedules = async (
     // Add computed availability fields and coach information
     const enrichedSchedules = schedules.map(schedule => {
       const scheduleObj: any = schedule.toJSON();
+      // Lets clients compute "earlier this week" in the gym's time zone
+      scheduleObj.timezone = (schedule.gymId as any)?.timezone;
 
       scheduleObj.days = scheduleObj.days.map((day: any) => ({
         ...day,
@@ -281,7 +290,8 @@ export const joinTimeslot = async (
       return;
     }
 
-    if (isDayInPast(targetDayOfWeek, scheduleCheck.lastResetAt, new Date(), GYM_TIME_ZONE)) {
+    const timeZone = await getGymTimeZone(scheduleCheck.gymId.toString());
+    if (isDayInPast(targetDayOfWeek, scheduleCheck.lastResetAt, new Date(), timeZone)) {
       res.status(400).json({
         success: false,
         error: "You can't join a class from earlier this week.",
@@ -432,7 +442,8 @@ export const leaveTimeslot = async (
       res.status(404).json({ success: false, error: 'Timeslot not found' });
       return;
     }
-    if (isDayInPast(targetDay.dayOfWeek, scheduleCheck.lastResetAt, new Date(), GYM_TIME_ZONE)) {
+    const timeZone = await getGymTimeZone(scheduleCheck.gymId.toString());
+    if (isDayInPast(targetDay.dayOfWeek, scheduleCheck.lastResetAt, new Date(), timeZone)) {
       res.status(400).json({
         success: false,
         error: "You can't unassign from a class from earlier this week.",

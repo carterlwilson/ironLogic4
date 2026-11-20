@@ -4,6 +4,8 @@ export interface Gym {
   address: string;
   phoneNumber: string;
   ownerId: string;
+  /** IANA time zone the gym's schedule runs in, e.g. America/Los_Angeles */
+  timezone: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,6 +15,7 @@ export interface CreateGymRequest {
   address: string;
   phoneNumber: string;
   ownerId: string;
+  timezone: string;
 }
 
 export interface UpdateGymRequest {
@@ -20,6 +23,7 @@ export interface UpdateGymRequest {
   address?: string;
   phoneNumber?: string;
   ownerId?: string;
+  timezone?: string;
 }
 
 export interface GymListParams {

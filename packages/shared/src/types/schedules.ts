@@ -32,9 +32,6 @@ export function isDayInPast(dayOfWeek: DayOfWeek, lastResetAt: Date, now: Date =
   return dayOfWeek < new Date(`${today}T00:00:00Z`).getUTCDay();
 }
 
-/** Time zone of the gym's schedule. The server runs in UTC, so day-of-week checks must use this. */
-export const GYM_TIME_ZONE = 'America/Los_Angeles';
-
 /** Calendar date of `date` in `timeZone`, as YYYY-MM-DD. */
 function calendarDate(date: Date, timeZone?: string): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);

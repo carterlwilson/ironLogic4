@@ -152,9 +152,11 @@ const connectDB = async () => {
 };
 
 // Weekly reset of every gym's active schedule back to its template,
-// Saturdays at 11:59 PM Eastern.
+// Saturdays at 11:59 PM in each gym's own time zone. Ticks at :14/:29/:44/:59
+// UTC so 23:59 local is hit for any zone offset that's a multiple of 15
+// minutes; runScheduleResetJob only resets gyms that are due.
 const scheduleWeeklyActiveScheduleReset = () => {
-  const task = cron.schedule('59 23 * * 6', () => runScheduleResetJob('cron'), { timezone: 'America/New_York' });
+  const task = cron.schedule('14,29,44,59 * * * *', () => runScheduleResetJob('cron'), { timezone: 'UTC' });
 
   // node-cron swallows a failed execution internally (it only records
   // lastRun()) unless a listener is attached, so without this an error
@@ -163,7 +165,7 @@ const scheduleWeeklyActiveScheduleReset = () => {
     console.error('[SCHEDULE-RESET] node-cron reported a failed execution:', context.execution?.error ?? context.error);
   });
 
-  console.log('[SCHEDULE-RESET] Weekly reset cron job registered. Next run:', task.getNextRun());
+  console.log('[SCHEDULE-RESET] Weekly reset cron job registered. Next check:', task.getNextRun());
 };
 
 // If the most recent logged reset is older than a week, the cron likely

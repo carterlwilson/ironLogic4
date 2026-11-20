@@ -25,6 +25,7 @@ class GymApiService {
       address: gymData.address,
       phoneNumber: gymData.phoneNumber,
       ownerId: gymData.ownerId,
+      timezone: gymData.timezone,
       createdAt: new Date(gymData.createdAt),
       updatedAt: new Date(gymData.updatedAt),
     }));
