@@ -1,5 +1,17 @@
-import { useState } from 'react';
-import { Paper, Stack, Group, Text, Badge, Box, ActionIcon, Select, UnstyledButton } from '@mantine/core';
+import { useState, type ReactElement } from 'react';
+import {
+  Paper,
+  Stack,
+  Group,
+  Text,
+  Badge,
+  Box,
+  ActionIcon,
+  UnstyledButton,
+  Combobox,
+  ScrollArea,
+  useCombobox,
+} from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 import type { ITimeSlot } from '@ironlogic4/shared';
 import type { Coach } from '../../../hooks/useCoaches';
@@ -32,6 +44,68 @@ const getShortClientName = (client: Client) => {
   return client.lastName ? `${client.firstName} ${client.lastName[0]}.` : client.firstName;
 };
 
+interface ClientPickerProps {
+  options: { value: string; label: string }[];
+  onPick: (clientId: string) => void;
+  onClose: () => void;
+  children: ReactElement;
+}
+
+/**
+ * Searchable client list that drops down from a spot. The search box sits in the
+ * dropdown so typed names aren't squeezed into the narrow grid cell, and the list
+ * only closes on a pick, Escape or a click elsewhere — not on blur, which Safari
+ * fires unexpectedly (e.g. from its autocorrect bubble)
+ */
+function ClientPicker({ options, onPick, onClose, children }: ClientPickerProps) {
+  const [search, setSearch] = useState('');
+  const combobox = useCombobox({ defaultOpened: true, onDropdownClose: onClose });
+
+  const query = search.trim().toLowerCase();
+  const filtered = query ? options.filter((o) => o.label.toLowerCase().includes(query)) : options;
+
+  return (
+    <Combobox
+      store={combobox}
+      withinPortal
+      position="bottom-start"
+      // Size the dropdown to the longest name rather than the narrow grid column
+      width="max-content"
+      onOptionSubmit={(value) => {
+        combobox.closeDropdown();
+        onPick(value);
+      }}
+    >
+      <Combobox.Target withAriaAttributes={false}>{children}</Combobox.Target>
+      <Combobox.Dropdown miw={240}>
+        <Combobox.Search
+          value={search}
+          onChange={(event) => setSearch(event.currentTarget.value)}
+          placeholder="Search clients…"
+          autoFocus
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck={false}
+        />
+        <Combobox.Options>
+          <ScrollArea.Autosize mah={300} type="scroll">
+            {filtered.length === 0 ? (
+              <Combobox.Empty>No clients found</Combobox.Empty>
+            ) : (
+              filtered.map((option) => (
+                <Combobox.Option key={option.value} value={option.value} style={{ whiteSpace: 'nowrap' }}>
+                  {option.label}
+                </Combobox.Option>
+              ))
+            )}
+          </ScrollArea.Autosize>
+        </Combobox.Options>
+      </Combobox.Dropdown>
+    </Combobox>
+  );
+}
+
 /**
  * One class block in the schedule grid: time + coach header, then numbered
  * spots (filled with client names, open spots highlighted) like a sign-up sheet
@@ -50,7 +124,8 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
 
   const clientOptions = clients
     .filter((c) => !assigned.includes(c.id))
-    .map((c) => ({ value: c.id, label: getFullClientName(c) }));
+    .map((c) => ({ value: c.id, label: getFullClientName(c) }))
+    .sort((a, b) => a.label.localeCompare(b.label));
 
   const run = async (action: () => Promise<void>) => {
     setSaving(true);
@@ -89,54 +164,48 @@ export function GridSlot({ timeslot, coaches, clients, clientsLoading, onAdd, on
 
     if (index >= timeslot.capacity) return null;
 
-    if (index >= timeslot.capacity - reservedSpots) {
-      return (
-        <Box w="100%" h="100%" px={3} bg="var(--mantine-color-default-hover)" style={{ display: 'flex', alignItems: 'center' }}>
-          <Text size="xs" c="dimmed" fs="italic">
-            Flex
-          </Text>
-        </Box>
-      );
-    }
+    // Flex spots are reserved in the roster but can still be filled, like open spots
+    const isFlex = index >= timeslot.capacity - reservedSpots;
 
-    if (addingIndex === index) {
-      return (
-        <Select
-          size="xs"
-          style={{ flex: 1 }}
-          autoFocus
-          searchable
-          defaultDropdownOpened
-          placeholder="Add client…"
-          data={clientOptions}
-          limit={50}
-          nothingFoundMessage="No clients found"
-          // Size the dropdown to the longest name rather than the narrow grid column
-          comboboxProps={{ withinPortal: true, width: 'max-content', position: 'bottom-start' }}
-          onChange={(value) => {
-            setAddingIndex(null);
-            if (value) void run(() => onAdd(value));
-          }}
-          onBlur={() => setAddingIndex(null)}
-        />
-      );
-    }
-
-    return (
+    const spotButton = (
       <UnstyledButton
         w="100%"
         h="100%"
         px={3}
         disabled={saving || clientsLoading}
         onClick={() => setAddingIndex(index)}
-        style={{ backgroundColor: 'var(--mantine-color-green-light)' }}
-        aria-label="Add client to open spot"
+        style={{
+          backgroundColor: isFlex ? 'var(--mantine-color-default-hover)' : 'var(--mantine-color-green-light)',
+          outline: addingIndex === index ? '2px solid var(--mantine-color-blue-filled)' : undefined,
+          outlineOffset: -2,
+        }}
+        aria-label={isFlex ? 'Add client to flex spot' : 'Add client to open spot'}
       >
-        <Text size="xs" c="green">
-          Open
-        </Text>
+        {isFlex ? (
+          <Text size="xs" c="dimmed" fs="italic">
+            Flex
+          </Text>
+        ) : (
+          <Text size="xs" c="green">
+            Open
+          </Text>
+        )}
       </UnstyledButton>
     );
+
+    if (addingIndex === index) {
+      return (
+        <ClientPicker
+          options={clientOptions}
+          onClose={() => setAddingIndex(null)}
+          onPick={(value) => void run(() => onAdd(value))}
+        >
+          {spotButton}
+        </ClientPicker>
+      );
+    }
+
+    return spotButton;
   };
 
   return (
